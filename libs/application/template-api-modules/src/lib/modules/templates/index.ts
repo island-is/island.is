@@ -196,8 +196,6 @@ import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-lic
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
 import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
-import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
-import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
@@ -290,7 +288,6 @@ export const modules = [
   CarRentalDayrateReturnsModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
-  LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
   ActivationAllowanceModule,
@@ -396,7 +393,6 @@ export const services = [
   CarRentalDayrateReturnsService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
-  LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
   ActivationAllowanceService,

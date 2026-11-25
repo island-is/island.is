@@ -273,8 +273,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: () =>
     import('@island.is/application/templates/hms/fire-compensation-appraisal'),
-  [ApplicationTypes.LEGAL_GAZETTE]: () =>
-    import('@island.is/application/templates/legal-gazette'),
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: () =>
     import(
       '@island.is/application/templates/transport-authority/exemption-for-transportation'

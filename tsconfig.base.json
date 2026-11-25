@@ -178,9 +178,6 @@
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
       ],
-      "@island.is/api/domains/legal-gazette": [
-        "libs/api/domains/legal-gazette/src/index.ts"
-      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
@@ -542,9 +539,6 @@
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
-      ],
-      "@island.is/application/templates/legal-gazette": [
-        "libs/application/templates/legal-gazette/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
@@ -916,9 +910,6 @@
       ],
       "@island.is/clients/judicial-system-sp": [
         "libs/clients/judicial-system-sp/src/index.ts"
-      ],
-      "@island.is/clients/legal-gazette": [
-        "libs/clients/legal-gazette/src/index.ts"
       ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"

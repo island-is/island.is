@@ -7,7 +7,6 @@ import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
-import { LegalGazetteModule } from '@island.is/api/domains/legal-gazette'
 import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
@@ -139,10 +138,6 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
-import {
-  LegalGazetteClientConfig,
-  LegalGazetteClientModule,
-} from '@island.is/clients/legal-gazette'
 import { GovernmentInvoicesClientConfig } from '@island.is/clients/government-invoices'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
@@ -367,7 +362,6 @@ const environment = getConfig
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
-    LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     IcelandicGovernmentInstitutionVacanciesModule,
@@ -379,7 +373,6 @@ const environment = getConfig
     UniversityCareersModule,
     OfficialJournalOfIcelandModule,
     OfficialJournalOfIcelandApplicationModule,
-    LegalGazetteModule,
     CompanyRegistryModule,
     QuestionnairesModule,
     IcelandicNamesModule.register({
@@ -516,7 +509,6 @@ const environment = getConfig
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
-        LegalGazetteClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         PaymentsApiClientConfig,

@@ -18,7 +18,6 @@ export enum Features {
   homeSupport = 'isHomeSupportEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
-  legalGazette = 'isLegalGazetteEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',

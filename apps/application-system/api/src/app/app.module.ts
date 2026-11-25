@@ -46,7 +46,6 @@ import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/officia
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
-import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
@@ -134,7 +133,6 @@ import { FjarskiptastofaSelfAssessmentClientConfig } from '@island.is/clients/fj
         OfficialJournalOfIcelandApplicationClientConfig,
         RegulationsClientConfig,
         RegulationsAdminClientConfig,
-        LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
