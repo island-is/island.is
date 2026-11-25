@@ -40,8 +40,8 @@ import {
   UserContext,
   type WorkingCase,
 } from '@island.is/judicial-system-web/src/components'
-import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealEventType,
   CaseFileCategory,
