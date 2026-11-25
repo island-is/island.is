@@ -107,7 +107,7 @@ export type VerdictAppealSummaryStage =
  * shows the appeal as it ended and offers nothing more to do.
  */
 export const getVerdictAppealSummaryStage = (
-  appealCase: Pick<AppealCase, 'appealState'> | undefined | null,
+  appealCase: Pick<AppealCase, 'appealType' | 'appealState'> | undefined | null,
 ): VerdictAppealSummaryStage => {
   if (appealCase?.appealState === AppealCaseState.COMPLETED) {
     return 'COMPLETED'

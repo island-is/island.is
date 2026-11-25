@@ -48,13 +48,22 @@ export enum AppealCaseTransition {
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
-// Whether the court of appeals has confirmed how a verdict appeal ended: it is
-// ready to complete, or completed and released to everyone.
+// Whether the appeal is a verdict appeal and the court of appeals has confirmed
+// how it ended: it is ready to complete, or completed and released to everyone.
+// A ruling appeal is never confirmed, even when it is completed, so the appeal
+// passed must carry its type.
 export const isVerdictAppealConfirmed = (
-  appealCase: { appealState?: AppealCaseState | null } | null | undefined,
+  appealCase:
+    | {
+        appealType?: AppealCaseType | null
+        appealState?: AppealCaseState | null
+      }
+    | null
+    | undefined,
 ): boolean =>
-  appealCase?.appealState === AppealCaseState.READY_TO_COMPLETE ||
-  appealCase?.appealState === AppealCaseState.COMPLETED
+  appealCase?.appealType === AppealCaseType.VERDICT &&
+  (appealCase.appealState === AppealCaseState.READY_TO_COMPLETE ||
+    appealCase.appealState === AppealCaseState.COMPLETED)
 
 export enum AppealDecisionPartyRole {
   PROSECUTOR = 'PROSECUTOR',

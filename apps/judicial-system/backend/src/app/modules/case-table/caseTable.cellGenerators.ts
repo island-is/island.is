@@ -865,7 +865,9 @@ const verdictAppealCompletedDate: CaseTableCellGenerator<StringValue> = {
 const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: {
-      attributes: ['appealState', 'appealRulingDecision'],
+      // The type is what tells a confirmed verdict appeal from a completed
+      // ruling appeal.
+      attributes: ['appealType', 'appealState', 'appealRulingDecision'],
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {

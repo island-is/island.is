@@ -2,6 +2,7 @@ import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealRulingType,
   CaseFileCategory,
   VerdictAppealStatus,
@@ -32,6 +33,7 @@ const readyCase = {
   ],
   verdictAppealCase: {
     id: 'verdict-appeal',
+    appealType: AppealCaseType.VERDICT,
     appealState: AppealCaseState.APPEALED,
     verdictAppealStatus: VerdictAppealStatus.COMPLETED,
     appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
@@ -58,7 +60,12 @@ describe('getVerdictAppealSummaryStage', () => {
     [AppealCaseState.READY_TO_COMPLETE, 'CONFIRMED'],
     [AppealCaseState.COMPLETED, 'COMPLETED'],
   ])('is %s -> %s', (appealState, stage) => {
-    expect(getVerdictAppealSummaryStage({ appealState })).toBe(stage)
+    expect(
+      getVerdictAppealSummaryStage({
+        appealType: AppealCaseType.VERDICT,
+        appealState,
+      }),
+    ).toBe(stage)
   })
 
   it('is in progress without an appeal', () => {

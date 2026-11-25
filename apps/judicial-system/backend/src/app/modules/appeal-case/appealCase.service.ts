@@ -1190,7 +1190,6 @@ export class AppealCaseService {
     // The confirmed copy of a confirmed verdict appeal's ruling document is
     // stamped with this date, so a new date has it stamped again.
     if (
-      appealCase.appealType === AppealCaseType.VERDICT &&
       isVerdictAppealConfirmed(appealCase) &&
       update.appealRulingDate &&
       update.appealRulingDate.getTime() !==
