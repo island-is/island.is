@@ -1,11 +1,11 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildPhoneField,
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { removeCountryCode } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
@@ -87,23 +87,18 @@ export const childsPersonalInfo = buildMultiField({
           }
         )?.email ?? '',
     }),
-    buildTextField({
+    buildPhoneField({
       id: 'childsPersonalInfo.guardian1.phoneNumber',
       title: m.phoneNumber,
       width: 'half',
-      variant: 'tel',
-      format: '###-####',
       required: true,
-      defaultValue: (application: Application) => {
-        const phone =
-          (
-            application.externalData.userProfile?.data as {
-              mobilePhoneNumber?: string
-            }
-          )?.mobilePhoneNumber ?? ''
-
-        return removeCountryCode(phone)
-      },
+      enableCountrySelector: true,
+      defaultValue: (application: Application) =>
+        (
+          application.externalData.userProfile?.data as {
+            mobilePhoneNumber?: string
+          }
+        )?.mobilePhoneNumber ?? '',
     }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian2',
@@ -150,15 +145,14 @@ export const childsPersonalInfo = buildMultiField({
       condition: (answers, externalData) =>
         hasSecondGuardian(answers, externalData),
     }),
-    buildTextField({
+    buildPhoneField({
       id: 'childsPersonalInfo.guardian2.phoneNumber',
       title: m.phoneNumber,
       width: 'half',
-      variant: 'tel',
-      format: '###-####',
       backgroundColor: 'blue',
       defaultValue: '',
       required: true,
+      enableCountrySelector: true,
       condition: (answers, externalData) =>
         hasSecondGuardian(answers, externalData),
     }),

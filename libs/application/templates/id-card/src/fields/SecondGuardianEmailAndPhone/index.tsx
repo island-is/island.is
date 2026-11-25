@@ -90,7 +90,6 @@ export const SecondGuardianEmailAndPhone: FC<
           id={`${field.id}.phoneNumber`}
           control={control}
           backgroundColor="blue"
-          disableDropdown
           label={formatMessage(
             applicantInformation.labels.applicantPhoneNumber,
           )}

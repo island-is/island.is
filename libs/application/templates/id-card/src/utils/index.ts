@@ -18,7 +18,10 @@ export * from './getPriceList'
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone?.formatNational() || phoneNumber
+  if (!phone) return phoneNumber
+  return phone.country === 'IS'
+    ? phone.formatNational()
+    : phone.formatInternational()
 }
 
 export const getCombinedApplicantInformation = (externalData: ExternalData) => {

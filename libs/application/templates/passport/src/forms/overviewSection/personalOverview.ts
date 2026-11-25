@@ -5,7 +5,7 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { formatPhoneNumber } from '@island.is/shared/utils'
+import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import {
   Passport,
@@ -71,7 +71,7 @@ export const personalOverview = buildMultiField({
           }
         )?.phoneNumber
 
-        return formatPhoneNumber(phone as string)
+        return formatPhoneNumberWithIcelandicCountryCode(phone as string)
       },
     }),
     buildDescriptionField({

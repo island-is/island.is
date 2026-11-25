@@ -61,6 +61,8 @@ export const ApplicanInformationSubSection = buildSection({
           id: `${Routes.APPLICANTSINFORMATION}.phoneNumber`,
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
+          required: true,
+          enableCountrySelector: true,
           condition: (answers, externalData) => {
             return !isChild(answers, externalData)
           },
@@ -137,6 +139,7 @@ export const ApplicanInformationSubSection = buildSection({
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
           required: true,
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const applicantUserProfile = getValueViaPath(
               application.externalData,
