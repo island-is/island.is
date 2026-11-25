@@ -3,9 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/cms-importer/src",
   "projectType": "application",
-  "tags": [
-    "scope:nest"
-  ],
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -15,23 +13,17 @@
         "tsConfig": "apps/services/cms-importer/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": [
-          "cjs"
-        ]
+        "format": ["cjs"]
       },
       "configurations": {
         "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "assets": [
-            "apps/services/cms-importer/src/assets"
-          ]
+          "assets": ["apps/services/cms-importer/src/assets"]
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "grant-import": {
       "executor": "@nx/js:node",
@@ -40,10 +32,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "grant-import"
-        ]
+        "args": ["--job", "grant-import"]
       }
     },
     "fsre-buildings-import": {
@@ -53,10 +42,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "fsre-buildings-import"
-        ]
+        "args": ["--job", "fsre-buildings-import"]
       }
     },
     "energy-fund-import": {
@@ -66,10 +52,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "energy-fund-import"
-        ]
+        "args": ["--job", "energy-fund-import"]
       }
     },
     "web-sitemap": {
@@ -79,10 +62,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "web-sitemap"
-        ]
+        "args": ["--job", "web-sitemap"]
       }
     },
     "cms-cleanup": {
@@ -92,10 +72,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "cms-cleanup"
-        ]
+        "args": ["--job", "cms-cleanup"]
       }
     },
     "lyfjastofnun-forms-import": {
@@ -105,10 +82,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "lyfjastofnun-forms-import"
-        ]
+        "args": ["--job", "lyfjastofnun-forms-import"]
       }
     },
     "lyfjastofnun-instructions-import": {
@@ -118,10 +92,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "lyfjastofnun-instructions-import"
-        ]
+        "args": ["--job", "lyfjastofnun-instructions-import"]
       }
     },
     "lyfjastofnun-lists-import": {
@@ -131,10 +102,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "lyfjastofnun-lists-import"
-        ]
+        "args": ["--job", "lyfjastofnun-lists-import"]
       }
     },
     "lyfjastofnun-news-import": {
@@ -144,10 +112,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "lyfjastofnun-news-import"
-        ]
+        "args": ["--job", "lyfjastofnun-news-import"]
       }
     },
     "lint": {
@@ -155,9 +120,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/services/cms-importer/jest.config.ts"
       }
@@ -172,10 +135,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/cms-importer"
         },
-        "args": [
-          "--job",
-          "rsk-treaties-import"
-        ]
+        "args": ["--job", "rsk-treaties-import"]
       }
     }
   }

@@ -1,4 +1,4 @@
-import { RskTreatyTabKey } from '../repositories/rsk-treaties/dto/rskTreaty.dto'
+import { RskTreatyTabKey } from '../../dto/rskTreaty.dto'
 
 export const GENERIC_LIST_ID = '7GpKr4VzzRpitLSNBdWYRz'
 

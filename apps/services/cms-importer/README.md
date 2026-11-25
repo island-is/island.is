@@ -84,6 +84,23 @@ and most lyfjastofnun.is posts have none. **Those seed assets must be published
 in Contentful before any article referencing them is published**, otherwise the
 articles render with no image.
 
+### RSK Double Taxation Treaties Import
+
+Scrapes treaty tables from Skatturinn, resolves document links, and creates
+bilingual generic list items with document-type tags. Simple items use localized
+asset or external-link fields; items with multiple documents use rich-text links.
+Existing slugs are skipped. Entries and uploaded assets are created as drafts.
+
+```bash
+yarn nx run services-cms-importer:rsk-treaties-import
+```
+
+To limit the number of new items:
+
+```bash
+node dist/apps/services/cms-importer/main.cjs --job rsk-treaties-import --limit 5
+```
+
 ### Web Sitemap
 
 Generates a sitemap.xml file in S3 (that gets forwarded to https://island.is/sitemap.xml) by fetching entries from the CMS
@@ -108,6 +125,7 @@ yarn nx run services-cms-importer:cms-cleanup
 - **app/organizations/energy-fund/jobs/** - Energy fund import module
 - **app/organizations/fsre-buildings/jobs/** - FSRE buildings import module
 - **app/organizations/lyfjastofnun/** - Shared lyfjastofnun.is scraper/repository, with one module per job under `jobs/`
+- **app/organizations/rsk/** - Treaty scraper/repository and the treaty import job under `jobs/treaties/`
 - **app/contentful-maintenance/jobs/** - Web sitemap and CMS cleanup modules
 
 ## Building

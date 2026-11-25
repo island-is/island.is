@@ -127,44 +127,26 @@ export class CmsRepository {
   }
 
   findAssetByFileName = async (fileName: string): Promise<Asset | null> => {
-    const response = await this.managementClient.getAssets({
-      [`fields.file.fileName[${LOCALE}]`]: fileName,
-      limit: 1,
-    })
-    if (!response.ok || response.data.items.length === 0) return null
-    return response.data.items[0]
-  }
-
-  createAsset = async (
-    data: Omit<AssetProps, 'sys'>,
-    publish = false,
-  ): Promise<Asset | null> => {
-    const createResult = await this.managementClient.createAsset(data)
-
-    if (!createResult.ok) {
-      logger.warn('Failed to create asset', { error: createResult.error })
-      return null
-    }
-
-    try {
-      const processed = await createResult.data.processForAllLocales()
-      return publish ? processed.publish() : processed
-    } catch (error) {
-      logger.error('Failed to process asset', { error })
-      return null
-    }
-  }
-
-  findAssetByFileName = async (fileName: string): Promise<Asset | null> => {
     // Contentful's query API only supports equality search on top-level
     // fields, not nested properties like file.fileName — filter client-side
-    // instead (same approach as findOrCreateLinkUrlEntry).
-    const response = await this.managementClient.getAssets()
-    if (!response.ok) return null
-    const match = response.data.items.find(
-      (asset) => asset.fields.file?.[LOCALE]?.fileName === fileName,
-    )
-    return match ?? null
+    // instead. Search every page so older assets can also be reused.
+    const limit = 1000
+    for (let skip = 0; ; skip += limit) {
+      const response = await this.managementClient.getAssets({
+        order: 'sys.id',
+        limit,
+        skip,
+      })
+      if (!response.ok) {
+        throw new Error(`Failed to look up asset: ${fileName}`)
+      }
+      const { items, total } = response.data
+      const match = items.find(
+        (asset) => asset.fields.file?.[LOCALE]?.fileName === fileName,
+      )
+      if (match) return match
+      if (skip + items.length >= total || items.length === 0) return null
+    }
   }
 
   createAsset = async (

@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { LOCALE } from '../constants'
-import { CmsRepository } from '../repositories/cms/cms.repository'
-import { EntryCreationDto } from '../repositories/cms/cms.types'
-import { RskTreatiesRepository } from '../repositories/rsk-treaties/rskTreaties.repository'
-import {
-  RskTreatyDocument,
-  RskTreatyItem,
-} from '../repositories/rsk-treaties/dto/rskTreaty.dto'
+import { LOCALE } from '../../../../constants'
+import { CmsRepository } from '../../../../platform/cms.repository'
+import { EntryCreationDto } from '../../../../platform/cms.types'
+import { RskTreatiesRepository } from '../../rskTreaties.repository'
+import { RskTreatyDocument, RskTreatyItem } from '../../dto/rskTreaty.dto'
 import { GENERIC_LIST_ID, TAB_KEY_DOCUMENT_TYPE_LABELS } from './constants'
 import {
   ResolvedRskDocument,
@@ -15,7 +12,7 @@ import {
   isSimpleShape,
   mapEntryCreationDto,
   mapSlug,
-} from './mapper'
+} from './treaties.mapper'
 
 const FILE_CONTENT_TYPE_MAP: Record<string, string> = {
   pdf: 'application/pdf',

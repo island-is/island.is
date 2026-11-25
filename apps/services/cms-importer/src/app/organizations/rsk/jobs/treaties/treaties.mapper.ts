@@ -1,19 +1,14 @@
 import slugify from '@sindresorhus/slugify'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { EN_LOCALE, LOCALE } from '../constants'
+import { EN_LOCALE, LOCALE } from '../../../../constants'
 import {
   EntryCreationDto,
   Localized,
   RichTextParagraph,
-} from '../repositories/cms/cms.types'
-import {
-  generateGenericListItem,
-  mapLocalizedValue,
-} from '../repositories/cms/mapper'
-import {
-  RskTreatyLinkKind,
-  RskTreatyTabKey,
-} from '../repositories/rsk-treaties/dto/rskTreaty.dto'
+} from '../../../../platform/cms.types'
+import { generateGenericListItem } from '../../../../platform/content-types/generic-list-item.mapper'
+import { mapLocalizedValue } from '../../../../platform/localization'
+import { RskTreatyLinkKind, RskTreatyTabKey } from '../../dto/rskTreaty.dto'
 import {
   GENERIC_LIST_ID,
   OWNER_TAG,
@@ -108,33 +103,21 @@ const mapSimpleLinkProperties = (document: ResolvedRskDocument) => {
   }
 
   if (isLink.resolved.type === 'asset') {
-    if (enLink && enLink.resolved.type !== 'asset') {
-      // Kind mismatch between locales (rare) — keep the Icelandic asset only,
-      // rather than silently dropping the asset field or mixing field types.
-      return { assetId: mapLocalizedValue(isLink.resolved.assetId) }
-    }
     return {
-      assetId: mapLocalizedValue(
-        isLink.resolved.assetId,
+      assetId: isLink.resolved.assetId,
+      assetIdEn:
         enLink?.resolved.type === 'asset' ? enLink.resolved.assetId : undefined,
-      ),
     }
   }
 
-  if (isLink.resolved.type !== 'externalLinkEntry') {
-    return {}
-  }
+  if (isLink.resolved.type !== 'externalLinkEntry') return {}
 
-  if (enLink && enLink.resolved.type !== 'externalLinkEntry') {
-    return { externalLinkId: mapLocalizedValue(isLink.resolved.entryId) }
-  }
   return {
-    externalLinkId: mapLocalizedValue(
-      isLink.resolved.entryId,
+    externalLinkId: isLink.resolved.entryId,
+    externalLinkIdEn:
       enLink?.resolved.type === 'externalLinkEntry'
         ? enLink.resolved.entryId
         : undefined,
-    ),
   }
 }
 

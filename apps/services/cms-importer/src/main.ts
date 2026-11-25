@@ -110,7 +110,7 @@ switch (job) {
     break
   }
   case 'rsk-treaties-import': {
-    import('./app/rsk-treaties-import/rsk-treaties-import-worker')
+    import('./app/organizations/rsk/jobs/treaties/treaties.worker')
       .then((app) => app.rskTreatiesImportWorker())
       .catch((error) => {
         console.error(
