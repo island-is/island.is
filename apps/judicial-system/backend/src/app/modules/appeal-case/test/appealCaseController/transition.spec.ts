@@ -175,6 +175,42 @@ describe('AppealCaseController - Transition', () => {
     })
   })
 
+  // Only the file service takes a confirmation back, when the court changes
+  // its ruling document. Guards are skipped here, so this is the service
+  // refusing it on its own.
+  describe('taking a confirmation back', () => {
+    it.each([
+      [
+        'a confirmed verdict appeal',
+        {
+          id: appealCaseId,
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.READY_TO_COMPLETE,
+        },
+      ],
+      [
+        'a ruling appeal',
+        {
+          id: appealCaseId,
+          appealType: AppealCaseType.RULING,
+          appealState: AppealCaseState.RECEIVED,
+        },
+      ],
+    ])('should be refused for %s', async (_, appealCase) => {
+      const then = await givenWhenThen(
+        { id: caseId, type: CaseType.INDICTMENT } as Case,
+        appealCase as AppealCase,
+        AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+      )
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+  })
+
   describe('confirm a verdict appeal', () => {
     const concludedDate = new Date('2024-01-10T00:00:00Z')
     const rulingFile = {

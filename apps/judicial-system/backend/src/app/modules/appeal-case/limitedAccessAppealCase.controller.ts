@@ -239,8 +239,12 @@ export class LimitedAccessAppealCaseController {
     const transition = dto.transition
 
     // This check exists only to narrow the transition to the events the event
-    // service accepts: no limited access user may confirm a verdict appeal.
-    if (transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE) {
+    // service accepts: no limited access user may confirm a verdict appeal,
+    // and no user may take a confirmation back.
+    if (
+      transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      transition !== AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+    ) {
       registerAfterCommit(() =>
         this.eventService.postEvent(transition, theCase),
       )

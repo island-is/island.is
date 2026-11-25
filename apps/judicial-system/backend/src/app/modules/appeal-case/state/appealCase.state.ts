@@ -69,6 +69,20 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       },
     ],
     [
+      // A confirmed verdict appeal whose ruling document is replaced or
+      // removed has to be confirmed again. Everything the court recorded,
+      // including the date it entered, is kept.
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+      {
+        fromAppealStates: [],
+        fromVerdictAppealStates: [AppealCaseState.READY_TO_COMPLETE],
+        transition: (): AppealTransitionResult => ({
+          caseUpdate: {},
+          appealCaseUpdate: { appealState: AppealCaseState.APPEALED },
+        }),
+      },
+    ],
+    [
       AppealCaseTransition.COMPLETE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],

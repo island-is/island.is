@@ -72,6 +72,29 @@ describe('AppealCaseController - transition rules for confirming a verdict appea
   })
 })
 
+// Taking a confirmation back belongs to the file service, when the court
+// changes its ruling document; no user sends it.
+describe('AppealCaseController - transition rules for taking a confirmation back', () => {
+  const dtoFieldValues = (rule: RolesRule) =>
+    (rule as { dtoFieldValues?: string[] }).dtoFieldValues ?? []
+
+  it.each([
+    ['court of appeals judge', courtOfAppealsJudgeTransitionRule],
+    ['court of appeals registrar', courtOfAppealsRegistrarTransitionRule],
+    ['court of appeals assistant', courtOfAppealsAssistantTransitionRule],
+    ['prosecutor', prosecutorTransitionRule],
+    ['prosecutor representative', prosecutorRepresentativeTransitionRule],
+    ['defender', defenderTransitionRule],
+    ['district court judge', districtCourtJudgeTransitionRule],
+    ['district court registrar', districtCourtRegistrarTransitionRule],
+    ['public prosecutor staff', publicProsecutorStaffTransitionRule],
+  ])('should not let a %s send it', (_, rule) => {
+    expect(dtoFieldValues(rule)).not.toContain(
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+    )
+  })
+})
+
 describe('AppealCaseController - transition withdrawal rules', () => {
   describe('prosecution', () => {
     const prosecutor = {

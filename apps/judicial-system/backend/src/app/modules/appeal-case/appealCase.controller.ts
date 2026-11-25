@@ -344,8 +344,12 @@ export class AppealCaseController {
     const transition = dto.transition
 
     // Confirming a verdict appeal is not announced: its outcome stays with
-    // the court of appeals until it is released.
-    if (transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE) {
+    // the court of appeals until it is released. Taking a confirmation back is
+    // refused by the service above and is checked only to narrow the type.
+    if (
+      transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      transition !== AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+    ) {
       registerAfterCommit(() =>
         this.eventService.postEvent(transition, theCase),
       )

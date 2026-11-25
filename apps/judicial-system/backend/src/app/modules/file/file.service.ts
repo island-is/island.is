@@ -19,6 +19,8 @@ import type { ConfigType } from '@island.is/nest/config'
 import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
+  AppealCaseTransition,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -40,12 +42,14 @@ import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
+import { transitionAppealCase } from '../appeal-case/state/appealCase.state'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { PoliceDocumentType } from '../police'
 import {
   AppealCase,
+  AppealCaseRepositoryService,
   Case,
   CaseFile,
   CaseFileRepositoryService,
@@ -88,6 +92,7 @@ export class FileService {
     private readonly awsS3Service: AwsS3Service,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
+    private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
@@ -322,6 +327,53 @@ export class FileService {
     )
   }
 
+  // The confirmed verdict appeal that changing a file of this category takes
+  // back, if any. The route has locked the case row, as confirming the appeal
+  // does, so the state read with the case is the one on record.
+  private confirmedVerdictAppealOfRuling(
+    theCase: Case,
+    category?: CaseFileCategory | null,
+  ): AppealCase | undefined {
+    const verdictAppealCase = theCase.verdictAppealCase
+
+    return category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      verdictAppealCase?.appealState === AppealCaseState.READY_TO_COMPLETE
+      ? verdictAppealCase
+      : undefined
+  }
+
+  // The court confirmed a verdict appeal with the ruling document it had then,
+  // so a new or removed one has to be confirmed again. The appeal goes back
+  // to APPEALED with everything recorded kept, and the stamped copy of the
+  // ruling is no longer trusted. Nothing is announced: the outcome was never
+  // released.
+  private async takeVerdictAppealConfirmationBack(
+    theCase: Case,
+    verdictAppealCase: AppealCase,
+    transaction: Transaction,
+  ): Promise<void> {
+    const { appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+      theCase,
+      verdictAppealCase,
+    )
+
+    this.logger.debug(
+      `Taking the confirmation of verdict appeal ${verdictAppealCase.id} of case ${theCase.id} back`,
+    )
+
+    await this.appealCaseRepositoryService.update(
+      verdictAppealCase.id,
+      appealCaseUpdate,
+      { transaction },
+    )
+
+    await this.invalidateVerdictAppealRulingConfirmation(
+      theCase.id,
+      transaction,
+    )
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
@@ -536,6 +588,19 @@ export class FileService {
       user,
       transaction,
     )
+
+    const confirmedVerdictAppeal = this.confirmedVerdictAppealOfRuling(
+      theCase,
+      file.category,
+    )
+
+    if (confirmedVerdictAppeal) {
+      await this.takeVerdictAppealConfirmationBack(
+        theCase,
+        confirmedVerdictAppeal,
+        transaction,
+      )
+    }
 
     if (
       theCase.appealCase?.appealCaseNumber &&
@@ -797,7 +862,28 @@ export class FileService {
     file: CaseFile,
     transaction?: Transaction,
   ): Promise<DeleteFileResponse> {
+    const confirmedVerdictAppeal = this.confirmedVerdictAppealOfRuling(
+      theCase,
+      file.category,
+    )
+
+    // The appeal has to go back in the same transaction as the file, or a
+    // removed ruling could leave the appeal confirmed.
+    if (confirmedVerdictAppeal && !transaction) {
+      throw new InternalServerErrorException(
+        `File ${file.id} of case ${theCase.id} is the ruling of a confirmed verdict appeal and can only be deleted in a transaction`,
+      )
+    }
+
     const success = await this.deleteFileFromDatabase(file.id, transaction)
+
+    if (success && confirmedVerdictAppeal && transaction) {
+      await this.takeVerdictAppealConfirmationBack(
+        theCase,
+        confirmedVerdictAppeal,
+        transaction,
+      )
+    }
 
     if (success && isRequestCase(theCase.type)) {
       if (transaction) {

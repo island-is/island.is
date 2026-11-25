@@ -1303,6 +1303,14 @@ export class AppealCaseService {
     transaction: Transaction,
     defendantId?: string,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // A confirmed verdict appeal goes back to the court only when its ruling
+    // document changes, which the file service does in the same transaction.
+    if (transition === AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE) {
+      throw new ForbiddenException(
+        `The appeal transition ${transition} cannot be requested`,
+      )
+    }
+
     // Withdrawing a verdict appeal is per defendant, the same way filing one is.
     if (
       transition === AppealCaseTransition.WITHDRAW_APPEAL &&

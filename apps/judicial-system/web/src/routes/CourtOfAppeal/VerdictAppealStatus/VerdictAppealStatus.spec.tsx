@@ -238,6 +238,10 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
       }}
     >
       {children}
+      {/* What the page has written back to the appeal's state. */}
+      <output data-testid="verdictAppealState">
+        {workingCase.verdictAppealCase?.appealState}
+      </output>
     </FormContext.Provider>
   )
 }
@@ -846,6 +850,91 @@ describe('VerdictAppealStatus', () => {
       ).not.toBeInTheDocument()
       expect(screen.getByTestId('continueButton')).toBeDisabled()
     })
+  })
+
+  // The backend takes a confirmed appeal back when its ruling document is
+  // replaced or removed, and the working case follows so the summary asks
+  // for confirmation again.
+  describe('changing the ruling document', () => {
+    const appealIn = (c: WorkingCase, appealState: AppealCaseState) =>
+      ({
+        ...c,
+        verdictAppealCase: { ...c.verdictAppealCase, appealState },
+      } as unknown as WorkingCase)
+    const appealState = () =>
+      screen.getByTestId('verdictAppealState').textContent
+
+    it('takes a confirmed appeal back once a document is uploaded', async () => {
+      const { container } = renderPage(
+        appealIn(
+          finishedCaseWithoutDocument,
+          AppealCaseState.READY_TO_COMPLETE,
+        ),
+      )
+
+      await chooseRulingDocument(container)
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    it('takes a confirmed appeal back once the document is removed', async () => {
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+      )
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    it('leaves a confirmed appeal confirmed when the upload fails', async () => {
+      mockHandleUpload.mockResolvedValue('NONE_SUCCEEDED')
+      const { container } = renderPage(
+        appealIn(
+          finishedCaseWithoutDocument,
+          AppealCaseState.READY_TO_COMPLETE,
+        ),
+      )
+
+      await chooseRulingDocument(container)
+
+      await waitFor(() => expect(mockHandleUpload).toHaveBeenCalled())
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    // A failed removal never calls back.
+    it('leaves a confirmed appeal confirmed when the removal fails', async () => {
+      mockHandleRemove.mockResolvedValue(undefined)
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+      )
+
+      await waitFor(() => expect(mockHandleRemove).toHaveBeenCalled())
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+      'leaves an appeal that is %s as it is after an upload and a removal',
+      async (state) => {
+        const { container } = renderPage(appealIn(finishedCase, state))
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+        )
+        await waitFor(() =>
+          expect(
+            screen.queryByText('domur-landsrettar.pdf'),
+          ).not.toBeInTheDocument(),
+        )
+        await chooseRulingDocument(container)
+        expect(await screen.findByText('nyr-domur.pdf')).toBeInTheDocument()
+
+        expect(appealState()).toBe(state)
+      },
+    )
   })
 
   describe('a booked session', () => {

@@ -3,6 +3,7 @@ import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import { getProsecutionVerdictAppealDate } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  AppealCaseState,
   AppealCourtSessionType,
   VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -164,4 +165,35 @@ export const getVerdictAppealStatusHeaderLines = (
   }
 
   return Array.from(new Set(lines))
+}
+
+/**
+ * The working case after the court has tried to upload or remove the ruling
+ * document. The court confirmed the appeal with the document it had then, so
+ * once a new one is stored or the old one removed, the backend takes a
+ * confirmed appeal back in the same request and the court confirms it again.
+ * The working case follows: a confirmed appeal goes back to APPEALED, and
+ * nothing changes when the operation failed or the appeal was in any other
+ * state.
+ */
+export const withRulingDocumentChanged = (
+  workingCase: WorkingCase,
+  succeeded: boolean,
+): WorkingCase => {
+  const verdictAppealCase = workingCase.verdictAppealCase
+
+  if (
+    !succeeded ||
+    verdictAppealCase?.appealState !== AppealCaseState.READY_TO_COMPLETE
+  ) {
+    return workingCase
+  }
+
+  return {
+    ...workingCase,
+    verdictAppealCase: {
+      ...verdictAppealCase,
+      appealState: AppealCaseState.APPEALED,
+    },
+  }
 }

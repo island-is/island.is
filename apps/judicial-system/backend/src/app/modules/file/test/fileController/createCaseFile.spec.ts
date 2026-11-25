@@ -6,6 +6,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -21,7 +22,12 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { getOrCreateTransaction } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
-import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
+import {
+  AppealCaseRepositoryService,
+  Case,
+  CaseFile,
+  CaseFileRepositoryService,
+} from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
 interface Then {
@@ -40,6 +46,7 @@ describe('FileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -55,11 +62,13 @@ describe('FileController - Create case file', () => {
       queuedMessagesAfterCommit,
       sequelize,
       caseFileRepositoryService,
+      appealCaseRepositoryService,
       fileController,
     } = await createTestingFileModule()
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
 
     mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -455,9 +464,71 @@ describe('FileController - Create case file', () => {
       })
     })
 
+    // The court confirmed the appeal with the document it had then, so a new
+    // one takes the confirmation back in the transaction that stores it.
+    describe('created once the verdict appeal is confirmed', () => {
+      const verdictAppealCaseId = uuid()
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          ...createCaseFile,
+          id: uuid(),
+          name: 'test.pdf',
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: verdictAppealCaseId,
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should create the case file', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
+          expect.objectContaining({
+            category: CaseFileCategory.VERDICT_APPEAL_RULING,
+          }),
+          { transaction },
+        )
+      })
+
+      it('should take the confirmation back in the same transaction', () => {
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          verdictAppealCaseId,
+          { appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
+          transaction,
+        })
+        expectTheGuardsTransactionOnly()
+      })
+
+      it('should not queue any messages', () => {
+        expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
     describe.each([
-      AppealCaseState.READY_TO_COMPLETE,
+      AppealCaseState.APPEALED,
       AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
     ])('created once the verdict appeal is %s', (appealState) => {
       let then: Then
 
@@ -477,6 +548,7 @@ describe('FileController - Create case file', () => {
             ...theCase,
             verdictAppealCase: {
               id: uuid(),
+              appealType: AppealCaseType.VERDICT,
               appealState,
             },
           } as Case,
@@ -484,10 +556,89 @@ describe('FileController - Create case file', () => {
         )
       })
 
-      // The court can still replace its document after confirming the appeal.
-      it('should create the case file', () => {
+      it('should create the case file and leave the appeal as it is', () => {
         expect(then.error).toBeUndefined()
         expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('another category created once the verdict appeal is confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const otherFile: CreateFileDto = {
+          type: 'application/pdf',
+          key: `${caseId}/${uuid()}/test.pdf`,
+          size: 99,
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        }
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          ...otherFile,
+          id: uuid(),
+          name: 'test.pdf',
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          otherFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should leave the appeal confirmed', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    // The appeal is taken back only after the file is stored, so a failed
+    // insert fails the request and the transaction is rolled back with the
+    // appeal untouched.
+    describe('created once the verdict appeal is confirmed and the insert fails', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockRejectedValueOnce(new Error('Some error'))
+
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should fail and leave the appeal confirmed', () => {
+        expect(then.error.message).toBe('Some error')
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
       })
     })
 
@@ -506,6 +657,7 @@ describe('FileController - Create case file', () => {
       it('should refuse creation', () => {
         expect(then.error).toBeInstanceOf(BadRequestException)
         expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       })
     })
   })

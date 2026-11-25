@@ -17,6 +17,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import {
+  AppealCaseRepositoryService,
   CaseFileRepositoryService,
   CourtDocumentRepositoryService,
 } from '../../repository'
@@ -74,6 +75,10 @@ export const createTestingFileModule = async () => {
           clearHashesForCaseAndCategory: jest.fn(),
         },
       },
+      {
+        provide: AppealCaseRepositoryService,
+        useValue: { update: jest.fn() },
+      },
       FileService,
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
@@ -94,6 +99,9 @@ export const createTestingFileModule = async () => {
   const caseFileRepositoryService = fileModule.get<CaseFileRepositoryService>(
     CaseFileRepositoryService,
   )
+
+  const appealCaseRepositoryService =
+    fileModule.get<AppealCaseRepositoryService>(AppealCaseRepositoryService)
 
   const courtDocumentRepositoryService =
     fileModule.get<CourtDocumentRepositoryService>(
@@ -137,6 +145,7 @@ export const createTestingFileModule = async () => {
     awsS3Service,
     courtService,
     caseFileRepositoryService,
+    appealCaseRepositoryService,
     courtDocumentRepositoryService,
     fileConfig,
     fileService,

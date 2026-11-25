@@ -43,6 +43,9 @@ export enum VerdictAppealStatus {
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   MARK_APPEAL_READY_TO_COMPLETE = 'MARK_APPEAL_READY_TO_COMPLETE',
+  // Never sent by a user: the backend takes a confirmed verdict appeal back
+  // when the court changes its ruling document.
+  UNMARK_APPEAL_READY_TO_COMPLETE = 'UNMARK_APPEAL_READY_TO_COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',

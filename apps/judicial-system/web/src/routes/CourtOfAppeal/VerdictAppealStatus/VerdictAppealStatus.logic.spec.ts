@@ -1,5 +1,7 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
+  AppealCaseType,
   AppealCourtSessionType,
   AppealEventType,
   UserRole,
@@ -14,6 +16,7 @@ import {
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
   toAppealCourtSessionDraft,
+  withRulingDocumentChanged,
 } from './VerdictAppealStatus.logic'
 
 describe('getVerdictAppealStatusHeaderLines', () => {
@@ -164,4 +167,51 @@ describe('getInitialVerdictAppealStatus', () => {
       expect(getInitialVerdictAppealStatus(verdictAppealCase)).toBeUndefined()
     },
   )
+})
+
+describe('withRulingDocumentChanged', () => {
+  const caseWithAppealIn = (appealState: AppealCaseState) =>
+    ({
+      id: 'case-id',
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealType: AppealCaseType.VERDICT,
+        appealState,
+        appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      },
+    } as unknown as WorkingCase)
+
+  it('takes a confirmed appeal back and keeps everything else', () => {
+    const confirmed = caseWithAppealIn(AppealCaseState.READY_TO_COMPLETE)
+
+    expect(withRulingDocumentChanged(confirmed, true)).toEqual({
+      ...confirmed,
+      verdictAppealCase: {
+        ...confirmed.verdictAppealCase,
+        appealState: AppealCaseState.APPEALED,
+      },
+    })
+  })
+
+  it('leaves a confirmed appeal confirmed when the operation failed', () => {
+    const confirmed = caseWithAppealIn(AppealCaseState.READY_TO_COMPLETE)
+
+    expect(withRulingDocumentChanged(confirmed, false)).toBe(confirmed)
+  })
+
+  it.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.COMPLETED,
+    AppealCaseState.WITHDRAWN,
+  ])('leaves an appeal that is %s as it is', (appealState) => {
+    const theCase = caseWithAppealIn(appealState)
+
+    expect(withRulingDocumentChanged(theCase, true)).toBe(theCase)
+  })
+
+  it('leaves a case without a verdict appeal as it is', () => {
+    const theCase = { id: 'case-id' } as unknown as WorkingCase
+
+    expect(withRulingDocumentChanged(theCase, true)).toBe(theCase)
+  })
 })
