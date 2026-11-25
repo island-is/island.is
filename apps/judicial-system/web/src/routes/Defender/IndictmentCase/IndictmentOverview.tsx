@@ -427,14 +427,13 @@ const IndictmentOverview: FC = () => {
                 </Button>
               </Box>
             )}
-            {caseIsClosed && (
-              <Box component="section">
-                <ZipButton
-                  caseId={workingCase.id}
-                  courtCaseNumber={workingCase.courtCaseNumber}
-                />
-              </Box>
-            )}
+            <Box component="section">
+              <ZipButton
+                caseId={workingCase.id}
+                courtCaseNumber={workingCase.courtCaseNumber}
+                policeCaseNumbers={workingCase.policeCaseNumbers}
+              />
+            </Box>
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>

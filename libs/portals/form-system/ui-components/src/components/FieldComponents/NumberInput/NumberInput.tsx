@@ -17,7 +17,7 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { fieldSettings } = item
   const { control, trigger, getFieldState } = useFormContext()
   const { lang, formatMessage } = useLocale()
-  const { hasDescription, minLength, maxLength } = fieldSettings || {}
+  const { minLength, maxLength } = fieldSettings || {}
 
   const defaultNumberValue: number | '' = (() => {
     const v = getValue(item, 'number', valueIndex)
@@ -101,9 +101,7 @@ export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
             max={maxValue}
             min={minValue}
             required={item.isRequired ?? false}
-            tooltip={
-              hasDescription ? item?.description?.[lang] ?? '' : undefined
-            }
+            tooltip={item.tooltip?.[lang]?.trim() || undefined}
             backgroundColor="blue"
             value={field.value ?? ''}
             onChange={(e) => {

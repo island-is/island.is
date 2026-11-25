@@ -17,7 +17,7 @@ export const TextInput = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
   const { lang, formatMessage } = useLocale()
-  const { isLarge, maxLength: maxL, hasDescription } = fieldSettings || {}
+  const { isLarge, maxLength: maxL } = fieldSettings || {}
   const maxLength = maxL === undefined || maxL === 0 ? -1 : maxL
   return (
     <Box>
@@ -46,9 +46,7 @@ export const TextInput = ({ item, valueIndex = 0, dispatch }: Props) => {
             textarea={isLarge ?? false}
             required={item.isRequired ?? false}
             maxLength={maxLength ?? -1}
-            tooltip={
-              hasDescription ? item?.description?.[lang] ?? '' : undefined
-            }
+            tooltip={item.tooltip?.[lang]?.trim() || undefined}
             backgroundColor="blue"
             value={getValue(item, 'text', valueIndex) ?? ''}
             onChange={(e) => {

@@ -11,6 +11,7 @@ import {
   DatePicker,
   Email,
   Family,
+  FieldInformation,
   FileUpload,
   List,
   MessageWithLink,
@@ -97,14 +98,17 @@ export const Preview = ({
       ] as ElementType)
     : undefined
   const fieldContent = FieldComponent ? (
-    <FieldComponent
-      item={previewItem}
-      valueIndex={valueIndex}
-      lang={lang}
-      dispatch={dispatch ?? previewDispatch}
-      state={state}
-      isPreview
-    />
+    <>
+      <FieldInformation item={previewItem} />
+      <FieldComponent
+        item={previewItem}
+        valueIndex={valueIndex}
+        lang={lang}
+        dispatch={dispatch ?? previewDispatch}
+        state={state}
+        isPreview
+      />
+    </>
   ) : null
 
   if (screenOrSection) {

@@ -1,4 +1,5 @@
-import { FamilyTypes, FieldTypesEnum } from '@island.is/form-system/enums'
+import { FamilyTypes } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from './enums'
 
 const childInBothLists = {
   nationalId: '0101212989',
@@ -6,6 +7,9 @@ const childInBothLists = {
 }
 
 export const previewMockData = {
+  [FieldTypesEnum.BANK_ACCOUNT]: {
+    bankAccount: '0000-00-000000',
+  },
   [FieldTypesEnum.FAMILY]: {
     [FamilyTypes.CHILD]: {
       nationalRegistryPerson: {

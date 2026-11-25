@@ -14,8 +14,14 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import type { Locale } from '@island.is/shared/types'
-import { HNIPP_TEMPLATE_PRIORITY_TYPES } from './hnippTemplate.response'
-import type { HnippTemplatePriorityType } from './hnippTemplate.response'
+import {
+  HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
+} from './hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from './hnippTemplate.response'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -145,6 +151,13 @@ export class RenderedNotificationDto {
   @IsOptional()
   @IsIn(HNIPP_TEMPLATE_PRIORITY_TYPES)
   priorityType?: HnippTemplatePriorityType
+
+  @ApiProperty({
+    enum: HNIPP_TEMPLATE_SOURCE_TYPES,
+    example: 'General',
+  })
+  @IsIn(HNIPP_TEMPLATE_SOURCE_TYPES)
+  sourceType!: HnippTemplateSourceType
 
   @ApiProperty({
     example: 'heilbrigdismal',
