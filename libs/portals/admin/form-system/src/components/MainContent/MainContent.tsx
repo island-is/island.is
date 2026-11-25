@@ -31,12 +31,14 @@ import { Deadline } from './components/Deadline/Deadline'
 import * as styles from './MainContent.css'
 
 interface Props {
+  onPreviewScreen: () => void
   openPreview: boolean
   setOpenPreview: Dispatch<SetStateAction<boolean>>
   enforcePreviewRestrictions?: boolean
 }
 
 export const MainContent = ({
+  onPreviewScreen,
   openPreview,
   setOpenPreview,
   enforcePreviewRestrictions,
@@ -98,14 +100,14 @@ export const MainContent = ({
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PREMISES ? (
-        <Premises />
+        <Premises onPreview={onPreviewScreen} />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PARTIES ? (
-        <RelevantParties />
+        <RelevantParties onPreview={onPreviewScreen} />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.COMPLETED ? (
-        <Completed />
+        <Completed onPreview={onPreviewScreen} />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Urls' ? (
         <Urls />

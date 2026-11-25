@@ -34,7 +34,7 @@ const defaultPremises: PremisesProps = {
   },
 }
 
-export const Premises = () => {
+export const Premises = ({ onPreview }: { onPreview: () => void }) => {
   const {
     control,
     controlDispatch,
@@ -145,11 +145,17 @@ export const Premises = () => {
 
   return (
     <>
-      <Row>
-        <Box marginLeft={1}>
-          <Text variant="h3">Gagnaöflun</Text>
-        </Box>
-      </Row>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+        columnGap={2}
+      >
+        <Text variant="h3">Gagnaöflun</Text>
+        <Button variant="ghost" size="small" onClick={onPreview}>
+          {formatMessage(m.preview)}
+        </Button>
+      </Box>
       <Box marginTop={2}></Box>
       <Row>
         <Column span="8/10">

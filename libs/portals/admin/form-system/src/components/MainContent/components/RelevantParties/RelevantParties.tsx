@@ -5,7 +5,7 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { Stack, Text, GridRow as Row, Box } from '@island.is/island-ui/core'
+import { Stack, Text, Box, Button } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../context/ControlContext'
@@ -13,7 +13,7 @@ import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { PartyType } from './components/PartyType'
 
-export const RelevantParties = () => {
+export const RelevantParties = ({ onPreview }: { onPreview: () => void }) => {
   const [createApplicant] = useMutation(CREATE_APPLICANT)
   const [deleteApplicant] = useMutation(DELETE_APPLICANT)
   const { control, controlDispatch } = useContext(ControlContext)
@@ -113,11 +113,17 @@ export const RelevantParties = () => {
 
   return (
     <Stack space={2}>
-      <Row>
-        <Box marginLeft={1}>
-          <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
-        </Box>
-      </Row>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+        columnGap={2}
+      >
+        <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
+        <Button variant="ghost" size="small" onClick={onPreview}>
+          {formatMessage(m.preview)}
+        </Button>
+      </Box>
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individual}

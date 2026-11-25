@@ -25,6 +25,9 @@ not on the name or address fields populated by the lookup.
 Phone-number fields do not support tooltip editing or display.
 Applicant fields do not support tooltip editing or display either; saved applicant
 tooltips are ignored.
+Applicant settings show Icelandic instructions above each name input, with
+role-specific examples for both the Icelandic and English section headings.
+These headings are not personal or company names.
 Email tooltips appear inside the email input, not above it.
 Automatic English translations target the originating field and do not overwrite
 English edits made while a translation request is pending.
@@ -40,3 +43,14 @@ saved edit. Updates to different fields can proceed independently.
 After a publish request fails, the forms list refreshes from persisted state:
 publishing may already have committed before attachment cleanup failed.
 If the refresh also fails, the operator is told to reload before retrying.
+
+## Data collection preview
+
+The Gagnaöflun settings offer only "Skoða skjá", including in read-only mode,
+without "Skoða með tengingum". The preview opens on the data-collection section.
+This button is right-aligned on the same row as the Gagnaöflun heading;
+other screens retain their existing preview toolbar.
+The Staðfesting settings also offer "Skoða skjá" to the right of the heading,
+opening the confirmation-screen preview without restrictions.
+The Aðilar settings offer the same heading-aligned button to preview applicants
+without restrictions.
