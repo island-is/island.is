@@ -15,6 +15,14 @@ interface CreateArchive {
   archiveJson: string
 }
 
+// An archive read back: `content` is the decrypted archive JSON, or undefined
+// when the stored archive cannot be decrypted into a JSON object.
+export interface DecryptedCaseArchive {
+  id: string
+  created: Date
+  content?: { [key: string]: unknown }
+}
+
 @Injectable()
 export class CaseArchiveRepositoryService {
   constructor(
@@ -47,15 +55,6 @@ export class CaseArchiveRepositoryService {
         {
           caseId,
           archive: encryptedArchive,
-          // To decrypt:
-          // JSON.parse(
-          //   Base64.fromBase64(
-          //     CryptoJS.AES.decrypt(
-          //       archive,
-          //       this.config.archiveEncryptionKey,
-          //     ).toString(CryptoJS.enc.Base64),
-          //   ),
-          // )
         },
         options,
       )
@@ -72,6 +71,68 @@ export class CaseArchiveRepositoryService {
       )
 
       throw error
+    }
+  }
+
+  // A case that was restored and archived again has more than one archive, and
+  // only the latest one matches the case as it is now.
+  async findLatestByCaseId(
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<DecryptedCaseArchive | null> {
+    try {
+      this.logger.debug(`Finding the latest case archive for case ${caseId}`)
+
+      const caseArchive = await this.caseArchiveModel.findOne({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction: options.transaction,
+      })
+
+      if (!caseArchive) {
+        this.logger.debug(`No case archive found for case ${caseId}`)
+
+        return null
+      }
+
+      return {
+        id: caseArchive.id,
+        created: caseArchive.created,
+        content: this.decrypt(caseArchive),
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error finding the latest case archive for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  private decrypt(
+    caseArchive: CaseArchive,
+  ): { [key: string]: unknown } | undefined {
+    try {
+      const content: unknown = JSON.parse(
+        CryptoJS.AES.decrypt(
+          caseArchive.archive,
+          this.config.archiveEncryptionKey,
+        ).toString(CryptoJS.enc.Utf8),
+      )
+
+      if (!content || typeof content !== 'object' || Array.isArray(content)) {
+        throw new Error('The decrypted archive is not a JSON object')
+      }
+
+      return content as { [key: string]: unknown }
+    } catch (error) {
+      // The reason only - the archive itself must never reach the logs
+      this.logger.error(`Error decrypting case archive ${caseArchive.id}:`, {
+        reason: error instanceof Error ? error.message : 'Unknown error',
+      })
+
+      return undefined
     }
   }
 }

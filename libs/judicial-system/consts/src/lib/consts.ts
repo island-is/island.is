@@ -266,6 +266,7 @@ export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
 export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
 export const ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE =
   '/notendur/vidvorunar-bordi'
+export const ADMIN_CASE_LIFETIME_ROUTE = '/notendur/liftimi-mala'
 
 //#endregion Admin user routes
 
