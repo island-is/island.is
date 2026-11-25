@@ -72,7 +72,8 @@ export class AppealVerdictService {
     }
 
     const rulingFile = theCase.caseFiles?.find(
-      (caseFile) => caseFile.category === CaseFileCategory.VERDICT_APPEAL_RULING,
+      (caseFile) =>
+        caseFile.category === CaseFileCategory.VERDICT_APPEAL_RULING,
     )
 
     if (!rulingFile) {
@@ -85,7 +86,9 @@ export class AppealVerdictService {
     const created: AppealVerdict[] = []
 
     for (const defendantId of defendantIds) {
-      const defendant = theCase.defendants?.find((row) => row.id === defendantId)
+      const defendant = theCase.defendants?.find(
+        (row) => row.id === defendantId,
+      )
 
       if (!defendant) {
         throw new BadRequestException(
@@ -160,11 +163,10 @@ export class AppealVerdictService {
     user: User
     transaction: Transaction
   }): Promise<DeliverResponse> {
-    const locked =
-      await this.appealVerdictRepositoryService.findByIdForUpdate(
-        appealVerdict.id,
-        { transaction },
-      )
+    const locked = await this.appealVerdictRepositoryService.findByIdForUpdate(
+      appealVerdict.id,
+      { transaction },
+    )
 
     if (!locked) {
       throw new NotFoundException(
@@ -223,8 +225,7 @@ export class AppealVerdictService {
           transaction,
         })
 
-      const policeCaseNumbers =
-        theCase.policeCaseNumbers?.filter(Boolean) ?? []
+      const policeCaseNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
 
       const createdDocument = await this.policeService.createDocument({
         caseId: theCase.id,

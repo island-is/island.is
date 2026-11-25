@@ -73,7 +73,6 @@ describe('AppealVerdictController - Sync service statuses', () => {
     transaction = {} as Transaction
     const mockTransaction = mockSequelize.transaction as jest.Mock
     mockTransaction.mockResolvedValue(transaction)
-
     ;(
       mockAppealVerdictRepositoryService.findByCaseId as jest.Mock
     ).mockResolvedValue([waiting])

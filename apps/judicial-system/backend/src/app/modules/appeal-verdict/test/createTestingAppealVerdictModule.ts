@@ -80,8 +80,9 @@ export const createTestingAppealVerdictModule = async () => {
       AppealVerdictRepositoryService,
     )
 
-  const caseRepositoryService =
-    appealVerdictModule.get<CaseRepositoryService>(CaseRepositoryService)
+  const caseRepositoryService = appealVerdictModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   const mockFindOriginalAncestorId =
     caseRepositoryService.findOriginalAncestorId as jest.Mock

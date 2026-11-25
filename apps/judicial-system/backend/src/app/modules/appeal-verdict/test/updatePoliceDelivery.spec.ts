@@ -8,10 +8,7 @@ import {
 
 import { createTestingAppealVerdictModule } from './createTestingAppealVerdictModule'
 
-import {
-  AppealVerdict,
-  AppealVerdictRepositoryService,
-} from '../../repository'
+import { AppealVerdict, AppealVerdictRepositoryService } from '../../repository'
 import { AppealVerdictService } from '../appealVerdict.service'
 import { PoliceUpdateAppealVerdictDto } from '../dto/policeUpdateAppealVerdict.dto'
 
