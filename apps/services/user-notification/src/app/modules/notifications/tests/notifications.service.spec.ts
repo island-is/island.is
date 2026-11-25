@@ -272,6 +272,18 @@ describe('NotificationsService', () => {
       expect(result.priorityType).toBe('Informative')
     })
 
+    it('returns the stored deadline, or null without one', async () => {
+      const deadline = new Date('2026-12-01T16:00:00Z')
+      const withDeadline = await format({
+        ...baseNotification,
+        deadline,
+      } as Notification)
+      expect(withDeadline.deadline).toEqual(deadline)
+
+      const withoutDeadline = await format(baseNotification)
+      expect(withoutDeadline.deadline).toBeNull()
+    })
+
     it('returns the stored sourceType', async () => {
       const result = await format(baseNotification, { sourceType: 'Event' })
       expect(result.sourceType).toBe('Mail')

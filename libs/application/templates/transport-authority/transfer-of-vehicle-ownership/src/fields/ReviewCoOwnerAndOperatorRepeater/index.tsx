@@ -12,9 +12,13 @@ import { error, information, review } from '../../lib/messages'
 import { CoOwnerAndOperator, ReviewScreenProps } from '../../shared'
 import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 export const ReviewCoOwnerAndOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -109,6 +113,21 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     return availableOperators.length > 1
   }
 
+  const getSaveErrorMessage = (e: unknown) => {
+    // e.g. the answer validator rejects restoring or changing an approved person
+    const problem =
+      e instanceof ApolloError
+        ? findProblemInApolloError(e, [ProblemType.VALIDATION_FAILED])
+        : undefined
+    const fieldError =
+      problem?.type === ProblemType.VALIDATION_FAILED
+        ? problem.fields.buyerCoOwnerAndOperator
+        : undefined
+    return typeof fieldError === 'string'
+      ? fieldError
+      : formatMessage(error.couldNotUpdateApplication)
+  }
+
   const onForwardButtonClick = async () => {
     setIdenticalError(checkDuplicate())
     if (!checkDuplicate()) {
@@ -129,17 +148,24 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
           setGenericErrorMessage(undefined)
           setErrorMessage(formatMessage(error.fillInValidInput))
         } else {
-          const res = await updateApplication({
-            variables: {
-              input: {
-                id: application.id,
-                answers: {
-                  buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+          let res
+          try {
+            res = await updateApplication({
+              variables: {
+                input: {
+                  id: application.id,
+                  answers: {
+                    buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+                  },
                 },
+                locale,
               },
-              locale,
-            },
-          })
+            })
+          } catch (e) {
+            setErrorMessage(undefined)
+            setGenericErrorMessage(getSaveErrorMessage(e))
+            return
+          }
           if (!res.data) {
             setGenericErrorMessage(
               formatMessage(error.couldNotUpdateApplication),
