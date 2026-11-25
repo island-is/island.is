@@ -41,10 +41,7 @@ import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
-import {
-  findAppealCaseOfCaseFile,
-  isVerdictAppealOver,
-} from '../appeal-case'
+import { findAppealCaseOfCaseFile, isVerdictAppealOver } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
