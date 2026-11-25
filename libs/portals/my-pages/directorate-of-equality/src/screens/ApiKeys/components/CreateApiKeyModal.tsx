@@ -165,7 +165,7 @@ export const CreateApiKeyModal = ({
             size="sm"
             maxLength={100}
           />
-          <Text variant="small" fontWeight="semiBold" marginTop={1}>
+          <Text variant="small" marginTop={1}>
             {formatMessage(messages.keyLabelHint)}
           </Text>
           {isServiceProvider && (
@@ -191,6 +191,9 @@ export const CreateApiKeyModal = ({
                 backgroundColor="blue"
                 size="sm"
               />
+              <Text variant="small" marginTop={1}>
+                {formatMessage(messages.keyTypeHint)}
+              </Text>
             </Box>
           )}
           <Box marginTop={3}>
@@ -206,7 +209,7 @@ export const CreateApiKeyModal = ({
               size="sm"
             />
           </Box>
-          <Text variant="small" fontWeight="semiBold" marginTop={1}>
+          <Text variant="small" marginTop={1}>
             {formatMessage(messages.validityHint)}
           </Text>
         </>

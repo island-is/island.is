@@ -4,7 +4,7 @@ export const messages = defineMessages({
   submissionsIntro: {
     id: 'sp.directorate-of-equality:submissions-intro',
     defaultMessage:
-      'Hér getur þú séð yfirlit yfir þær jafnréttisáætlanir og skýrslur sem fyrirtækið hefur sent inn til Jafnréttisstofu.',
+      'Hér getur þú séð yfirlit yfir þær jafnréttisáætlanir og skýrslugjafir sem fyrirtækið hefur sent inn til Jafnréttisstofu.',
   },
   submissionObligations: {
     id: 'sp.directorate-of-equality:submission-obligations',
@@ -20,16 +20,16 @@ export const messages = defineMessages({
   },
   salaryReportRequired: {
     id: 'sp.directorate-of-equality:salary-report-required',
-    defaultMessage: 'Skylt að skila inn skýrslu',
+    defaultMessage: 'Skylt að skila inn skýrslugjöf',
   },
   nextSalaryReportDeadline: {
     id: 'sp.directorate-of-equality:next-salary-report-deadline',
-    defaultMessage: 'Næstu skil skýrslu',
+    defaultMessage: 'Næstu skil skýrslugjafar',
   },
   notObligedMessage: {
     id: 'sp.directorate-of-equality:not-obliged-message',
     defaultMessage:
-      'Þitt fyrirtæki er ekki skylt að skila inn hvorki jafnréttisáætlun né skýrslu. Þú getur lesið meira',
+      'Þínu fyrirtæki er hvorki skylt að skila inn jafnréttisáætlun né skýrslugjöf. Þú getur lesið meira',
   },
   notObligedLinkText: {
     id: 'sp.directorate-of-equality:not-obliged-link-text',
@@ -45,7 +45,7 @@ export const messages = defineMessages({
   },
   reportTitle: {
     id: 'sp.directorate-of-equality:report-title',
-    defaultMessage: 'Skýrsla {year}',
+    defaultMessage: 'Skýrslugjöf {year}',
   },
   submittedOn: {
     id: 'sp.directorate-of-equality:submitted-on',
@@ -87,7 +87,7 @@ export const messages = defineMessages({
   noAccessReportsMessage: {
     id: 'sp.directorate-of-equality:no-access-reports-message',
     defaultMessage:
-      'Þú hefur ekki umboð til að skoða skýrslur fyrir hönd fyrirtækisins. Prókúruhafi fyrirtækisins getur veitt þér umboð.',
+      'Þú hefur ekki umboð til að skoða skýrslugjafir fyrir hönd fyrirtækisins. Prókúruhafi fyrirtækisins getur veitt þér umboð.',
   },
   noSubmissionsTitle: {
     id: 'sp.directorate-of-equality:no-submissions-title',
@@ -96,12 +96,12 @@ export const messages = defineMessages({
   noPlansMessage: {
     id: 'sp.directorate-of-equality:no-plans-message',
     defaultMessage:
-      'Ef þú telur að þú eigir að vera með innsenda jafnréttisáætlun, vinsamlegast hafðu samband við þjónustuaðila.',
+      'Ef þú telur að þú eigir að vera með innsenda jafnréttisáætlun, vinsamlegast hafðu samband við Jafnréttisstofu.',
   },
   noReportsMessage: {
     id: 'sp.directorate-of-equality:no-reports-message',
     defaultMessage:
-      'Ef þú telur að þú eigir að vera með innsenda skýrslu, vinsamlegast hafðu samband við þjónustuaðila.',
+      'Ef þú telur að þú eigir að vera með innsenda skýrslugjöf, vinsamlegast hafðu samband við Jafnréttisstofu.',
   },
   planDetailIntro: {
     id: 'sp.directorate-of-equality:plan-detail-intro',
@@ -138,15 +138,15 @@ export const messages = defineMessages({
   reportDetailIntro: {
     id: 'sp.directorate-of-equality:report-detail-intro',
     defaultMessage:
-      'Hér getur þú séð upplýsingar um skýrsluna og niðurstöður launagreiningar.',
+      'Hér getur þú séð upplýsingar um skýrslugjöfina og niðurstöður launagreiningar.',
   },
   downloadReport: {
     id: 'sp.directorate-of-equality:download-report',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Sækja skýrslugjöf',
   },
   reportInfo: {
     id: 'sp.directorate-of-equality:report-info',
-    defaultMessage: 'Upplýsingar um skýrslu',
+    defaultMessage: 'Upplýsingar um skýrslugjöf',
   },
   analysisPeriod: {
     id: 'sp.directorate-of-equality:analysis-period',
@@ -329,11 +329,11 @@ export const messages = defineMessages({
   apiKeysIntro: {
     id: 'sp.directorate-of-equality:api-keys-intro',
     defaultMessage:
-      'Hér getur þú veitt þjónustuaðilum heimild og búið til aðgangslykla svo hægt sé að skila gögnum rafrænt til Jafnréttisstofu.',
+      'Hér getur þú gefið launakerfi heimild til að senda gögn fyrirtækisins til Jafnréttisstofu eða búið til aðgangslykil fyrir eigin hugbúnað fyrirtækisins.',
   },
   tabServiceProviders: {
     id: 'sp.directorate-of-equality:tab-service-providers',
-    defaultMessage: 'Þjónustuaðilar',
+    defaultMessage: 'Tengd kerfi',
   },
   tabCompanyKeys: {
     id: 'sp.directorate-of-equality:tab-company-keys',
@@ -341,12 +341,12 @@ export const messages = defineMessages({
   },
   serviceProvidersTitle: {
     id: 'sp.directorate-of-equality:service-providers-title',
-    defaultMessage: 'Þjónustuaðilar með heimild',
+    defaultMessage: 'Kerfi með heimild',
   },
   serviceProvidersIntro: {
     id: 'sp.directorate-of-equality:service-providers-intro',
     defaultMessage:
-      'Þjónustuaðili, til dæmis launakerfi eða bókhaldsstofa, getur aðeins skilað fyrir hönd fyrirtækisins á meðan það hefur veitt honum heimild. Heimild nær til allra skila og starfsmats fyrirtækisins. Hana má afturkalla hvenær sem er og það tekur gildi samstundis.',
+      'Þegar fyrirtækið veitir launakerfi heimild getur kerfið sent gögn fyrirtækisins beint til Jafnréttisstofu. Heimildin nær til allra skila og starfsmats fyrirtækisins. Hana má afturkalla hvenær sem er og það tekur gildi samstundis.',
   },
   grantServiceProvider: {
     id: 'sp.directorate-of-equality:grant-service-provider',
@@ -370,11 +370,12 @@ export const messages = defineMessages({
   },
   noServiceProvidersTitle: {
     id: 'sp.directorate-of-equality:no-service-providers-title',
-    defaultMessage: 'Enginn þjónustuaðili með heimild',
+    defaultMessage: 'Ekkert kerfi tengt',
   },
   noServiceProvidersMessage: {
     id: 'sp.directorate-of-equality:no-service-providers-message',
-    defaultMessage: 'Fyrirtækið hefur ekki veitt neinum þjónustuaðila heimild.',
+    defaultMessage:
+      'Fyrirtækið hefur ekki veitt neinu launakerfi heimild til að senda gögn til Jafnréttisstofu.',
   },
   companyKeysTitle: {
     id: 'sp.directorate-of-equality:company-keys-title',
@@ -383,7 +384,7 @@ export const messages = defineMessages({
   companyKeysIntro: {
     id: 'sp.directorate-of-equality:company-keys-intro',
     defaultMessage:
-      'Aðgangslykill leyfir hugbúnaði fyrirtækisins sjálfs að skila skýrslum og vinna starfsmat beint hjá Jafnréttisstofu, án þjónustuaðila. Ef þjónustuaðili sér um skilin þarf fyrirtækið ekki lykil — veittu honum heimild í staðinn.',
+      'Aðgangslykill gerir hugbúnaði fyrirtækisins sjálfs kleift að senda skýrslugjafir og starfsmat beint til Jafnréttisstofu. Ef fyrirtækið notar launakerfi af lista Jafnréttisstofu þarf ekki lykil. Veittu kerfinu heimild í staðinn.',
   },
   createCompanyKey: {
     id: 'sp.directorate-of-equality:create-company-key',
@@ -519,30 +520,34 @@ export const messages = defineMessages({
   },
   grantTitle: {
     id: 'sp.directorate-of-equality:grant-title',
-    defaultMessage: 'Veita þjónustuaðila heimild',
+    defaultMessage: 'Veita launakerfi heimild',
   },
   grantText: {
     id: 'sp.directorate-of-equality:grant-text',
     defaultMessage:
-      'Veldu þjónustuaðila af lista Jafnréttisstofu yfir samþykkta þjónustuaðila.',
+      'Veldu kerfi af lista Jafnréttisstofu yfir viðurkennd launakerfi.',
   },
   grantPermissionsTitle: {
     id: 'sp.directorate-of-equality:grant-permissions-title',
-    defaultMessage: 'Þjónustuaðilinn sem þú velur fær að:',
+    defaultMessage: 'Með heimildinni getur kerfið:',
   },
   grantPermissionSubmit: {
     id: 'sp.directorate-of-equality:grant-permission-submit',
     defaultMessage:
-      'skila launagreiningu og jafnréttisáætlun fyrir hönd fyrirtækisins,',
+      'sent launagreiningu og jafnréttisáætlun fyrirtækisins til Jafnréttisstofu,',
   },
   grantPermissionRead: {
     id: 'sp.directorate-of-equality:grant-permission-read',
     defaultMessage:
-      'lesa skýrslur fyrirtækisins og athugasemdir Jafnréttisstofu,',
+      'sótt skýrslugjafir fyrirtækisins og athugasemdir Jafnréttisstofu,',
   },
   grantPermissionScoring: {
     id: 'sp.directorate-of-equality:grant-permission-scoring',
-    defaultMessage: 'skrá, breyta og eyða starfsmati fyrirtækisins.',
+    defaultMessage: 'skráð, breytt og eytt starfsmati fyrirtækisins.',
+  },
+  grantSystemLabel: {
+    id: 'sp.directorate-of-equality:grant-system-label',
+    defaultMessage: 'Launakerfi',
   },
   grantConfirm: {
     id: 'sp.directorate-of-equality:grant-confirm',
@@ -550,11 +555,11 @@ export const messages = defineMessages({
   },
   selectServiceProviderError: {
     id: 'sp.directorate-of-equality:select-service-provider-error',
-    defaultMessage: 'Veldu þjónustuaðila',
+    defaultMessage: 'Veldu kerfi',
   },
   noAvailableServiceProviders: {
     id: 'sp.directorate-of-equality:no-available-service-providers',
-    defaultMessage: 'Enginn annar samþykktur þjónustuaðili er í boði.',
+    defaultMessage: 'Ekkert annað viðurkennt kerfi er í boði.',
   },
   revokeServiceProviderTitle: {
     id: 'sp.directorate-of-equality:revoke-service-provider-title',
@@ -563,7 +568,7 @@ export const messages = defineMessages({
   revokeServiceProviderText: {
     id: 'sp.directorate-of-equality:revoke-service-provider-text',
     defaultMessage:
-      '{name} getur ekki lengur skilað gögnum fyrir hönd fyrirtækisins. Þetta tekur gildi samstundis.',
+      '{name} getur ekki lengur sent gögn fyrirtækisins til Jafnréttisstofu. Þetta tekur gildi samstundis.',
   },
   revokeKeyTitle: {
     id: 'sp.directorate-of-equality:revoke-key-title',
@@ -588,11 +593,16 @@ export const messages = defineMessages({
   },
   keyTypeCompany: {
     id: 'sp.directorate-of-equality:key-type-company',
-    defaultMessage: 'Fyrirtæki',
+    defaultMessage: 'Eigin skil',
   },
   keyTypeServiceProvider: {
     id: 'sp.directorate-of-equality:key-type-service-provider',
-    defaultMessage: 'Þjónustuaðili',
+    defaultMessage: 'Skil fyrir önnur fyrirtæki',
+  },
+  keyTypeHint: {
+    id: 'sp.directorate-of-equality:key-type-hint',
+    defaultMessage:
+      'Veldu hvort lykillinn sendir gögn fyrirtækisins sjálfs eða gögn þeirra fyrirtækja sem hafa veitt launakerfinu heimild.',
   },
   serviceProviderNoticeTitle: {
     id: 'sp.directorate-of-equality:service-provider-notice-title',
@@ -601,7 +611,7 @@ export const messages = defineMessages({
   serviceProviderNoticeMessage: {
     id: 'sp.directorate-of-equality:service-provider-notice-message',
     defaultMessage:
-      'Jafnréttisstofa samþykkti fyrirtækið sem þjónustuaðila {date}. Því getið þið líka búið til lykla þjónustuaðila, sem gera ykkur kleift að skila gögnum fyrir hönd þeirra fyrirtækja sem hafa veitt ykkur heimild. Veljið tegund lykils þegar þið búið hann til.',
+      'Jafnréttisstofa viðurkenndi launakerfi fyrirtækisins {date}. Því getið þið líka búið til lykla fyrir launakerfið, sem gera kerfinu ykkar kleift að senda gögn til Jafnréttisstofu fyrir þau fyrirtæki sem hafa veitt ykkur heimild. Veljið tegund lykils þegar þið búið hann til.',
   },
   mutationError: {
     id: 'sp.directorate-of-equality:mutation-error',
