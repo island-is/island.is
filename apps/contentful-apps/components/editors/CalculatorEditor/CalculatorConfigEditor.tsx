@@ -297,9 +297,10 @@ export const CalculatorConfigEditor = () => {
 
       {metadataChecked && state.metadataInvalid && (
         <Note variant="warning">
-          Some fields do not match this calculator. Your work is saved, but the
-          calculator won&apos;t work on the website until they&apos;re resolved
-          — don&apos;t publish before then.
+          Some fields are missing required labels or do not match this
+          calculator. Your work is saved, but the calculator won&apos;t work on
+          the website until they&apos;re resolved — don&apos;t publish before
+          then.
         </Note>
       )}
 
