@@ -742,7 +742,7 @@ describe('public prosecution appealed verdict cell generators', () => {
     )
 
     it.each([undefined, VerdictAppealStatus.COMPLETED])(
-      'tags the appeal as completed once the appeal itself is completed',
+      'keeps a completed appeal under advisement until its outcome is released',
       (verdictAppealStatus) => {
         const cell = caseTableCellGenerators.verdictAppealProgress.generate(
           row({
@@ -755,7 +755,7 @@ describe('public prosecution appealed verdict cell generators', () => {
           user,
         )
 
-        expect(cell.value).toEqual({ color: 'darkerBlue', text: 'Lokið' })
+        expect(cell.value).toEqual({ color: 'mint', text: 'Dómtekið' })
       },
     )
 

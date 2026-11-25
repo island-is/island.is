@@ -1,3 +1,4 @@
+import { applyCase } from 'beygla/strict'
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
@@ -585,6 +586,67 @@ export const getWordByGender = (
     default:
       return null
   }
+}
+
+/**
+ * Joins defendant names the way appeal documents list them: one name alone,
+ * two or more as "A, B og C".
+ */
+export const formatAppealDefendantNames = (
+  names: (string | undefined | null)[],
+): string =>
+  enumerate(
+    names.filter(
+      (name): name is string =>
+        name !== undefined && name !== null && name !== '',
+    ),
+    'og',
+  )
+
+type AppealCaseNameOptions = {
+  /**
+   * Decline each nominative person name into þágufall via Beygla before
+   * joining. Use for fallbacks that should match the summons form prefill.
+   * Leave off when the names are already declined or are abbreviated strings
+   * such as "Jón Jónsson o.fl.".
+   */
+  decline?: boolean
+}
+
+/**
+ * Style-of-cause for an indictment appeal: "Ákæruvaldið gegn …". Used as the
+ * stored case name prefill and as the fallback when an older appeal has none.
+ */
+export const formatAppealCaseName = (
+  names: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
+): string => {
+  // Decline nominative names into þágufall so "gegn …" reads correctly.
+  const prepared = options?.decline
+    ? names.map((name) => (name ? applyCase('þgf', name) : name))
+    : names
+  const against = formatAppealDefendantNames(prepared)
+
+  return against ? `Ákæruvaldið gegn ${against}` : ''
+}
+
+/**
+ * Prefer a stored appeal case name; otherwise build the style-of-cause from
+ * the defendant names (optionally declined into þágufall). Returns an empty
+ * string when neither a stored name nor any defendant name is available.
+ */
+export const resolveAppealCaseName = (
+  caseName: string | undefined | null,
+  defendantNames: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
+): string => {
+  const trimmed = caseName?.trim()
+
+  if (trimmed) {
+    return trimmed
+  }
+
+  return formatAppealCaseName(defendantNames, options)
 }
 
 // þgf to dómur

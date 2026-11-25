@@ -8,7 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import format from 'date-fns/format'
-import { buildCreateIncomesRequest } from './confirm-job-or-income.utils'
+import {
+  buildCreateIncomesRequest,
+  hasIncomeChanges,
+} from './confirm-job-or-income.utils'
 
 @Injectable()
 export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
@@ -152,6 +155,21 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    const request = buildCreateIncomesRequest(
+      application.answers,
+      application.externalData,
+    )
+
+    if (!hasIncomeChanges(request)) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.noChangesErrorTitle,
+          summary: errorMessages.noChangesErrorSummary,
+        },
+        400,
+      )
+    }
+
     let applicantId: string
 
     try {
@@ -173,10 +191,6 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       )
     }
 
-    const request = buildCreateIncomesRequest(
-      application.answers,
-      application.externalData,
-    )
     try {
       const response = await this.vmstUnemploymentClientService.createIncome({
         applicantId,

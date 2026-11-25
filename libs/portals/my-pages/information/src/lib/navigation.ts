@@ -59,7 +59,13 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.mySettingsNotifications,
           searchHide: true,
+          activeIfExact: true,
           path: InformationPaths.SettingsNotifications,
+        },
+        {
+          name: m.mySettingsActorNotifications,
+          searchHide: true,
+          path: InformationPaths.SettingsActorNotifications,
         },
       ],
     },

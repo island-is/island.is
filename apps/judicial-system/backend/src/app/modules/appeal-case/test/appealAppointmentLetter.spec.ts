@@ -79,7 +79,7 @@ describe('buildAppealAppointmentLetter', () => {
       advocateName: 'Þórður Már Jónsson',
       advocatePractice: undefined,
       clientName: 'Gervimaður Jónsson',
-      defendantName: 'Gervimaður Jónsson',
+      caseName: 'Ákæruvaldið gegn Gervimaður Jónsson',
       courtName: 'Héraðsdóms Reykjavíkur',
       courtCaseNumber: 'S-4275/2025',
       appealCaseNumber: '593/2026',
@@ -309,9 +309,15 @@ describe('buildAppealAppointmentLetter', () => {
 
   describe('the case title', () => {
     it.each([
-      [['Gervimaður Jónsson'], 'Gervimaður Jónsson'],
-      [['Jón Jónsson', 'Anna Önnudóttir'], 'Jón Jónsson og Anna Önnudóttir'],
-      [['Jón Jónsson', 'Anna Önnudóttir', 'Páll Pálsson'], 'Jón Jónsson o.fl.'],
+      [['Gervimaður Jónsson'], 'Ákæruvaldið gegn Gervimaður Jónsson'],
+      [
+        ['Jón Jónsson', 'Anna Önnudóttir'],
+        'Ákæruvaldið gegn Jón Jónsson og Anna Önnudóttir',
+      ],
+      [
+        ['Jón Jónsson', 'Anna Önnudóttir', 'Páll Pálsson'],
+        'Ákæruvaldið gegn Jón Jónsson o.fl.',
+      ],
     ])('names every accused in the case: %s', (names, expected) => {
       const letter = buildAppealAppointmentLetter({
         theCase: theCase({
@@ -322,7 +328,20 @@ describe('buildAppealAppointmentLetter', () => {
         defendant: defendant(),
       })
 
-      expect(letter?.defendantName).toBe(expected)
+      expect(letter?.caseName).toBe(expected)
+    })
+
+    it('prefers a case name stored on the appeal case', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase({
+          verdictAppealCase: appealCase({
+            caseName: 'Ákæruvaldið gegn Páli Pálssyni',
+          }),
+        }),
+        defendant: defendant(),
+      })
+
+      expect(letter?.caseName).toBe('Ákæruvaldið gegn Páli Pálssyni')
     })
   })
 

@@ -1,10 +1,191 @@
-import { SectionTypes } from '@island.is/form-system/shared'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import PDFDocument from 'pdfkit'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 import { buildApplicationPdf } from './applicationPdf'
+import { FieldDto } from '../app/modules/fields/models/dto/field.dto'
+import { ScreenDto } from '../app/modules/screens/models/dto/screen.dto'
+import { SectionDto } from '../app/modules/sections/models/dto/section.dto'
 
 describe('buildApplicationPdf layout', () => {
   afterEach(() => jest.restoreAllMocks())
+
+  const applicationWithFields = (fields: FieldDto[]): ApplicationDto => ({
+    formName: { is: 'Fallback form name', en: '' },
+    sections: [
+      Object.assign(new SectionDto(), {
+        sectionType: SectionTypes.INPUT,
+        screens: [Object.assign(new ScreenDto(), { fields })],
+      }),
+    ],
+  })
+
+  it.each(['', ' \n ', undefined])(
+    'does not fall back to another language for empty field content: %j',
+    async (translation) => {
+      const text = jest.spyOn(PDFDocument.prototype, 'text')
+      await buildApplicationPdf(
+        applicationWithFields([
+          Object.assign(new FieldDto(), {
+            name: { is: 'Fallback field name' },
+            fieldType: FieldTypesEnum.CHECKBOX,
+            informationText: { is: 'Hidden instructions', en: translation },
+            fieldSettings: {
+              subLabel: { is: 'Hidden sublabel', en: translation },
+            },
+          }),
+          Object.assign(new FieldDto(), {
+            name: { is: 'Fallback message name' },
+            fieldType: FieldTypesEnum.MESSAGE,
+            informationText: { is: 'Hidden message', en: translation },
+          }),
+        ]),
+        'en',
+      )
+
+      const content = text.mock.calls.map(([value]) => value)
+      expect(content).toContain('Fallback form name')
+      expect(content).toContain('Fallback field name')
+      expect(content).toContain('Fallback message name')
+      expect(content).not.toContain('Hidden instructions')
+      expect(content).not.toContain('Hidden sublabel')
+      expect(content).not.toContain('Hidden message')
+    },
+  )
+
+  it.each([FieldTypesEnum.MESSAGE, FieldTypesEnum.TEXTBOX])(
+    'decodes nested formatting and entities before measuring and rendering %s information',
+    async (fieldType) => {
+      const text = jest.spyOn(PDFDocument.prototype, 'text')
+      const height = jest.spyOn(PDFDocument.prototype, 'heightOfString')
+      const markup =
+        '<strong>First <em>nested &amp; emphasized</em></strong>\n\n<em>&lt;Second&gt; &#169;</em>'
+      const expected = 'First nested & emphasized\n\n<Second> ©'
+      await buildApplicationPdf(
+        applicationWithFields([
+          Object.assign(new FieldDto(), {
+            name: { is: 'Field' },
+            fieldType,
+            informationText: { is: markup },
+          }),
+        ]),
+      )
+
+      expect(text.mock.calls.map(([value]) => value)).toContain(expected)
+      expect(height.mock.calls.map(([value]) => value)).toContain(expected)
+      expect(text.mock.calls.map(([value]) => value)).not.toContain(markup)
+      expect(height.mock.calls.map(([value]) => value)).not.toContain(markup)
+    },
+  )
+
+  it('includes information and checkbox sublabels, renders message bodies once, and omits tooltips', async () => {
+    const text = jest.spyOn(PDFDocument.prototype, 'text')
+    await buildApplicationPdf({
+      sections: [
+        Object.assign(new SectionDto(), {
+          name: { is: 'Section' },
+          sectionType: SectionTypes.INPUT,
+          screens: [
+            Object.assign(new ScreenDto(), {
+              name: { is: 'Screen' },
+              fields: [
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Input' },
+                  fieldType: FieldTypesEnum.CHECKBOX,
+                  informationText: { is: 'Instructions' },
+                  tooltip: { is: 'Tooltip help' },
+                  fieldSettings: {
+                    isLarge: true,
+                    subLabel: { is: 'Sublabel' },
+                  },
+                  values: [{ json: { checkboxValue: true } }],
+                }),
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Message' },
+                  fieldType: FieldTypesEnum.MESSAGE,
+                  informationText: { is: 'Message body' },
+                }),
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Applicant' },
+                  fieldType: FieldTypesEnum.APPLICANT,
+                  informationText: { is: 'Excluded applicant instructions' },
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    const content = text.mock.calls.map(([value]) => value)
+    expect(content).toContain('Instructions')
+    expect(content).toContain('Input\nSublabel')
+    expect(content.filter((value) => value === 'Message body')).toHaveLength(1)
+    expect(content).not.toContain('Tooltip help')
+    expect(content).not.toContain('Excluded applicant instructions')
+  })
+
+  it.each(['is', 'en'] as const)(
+    'places the checkbox sublabel beneath its name with matching font and measured spacing in %s',
+    async (locale) => {
+      const text = jest.spyOn(PDFDocument.prototype, 'text')
+      const height = jest.spyOn(PDFDocument.prototype, 'heightOfString')
+      const font = jest.spyOn(PDFDocument.prototype, 'font')
+      const fontSize = jest.spyOn(PDFDocument.prototype, 'fontSize')
+      const name = { is: 'Checkbox', en: 'English checkbox' }
+      const subLabel = {
+        is: 'First line\nSecond line',
+        en: 'English first line\nEnglish second line',
+      }
+      await buildApplicationPdf(
+        applicationWithFields([
+          Object.assign(new FieldDto(), {
+            name,
+            fieldType: FieldTypesEnum.CHECKBOX,
+            isRequired: true,
+            fieldSettings: { isLarge: true, subLabel },
+            values: [{ json: { checkboxValue: true } }],
+          }),
+        ]),
+        locale,
+      )
+
+      const label = `${name[locale]} *\n${subLabel[locale]}`
+      const labelIndex = text.mock.calls.findIndex(([value]) => value === label)
+      const heightIndex = height.mock.calls.findIndex(
+        ([value]) => value === label,
+      )
+      expect(labelIndex).toBeGreaterThanOrEqual(0)
+      expect(heightIndex).toBeGreaterThanOrEqual(0)
+      for (const order of [
+        text.mock.invocationCallOrder[labelIndex],
+        height.mock.invocationCallOrder[heightIndex],
+      ]) {
+        expect(
+          font.mock.calls
+            .filter((_, index) => font.mock.invocationCallOrder[index] < order)
+            .pop(),
+        ).toEqual(['Helvetica-Bold'])
+        expect(
+          fontSize.mock.calls
+            .filter(
+              (_, index) => fontSize.mock.invocationCallOrder[index] < order,
+            )
+            .pop(),
+        ).toEqual([9])
+      }
+      const labelCall = text.mock.calls[labelIndex]
+      const valueCall = text.mock.calls[labelIndex + 1]
+      expect(valueCall[1]).toBe(labelCall[1])
+      expect(Number(valueCall[2])).toBeCloseTo(
+        Number(labelCall[2]) +
+          Number(height.mock.results[heightIndex].value) +
+          6,
+      )
+      expect(text.mock.calls.map(([value]) => value)).not.toContain(
+        subLabel[locale],
+      )
+    },
+  )
 
   it.each([
     {

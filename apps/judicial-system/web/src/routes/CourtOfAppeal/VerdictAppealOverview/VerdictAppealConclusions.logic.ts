@@ -1,6 +1,7 @@
 import { getAppealJudges } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getAppealRulingTypeWording } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealStatus/RegisterConclusion.logic'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 export interface VerdictAppealConclusion {
@@ -41,10 +42,9 @@ export const getDistrictCourtConclusion = (
 }
 
 /**
- * What this court decided, once it has decided it. Nothing writes an appeal
- * conclusion for a verdict appeal yet, so in practice this is absent until the
- * step that does is built - which is why it is left out rather than shown
- * empty.
+ * What this court decided, once it has decided it, titled for whether it ended
+ * the appeal with a verdict or a ruling. Left out rather than shown empty
+ * until the court has written it.
  *
  * The panel is named in the same order the info cards name it, so the court
  * reads the same three names in the same sequence wherever they appear.
@@ -61,7 +61,7 @@ export const getCourtOfAppealsConclusion = (
 
   return {
     id: 'court-of-appeals-conclusion',
-    title: 'Dómsorð Landsréttar',
+    title: getAppealRulingTypeWording(appeal.appealRulingType).courtConclusion,
     text,
     signedBy: sortByIcelandicAlphabet(
       getAppealJudges(appeal)

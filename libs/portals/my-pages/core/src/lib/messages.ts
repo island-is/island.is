@@ -990,6 +990,10 @@ export const m = defineMessages({
     id: 'service.portal:my-settings-notifications',
     defaultMessage: 'Tilkynningar',
   },
+  mySettingsActorNotifications: {
+    id: 'service.portal:my-settings-actor-notifications',
+    defaultMessage: 'Tilkynningar umboða',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
@@ -2339,6 +2343,44 @@ export const m = defineMessages({
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',
     defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
+  },
+  equality: {
+    id: 'service.portal:equality',
+    defaultMessage: 'Jafnrétti á vinnumarkaði',
+  },
+  equalityDescription: {
+    id: 'service.portal:equality-description',
+    defaultMessage:
+      'Jafnréttisáætlanir, skýrslur og aðgangslyklar fyrirtækisins',
+  },
+  equalitySubmissions: {
+    id: 'service.portal:equality-submissions',
+    defaultMessage: 'Innsendingar',
+  },
+  equalityPlans: {
+    id: 'service.portal:equality-plans',
+    defaultMessage: 'Jafnréttisáætlanir',
+  },
+  equalityPlan: {
+    id: 'service.portal:equality-plan',
+    defaultMessage: 'Jafnréttisáætlun',
+  },
+  equalityReports: {
+    id: 'service.portal:equality-reports',
+    defaultMessage: 'Skýrslur',
+  },
+  equalityReport: {
+    id: 'service.portal:equality-report',
+    defaultMessage: 'Skýrsla',
+  },
+  equalityTooltip: {
+    id: 'service.portal:equality-tooltip',
+    defaultMessage:
+      'Jafnréttisstofa hefur umsjón með gögnum um jafnréttisáætlanir og skýrslur fyrirtækisins.',
+  },
+  equalityApiKeys: {
+    id: 'service.portal:equality-api-keys',
+    defaultMessage: 'Aðgangslyklar',
   },
 })
 

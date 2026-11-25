@@ -3,10 +3,17 @@ import { render, screen } from '@testing-library/react'
 
 import ZipButton from './ZipButton'
 
-const renderZipButton = (courtCaseNumber?: string) =>
+const renderZipButton = (
+  courtCaseNumber?: string,
+  policeCaseNumbers?: string[],
+) =>
   render(
     <IntlProvider locale="is" onError={jest.fn}>
-      <ZipButton caseId="test-case-id" courtCaseNumber={courtCaseNumber} />
+      <ZipButton
+        caseId="test-case-id"
+        courtCaseNumber={courtCaseNumber}
+        policeCaseNumbers={policeCaseNumbers}
+      />
     </IntlProvider>,
   )
 
@@ -22,6 +29,21 @@ describe('<ZipButton />', () => {
       '/api/case/test-case-id/limitedAccess/allFiles',
     )
     expect(link).toHaveAttribute('download', 'mal_R-123/2024')
+  })
+
+  test('should name the download after the police case number until the court assigns a case number', () => {
+    renderZipButton(undefined, ['007-2026-1', '007-2026-2'])
+
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'download',
+      'mal_007-2026-1',
+    )
+  })
+
+  test('should not put a missing case number in the download name', () => {
+    renderZipButton()
+
+    expect(screen.getByRole('link')).toHaveAttribute('download', 'mal')
   })
 
   test('should not nest an interactive button inside the link', () => {

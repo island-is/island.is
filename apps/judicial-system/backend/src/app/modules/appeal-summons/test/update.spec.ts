@@ -19,6 +19,7 @@ import { runInRequestContext } from '../../../test'
 import { AwsS3Service } from '../../aws-s3'
 import {
   AppealCase,
+  AppealCaseRepositoryService,
   AppealEventLog,
   AppealEventLogRepositoryService,
   AppealSummons,
@@ -61,6 +62,7 @@ describe('AppealSummonsController - Update', () => {
   } as Case
 
   const dto: CreateAppealSummonsDto = {
+    caseName: 'Ákæruvaldið gegn Jóni Jónssyni',
     defendants: [
       {
         defendantId,
@@ -82,6 +84,7 @@ describe('AppealSummonsController - Update', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAwsS3Service: AwsS3Service
   let mockSequelize: Sequelize
   let transaction: Transaction
@@ -115,12 +118,14 @@ describe('AppealSummonsController - Update', () => {
       sequelize,
       appealSummonsRepositoryService,
       appealEventLogRepositoryService,
+      appealCaseRepositoryService,
       awsS3Service,
       appealSummonsController: controller,
     } = await createTestingAppealSummonsModule()
 
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAwsS3Service = awsS3Service
     appealSummonsController = controller
     mockSequelize = sequelize
@@ -145,6 +150,7 @@ describe('AppealSummonsController - Update', () => {
       mockAppealSummonsRepositoryService.clearConfirmationIfUnsent as jest.Mock
     ).mockResolvedValue(updated)
     ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
+    ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue({})
   })
 
   it('replaces defendant rows in the transaction the guard opened and does not write an issued event', async () => {
@@ -156,6 +162,11 @@ describe('AppealSummonsController - Update', () => {
     // would be the handler opening a transaction of its own, which would
     // block on the guard's row lock and deadlock the request.
     expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+      appealCaseId,
+      { caseName: dto.caseName },
+      { transaction },
+    )
     expect(
       mockAppealSummonsRepositoryService.deleteDefendants,
     ).toHaveBeenCalledWith(summonsId, { transaction })
@@ -258,6 +269,7 @@ describe('AppealSummonsController - Update', () => {
       ],
     } as AppealSummons
     const dtoWithWithdrawn: CreateAppealSummonsDto = {
+      caseName: 'Ákæruvaldið gegn Jóni Jónssyni',
       defendants: [
         {
           defendantId: withdrawnDefendantId,
