@@ -1,5 +1,6 @@
 import {
   AppealCaseState,
+  AppealCaseType,
   getAppealJudges,
   getAppealJudgeUserIds,
   getOrderedAppealJudges,
@@ -139,8 +140,37 @@ describe('isVerdictAppealConfirmed', () => {
     [AppealCaseState.READY_TO_COMPLETE, true],
     [AppealCaseState.COMPLETED, true],
     [AppealCaseState.WITHDRAWN, false],
-  ])('is %s -> %s', (appealState, expected) => {
-    expect(isVerdictAppealConfirmed({ appealState })).toBe(expected)
+  ])('is %s -> %s for a verdict appeal', (appealState, expected) => {
+    expect(
+      isVerdictAppealConfirmed({
+        appealType: AppealCaseType.VERDICT,
+        appealState,
+      }),
+    ).toBe(expected)
+  })
+
+  it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+    'is false for a ruling appeal that is %s',
+    (appealState) => {
+      expect(
+        isVerdictAppealConfirmed({
+          appealType: AppealCaseType.RULING,
+          appealState,
+        }),
+      ).toBe(false)
+    },
+  )
+
+  it('is false for an appeal that does not carry its type', () => {
+    expect(
+      isVerdictAppealConfirmed({ appealState: AppealCaseState.COMPLETED }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealConfirmed({
+        appealType: null,
+        appealState: AppealCaseState.READY_TO_COMPLETE,
+      }),
+    ).toBe(false)
   })
 
   it('is false without an appeal', () => {

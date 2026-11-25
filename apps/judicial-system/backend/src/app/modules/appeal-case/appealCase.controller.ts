@@ -344,11 +344,16 @@ export class AppealCaseController {
     const transition = dto.transition
 
     // Confirming a verdict appeal is not announced: its outcome stays with
-    // the court of appeals until it is released.
+    // the court of appeals until it is released. Releasing it completes an
+    // áfrýjun, which is announced apart from a completed kæra.
     if (transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE) {
-      registerAfterCommit(() =>
-        this.eventService.postEvent(transition, theCase),
-      )
+      const event =
+        transition === AppealCaseTransition.COMPLETE_APPEAL &&
+        appealCase.appealType === AppealCaseType.VERDICT
+          ? 'COMPLETE_VERDICT_APPEAL'
+          : transition
+
+      registerAfterCommit(() => this.eventService.postEvent(event, theCase))
     }
 
     return result.appealCase

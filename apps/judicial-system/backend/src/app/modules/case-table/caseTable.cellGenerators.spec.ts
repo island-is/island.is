@@ -1,6 +1,7 @@
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealCourtSessionType,
   AppealEventType,
   CaseIndictmentRulingDecision,
@@ -165,6 +166,7 @@ describe('verdict appeal cell generators', () => {
       (appealState) => {
         const cell = caseTableCellGenerators.verdictAppealResult.generate(
           caseWithVerdictAppeal({
+            appealType: AppealCaseType.VERDICT,
             appealState,
             appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
           }),
@@ -175,11 +177,29 @@ describe('verdict appeal cell generators', () => {
       },
     )
 
+    // Whether the appeal is confirmed is read off its type, so the column
+    // fetches the type along with the state.
+    it('fetches the appeal type with the state and the ruling', () => {
+      expect(
+        caseTableCellGenerators.verdictAppealResult.includes?.verdictAppealCase
+          ?.attributes,
+      ).toEqual(
+        expect.arrayContaining([
+          'appealType',
+          'appealState',
+          'appealRulingDecision',
+        ]),
+      )
+    })
+
     // A withdrawal ends the appeal without a ruling, and the design puts it in
     // the completed list under the result column.
     it('shows a withdrawal as the result', () => {
       const cell = caseTableCellGenerators.verdictAppealResult.generate(
-        caseWithVerdictAppeal({ appealState: AppealCaseState.WITHDRAWN }),
+        caseWithVerdictAppeal({
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.WITHDRAWN,
+        }),
         user,
       )
 
@@ -188,7 +208,10 @@ describe('verdict appeal cell generators', () => {
 
     it('leaves the result empty while the appeal is still open', () => {
       const cell = caseTableCellGenerators.verdictAppealResult.generate(
-        caseWithVerdictAppeal({ appealState: AppealCaseState.APPEALED }),
+        caseWithVerdictAppeal({
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        }),
         user,
       )
 

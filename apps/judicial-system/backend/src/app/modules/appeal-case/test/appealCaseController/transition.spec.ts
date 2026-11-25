@@ -391,15 +391,18 @@ describe('AppealCaseController - Transition', () => {
         expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       })
 
-      it('should announce the completion once the transaction has committed', async () => {
+      // A verdict appeal is an áfrýjun, so its completion is not announced
+      // as a completed kæra.
+      it('should announce the completion of the verdict appeal once the transaction has committed', async () => {
         expect(transactionContext?.afterCommit).toHaveLength(1)
 
         await Promise.all(
           (transactionContext?.afterCommit ?? []).map((callback) => callback()),
         )
 
+        expect(mockEventService.postEvent).toHaveBeenCalledTimes(1)
         expect(mockEventService.postEvent).toHaveBeenCalledWith(
-          AppealCaseTransition.COMPLETE_APPEAL,
+          'COMPLETE_VERDICT_APPEAL',
           theCase,
         )
       })
@@ -558,6 +561,7 @@ describe('AppealCaseController - Transition', () => {
     } as unknown as Case
     const appealCase = {
       id: appealCaseId,
+      appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.RECEIVED,
     } as AppealCase
 
@@ -566,6 +570,21 @@ describe('AppealCaseController - Transition', () => {
         theCase,
         appealCase,
         AppealCaseTransition.COMPLETE_APPEAL,
+      )
+    })
+
+    it('should announce the completed appeal once the transaction has committed', async () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledTimes(1)
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        AppealCaseTransition.COMPLETE_APPEAL,
+        theCase,
       )
     })
 
