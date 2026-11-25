@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer'
 import {
-  IsBoolean,
   IsEnum,
   IsOptional,
   IsString,
@@ -60,32 +59,20 @@ export class InternalUpdateDefendantDto {
   readonly requestedDefenderName?: string
 
   @IsOptional()
+  @IsEnum(DefenderChoice)
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  readonly requestedAppealDefenderChoice?: DefenderChoice
+
+  @IsOptional()
   @IsString()
   @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
-  readonly appealDefenderNationalId?: string
+  readonly requestedAppealDefenderNationalId?: string
 
   @IsOptional()
   @IsString()
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
-  readonly appealDefenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly appealDefenderEmail?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly appealDefenderPhoneNumber?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isAppealDefenderWaived?: boolean
+  readonly requestedAppealDefenderName?: string
 }

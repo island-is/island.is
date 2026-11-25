@@ -1849,11 +1849,15 @@ export interface UpdateDefendant {
   requestedDefenderName?: string
   isDefenderChoiceConfirmed?: boolean
   caseFilesSharedWithDefender?: boolean
+  requestedAppealDefenderChoice?: DefenderChoice | null
+  requestedAppealDefenderNationalId?: string | null
+  requestedAppealDefenderName?: string | null
   appealDefenderName?: string | null
   appealDefenderNationalId?: string | null
   appealDefenderEmail?: string | null
   appealDefenderPhoneNumber?: string | null
   isAppealDefenderConfirmed?: boolean | null
+  isAppealDefenderWaived?: boolean | null
   isSentToPrisonAdmin?: boolean
   punishmentType?: PunishmentType
   isAlternativeService?: boolean

@@ -719,18 +719,17 @@ export class DefendantService {
         (update.defenderNationalId &&
           defendant?.defenderNationalId !== update.defenderNationalId))
 
-    const appealCounselUpdateRequested =
-      update.isAppealDefenderWaived !== undefined ||
-      update.appealDefenderNationalId !== undefined ||
-      update.appealDefenderName !== undefined ||
-      update.appealDefenderEmail !== undefined ||
-      update.appealDefenderPhoneNumber !== undefined
-    const appealCounselLocked =
+    // Citizen CoA wish (requestedAppealDefender*): lock once a wish exists or
+    // the court has already confirmed settled appeal counsel.
+    const appealWishUpdateRequested =
+      update.requestedAppealDefenderChoice !== undefined ||
+      update.requestedAppealDefenderNationalId !== undefined ||
+      update.requestedAppealDefenderName !== undefined
+    const appealWishLocked =
       Boolean(defendant.isAppealDefenderConfirmed) ||
-      Boolean(defendant.isAppealDefenderWaived) ||
-      Boolean(defendant.appealDefenderNationalId)
+      Boolean(defendant.requestedAppealDefenderChoice)
 
-    if (appealCounselUpdateRequested && appealCounselLocked) {
+    if (appealWishUpdateRequested && appealWishLocked) {
       throw new ForbiddenException(
         'Appeal defender choice can no longer be changed',
       )

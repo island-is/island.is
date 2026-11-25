@@ -145,8 +145,13 @@ export class AppealSummonsResponse {
       return null
     }
 
-    const waivedRight = Boolean(defendant.isAppealDefenderWaived)
-    const hasCounsel = Boolean(defendant.appealDefenderNationalId)
+    // Citizen wish (requested*) is what mailbox edits; court-settled
+    // appealDefender* / waive still lock once confirmed.
+    const waivedRight =
+      defendant.requestedAppealDefenderChoice === DefenderChoice.WAIVE
+    const hasCounsel =
+      defendant.requestedAppealDefenderChoice === DefenderChoice.CHOOSE &&
+      Boolean(defendant.requestedAppealDefenderNationalId)
     const canEdit =
       !defendant.isAppealDefenderConfirmed && !waivedRight && !hasCounsel
 
@@ -160,7 +165,7 @@ export class AppealSummonsResponse {
       waivedRight,
       hasCounsel,
       canEdit,
-      counselName: defendant.appealDefenderName,
+      counselName: defendant.requestedAppealDefenderName,
       infoText: t.appealSummonsInfoText,
       courtContactInfo: t.courtContactInfo,
       lang,

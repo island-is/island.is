@@ -18,6 +18,9 @@ fragment DefendantFields on Defendant {
   requestedDefenderName
   isDefenderChoiceConfirmed
   caseFilesSharedWithDefender
+  requestedAppealDefenderChoice
+  requestedAppealDefenderNationalId
+  requestedAppealDefenderName
   appealDefenderName
   appealDefenderNationalId
   appealDefenderEmail

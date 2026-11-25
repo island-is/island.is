@@ -57,6 +57,9 @@ interface Defendant {
   requestedDefenderName?: string
   subpoenaType?: SubpoenaType
   verdict?: Verdict
+  requestedAppealDefenderChoice?: DefenderChoice
+  requestedAppealDefenderNationalId?: string
+  requestedAppealDefenderName?: string
   appealDefenderName?: string
   appealDefenderNationalId?: string
   appealDefenderEmail?: string

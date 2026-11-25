@@ -139,7 +139,7 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
     if (!defendant) {
       throw new Error('expected defendant in fixture')
     }
-    defendant.isAppealDefenderWaived = true
+    defendant.requestedAppealDefenderChoice = DefenderChoice.WAIVE
 
     const response = AppealSummonsResponse.fromInternalCaseResponse(
       internalCase,
@@ -233,6 +233,31 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
 
     expect(response?.counselInfo?.defenderChoice).toBeUndefined()
     expect(response?.counselInfo?.canEdit).toBe(false)
+  })
+
+  it('exposes a chosen requested appeal defender for a defendant', () => {
+    const internalCase = baseCase()
+    const defendant = internalCase.defendants?.[0]
+    if (!defendant) {
+      throw new Error('expected defendant in fixture')
+    }
+    defendant.requestedAppealDefenderChoice = DefenderChoice.CHOOSE
+    defendant.requestedAppealDefenderNationalId = '2222222222'
+    defendant.requestedAppealDefenderName = 'Lára Lögmann'
+
+    const response = AppealSummonsResponse.fromInternalCaseResponse(
+      internalCase,
+      '0000000000',
+      'is',
+    )
+
+    expect(response?.counselInfo).toEqual({
+      defenderChoice: DefenderChoice.CHOOSE,
+      defenderName: 'Lára Lögmann',
+      canEdit: false,
+      courtContactInfo:
+        'Vinsamlegast hafið samband við dómstól til að breyta verjanda vali',
+    })
   })
 
   it('infers a waived spokesperson when hasAppealSpokesperson is false', () => {
