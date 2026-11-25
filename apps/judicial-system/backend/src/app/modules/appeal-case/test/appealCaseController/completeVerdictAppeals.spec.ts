@@ -11,7 +11,6 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
-  AppealCaseTransition,
   AppealCaseType,
   AppealEventType,
   AppealRulingType,
@@ -302,7 +301,8 @@ describe('AppealCaseController - Complete verdict appeals', () => {
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
 
-    it('should announce each completion once the transaction has committed', async () => {
+    // Each is an áfrýjun, announced as the per-appeal route announces it.
+    it('should announce each completion of a verdict appeal once the transaction has committed', async () => {
       expect(mockEventService.postEvent).not.toHaveBeenCalled()
       expect(transactionContext?.afterCommit).toHaveLength(3)
 
@@ -314,7 +314,7 @@ describe('AppealCaseController - Complete verdict appeals', () => {
 
       for (const { theCase } of appeals) {
         expect(mockEventService.postEvent).toHaveBeenCalledWith(
-          AppealCaseTransition.COMPLETE_APPEAL,
+          'COMPLETE_VERDICT_APPEAL',
           theCase,
         )
       }

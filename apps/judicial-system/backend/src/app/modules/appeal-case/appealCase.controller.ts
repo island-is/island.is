@@ -396,14 +396,11 @@ export class AppealCaseController {
       transaction,
     )
 
-    // Each completion is announced as the per-appeal route announces it, once
-    // the transaction has committed.
+    // Each completion is an áfrýjun and is announced as the per-appeal route
+    // announces one, once the transaction has committed.
     for (const { theCase } of completed) {
       registerAfterCommit(() =>
-        this.eventService.postEvent(
-          AppealCaseTransition.COMPLETE_APPEAL,
-          theCase,
-        ),
+        this.eventService.postEvent('COMPLETE_VERDICT_APPEAL', theCase),
       )
     }
 
