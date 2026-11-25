@@ -91,7 +91,7 @@ const RENEW_MARGIN_MS = 60_000
 const APP_ATTEST_RETRY_DELAYS_MS = [2_000, 4_000]
 // How long a request to IAS may take before it counts as failed: without a
 // limit a stalled connection waits forever on Android.
-const REQUEST_TIMEOUT_MS = 30_000
+const REQUEST_TIMEOUT_MS = 15_000
 
 /**
  * fetch, failing with a TimeoutError when IAS doesn't answer in time, and a

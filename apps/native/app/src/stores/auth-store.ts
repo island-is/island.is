@@ -31,7 +31,7 @@ import { router } from 'expo-router'
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const KEYCHAIN_NATIVE_USER_KEY = `@islandis_${bundleId}_native`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
-const USER_INFO_TIMEOUT_MS = 30_000
+const USER_INFO_TIMEOUT_MS = 15_000
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 interface UserInfo {
