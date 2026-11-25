@@ -110,7 +110,7 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
       label: 'Saksóknari',
       value: 'Sigríður Saksóknari',
     })
-    expect(response?.counselInfo).toBeUndefined()
+    expect(response?.counselInfo?.canEdit).toBe(true)
   })
 
   it('maps a served appeal summons for a civil claimant', () => {
@@ -201,7 +201,7 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
     ).toBeNull()
   })
 
-  it('leaves counselInfo unset before the defendant picks', () => {
+  it('exposes an editable counselInfo before the defendant picks', () => {
     const response = AppealSummonsResponse.fromInternalCaseResponse(
       baseCase(),
       '0000000000',
@@ -209,7 +209,30 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
     )
 
     expect(response?.data.hasChosenCounsel).toBe(false)
-    expect(response?.counselInfo).toBeUndefined()
+    expect(response?.counselInfo).toEqual({
+      defenderChoice: undefined,
+      defenderName: undefined,
+      canEdit: true,
+      courtContactInfo: undefined,
+    })
+  })
+
+  it('locks counselInfo when appeal defender is confirmed without a choice', () => {
+    const internalCase = baseCase()
+    const defendant = internalCase.defendants?.[0]
+    if (!defendant) {
+      throw new Error('expected defendant in fixture')
+    }
+    defendant.isAppealDefenderConfirmed = true
+
+    const response = AppealSummonsResponse.fromInternalCaseResponse(
+      internalCase,
+      '0000000000',
+      'is',
+    )
+
+    expect(response?.counselInfo?.defenderChoice).toBeUndefined()
+    expect(response?.counselInfo?.canEdit).toBe(false)
   })
 
   it('infers a waived spokesperson when hasAppealSpokesperson is false', () => {

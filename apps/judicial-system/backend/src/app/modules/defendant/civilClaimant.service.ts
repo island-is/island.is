@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -232,34 +233,40 @@ export class CivilClaimantService {
 
   // Digital-mailbox / outside APIs: only appeal-spokesperson fields the
   // citizen may set. Staff updates go through update() with a real user.
-  // Confirmation is never accepted from this surface — only cleared when the
-  // citizen changes a previously confirmed spokesperson.
+  // Confirmation is never accepted from this surface.
   async updateRestricted(
     theCase: Case,
     civilClaimant: CivilClaimant,
     update: InternalUpdateCivilClaimantDto,
     transaction: Transaction,
   ): Promise<CivilClaimant> {
-    let effectiveUpdate: UpdateCivilClaimant = { ...update }
+    const hasChosenSpokesperson = Boolean(
+      civilClaimant.hasAppealSpokesperson &&
+        civilClaimant.appealSpokespersonNationalId,
+    )
+    const hasWaivedSpokesperson =
+      civilClaimant.hasAppealSpokesperson === false &&
+      !civilClaimant.appealSpokespersonNationalId
+    const appealSpokespersonLocked =
+      Boolean(civilClaimant.isAppealSpokespersonConfirmed) ||
+      hasChosenSpokesperson ||
+      hasWaivedSpokesperson
 
-    if (
-      civilClaimant.isAppealSpokespersonConfirmed &&
-      (update.hasAppealSpokesperson !== undefined ||
-        namesADifferentAdvocate(
-          {
-            name: civilClaimant.appealSpokespersonName,
-            nationalId: civilClaimant.appealSpokespersonNationalId,
-          },
-          {
-            name: update.appealSpokespersonName,
-            nationalId: update.appealSpokespersonNationalId,
-          },
-        ))
-    ) {
-      effectiveUpdate = {
-        ...effectiveUpdate,
-        isAppealSpokespersonConfirmed: false,
-      }
+    if (appealSpokespersonLocked) {
+      throw new ForbiddenException(
+        'Appeal spokesperson choice can no longer be changed',
+      )
+    }
+
+    // Pick only the citizen-writable fields so undeclared body properties
+    // (including confirmation) cannot reach the repository.
+    const effectiveUpdate: UpdateCivilClaimant = {
+      hasAppealSpokesperson: update.hasAppealSpokesperson,
+      appealSpokespersonIsLawyer: update.appealSpokespersonIsLawyer,
+      appealSpokespersonNationalId: update.appealSpokespersonNationalId,
+      appealSpokespersonName: update.appealSpokespersonName,
+      appealSpokespersonEmail: update.appealSpokespersonEmail,
+      appealSpokespersonPhoneNumber: update.appealSpokespersonPhoneNumber,
     }
 
     const { numberOfAffectedRows, civilClaimants } =

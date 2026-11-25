@@ -34,9 +34,11 @@ export enum AppealSummonsRecipientRole {
 }
 
 class CounselInfo {
+  // Optional so a confirmed recipient with no derived CHOOSE/WAIVE still
+  // exposes canEdit=false and locks PATCH.
   @IsEnum(DefenderChoice)
-  @ApiProperty({ enum: DefenderChoice })
-  defenderChoice!: DefenderChoice
+  @ApiProperty({ enum: DefenderChoice, required: false })
+  defenderChoice?: DefenderChoice
 
   @ApiProperty({ type: () => String })
   defenderName?: string
@@ -338,14 +340,14 @@ export class AppealSummonsResponse {
           },
         ],
       },
-      counselInfo: defenderChoice
-        ? {
-            defenderChoice,
-            defenderName: !waivedRight && hasCounsel ? counselName : undefined,
-            canEdit,
-            courtContactInfo: canEdit ? undefined : courtContactInfo,
-          }
-        : undefined,
+      // Always emit counselInfo so PATCH can see canEdit=false even when no
+      // CHOOSE/WAIVE choice has been stored yet (e.g. court-confirmed blank).
+      counselInfo: {
+        defenderChoice,
+        defenderName: !waivedRight && hasCounsel ? counselName : undefined,
+        canEdit,
+        courtContactInfo: canEdit ? undefined : courtContactInfo,
+      },
     }
   }
 }

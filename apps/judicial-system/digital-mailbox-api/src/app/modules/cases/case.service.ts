@@ -33,6 +33,7 @@ import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { VerdictResponse } from './models/verdict.response'
+import { withTraceContext } from './traceContext'
 
 @Injectable()
 export class CaseService {
@@ -285,7 +286,7 @@ export class CaseService {
       )
     }
 
-    if (existing.counselInfo && existing.counselInfo.canEdit === false) {
+    if (existing.counselInfo?.canEdit === false) {
       throw new ForbiddenException(
         'Appeal summons counsel choice can no longer be changed',
       )
@@ -306,13 +307,13 @@ export class CaseService {
 
       const res = await fetch(
         `${this.config.backendUrl}/api/lawyer-registry/${counselAssignment.defenderNationalId}`,
-        {
+        withTraceContext({
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-        },
+        }),
       )
 
       if (!res.ok) {
@@ -496,14 +497,19 @@ export class CaseService {
     body?: unknown,
   ): Promise<Response> {
     try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.secretToken}`,
-        },
-        ...(typeof body !== 'undefined' ? { body: JSON.stringify(body) } : {}),
-      })
+      const response = await fetch(
+        url,
+        withTraceContext({
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          ...(typeof body !== 'undefined'
+            ? { body: JSON.stringify(body) }
+            : {}),
+        }),
+      )
 
       if (!response.ok) {
         await this.handleHttpError(response, url)

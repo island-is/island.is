@@ -2,6 +2,7 @@ import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -718,21 +719,22 @@ export class DefendantService {
         (update.defenderNationalId &&
           defendant?.defenderNationalId !== update.defenderNationalId))
 
-    // Citizen appeal-counsel updates cannot assert confirmation; clear it when
-    // the advocate identity or waive decision changes after court confirmation.
-    const resetAppealDefenderConfirmed =
-      defendant.isAppealDefenderConfirmed &&
-      (update.isAppealDefenderWaived !== undefined ||
-        namesADifferentAdvocate(
-          {
-            name: defendant.appealDefenderName,
-            nationalId: defendant.appealDefenderNationalId,
-          },
-          {
-            name: update.appealDefenderName,
-            nationalId: update.appealDefenderNationalId,
-          },
-        ))
+    const appealCounselUpdateRequested =
+      update.isAppealDefenderWaived !== undefined ||
+      update.appealDefenderNationalId !== undefined ||
+      update.appealDefenderName !== undefined ||
+      update.appealDefenderEmail !== undefined ||
+      update.appealDefenderPhoneNumber !== undefined
+    const appealCounselLocked =
+      Boolean(defendant.isAppealDefenderConfirmed) ||
+      Boolean(defendant.isAppealDefenderWaived) ||
+      Boolean(defendant.appealDefenderNationalId)
+
+    if (appealCounselUpdateRequested && appealCounselLocked) {
+      throw new ForbiddenException(
+        'Appeal defender choice can no longer be changed',
+      )
+    }
 
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
@@ -742,14 +744,13 @@ export class DefendantService {
         ...(resetDefenderChoiceConfirmed && {
           isDefenderChoiceConfirmed: false,
         }),
-        ...(resetAppealDefenderConfirmed && {
-          isAppealDefenderConfirmed: false,
-        }),
       },
       transaction,
     )
 
-    if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
+    // Only when this request sets DELEGATE — not when appeal-counsel patches
+    // touch a defendant who already delegated their district defender.
+    if (update.defenderChoice === DefenderChoice.DELEGATE) {
       queueMessagesAfterCommit({
         type: MessageType.DEFENDANT_NOTIFICATION,
         caseId: theCase.id,
