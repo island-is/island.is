@@ -20,6 +20,11 @@ The editor preserves the `isLarge` checkbox and prevents disabling it while a
 sublabel exists in either language. Information and tooltip editors are available
 for their supported field types. Preview and live applications use the same
 content rendering.
+Checkbox and radio-option tooltip icons are separate buttons: opening help does
+not change the selection or submit the form, including for large checkboxes.
+The icon turns blue on hover and stays blue while its tooltip is visible.
+Only checkbox squares and radio circles change selection when clicked; captions,
+sublabels, and surrounding cards do not. Keyboard activation remains supported.
 
 ## Number validation
 
