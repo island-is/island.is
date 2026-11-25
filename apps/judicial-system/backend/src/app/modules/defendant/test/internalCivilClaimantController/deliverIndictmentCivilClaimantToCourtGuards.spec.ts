@@ -1,27 +1,23 @@
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard } from '../../../case'
+import { verifyGuards } from '../../../../test'
+import { CaseExistsGuard, CaseTypeGuard } from '../../../case'
 import { CivilClaimantExistsGuard } from '../../guards/civilClaimantExists.guard'
 import { InternalCivilClaimantController } from '../../internalCivilClaimant.controller'
 
+// CaseExistsGuard sits on the route rather than the class so the counsel
+// PATCH can lock with CaseExistsForUpdateGuard instead. Deliver itself only
+// needs a plain read.
 describe('InternalCivilClaimantController - Deliver indictment civil claimant to court guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      InternalCivilClaimantController.prototype
-        .deliverIndictmentCivilClaimantToCourt,
-    )
-  })
-
-  it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(2)
-    expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
-    expect(guards[0]).toEqual({
-      allowedCaseTypes: indictmentCases,
-    })
-    expect(new guards[1]()).toBeInstanceOf(CivilClaimantExistsGuard)
-  })
+  verifyGuards(
+    InternalCivilClaimantController,
+    'deliverIndictmentCivilClaimantToCourt',
+    [CaseExistsGuard, CaseTypeGuard, CivilClaimantExistsGuard],
+    [
+      {
+        guard: CaseTypeGuard,
+        prop: { allowedCaseTypes: indictmentCases },
+      },
+    ],
+  )
 })
