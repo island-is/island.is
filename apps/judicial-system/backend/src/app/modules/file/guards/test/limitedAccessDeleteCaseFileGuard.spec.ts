@@ -213,7 +213,9 @@ describe('LimitedAccess Delete Case File Guard', () => {
       },
     )
 
-    it('rejects deleting a verdict appeal statement after the party has filed', () => {
+    // After filing, this guard still activates so DeleteAppealCaseFileGuard can
+    // reject with the specific "already filed" message instead of a generic 403.
+    it('activates for a verdict appeal statement after the party has filed', () => {
       const nationalId = uuid()
       const defendantId = uuid()
       mockRequest.mockImplementationOnce(() => ({
@@ -246,7 +248,7 @@ describe('LimitedAccess Delete Case File Guard', () => {
 
       const then = givenWhenThen()
 
-      expect(then.result).toBe(false)
+      expect(then.result).toBe(true)
     })
 
     describe.each([
