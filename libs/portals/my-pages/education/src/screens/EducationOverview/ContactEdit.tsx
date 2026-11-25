@@ -142,6 +142,7 @@ const ContactForm = ({ stored, saving, save, onDone }: ContactFormProps) => {
           initialVisibility
           buttonsSpacing="spaceBetween"
           onCloseModal={closeClearModal}
+          label={formatMessage(om.clearTitle)}
           title={formatMessage(om.clearTitle)}
           text={formatMessage(om.clearText, {
             fields: clearedFields.length > 1 ? 'both' : clearedFields[0],

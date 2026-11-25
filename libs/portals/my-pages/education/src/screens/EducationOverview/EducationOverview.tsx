@@ -5,6 +5,7 @@ import {
   Divider,
   Icon,
   Text,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -28,6 +29,7 @@ export const EducationOverview = () => {
   useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { sm } = useBreakpoint()
   const { contact, hasContact, loading, error } = useOwnContact()
 
   const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
@@ -63,7 +65,7 @@ export const EducationOverview = () => {
               size="small"
               onClick={goToEdit}
             >
-              {formatMessage(sharedMessages.edit)}
+              {formatMessage(sm ? sharedMessages.edit : om.contactEditTitle)}
             </Button>
           )
         }
