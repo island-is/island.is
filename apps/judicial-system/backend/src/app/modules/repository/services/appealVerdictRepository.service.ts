@@ -159,4 +159,31 @@ export class AppealVerdictRepositoryService {
 
     return rows[0] ?? null
   }
+
+  // The rows reference the defendant without a cascade, as this schema's
+  // appeal children do, so the service deleting the defendant has to clear
+  // them first.
+  async deleteAllForDefendant(
+    caseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the appeal verdicts of defendant ${defendantId} of case ${caseId}`,
+      )
+
+      return await this.appealVerdictModel.destroy({
+        where: { caseId, defendantId },
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the appeal verdicts of defendant ${defendantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

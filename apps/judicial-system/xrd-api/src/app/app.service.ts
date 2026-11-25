@@ -40,6 +40,7 @@ import { Groups } from './models/componentDefinitions/groups.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
+import { withTraceContext } from './traceContext'
 
 @Injectable()
 export class AppService {
@@ -563,22 +564,20 @@ export class AppService {
     }
 
     this.logger.info(
-      `Parsed appeal verdict update request ${JSON.stringify(
-        parsedPoliceUpdate,
-      )}`,
+      `Parsed appeal verdict update request for document ${policeDocumentId} with service status ${serviceStatus}`,
     )
 
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/appeal-verdict/${policeDocumentId}`,
-        {
+        withTraceContext({
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.backend.accessToken}`,
           },
           body: JSON.stringify(parsedPoliceUpdate),
-        },
+        }),
       )
 
       const response = await res.json()

@@ -134,19 +134,59 @@ describe('AppealVerdictController - Send to service', () => {
     expect(result).toEqual([created])
   })
 
-  it('rejects when the appeal verdict was already sent to service', async () => {
+  it('rejects when the appeal verdict was already delivered to police', async () => {
     ;(
       mockAppealVerdictRepositoryService.findByDefendantId as jest.Mock
     ).mockResolvedValue({
       id: appealVerdictId,
       defendantId,
       sentToServiceDate: new Date('2026-06-01'),
+      externalPoliceDocumentId: uuid(),
     } as AppealVerdict)
 
     await expect(sendToService(theCase, [defendantId])).rejects.toBeInstanceOf(
       BadRequestException,
     )
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('re-queues delivery when a prior send never received an external police id', async () => {
+    const existing = {
+      id: appealVerdictId,
+      caseId,
+      appealCaseId,
+      defendantId,
+      sentToServiceDate: new Date('2026-06-01'),
+    } as AppealVerdict
+    const updated = {
+      ...existing,
+      sentToServiceDate: new Date('2026-06-10'),
+    } as AppealVerdict
+
+    ;(
+      mockAppealVerdictRepositoryService.findByDefendantId as jest.Mock
+    ).mockResolvedValue(existing)
+    ;(mockAppealVerdictRepositoryService.update as jest.Mock).mockResolvedValue(
+      updated,
+    )
+
+    const result = await sendToService(theCase, [defendantId])
+
+    expect(mockAppealVerdictRepositoryService.update).toHaveBeenCalledWith(
+      appealVerdictId,
+      {
+        serviceRequirement: ServiceRequirement.REQUIRED,
+        sentToServiceDate: expect.any(Date),
+      },
+      { transaction },
+    )
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_VERDICT,
+      user,
+      caseId,
+      elementId: appealVerdictId,
+    })
+    expect(result).toEqual([updated])
   })
 
   it('rejects when the COA ruling file is missing', async () => {

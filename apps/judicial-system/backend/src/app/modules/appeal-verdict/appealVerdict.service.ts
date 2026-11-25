@@ -108,36 +108,34 @@ export class AppealVerdictService {
           { transaction },
         )
 
-      if (existing?.externalPoliceDocumentId || existing?.sentToServiceDate) {
+      // Only a successful CreateDocument hand-off owns the row. A prior
+      // attempt that set sentToServiceDate but never got an external id can
+      // be re-queued; deliver is idempotent on externalPoliceDocumentId.
+      if (existing?.externalPoliceDocumentId) {
         throw new BadRequestException(
           `Appeal verdict for defendant ${defendantId} has already been sent to service`,
         )
       }
 
-      const appealVerdict =
-        existing ??
-        (await this.appealVerdictRepositoryService.create(
-          {
-            caseId: theCase.id,
-            appealCaseId: appealCase.id,
-            defendantId,
-            serviceRequirement: ServiceRequirement.REQUIRED,
-            sentToServiceDate,
-          },
-          { transaction },
-        ))
-
-      const ready =
-        existing && !existing.sentToServiceDate
-          ? await this.appealVerdictRepositoryService.update(
-              existing.id,
-              {
-                serviceRequirement: ServiceRequirement.REQUIRED,
-                sentToServiceDate,
-              },
-              { transaction },
-            )
-          : appealVerdict
+      const ready = existing
+        ? await this.appealVerdictRepositoryService.update(
+            existing.id,
+            {
+              serviceRequirement: ServiceRequirement.REQUIRED,
+              sentToServiceDate,
+            },
+            { transaction },
+          )
+        : await this.appealVerdictRepositoryService.create(
+            {
+              caseId: theCase.id,
+              appealCaseId: appealCase.id,
+              defendantId,
+              serviceRequirement: ServiceRequirement.REQUIRED,
+              sentToServiceDate,
+            },
+            { transaction },
+          )
 
       created.push(ready)
 

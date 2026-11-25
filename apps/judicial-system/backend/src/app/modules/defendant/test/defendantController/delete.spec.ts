@@ -12,6 +12,7 @@ import { createTestingDefendantModule } from '../createTestingDefendantModule'
 import { runInRequestContext } from '../../../../test'
 import {
   AppealStatementDeadlineRepositoryService,
+  AppealVerdictRepositoryService,
   Case,
   CaseFileRepositoryService,
   DefendantRepositoryService,
@@ -34,6 +35,7 @@ describe('DefendantController - Delete', () => {
   let mockDefendantRepositoryService: DefendantRepositoryService
   let mockCaseFileRepositoryService: CaseFileRepositoryService
   let mockAppealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService
+  let mockAppealVerdictRepositoryService: AppealVerdictRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -44,6 +46,7 @@ describe('DefendantController - Delete', () => {
       defendantRepositoryService,
       caseFileRepositoryService,
       appealStatementDeadlineRepositoryService,
+      appealVerdictRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
@@ -52,6 +55,7 @@ describe('DefendantController - Delete', () => {
     mockCaseFileRepositoryService = caseFileRepositoryService
     mockAppealStatementDeadlineRepositoryService =
       appealStatementDeadlineRepositoryService
+    mockAppealVerdictRepositoryService = appealVerdictRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -132,6 +136,21 @@ describe('DefendantController - Delete', () => {
         mockDelete.mock.invocationCallOrder[0],
       )
     })
+
+    // The appeal verdict rows reference the defendant without a cascade, so a
+    // delete that left them behind would fail on the foreign key.
+    it("should delete the defendant's appeal verdicts before the defendant", () => {
+      const mockDeleteVerdicts =
+        mockAppealVerdictRepositoryService.deleteAllForDefendant as jest.Mock
+      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+
+      expect(mockDeleteVerdicts).toHaveBeenCalledWith(caseId, defendantId, {
+        transaction,
+      })
+      expect(mockDeleteVerdicts.mock.invocationCallOrder[0]).toBeLessThan(
+        mockDelete.mock.invocationCallOrder[0],
+      )
+    })
   })
 
   describe('statement deadline deletion fails', () => {
@@ -148,6 +167,23 @@ describe('DefendantController - Delete', () => {
     it('should not delete the defendant', () => {
       expect(mockDefendantRepositoryService.delete).not.toHaveBeenCalled()
       expect(then.error.message).toBe('Deadline error')
+    })
+  })
+
+  describe('appeal verdict deletion fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteVerdicts =
+        mockAppealVerdictRepositoryService.deleteAllForDefendant as jest.Mock
+      mockDeleteVerdicts.mockRejectedValue(new Error('Appeal verdict error'))
+
+      then = await givenWhenThen()
+    })
+
+    it('should not delete the defendant', () => {
+      expect(mockDefendantRepositoryService.delete).not.toHaveBeenCalled()
+      expect(then.error.message).toBe('Appeal verdict error')
     })
   })
 

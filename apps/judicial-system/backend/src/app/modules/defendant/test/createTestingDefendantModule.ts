@@ -19,6 +19,7 @@ import { EventLogService } from '../../event-log'
 import {
   AppealEventLogRepositoryService,
   AppealStatementDeadlineRepositoryService,
+  AppealVerdictRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -106,6 +107,12 @@ export const createTestingDefendantModule = async () => {
           deleteAllForCivilClaimant: jest.fn(),
         },
       },
+      {
+        provide: AppealVerdictRepositoryService,
+        useValue: {
+          deleteAllForDefendant: jest.fn(),
+        },
+      },
       DefendantService,
       CivilClaimantService,
     ],
@@ -173,6 +180,11 @@ export const createTestingDefendantModule = async () => {
       AppealStatementDeadlineRepositoryService,
     )
 
+  const appealVerdictRepositoryService =
+    defendantModule.get<AppealVerdictRepositoryService>(
+      AppealVerdictRepositoryService,
+    )
+
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -217,5 +229,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantRepositoryService,
     caseFileRepositoryService,
     appealStatementDeadlineRepositoryService,
+    appealVerdictRepositoryService,
   }
 }
