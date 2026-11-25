@@ -17,9 +17,10 @@ import { useLocale } from '@island.is/localization'
 import { m as coreMessages, Modal } from '@island.is/portals/my-pages/core'
 
 import {
-  DEFAULT_VALIDITY_MONTHS,
-  VALIDITY_MONTHS,
-  ValidityMonths,
+  DEFAULT_VALIDITY,
+  NO_EXPIRY,
+  VALIDITY_OPTIONS,
+  Validity,
 } from '../../../lib/apiKeys'
 import { messages } from '../../../lib/messages'
 
@@ -35,14 +36,14 @@ export const CreateApiKeyModal = ({
   issuedKey: string | null
   onSubmit: (input: {
     label: string | null
-    expiresAt: string
+    expiresAt: string | null
     type: DirectorateOfEqualityApiKeyType
   }) => void
   onClose: () => void
 }) => {
   const { formatMessage } = useLocale()
   const [label, setLabel] = useState('')
-  const [months, setMonths] = useState<ValidityMonths>(DEFAULT_VALIDITY_MONTHS)
+  const [validity, setValidity] = useState<Validity>(DEFAULT_VALIDITY)
   const [type, setType] = useState<DirectorateOfEqualityApiKeyType | null>(null)
   const [showTypeError, setShowTypeError] = useState(false)
   const keyInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
@@ -53,13 +54,14 @@ export const CreateApiKeyModal = ({
     }
   }, [issuedKey])
 
-  const validityLabels: Record<ValidityMonths, MessageDescriptor> = {
+  const validityLabels: Record<Validity, MessageDescriptor> = {
+    [NO_EXPIRY]: messages.validityNone,
     3: messages.validity3,
     6: messages.validity6,
     12: messages.validity12,
     24: messages.validity24,
   }
-  const options = VALIDITY_MONTHS.map((value) => ({
+  const options = VALIDITY_OPTIONS.map((value) => ({
     value,
     label: formatMessage(validityLabels[value]),
   }))
@@ -112,7 +114,10 @@ export const CreateApiKeyModal = ({
                   }
                   onSubmit({
                     label: label.trim() || null,
-                    expiresAt: addMonths(new Date(), months).toISOString(),
+                    expiresAt:
+                      validity === NO_EXPIRY
+                        ? null
+                        : addMonths(new Date(), validity).toISOString(),
                     type: type ?? DirectorateOfEqualityApiKeyType.COMPANY,
                   })
                 },
@@ -165,7 +170,7 @@ export const CreateApiKeyModal = ({
             size="sm"
             maxLength={100}
           />
-          <Text variant="small" fontWeight="semiBold" marginTop={1}>
+          <Text variant="small" marginTop={1}>
             {formatMessage(messages.keyLabelHint)}
           </Text>
           {isServiceProvider && (
@@ -191,6 +196,9 @@ export const CreateApiKeyModal = ({
                 backgroundColor="blue"
                 size="sm"
               />
+              <Text variant="small" marginTop={1}>
+                {formatMessage(messages.keyTypeHint)}
+              </Text>
             </Box>
           )}
           <Box marginTop={3}>
@@ -198,15 +206,15 @@ export const CreateApiKeyModal = ({
               name="api-key-validity"
               label={formatMessage(messages.validity)}
               options={options}
-              value={options.find((option) => option.value === months)}
-              onChange={(option) => option && setMonths(option.value)}
+              value={options.find((option) => option.value === validity)}
+              onChange={(option) => option && setValidity(option.value)}
               menuPosition="fixed"
               closeMenuOnScroll
               backgroundColor="blue"
               size="sm"
             />
           </Box>
-          <Text variant="small" fontWeight="semiBold" marginTop={1}>
+          <Text variant="small" marginTop={1}>
             {formatMessage(messages.validityHint)}
           </Text>
         </>

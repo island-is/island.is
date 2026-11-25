@@ -13,6 +13,7 @@ export const getApiKeyState = (
   return 'active'
 }
 
-export const VALIDITY_MONTHS = [3, 6, 12, 24] as const
-export type ValidityMonths = typeof VALIDITY_MONTHS[number]
-export const DEFAULT_VALIDITY_MONTHS: ValidityMonths = 12
+export const NO_EXPIRY = 'none'
+export const VALIDITY_OPTIONS = [NO_EXPIRY, 3, 6, 12, 24] as const
+export type Validity = typeof VALIDITY_OPTIONS[number]
+export const DEFAULT_VALIDITY: Validity = NO_EXPIRY
