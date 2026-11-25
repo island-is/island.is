@@ -145,9 +145,10 @@ export class CmsRepository {
         throw new Error(`Failed to look up asset: ${fileName}`)
       }
       const { items, total } = response.data
-      const match = items.find(
-        (asset) => asset.fields.file?.[LOCALE]?.fileName === fileName,
-      )
+      const match = items.find((asset) => {
+        const file = asset.fields.file?.[LOCALE]
+        return file?.fileName === fileName && !!file.url
+      })
       if (match) return match
       if (skip + items.length >= total || items.length === 0) return null
     }
@@ -335,15 +336,21 @@ export class CmsRepository {
       logger.debug('Entry created', {
         id: createdEntry.data.sys.id,
       })
-      if (!publish) return createdEntry.data
+      const draft = createdEntry.data
+      if (!publish) return draft
       try {
-        return await createdEntry.data.publish()
+        return await draft.publish()
       } catch (error) {
         logger.warn('Entry publish failed, deleting draft so a rerun retries', {
-          id: createdEntry.data.sys.id,
+          id: draft.sys.id,
           error,
         })
-        await createdEntry.data.delete()
+        await draft.delete().catch((deleteError) =>
+          logger.error('Failed to delete unpublished draft, remove it manually', {
+            id: draft.sys.id,
+            error: deleteError,
+          }),
+        )
         throw error
       }
     }
