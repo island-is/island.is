@@ -54,3 +54,18 @@ The Staðfesting settings also offer "Skoða skjá" to the right of the heading,
 opening the confirmation-screen preview without restrictions.
 The Aðilar settings offer the same heading-aligned button to preview applicants
 without restrictions.
+
+The preview header has a Farsímasýn toggle. It switches the same preview iframe
+between its full width and a 390px mobile viewport without resetting input or
+navigation state. The iframe uses the existing form-system-web responsive
+breakpoints, grid, footer spacing, and sticky mobile stepper layout. Radio options
+use CSS media queries at the existing `lg` breakpoint, so their layout follows
+the iframe viewport without changes to island-ui/core.
+Opening the preview focuses its header without drawing a focus outline around
+the whole header. Interactive controls retain their keyboard-focus styling.
+The sticky mobile stepper stays above the form content while scrolling, so the
+content cannot cover its center and leave only its background edges visible.
+The preview modal fills the browser height with a 16px margin above and below;
+the iframe fills the available space without an 800px height cap. The logo,
+organization and form name share the header row with the preview controls,
+matching form-system-web. Mobile view uses compact, accessibly labelled controls.
