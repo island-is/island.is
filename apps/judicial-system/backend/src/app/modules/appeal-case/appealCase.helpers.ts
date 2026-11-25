@@ -295,11 +295,6 @@ export const isStatementDeadlineExpired = (
 const isStatementDeadlineRunning = (deadline: Date, now: Date): boolean =>
   !isStatementDeadlineExpired(deadline, now)
 
-export const isStatementDeadlineExpired = (
-  deadline: Date,
-  now: Date = new Date(),
-): boolean => !isStatementDeadlineRunning(deadline, now)
-
 export const verdictAppealProgress = (
   appealCase: Pick<
     AppealCase,
