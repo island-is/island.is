@@ -198,17 +198,19 @@ const VerdictAppealSummary = () => {
         <FormContentContainer>
           <div className={stack({ gap: 5 })}>
             <Box>
-              <PageTitle marginBottom={1}>Samantekt</PageTitle>
-              {caseNumber && (
-                <Text as="h2" variant="h2">
-                  {caseNumber}
-                </Text>
-              )}
-              {headerLines.map((line) => (
-                <Text key={line} as="h5" variant="h5">
-                  {line}
-                </Text>
-              ))}
+              <PageTitle marginBottom={caseNumber ? 5 : 1}>Samantekt</PageTitle>
+              <div className={stack({ gap: 1 })}>
+                {caseNumber && (
+                  <Text as="h2" variant="h2">
+                    {caseNumber}
+                  </Text>
+                )}
+                {headerLines.map((line) => (
+                  <Text key={line} as="h5" variant="h5">
+                    {line}
+                  </Text>
+                ))}
+              </div>
             </Box>
             {isCompleted && (
               <InfoCardClosedIndictment
