@@ -23,9 +23,8 @@ import {
  * The date the appeal ended, which the Court of Appeals enters itself. It is
  * the date the stamp on the court's document carries and the one the deadlines
  * that follow are counted from, so it stays editable after the appeal is
- * confirmed. Only the court sees it until the appeal is completed and its
- * outcome released: until then everyone else is shown an appeal still in
- * progress.
+ * confirmed. Only the court sees it: everyone else is shown an appeal still
+ * in progress.
  *
  * The working case takes a date only once the server has stored it, so the
  * page never offers to confirm with a date that is not on record.

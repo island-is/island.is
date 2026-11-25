@@ -1,7 +1,4 @@
-import {
-  isStoredVerdictAppealRulingPdf,
-  isVerdictAppealConfirmed,
-} from '@island.is/judicial-system/types'
+import { isStoredVerdictAppealRulingPdf } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
@@ -24,8 +21,8 @@ export const getVerdictAppealRulingFiles = (
     (file) => file.category === CaseFileCategory.VERDICT_APPEAL_RULING,
   )
 
-/** The ruling document the appeal can be confirmed with. */
-export const getConfirmableVerdictAppealRulingFile = (
+/** The ruling document the appeal can be completed with. */
+export const getCompletableVerdictAppealRulingFile = (
   theCase: Pick<WorkingCase, 'caseFiles'>,
 ): CaseFile | undefined =>
   (theCase.caseFiles ?? []).find(isStoredVerdictAppealRulingPdf)
@@ -93,36 +90,13 @@ export const isSameVerdictAppealRulingDate = (
   picked: Date,
 ): boolean => (stored ? new Date(stored).getTime() === picked.getTime() : false)
 
-export type VerdictAppealSummaryStage =
-  | 'IN_PROGRESS'
-  | 'CONFIRMED'
-  | 'COMPLETED'
-
-/**
- * Where the appeal stands for its summary. IN_PROGRESS: the court has not
- * confirmed how it ended, and the page offers to. CONFIRMED: the court has
- * confirmed it (READY_TO_COMPLETE), but the outcome is not released, so the
- * page warns that the parties do not see it. COMPLETED: the outcome is
- * released to everyone who can open the appeal. Past IN_PROGRESS the page
- * shows the appeal as it ended and offers nothing more to do.
- */
-export const getVerdictAppealSummaryStage = (
-  appealCase: Pick<AppealCase, 'appealState'> | undefined | null,
-): VerdictAppealSummaryStage => {
-  if (appealCase?.appealState === AppealCaseState.COMPLETED) {
-    return 'COMPLETED'
-  }
-
-  return isVerdictAppealConfirmed(appealCase) ? 'CONFIRMED' : 'IN_PROGRESS'
-}
-
 /**
  * Whether the court can confirm the appeal as finished: it is still open,
  * the court has marked it "Lokið", and everything the backend asks of a
  * finished appeal is on record - the outcome, its type, the concluding words,
  * the date the appeal ended and the document, stored as a PDF.
  */
-export const canConfirmVerdictAppeal = (
+export const canCompleteVerdictAppeal = (
   theCase: Pick<WorkingCase, 'verdictAppealCase' | 'caseFiles'>,
 ): boolean => {
   const appeal = theCase.verdictAppealCase
@@ -133,6 +107,6 @@ export const canConfirmVerdictAppeal = (
       appeal.verdictAppealStatus === VerdictAppealStatus.COMPLETED &&
       isVerdictAppealConclusionFieldsValid(appeal) &&
       appeal.appealRulingDate &&
-      getConfirmableVerdictAppealRulingFile(theCase),
+      getCompletableVerdictAppealRulingFile(theCase),
   )
 }

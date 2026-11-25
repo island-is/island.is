@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
 import {
+  AppealCaseState,
   AppealCaseTransition,
   AppealRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -37,10 +38,9 @@ import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDate from './VerdictAppealRulingDate'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
 import {
-  canConfirmVerdictAppeal,
-  getConfirmableVerdictAppealRulingFile,
+  canCompleteVerdictAppeal,
+  getCompletableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
-  getVerdictAppealSummaryStage,
 } from './VerdictAppealSummary.logic'
 
 /**
@@ -48,11 +48,10 @@ import {
  * confirms how it ended once it has recorded that on the status step.
  *
  * Confirming reads the document in a modal first, the way the district court
- * confirms its own verdict. It marks the appeal ready to complete and sends
- * nothing: the parties do not see the outcome until it is released, which
- * completes the appeal. Once confirmed, the page shows the appeal as it ended
- * and offers nothing more to do; it can still be corrected on the status
- * step.
+ * confirms its own verdict. It finishes the appeal and sends nothing: the
+ * parties do not see the outcome until it is published. Once finished, the
+ * page shows the appeal as it ended and offers nothing more to do; it can
+ * still be corrected on the status step.
  */
 const VerdictAppealSummary = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -76,8 +75,8 @@ const VerdictAppealSummary = () => {
   // Held while the appeal is being finished. A ref, so a second click that
   // lands before the next render is turned away too; the state mirrors it so
   // the modal can lock itself for as long as the request runs.
-  const isConfirmingAppealRef = useRef(false)
-  const [isConfirmingAppeal, setIsConfirmingAppeal] = useState(false)
+  const isCompletingRef = useRef(false)
+  const [isCompleting, setIsCompleting] = useState(false)
 
   const statusUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
@@ -94,14 +93,14 @@ const VerdictAppealSummary = () => {
 
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
   const decisionLabel = getVerdictAppealRulingDecisionLabel(verdictAppealCase)
-  const stage = getVerdictAppealSummaryStage(verdictAppealCase)
-  const isConfirmed = stage !== 'IN_PROGRESS'
-  const canConfirm = canConfirmVerdictAppeal(workingCase)
+  const isCompleted =
+    verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+  const canComplete = canCompleteVerdictAppeal(workingCase)
   const isRuling =
     verdictAppealCase?.appealRulingType === AppealRulingType.RULING
 
   const closeModal = () => {
-    if (isConfirmingAppealRef.current) {
+    if (isCompletingRef.current) {
       return
     }
 
@@ -114,7 +113,7 @@ const VerdictAppealSummary = () => {
   // A failed fetch has already told the user why: the hook toasts a failed
   // request and raises fileNotFound, shown below, for a missing file.
   const openConfirmation = async () => {
-    const rulingFile = getConfirmableVerdictAppealRulingFile(workingCase)
+    const rulingFile = getCompletableVerdictAppealRulingFile(workingCase)
 
     if (!rulingFile) {
       toast.error(isRuling ? 'Úrskurður fannst ekki' : 'Dómur fannst ekki')
@@ -138,31 +137,31 @@ const VerdictAppealSummary = () => {
     }
   }
 
-  // Confirms the appeal and closes the modal, staying in it when that fails.
-  // The transition writes the confirmed appeal into the working case, so the
-  // page then shows it as confirmed.
-  const confirmAppeal = async () => {
-    if (!verdictAppealCase || isConfirmingAppealRef.current) {
+  // Finishes the appeal and closes the modal, staying in it when that fails.
+  // The transition writes the finished appeal into the working case, so the
+  // page then shows it as finished.
+  const completeAppeal = async () => {
+    if (!verdictAppealCase || isCompletingRef.current) {
       return
     }
 
-    isConfirmingAppealRef.current = true
-    setIsConfirmingAppeal(true)
+    isCompletingRef.current = true
+    setIsCompleting(true)
 
     try {
-      const confirmed = await transitionAppealCase(
+      const completed = await transitionAppealCase(
         workingCase.id,
         verdictAppealCase.id,
-        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+        AppealCaseTransition.COMPLETE_APPEAL,
         setWorkingCase,
       )
 
-      if (!confirmed) {
+      if (!completed) {
         return
       }
     } finally {
-      isConfirmingAppealRef.current = false
-      setIsConfirmingAppeal(false)
+      isCompletingRef.current = false
+      setIsCompleting(false)
     }
 
     closeModal()
@@ -170,19 +169,20 @@ const VerdictAppealSummary = () => {
 
   return (
     <>
-      {stage === 'CONFIRMED' && (
+      {isCompleted ? (
         <AlertBanner
           variant="warning"
           title="Niðurstaða skráð en ekki gefin út"
           description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
         />
-      )}
-      {stage === 'IN_PROGRESS' && decisionLabel && (
-        <AlertBanner
-          variant="warning"
-          title="Niðurstaða Landsréttar"
-          description={decisionLabel}
-        />
+      ) : (
+        decisionLabel && (
+          <AlertBanner
+            variant="warning"
+            title="Niðurstaða Landsréttar"
+            description={decisionLabel}
+          />
+        )
       )}
       <PageLayout
         workingCase={workingCase}
@@ -201,7 +201,7 @@ const VerdictAppealSummary = () => {
                 </Text>
               ))}
             </Box>
-            {isConfirmed && <InfoCardClosedIndictment />}
+            {isCompleted && <InfoCardClosedIndictment />}
             <VerdictAppealConclusionBoxes workingCase={workingCase} />
             <VerdictAppealFiles />
             <VerdictAppealRulingDocument workingCase={workingCase} />
@@ -212,14 +212,14 @@ const VerdictAppealSummary = () => {
           <FormFooter
             previousUrl={statusUrl}
             actions={
-              isConfirmed
+              isCompleted
                 ? undefined
                 : [
                     {
                       text: 'Staðfesta',
                       icon: 'checkmark',
                       disabled:
-                        !canConfirm ||
+                        !canComplete ||
                         isFetchingRulingUrl ||
                         isTransitioningAppealCase,
                       onClick: openConfirmation,
@@ -265,7 +265,7 @@ const VerdictAppealSummary = () => {
                 </Box>
               }
               onClose={closeModal}
-              loading={isConfirmingAppeal}
+              loading={isCompleting}
               buttons={[
                 {
                   text: 'Hætta við',
@@ -274,7 +274,7 @@ const VerdictAppealSummary = () => {
                 },
                 {
                   text: 'Staðfesta',
-                  onClick: confirmAppeal,
+                  onClick: completeAppeal,
                   isLoading: isTransitioningAppealCase,
                   isDisabled: !hasReviewed || isPdfLoading || pdfError,
                   dataTestId: 'confirmCompleteAppealButton',

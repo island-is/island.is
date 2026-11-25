@@ -10,7 +10,6 @@ import {
   AppealRulingType,
   InstitutionType,
   UserRole,
-  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { VerdictAppealOutcomeInterceptor } from '../verdictAppealOutcome.interceptor'
@@ -72,7 +71,6 @@ const courtOfAppealsUsers: [string, unknown][] = [
 const makeAppealCase = (
   appealType: AppealCaseType,
   appealState: AppealCaseState,
-  recorded: { verdictAppealStatus?: VerdictAppealStatus | null } = {},
 ) => {
   const appealCase = {
     id: uuid(),
@@ -80,7 +78,6 @@ const makeAppealCase = (
     appealState,
     appealCaseNumber: '2/2024',
     ...outcome,
-    ...recorded,
   }
 
   return { ...appealCase, toJSON: () => appealCase }
@@ -102,97 +99,29 @@ describe('VerdictAppealOutcomeInterceptor', () => {
   describe.each(nonCourtOfAppealsUsers)(
     'when the user is %s',
     (_, currentUser) => {
-      describe.each([
-        AppealCaseState.APPEALED,
-        AppealCaseState.READY_TO_COMPLETE,
-      ])('and the verdict appeal is %s', (appealState) => {
-        const appealCase = makeAppealCase(AppealCaseType.VERDICT, appealState)
-        let result: Record<string, unknown>
+      describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+        'and the verdict appeal is %s',
+        (appealState) => {
+          const appealCase = makeAppealCase(AppealCaseType.VERDICT, appealState)
+          let result: Record<string, unknown>
 
-        beforeEach(async () => {
-          result = await intercept(appealCase, currentUser)
-        })
-
-        it('withholds the outcome', () => {
-          expect(result).toMatchObject(withheldOutcome)
-        })
-
-        it('presents the appeal as in progress', () => {
-          expect(result).toMatchObject({
-            id: appealCase.id,
-            appealState: AppealCaseState.APPEALED,
-            appealCaseNumber: '2/2024',
+          beforeEach(async () => {
+            result = await intercept(appealCase, currentUser)
           })
-        })
-      })
 
-      // The court can record another status after confirming. Outside the
-      // court a confirmed appeal is under advisement, whatever it records.
-      it.each([
-        VerdictAppealStatus.POSTPONED,
-        VerdictAppealStatus.COURT_SESSION_SCHEDULED,
-        VerdictAppealStatus.COMPLETED,
-        null,
-      ])(
-        'presents a confirmed appeal with a recorded status %s as under advisement',
-        async (verdictAppealStatus) => {
-          const result = await intercept(
-            makeAppealCase(
-              AppealCaseType.VERDICT,
-              AppealCaseState.READY_TO_COMPLETE,
-              { verdictAppealStatus },
-            ),
-            currentUser,
-          )
+          it('withholds the outcome', () => {
+            expect(result).toMatchObject(withheldOutcome)
+          })
 
-          expect(result).toMatchObject({
-            appealState: AppealCaseState.APPEALED,
-            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+          it('presents the appeal as in progress', () => {
+            expect(result).toMatchObject({
+              id: appealCase.id,
+              appealState: AppealCaseState.APPEALED,
+              appealCaseNumber: '2/2024',
+            })
           })
         },
       )
-
-      // Before the court confirms, only a recorded status of completed is
-      // rewritten.
-      it.each([
-        [VerdictAppealStatus.POSTPONED, VerdictAppealStatus.POSTPONED],
-        [
-          VerdictAppealStatus.COURT_SESSION_SCHEDULED,
-          VerdictAppealStatus.COURT_SESSION_SCHEDULED,
-        ],
-        [VerdictAppealStatus.COMPLETED, VerdictAppealStatus.UNDER_ADVISEMENT],
-        [null, null],
-      ])(
-        'presents an unconfirmed appeal with a recorded status %s as %s',
-        async (verdictAppealStatus, presented) => {
-          const result = await intercept(
-            makeAppealCase(AppealCaseType.VERDICT, AppealCaseState.APPEALED, {
-              verdictAppealStatus,
-            }),
-            currentUser,
-          )
-
-          expect(result.verdictAppealStatus).toBe(presented)
-        },
-      )
-
-      // The outcome of a completed appeal is released to everyone.
-      it('presents a completed appeal as it is stored', async () => {
-        const appealCase = makeAppealCase(
-          AppealCaseType.VERDICT,
-          AppealCaseState.COMPLETED,
-        )
-
-        const result = await intercept(appealCase, currentUser)
-
-        expect(result).toEqual({
-          id: appealCase.id,
-          appealType: AppealCaseType.VERDICT,
-          appealCaseNumber: '2/2024',
-          ...outcome,
-          appealState: AppealCaseState.COMPLETED,
-        })
-      })
 
       it('still presents a withdrawn appeal as withdrawn', async () => {
         const result = await intercept(
@@ -211,11 +140,7 @@ describe('VerdictAppealOutcomeInterceptor', () => {
   describe.each(courtOfAppealsUsers)(
     'when the user is a court of appeals %s',
     (_, currentUser) => {
-      it.each([
-        AppealCaseState.APPEALED,
-        AppealCaseState.READY_TO_COMPLETE,
-        AppealCaseState.COMPLETED,
-      ])(
+      it.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
         'includes the outcome and the state of a %s verdict appeal',
         async (appealState) => {
           const appealCase = makeAppealCase(AppealCaseType.VERDICT, appealState)

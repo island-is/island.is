@@ -30,11 +30,7 @@ import {
   RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
-import {
-  AppealCaseTransition,
-  AppealCaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsAssistantRule,
@@ -341,15 +337,9 @@ export class AppealCaseController {
     // this handler has returned - as it was when the handler committed a
     // transaction of its own. Still fire and forget: a failed announcement is
     // logged, not returned to the caller.
-    const transition = dto.transition
-
-    // Confirming a verdict appeal is not announced: its outcome stays with
-    // the court of appeals until it is released.
-    if (transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE) {
-      registerAfterCommit(() =>
-        this.eventService.postEvent(transition, theCase),
-      )
-    }
+    registerAfterCommit(() =>
+      this.eventService.postEvent(dto.transition, theCase),
+    )
 
     return result.appealCase
   }

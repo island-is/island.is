@@ -135,15 +135,12 @@ describe('FileController - Get case file signed url', () => {
       ).not.toHaveBeenCalled()
     })
 
-    describe.each([
-      AppealCaseState.READY_TO_COMPLETE,
-      AppealCaseState.COMPLETED,
-    ])('once the court has confirmed the appeal (%s)', (appealState) => {
+    describe('once the appeal is completed', () => {
       const theCase = {
         id: caseId,
         type: CaseType.INDICTMENT,
         verdictAppealCase: {
-          appealState,
+          appealState: AppealCaseState.COMPLETED,
           appealRulingDate: new Date('2026-11-20T10:00:00Z'),
         },
       } as Case

@@ -258,9 +258,9 @@ const pickToday = async () => {
 }
 const notReleasedTitle = 'Niðurstaða skráð en ekki gefin út'
 
-// Confirms the appeal the way the real transition does: it writes the
-// confirmed appeal into the working case through the setter it is given.
-const confirmAppeal = (
+// Finishes the appeal the way the real transition does: it writes the
+// finished appeal into the working case through the setter it is given.
+const finishAppeal = (
   _caseId: string,
   _appealCaseId: string,
   _transition: AppealCaseTransition,
@@ -271,7 +271,7 @@ const confirmAppeal = (
     verdictAppealCase: current.verdictAppealCase
       ? {
           ...current.verdictAppealCase,
-          appealState: AppealCaseState.READY_TO_COMPLETE,
+          appealState: AppealCaseState.COMPLETED,
         }
       : current.verdictAppealCase,
   }))
@@ -486,8 +486,8 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('confirmCompleteAppealButton')).toBeEnabled()
   })
 
-  it('marks the appeal ready to complete and shows it confirmed', async () => {
-    mockTransitionAppealCase.mockImplementation(confirmAppeal)
+  it('finishes the appeal and shows it finished once confirmed', async () => {
+    mockTransitionAppealCase.mockImplementation(finishAppeal)
     renderPage()
 
     await openModal()
@@ -497,7 +497,7 @@ describe('VerdictAppealSummary', () => {
     expect(mockTransitionAppealCase).toHaveBeenCalledWith(
       'case-id',
       'verdict-appeal',
-      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      AppealCaseTransition.COMPLETE_APPEAL,
       expect.any(Function),
     )
     expect(await screen.findByText(notReleasedTitle)).toBeInTheDocument()
@@ -508,7 +508,7 @@ describe('VerdictAppealSummary', () => {
     expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
-    // The date can still be corrected once the appeal is confirmed.
+    // The date can still be corrected once the appeal is finished.
     expect(
       screen.getByRole('heading', { name: rulingDateHeading }),
     ).toBeInTheDocument()
@@ -567,7 +567,7 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
   })
 
-  it('stays in the modal when the appeal could not be confirmed', async () => {
+  it('stays in the modal when the appeal could not be finished', async () => {
     mockTransitionAppealCase.mockResolvedValue(false)
     renderPage()
 
@@ -580,7 +580,7 @@ describe('VerdictAppealSummary', () => {
     expect(mockPush).not.toHaveBeenCalled()
   })
 
-  it('confirms the appeal once however often it is confirmed', async () => {
+  it('finishes the appeal once however often it is confirmed', async () => {
     let finishTransition: (completed: boolean) => void = () => undefined
     mockTransitionAppealCase.mockImplementationOnce(
       () =>
@@ -606,7 +606,7 @@ describe('VerdictAppealSummary', () => {
     expect(mockPush).not.toHaveBeenCalled()
   })
 
-  it('cannot be closed while the appeal is being confirmed', async () => {
+  it('cannot be closed while the appeal is being finished', async () => {
     let finishTransition: (completed: boolean) => void = () => undefined
     mockTransitionAppealCase.mockImplementationOnce(
       () =>
@@ -634,8 +634,8 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByRole('button', { name: 'Hætta við' })).toBeEnabled()
   })
 
-  it('shows a confirmed appeal as it ended, with nothing more to do', () => {
-    renderPage(withAppeal({ appealState: AppealCaseState.READY_TO_COMPLETE }))
+  it('shows a finished appeal as it ended, with nothing more to do', () => {
+    renderPage(withAppeal({ appealState: AppealCaseState.COMPLETED }))
 
     expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
     expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
@@ -665,22 +665,7 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
   })
 
-  it('shows a completed appeal as it ended, released and with nothing more to do', () => {
-    renderPage(withAppeal({ appealState: AppealCaseState.COMPLETED }))
-
-    expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
-    expect(screen.getAllByText('Jón Jónsson').length).toBeGreaterThan(0)
-    expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
-    expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
-    expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Staðfesta' }),
-    ).not.toBeInTheDocument()
-    expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
-    expect(screen.getByTestId('previousButton')).toBeInTheDocument()
-  })
-
-  it('shows no info card before the appeal is confirmed', () => {
+  it('shows no info card before the appeal is finished', () => {
     renderPage()
 
     expect(screen.queryAllByText('Jón Jónsson')).toHaveLength(0)

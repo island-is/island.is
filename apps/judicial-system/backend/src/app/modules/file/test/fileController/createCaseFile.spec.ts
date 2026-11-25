@@ -455,10 +455,7 @@ describe('FileController - Create case file', () => {
       })
     })
 
-    describe.each([
-      AppealCaseState.READY_TO_COMPLETE,
-      AppealCaseState.COMPLETED,
-    ])('created once the verdict appeal is %s', (appealState) => {
+    describe('created once the verdict appeal has been completed', () => {
       let then: Then
 
       beforeEach(async () => {
@@ -477,14 +474,15 @@ describe('FileController - Create case file', () => {
             ...theCase,
             verdictAppealCase: {
               id: uuid(),
-              appealState,
+              appealState: AppealCaseState.COMPLETED,
             },
           } as Case,
           courtOfAppealsUser,
         )
       })
 
-      // The court can still replace its document after confirming the appeal.
+      // The court can still replace its document: the outcome stays with it
+      // until it is released.
       it('should create the case file', () => {
         expect(then.error).toBeUndefined()
         expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()

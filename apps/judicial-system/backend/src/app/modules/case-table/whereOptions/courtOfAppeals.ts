@@ -97,8 +97,7 @@ export const courtOfAppealsCasesCompletedWhereOptions =
 // disposed of: sent to the court and waiting to be received, or received and
 // being worked on. A withdrawn appeal is finished, not in progress - which is
 // where this parts company with the ruling-appeal list above, on the design's
-// word (the withdrawn tag appears under Niðurstaða in "Afgreidd mál"). So is an
-// appeal the court has confirmed, though its outcome is not yet released.
+// word (the withdrawn tag appears under Niðurstaða in "Afgreidd mál").
 export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
@@ -136,11 +135,7 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
         attributes: [],
         required: true,
         where: {
-          appeal_state: [
-            AppealCaseState.READY_TO_COMPLETE,
-            AppealCaseState.COMPLETED,
-            AppealCaseState.WITHDRAWN,
-          ],
+          appeal_state: [AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN],
         },
       },
     },
@@ -149,7 +144,6 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
         courtOfAppealsCasesAccessWhereOptions().where,
         {
           '$verdictAppealCase.appeal_state$': [
-            AppealCaseState.READY_TO_COMPLETE,
             AppealCaseState.COMPLETED,
             AppealCaseState.WITHDRAWN,
           ],

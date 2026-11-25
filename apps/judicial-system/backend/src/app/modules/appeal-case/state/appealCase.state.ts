@@ -28,12 +28,11 @@ type AppealTransition = (
   appealCase: AppealCase,
 ) => AppealTransitionResult
 
-// A verdict appeal takes its own route: it is never received nor reopened.
-// The court of appeals confirms how it ended from the state it is filed in
-// (APPEALED -> READY_TO_COMPLETE), and it is completed when the outcome is
-// released (READY_TO_COMPLETE -> COMPLETED). Each rule therefore names the
-// states it applies from for a verdict appeal separately; an empty list refuses
-// the transition for that kind of appeal altogether.
+// A verdict appeal moves through fewer states than a ruling appeal: it is
+// never received, so it is concluded from the state it is filed in, and it is
+// neither received nor reopened. Each rule therefore names the states it
+// applies from for a verdict appeal separately; an empty list refuses the
+// transition for verdict appeals altogether.
 interface AppealCaseRule {
   fromAppealStates: AppealCaseState[]
   fromVerdictAppealStates: AppealCaseState[]
@@ -57,22 +56,10 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       },
     ],
     [
-      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
-      {
-        fromAppealStates: [],
-        fromVerdictAppealStates: [AppealCaseState.APPEALED],
-        // The date the court entered for the appeal's end is kept.
-        transition: (): AppealTransitionResult => ({
-          caseUpdate: {},
-          appealCaseUpdate: { appealState: AppealCaseState.READY_TO_COMPLETE },
-        }),
-      },
-    ],
-    [
       AppealCaseTransition.COMPLETE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
-        fromVerdictAppealStates: [AppealCaseState.READY_TO_COMPLETE],
+        fromVerdictAppealStates: [AppealCaseState.APPEALED],
         transition: (
           theCase: Case,
           appealCase: AppealCase,

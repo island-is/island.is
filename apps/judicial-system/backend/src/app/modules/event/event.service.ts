@@ -58,14 +58,7 @@ type CaseEvent =
   | 'VERDICT_DELIVERED_TO_POLICE'
   | 'VERDICT_SERVICE_STATUS'
 
-// Confirming a verdict appeal is not announced: its outcome stays with the court
-// of appeals until it is released.
-type AppealCaseEvent =
-  | Exclude<
-      AppealCaseTransition,
-      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE
-    >
-  | 'CREATE_APPEAL'
+type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
 
 type Event = CaseEvent | AppealCaseEvent
 

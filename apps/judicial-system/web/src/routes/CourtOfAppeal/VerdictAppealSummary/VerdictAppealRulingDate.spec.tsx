@@ -86,7 +86,7 @@ const theCase = {
   verdictAppealCase: {
     id: 'verdict-appeal',
     appealType: AppealCaseType.VERDICT,
-    appealState: AppealCaseState.READY_TO_COMPLETE,
+    appealState: AppealCaseState.COMPLETED,
     appealRulingDate: storedDate,
   },
 } as unknown as WorkingCase
