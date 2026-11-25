@@ -1,5 +1,3 @@
-import faker from 'faker'
-
 import type { TagVariant } from '@island.is/island-ui/core'
 
 export type MockBulkCase = {
@@ -24,7 +22,7 @@ export const MOCK_CASES: MockBulkCase[] = [
   {
     id: 'case-123',
     caseNumbers: ['HDR: S-123/2026', '007-2022-123'],
-    defendantName: faker.name.findName(),
+    defendantName: 'Jón Jónsson',
     defendantDetail: 'kt. 121200-1212',
     caseType: 'Fjársvik',
     judgmentDate: '21.11.2026',
@@ -37,7 +35,7 @@ export const MOCK_CASES: MockBulkCase[] = [
   {
     id: 'case-241',
     caseNumbers: ['241/2026', 'HDRN: S-301/2026', '007-2026-45678'],
-    defendantName: faker.name.findName(),
+    defendantName: 'Leifur Arnar Thors',
     defendantDetail: 'kt. 123456-7890',
     caseType: 'Umferðarlagabrot',
     caseTypeExtra: '+1',
@@ -52,7 +50,7 @@ export const MOCK_CASES: MockBulkCase[] = [
   {
     id: 'case-238',
     caseNumbers: ['238/2026', 'HDR: S-288/2026', '007-2026-33445'],
-    defendantName: faker.name.findName(),
+    defendantName: 'Anna Sigríður Ólafsdóttir',
     defendantDetail: '+ 2',
     caseType: 'Líkamsárás',
     judgmentDate: '21.11.2026',

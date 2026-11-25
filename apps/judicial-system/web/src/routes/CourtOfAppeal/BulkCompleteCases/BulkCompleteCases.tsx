@@ -21,7 +21,6 @@ import {
   type DropAnimation,
   KeyboardSensor,
   PointerSensor,
-  type UniqueIdentifier,
   useDroppable,
   useSensor,
   useSensors,
@@ -54,6 +53,18 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 
+import {
+  type CaseLists,
+  findListId,
+  formatCaseCountDative,
+  formatCaseNumberList,
+  getStagingEmptyMessage,
+  LIST_LABELS,
+  type ListId,
+  moveCaseInLists,
+  restoreSourceOrder,
+  transferCaseAcrossLists,
+} from './BulkCompleteCases.logic'
 import { MOCK_CASES, type MockBulkCase } from './mockData'
 import * as styles from './BulkCompleteCases.css'
 
@@ -77,6 +88,8 @@ const EMPTY_FADE_DURATION = 0.2
 const DRAG_SCALE = 1.02
 const DRAG_SCALE_IN_DURATION = 0.15
 const DROP_ANIMATION_DURATION = 300
+const EMPTY_BODY_MIN_HEIGHT = 120
+const POINTER_ACTIVATION_DISTANCE = 8
 
 const stagingShellVariants = {
   collapsed: {
@@ -103,7 +116,7 @@ const stagingShellVariants = {
   },
 }
 
-const stagingHeaderVariants = {
+const stagingContentVariants = (delay: number) => ({
   collapsed: {
     opacity: 0,
     y: 16,
@@ -115,27 +128,13 @@ const stagingHeaderVariants = {
     transition: {
       duration: CONTENT_FADE_DURATION,
       ease: 'easeOut' as const,
-      delay: 0.06,
+      delay,
     },
   },
-}
+})
 
-const stagingTableVariants = {
-  collapsed: {
-    opacity: 0,
-    y: 16,
-    transition: { duration: CONTENT_FADE_DURATION, ease: 'easeIn' as const },
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: CONTENT_FADE_DURATION,
-      ease: 'easeOut' as const,
-      delay: 0.14,
-    },
-  },
-}
+const stagingHeaderVariants = stagingContentVariants(0.06)
+const stagingTableVariants = stagingContentVariants(0.14)
 
 const dropAnimation: DropAnimation = {
   duration: DROP_ANIMATION_DURATION,
@@ -164,7 +163,6 @@ const dropAnimation: DropAnimation = {
 }
 
 type ModalState = 'none' | 'confirm' | 'success'
-type ListId = 'staging' | 'source'
 
 type FlightRect = {
   left: number
@@ -247,6 +245,19 @@ const renderCaseCells = (caseRow: MockBulkCase): ReactNode[] => {
   ]
 }
 
+const CaseRowCells: FC<{
+  caseRow: MockBulkCase
+  cellRole?: 'cell'
+}> = ({ caseRow, cellRole }) => (
+  <>
+    {renderCaseCells(caseRow).map((cell, index) => (
+      <div key={index} className={styles.gridCell} role={cellRole}>
+        {cell}
+      </div>
+    ))}
+  </>
+)
+
 const rowMenuItems = (_caseRow: MockBulkCase): ContextMenuItem[] => [
   {
     title: 'Opna mál í nýjum flipa',
@@ -281,22 +292,14 @@ type CaseRowContentProps = {
 }
 
 const CaseRowContent = forwardRef<HTMLDivElement, CaseRowContentProps>(
-  ({ caseRow, className, style, showMenu = true }, ref) => {
-    const cells = renderCaseCells(caseRow)
-
-    return (
-      <div ref={ref} className={className} style={style} role="row">
-        {cells.map((cell, index) => (
-          <div key={index} className={styles.gridCell} role="cell">
-            {cell}
-          </div>
-        ))}
-        <div className={`${styles.gridCell} ${styles.menuCell}`} role="cell">
-          {showMenu ? <CaseRowMenuButton caseRow={caseRow} /> : null}
-        </div>
+  ({ caseRow, className, style, showMenu = true }, ref) => (
+    <div ref={ref} className={className} style={style} role="row">
+      <CaseRowCells caseRow={caseRow} cellRole="cell" />
+      <div className={`${styles.gridCell} ${styles.menuCell}`} role="cell">
+        {showMenu ? <CaseRowMenuButton caseRow={caseRow} /> : null}
       </div>
-    )
-  },
+    </div>
+  ),
 )
 
 const SortableCaseRow: FC<{
@@ -348,11 +351,7 @@ const SortableCaseRow: FC<{
           }
         }}
       >
-        {renderCaseCells(caseRow).map((cell, index) => (
-          <div key={index} className={styles.gridCell}>
-            {cell}
-          </div>
-        ))}
+        <CaseRowCells caseRow={caseRow} />
       </button>
       <div className={`${styles.gridCell} ${styles.menuCell}`}>
         <CaseRowMenuButton caseRow={caseRow} />
@@ -361,9 +360,7 @@ const SortableCaseRow: FC<{
   )
 }
 
-const EMPTY_BODY_MIN_HEIGHT = 120
-
-const CaseTable: FC<{
+const BulkCompleteCaseList: FC<{
   listId: ListId
   cases: MockBulkCase[]
   enableDrag: boolean
@@ -465,7 +462,11 @@ const CaseTable: FC<{
   )
 
   return (
-    <div className={styles.gridTable} role="table" aria-label={listId}>
+    <div
+      className={styles.gridTable}
+      role="table"
+      aria-label={LIST_LABELS[listId]}
+    >
       <div className={styles.gridHeader} role="row">
         {COLUMN_TITLES.map((title) => (
           <div
@@ -502,31 +503,6 @@ const CaseTable: FC<{
   )
 }
 
-const findListId = (
-  id: UniqueIdentifier,
-  stagingCases: MockBulkCase[],
-  sourceCases: MockBulkCase[],
-): ListId | undefined => {
-  if (id === 'staging' || id === 'source') {
-    return id
-  }
-
-  if (stagingCases.some((c) => c.id === id)) {
-    return 'staging'
-  }
-
-  if (sourceCases.some((c) => c.id === id)) {
-    return 'source'
-  }
-
-  return undefined
-}
-
-type CaseLists = {
-  staging: MockBulkCase[]
-  source: MockBulkCase[]
-}
-
 const BulkCompleteCases: FC = () => {
   const router = useRouter()
   const [selectionMode, setSelectionMode] = useState(false)
@@ -543,6 +519,7 @@ const BulkCompleteCases: FC = () => {
   const [isStagingAnimating, setIsStagingAnimating] = useState(false)
   const skipClickRef = useRef(false)
   const skipClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dragWasActiveRef = useRef(false)
   const flightFromRectRef = useRef<FlightRect | null>(null)
   const flightRafRef = useRef<number | null>(null)
   // Prevents cross-list dragOver from bouncing the item between lists.
@@ -561,6 +538,14 @@ const BulkCompleteCases: FC = () => {
   }
 
   useEffect(() => {
+    return () => {
+      if (skipClickTimeoutRef.current !== null) {
+        clearTimeout(skipClickTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     requestAnimationFrame(() => {
       recentlyMovedToNewList.current = false
     })
@@ -568,67 +553,33 @@ const BulkCompleteCases: FC = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
+      activationConstraint: { distance: POINTER_ACTIVATION_DISTANCE },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   )
 
-  const stagingCaseNumbers = useMemo(
-    () => stagingCases.map((c) => c.caseNumbers[0]).join(' og '),
-    [stagingCases],
+  const stagingCaseNumbers = formatCaseNumberList(stagingCases)
+  const completedCaseNumbers = formatCaseNumberList(completedCases)
+  const judgmentNotStartedCases = stagingCases.filter(
+    (c) => c.judgmentNotStarted,
   )
+  const hasSelectableSourceCases = sourceCases.some((c) => c.canComplete)
+  const stagingEmptyMessage = getStagingEmptyMessage(hasSelectableSourceCases)
 
-  const completedCaseNumbers = useMemo(
-    () => completedCases.map((c) => c.caseNumbers[0]).join(' og '),
-    [completedCases],
-  )
-
-  const judgmentNotStartedCases = useMemo(
-    () => stagingCases.filter((c) => c.judgmentNotStarted),
-    [stagingCases],
-  )
-
-  const hasSelectableSourceCases = useMemo(
-    () => sourceCases.some((c) => c.canComplete),
-    [sourceCases],
-  )
-
-  const stagingEmptyMessage = hasSelectableSourceCases
-    ? 'Engin mál valin – smelltu á mál eða dragðu þau hingað'
-    : 'Engin mál tilbúin – staðfesta þarf dóm eða úrskurð áður en hægt er að ljúka máli'
-
-  const activeCase = useMemo(() => {
-    if (!activeCaseId) {
-      return null
-    }
-
-    return (
-      stagingCases.find((c) => c.id === activeCaseId) ??
+  const activeCase = activeCaseId
+    ? stagingCases.find((c) => c.id === activeCaseId) ??
       sourceCases.find((c) => c.id === activeCaseId) ??
       null
-    )
-  }, [activeCaseId, stagingCases, sourceCases])
+    : null
 
   const moveCaseBetweenLists = (
     caseRow: MockBulkCase,
     from: ListId,
     to: ListId,
   ) => {
-    if (from === to) {
-      return
-    }
-
-    if (to === 'staging' && !caseRow.canComplete) {
-      return
-    }
-
-    setCaseLists((prev) => {
-      const fromItems = prev[from].filter((c) => c.id !== caseRow.id)
-      const toItems = [...prev[to], caseRow]
-      return { ...prev, [from]: fromItems, [to]: toItems }
-    })
+    setCaseLists((prev) => moveCaseInLists(prev, caseRow, from, to))
   }
 
   const clearClickFlight = () => {
@@ -714,15 +665,7 @@ const BulkCompleteCases: FC = () => {
   const handleToggle = (checked: boolean) => {
     setSelectionMode(checked)
     if (!checked) {
-      setCaseLists((prev) => {
-        const combined = [...prev.source, ...prev.staging]
-        return {
-          staging: [],
-          source: MOCK_CASES.filter((mock) =>
-            combined.some((item) => item.id === mock.id),
-          ),
-        }
-      })
+      setCaseLists((prev) => restoreSourceOrder(prev, MOCK_CASES))
       setModalState('none')
       setActiveCaseId(null)
       clearClickFlight()
@@ -741,9 +684,19 @@ const BulkCompleteCases: FC = () => {
     setSelectionMode(false)
   }
 
+  const finishActiveDrag = () => {
+    if (dragWasActiveRef.current) {
+      armSkipClick()
+      dragWasActiveRef.current = false
+    }
+    setActiveCaseId(null)
+    didCrossListDuringDrag.current = false
+  }
+
   const handleDragStart = (event: DragStartEvent) => {
     recentlyMovedToNewList.current = false
     didCrossListDuringDrag.current = false
+    dragWasActiveRef.current = true
     setActiveCaseId(String(event.active.id))
   }
 
@@ -756,61 +709,22 @@ const BulkCompleteCases: FC = () => {
     const activeId = String(active.id)
     const overId = String(over.id)
 
+    let didTransfer = false
     setCaseLists((prev) => {
-      const activeList = findListId(activeId, prev.staging, prev.source)
-      const overList = findListId(overId, prev.staging, prev.source)
+      const result = transferCaseAcrossLists(prev, activeId, overId)
+      didTransfer = result.didTransfer
+      return result.didTransfer ? result.next : prev
+    })
 
-      if (!activeList || !overList || activeList === overList) {
-        return prev
-      }
-
-      const activeItems = prev[activeList]
-      const overItems = prev[overList]
-      const activeIndex = activeItems.findIndex((c) => c.id === activeId)
-      if (activeIndex < 0) {
-        return prev
-      }
-
-      const moving = activeItems[activeIndex]
-      if (overList === 'staging' && !moving.canComplete) {
-        return prev
-      }
-
-      if (overItems.some((c) => c.id === activeId)) {
-        return prev
-      }
-
-      const overIndex =
-        overId === overList
-          ? overItems.length
-          : overItems.findIndex((c) => c.id === overId)
-
-      const insertIndex = overIndex < 0 ? overItems.length : overIndex
-
+    if (didTransfer) {
       recentlyMovedToNewList.current = true
       didCrossListDuringDrag.current = true
-
-      return {
-        ...prev,
-        [activeList]: activeItems.filter((c) => c.id !== activeId),
-        [overList]: [
-          ...overItems.slice(0, insertIndex),
-          moving,
-          ...overItems.slice(insertIndex),
-        ],
-      }
-    })
+    }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over, delta } = event
-    setActiveCaseId(null)
-
-    const dragDistance = Math.hypot(delta.x, delta.y)
-    if (didCrossListDuringDrag.current || dragDistance > 12) {
-      armSkipClick()
-    }
-    didCrossListDuringDrag.current = false
+    const { active, over } = event
+    finishActiveDrag()
 
     if (!over) {
       return
@@ -846,8 +760,7 @@ const BulkCompleteCases: FC = () => {
   }
 
   const handleDragCancel = () => {
-    setActiveCaseId(null)
-    armSkipClick()
+    finishActiveDrag()
   }
 
   const listSections = (
@@ -869,7 +782,7 @@ const BulkCompleteCases: FC = () => {
           >
             <motion.div variants={stagingHeaderVariants}>
               <div className={styles.sectionHeader}>
-                <SectionHeading title="Mál til að ljúka" marginBottom={0} />
+                <SectionHeading title={LIST_LABELS.staging} marginBottom={0} />
                 <Button
                   variant="text"
                   size="small"
@@ -882,7 +795,7 @@ const BulkCompleteCases: FC = () => {
               </div>
             </motion.div>
             <motion.div variants={stagingTableVariants}>
-              <CaseTable
+              <BulkCompleteCaseList
                 listId="staging"
                 cases={stagingCases}
                 enableDrag={selectionMode}
@@ -897,7 +810,7 @@ const BulkCompleteCases: FC = () => {
 
       <div>
         <div className={styles.sectionHeader}>
-          <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
+          <SectionHeading title={LIST_LABELS.source} marginBottom={0} />
           <ToggleSwitchCheckbox
             name="select-cases-to-complete"
             label={<Text>Velja mál til að ljúka</Text>}
@@ -905,7 +818,7 @@ const BulkCompleteCases: FC = () => {
             onChange={handleToggle}
           />
         </div>
-        <CaseTable
+        <BulkCompleteCaseList
           listId="source"
           cases={sourceCases}
           enableDrag={selectionMode}
@@ -1005,7 +918,9 @@ const BulkCompleteCases: FC = () => {
             text={
               <Box>
                 <Text>
-                  {`Dómsúrlausnir og tilkynningar verða sendar í ${stagingCases.length} málum: ${stagingCaseNumbers}.`}
+                  {`Dómsúrlausnir og tilkynningar verða sendar í ${formatCaseCountDative(
+                    stagingCases.length,
+                  )}: ${stagingCaseNumbers}.`}
                 </Text>
                 {judgmentNotStartedCases.length > 0 && (
                   <Box marginTop={3}>
@@ -1039,7 +954,9 @@ const BulkCompleteCases: FC = () => {
         {modalState === 'success' && (
           <Modal
             title="Málunum er lokið"
-            text={`Dómsúrlausnir og tilkynningar hafa verið sendar í ${completedCases.length} málum: ${completedCaseNumbers}.`}
+            text={`Dómsúrlausnir og tilkynningar hafa verið sendar í ${formatCaseCountDative(
+              completedCases.length,
+            )}: ${completedCaseNumbers}.`}
             onClose={handleCloseSuccess}
             buttons={[
               {
