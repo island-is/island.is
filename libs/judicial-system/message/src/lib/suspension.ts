@@ -80,6 +80,8 @@ export const messageTypeToSuspensionCategory: Partial<
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_SUMMONS]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
+  [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_VERDICT]:
+    MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
 }
 
 // Returns the suspension category for a message type, or undefined if the type

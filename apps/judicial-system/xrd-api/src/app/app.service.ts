@@ -398,6 +398,16 @@ export class AppService {
           ),
           policeDocumentId,
         )
+      case PoliceFileTypeCode.APPEAL_VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_APPEAL_VERDICT,
+          this.updateAppealVerdictDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
     }
 
     throw new BadRequestException('Police file type code not supported')
@@ -464,6 +474,103 @@ export class AppService {
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(parsedPoliceUpdate),
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          policeDocumentId: response.externalPoliceDocumentId,
+        } as PoliceDocumentDelivery
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
+      })
+    }
+  }
+
+  private async updateAppealVerdictDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.supplements?.find(
+        (supplement) =>
+          supplement.code === DocumentDeliverySupplementCode.APPEAL_DECISION,
+      )
+
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision.value
+
+      if (
+        !Object.values(VerdictAppealDecision).includes(
+          appealDecision as VerdictAppealDecision,
+        )
+      ) {
+        throw new BadRequestException(
+          `Invalid appeal_decision: ${appealDecision}. Must be one of: ${Object.values(
+            VerdictAppealDecision,
+          ).join(', ')}`,
+        )
+      }
+    }
+
+    const serviceStatus = mapPoliceVerdictDeliveryStatus({
+      delivered: updatePoliceDocumentDelivery.delivered,
+      deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+      deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+      deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
+    })
+
+    const legalPaperServiceDate =
+      serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        ? getServiceDateFromSupplements(
+            updatePoliceDocumentDelivery.supplements,
+          )
+        : undefined
+
+    const parsedPoliceUpdate = {
+      serviceDate:
+        legalPaperServiceDate ?? updatePoliceDocumentDelivery.servedAt,
+      servedBy: updatePoliceDocumentDelivery.servedBy,
+      comment: updatePoliceDocumentDelivery.comment,
+      serviceStatus,
+      deliveredToDefenderNationalId:
+        updatePoliceDocumentDelivery.defenderNationalId,
+      appealDecision: deliveredAppealDecision?.value,
+    }
+
+    this.logger.info(
+      `Parsed appeal verdict update request ${JSON.stringify(
+        parsedPoliceUpdate,
+      )}`,
+    )
+
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/appeal-verdict/${policeDocumentId}`,
         {
           method: 'PATCH',
           headers: {
