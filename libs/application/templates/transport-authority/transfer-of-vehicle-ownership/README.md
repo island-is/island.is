@@ -13,6 +13,12 @@ This library was generated with [Nx](https://nx.dev).
   Someone whose role changes, or who replaces another reviewer, must approve
   again.
 - `approvedBy` is reset when the application enters `review` from `payment`.
+- An approval from a buyer co-owner or operator is tied to its row in
+  `buyerCoOwnerAndOperator`. Answer saves do not go through the state
+  machine, so in `review` an answer validator only lets the buyer add rows
+  or remove them: rows cannot be dropped or restored, and an approved row
+  keeps its person and role. Someone who is removed and added again gets a
+  new row and must approve again.
 - `SUBMIT` in `review` moves to `completed` only when every current reviewer
   has approved.
 - Applications that entered `review` before `approvedBy` existed fall back to

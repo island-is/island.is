@@ -5,9 +5,13 @@ import {
   DefaultEvents,
   FormValue,
 } from '@island.is/application/types'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  mergeAnswers,
+} from '@island.is/application/core'
 import TransferOfVehicleOwnershipTemplate from './TransferOfVehicleOwnershipTemplate'
 import { Roles, States } from './constants'
+import { getApproveAnswers } from '../utils'
 
 const SELLER = '1111111111'
 const BUYER = '2222222222'
@@ -18,6 +22,7 @@ const BUYER_APPROVAL = { nationalId: BUYER, role: 'buyer' }
 const OPERATOR_APPROVAL = {
   nationalId: BUYER_OPERATOR,
   role: 'buyerCoOwnerAndOperator.operator',
+  row: 0,
 }
 const SELLER_CO_OWNER_APPROVAL = {
   nationalId: SELLER_CO_OWNER,
@@ -194,81 +199,158 @@ describe('TransferOfVehicleOwnershipTemplate review approvals', () => {
     expect(state).toBe(States.REVIEW)
   })
 
-  describe('when a buyer operator approval goes stale', () => {
-    const withBuyerCoOwnerAndOperator = (
-      answers: FormValue,
-      buyerCoOwnerAndOperator: FormValue[],
-    ): FormValue => ({ ...answers, buyerCoOwnerAndOperator })
+  describe('when the buyer changes an approved co-owner or operator', () => {
+    const OPERATOR = { nationalId: BUYER_OPERATOR, type: 'operator' }
+    const REMOVED_OPERATOR = { ...OPERATOR, wasRemoved: 'true' }
 
-    const approveAfterChange = (changed: FormValue[]) => {
-      const application = buildApplication(
+    // Answer saves do not go through the state machine; the API runs the answer
+    // validators against the stored application and then merges the answers
+    const save = async (application: Application, answers: FormValue) => {
+      const errors = await new ApplicationTemplateHelper(
+        application,
+        TransferOfVehicleOwnershipTemplate,
+      ).applyAnswerValidators(
+        answers,
+        ((message: { id: string }) => message.id) as never,
+      )
+      return {
+        errors,
+        application: errors
+          ? application
+          : {
+              ...application,
+              answers: mergeAnswers(application.answers, answers),
+            },
+      }
+    }
+
+    const approvedByAll = () => {
+      let application = buildApplication(
         States.REVIEW,
         buildAnswers({ approvedBy: [] }),
         reviewers,
       )
-      const [, , approvedByOperator] = send(
-        application,
-        DefaultEvents.APPROVE,
-        BUYER_OPERATOR,
-      )
-      const [, , approvedByBuyer] = send(
-        {
-          ...application,
-          answers: withBuyerCoOwnerAndOperator(
-            approvedByOperator.answers,
-            changed,
-          ),
-        },
-        DefaultEvents.APPROVE,
-        BUYER,
-      )
-      const [, , approvedBySellerCoOwner] = send(
-        {
-          ...application,
-          answers: withBuyerCoOwnerAndOperator(approvedByBuyer.answers, [
-            { nationalId: BUYER_OPERATOR, type: 'operator' },
-          ]),
-        },
-        DefaultEvents.APPROVE,
-        SELLER_CO_OWNER,
-      )
-      return { application, answers: approvedBySellerCoOwner.answers }
+      for (const reviewer of reviewers) {
+        const [, , updated] = send(application, DefaultEvents.APPROVE, reviewer)
+        application = { ...application, answers: updated.answers }
+      }
+      return application
     }
 
-    it('should not count it after the role was replaced and restored', () => {
-      const { application, answers } = approveAfterChange([
-        { nationalId: BUYER_OPERATOR, type: 'coOwner' },
-      ])
+    it('should not let a removed operator be restored', async () => {
+      const removed = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [REMOVED_OPERATOR],
+      })
+      const restored = await save(removed.application, {
+        buyerCoOwnerAndOperator: [OPERATOR],
+      })
 
-      const [, state] = send(
-        { ...application, answers },
-        DefaultEvents.SUBMIT,
-        SELLER,
-      )
+      expect(removed.errors).toBeUndefined()
+      expect(restored.errors).toEqual({
+        buyerCoOwnerAndOperator:
+          'ta.tvo.application:error.approvedReviewerChanged',
+      })
+    })
 
-      expect(answers.approvedBy).toEqual([
-        BUYER_APPROVAL,
-        SELLER_CO_OWNER_APPROVAL,
+    it('should not let an approved operator be changed', async () => {
+      const toCoOwner = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [{ ...OPERATOR, type: 'coOwner' }],
+      })
+      const toSomeoneElse = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [{ ...OPERATOR, nationalId: SELLER_CO_OWNER }],
+      })
+      const dropped = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [],
+      })
+
+      expect(toCoOwner.errors).toBeDefined()
+      expect(toSomeoneElse.errors).toBeDefined()
+      expect(dropped.errors).toBeDefined()
+    })
+
+    it('should require a new approval when a removed operator is added again', async () => {
+      const removed = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [REMOVED_OPERATOR],
+      })
+      const readded = await save(removed.application, {
+        buyerCoOwnerAndOperator: [REMOVED_OPERATOR, OPERATOR],
+      })
+
+      const [, state] = send(readded.application, DefaultEvents.SUBMIT, SELLER)
+
+      expect(readded.errors).toBeUndefined()
+      expect(readded.application.answers.buyerCoOwnerAndOperator).toEqual([
+        expect.objectContaining({ wasRemoved: 'true' }),
+        OPERATOR,
       ])
       expect(state).toBe(States.REVIEW)
     })
 
-    it('should not count it after the role was removed and restored', () => {
-      const { application, answers } = approveAfterChange([
-        { nationalId: BUYER_OPERATOR, type: 'operator', wasRemoved: 'true' },
-      ])
+    it('should require a new approval when an operator is re-added after a role change', async () => {
+      const removed = await save(approvedByAll(), {
+        buyerCoOwnerAndOperator: [
+          REMOVED_OPERATOR,
+          { ...OPERATOR, type: 'coOwner' },
+        ],
+      })
+      const changedBack = await save(removed.application, {
+        buyerCoOwnerAndOperator: [
+          REMOVED_OPERATOR,
+          { ...OPERATOR, type: 'coOwner', wasRemoved: 'true' },
+          OPERATOR,
+        ],
+      })
 
       const [, state] = send(
-        { ...application, answers },
+        changedBack.application,
         DefaultEvents.SUBMIT,
         SELLER,
       )
 
-      expect(answers.approvedBy).toEqual([
-        BUYER_APPROVAL,
-        SELLER_CO_OWNER_APPROVAL,
-      ])
+      expect(removed.errors).toBeUndefined()
+      expect(changedBack.errors).toBeUndefined()
       expect(state).toBe(States.REVIEW)
+    })
+
+    it('should accept a save that keeps every row', async () => {
+      const BUYER_CO_OWNER = '5555555555'
+      const application = buildApplication(
+        States.REVIEW,
+        buildAnswers({
+          approvedBy: [
+            {
+              nationalId: BUYER_CO_OWNER,
+              role: 'buyerCoOwnerAndOperator.coOwner',
+              row: 1,
+            },
+          ],
+          buyerCoOwnerAndOperator: [
+            { ...REMOVED_OPERATOR, nationalId: SELLER_CO_OWNER },
+            { nationalId: BUYER_CO_OWNER, type: 'coOwner', approved: true },
+            OPERATOR,
+          ],
+        }),
+        [...reviewers, BUYER_CO_OWNER],
+      )
+
+      const { errors } = await save(application, {
+        buyerCoOwnerAndOperator: [
+          { ...REMOVED_OPERATOR, nationalId: SELLER_CO_OWNER },
+          { nationalId: BUYER_CO_OWNER, type: 'coOwner', name: 'Renamed' },
+          { ...OPERATOR, approved: true },
+          { nationalId: SELLER, type: 'operator' },
+        ],
+      })
+
+      expect(errors).toBeUndefined()
+    })
+
+    it('should not send the list with a co-owner or operator approval', () => {
+      const answers = buildAnswers({ approvedBy: [] })
+
+      expect(getApproveAnswers(BUYER_OPERATOR, answers)).not.toHaveProperty(
+        'buyerCoOwnerAndOperator',
+      )
     })
   })
 

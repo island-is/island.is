@@ -28,6 +28,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import {
   application as applicationMessage,
+  error,
   information,
   review,
 } from './messages'
@@ -48,6 +49,7 @@ import {
   getReviewerRole,
   getReviewers,
   isApprovedByAllReviewers,
+  isAllowedReviewerRowsChange,
   recordApproval,
   resetApprovals,
 } from '../utils'
@@ -97,6 +99,20 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  answerValidators: {
+    buyerCoOwnerAndOperator: (newAnswer, application) =>
+      application.state === States.REVIEW &&
+      !isAllowedReviewerRowsChange(
+        application.answers,
+        'buyerCoOwnerAndOperator',
+        newAnswer,
+      )
+        ? {
+            path: 'buyerCoOwnerAndOperator',
+            message: error.approvedReviewerChanged,
+          }
+        : undefined,
+  },
   adminDataConfig: {
     answers: [
       {

@@ -11,6 +11,9 @@ type ReviewerAnswer = {
   skipRemoved?: boolean
   // The role depends on the row's type, so changing it requires a new approval
   roleByType?: boolean
+  // The buyer can change these rows in review, so an approval is tied to its row
+  // and isAllowedReviewerRowsChange keeps the row from being restored or changed
+  trackRow?: boolean
 }
 
 // Must select the same reviewers as getReviewers
@@ -21,6 +24,7 @@ const REVIEWER_ANSWERS: ReviewerAnswer[] = [
     isList: true,
     skipRemoved: true,
     roleByType: true,
+    trackRow: true,
   },
   { key: 'sellerCoOwner', isList: true },
 ]
@@ -32,10 +36,20 @@ type Reviewer = {
   approved?: boolean
 }
 
-export type Approval = { nationalId: string; role: string }
+export type Approval = { nationalId: string; role: string; row?: number }
 
 const getRole = (answer: ReviewerAnswer, reviewer: Reviewer): string =>
   answer.roleByType ? `${answer.key}.${reviewer.type}` : answer.key
+
+const getApproval = (
+  answer: ReviewerAnswer,
+  reviewer: Reviewer,
+  row: number,
+): Approval => ({
+  nationalId: reviewer.nationalId as string,
+  role: getRole(answer, reviewer),
+  ...(answer.trackRow && { row }),
+})
 
 const getAnswerReviewers = (
   answers: FormValue,
@@ -48,25 +62,27 @@ const getAnswerReviewers = (
     : []
 }
 
+const isRemoved = (reviewer: Reviewer | undefined) =>
+  reviewer?.wasRemoved === 'true'
+
 const getReviewerSlots = (
   answers: FormValue,
 ): (Approval & { approved: boolean })[] =>
   REVIEWER_ANSWERS.flatMap((answer) =>
-    getAnswerReviewers(answers, answer)
-      .filter(
-        (reviewer) =>
-          !!reviewer?.nationalId &&
-          !(answer.skipRemoved && reviewer.wasRemoved === 'true'),
-      )
-      .map((reviewer) => ({
-        nationalId: reviewer.nationalId as string,
-        role: getRole(answer, reviewer),
-        approved: !!reviewer.approved,
-      })),
+    getAnswerReviewers(answers, answer).flatMap((reviewer, row) =>
+      !reviewer?.nationalId || (answer.skipRemoved && isRemoved(reviewer))
+        ? []
+        : [
+            {
+              ...getApproval(answer, reviewer, row),
+              approved: !!reviewer.approved,
+            },
+          ],
+    ),
   )
 
 const isSameApproval = (a: Approval) => (b: Approval) =>
-  a.nationalId === b.nationalId && a.role === b.role
+  a.nationalId === b.nationalId && a.role === b.role && a.row === b.row
 
 export const getApprovedBy = (answers: FormValue): Approval[] => {
   const approvedBy = getValueViaPath<Approval[]>(answers, APPROVED_BY)
@@ -75,7 +91,7 @@ export const getApprovedBy = (answers: FormValue): Approval[] => {
   // Applications that entered review before approvedBy was recorded
   return getReviewerSlots(answers)
     .filter(({ approved }) => approved)
-    .map(({ nationalId, role }) => ({ nationalId, role }))
+    .map(({ approved, ...approval }) => approval)
 }
 
 const withApprovedBy = (
@@ -86,22 +102,17 @@ const withApprovedBy = (
 
   // Keep the approved flags, which the UI and template API read, in sync with approvedBy
   REVIEWER_ANSWERS.forEach((answer) => {
-    const withFlag = (reviewer: Reviewer) => ({
+    const withFlag = (reviewer: Reviewer, row: number) => ({
       ...reviewer,
       approved:
         !!reviewer?.nationalId &&
-        approvedBy.some(
-          isSameApproval({
-            nationalId: reviewer.nationalId,
-            role: getRole(answer, reviewer),
-          }),
-        ),
+        approvedBy.some(isSameApproval(getApproval(answer, reviewer, row))),
     })
     const reviewers = getAnswerReviewers(answers, answer)
     if (answer.isList && reviewers.length > 0) {
       result[answer.key] = reviewers.map(withFlag)
     } else if (!answer.isList && reviewers[0]) {
-      result[answer.key] = withFlag(reviewers[0])
+      result[answer.key] = withFlag(reviewers[0], 0)
     }
   })
 
@@ -133,7 +144,7 @@ export const recordApproval = (
         slot.nationalId === nationalId &&
         !approvedBy.some(isSameApproval(slot)),
     )
-    .map(({ role }) => ({ nationalId: nationalId as string, role }))
+    .map(({ approved, ...approval }) => approval)
 
   return withApprovedBy(answers, [...approvedBy, ...newApprovals])
 }
@@ -143,4 +154,37 @@ export const isApprovedByAllReviewers = (answers: FormValue): boolean => {
   return getReviewerSlots(answers).every((slot) =>
     approvedBy.some(isSameApproval(slot)),
   )
+}
+
+// Answer saves do not go through the state machine, so a row's approval would count
+// again if the row could be restored or changed back. In review, rows can therefore
+// only be added or removed: they cannot be dropped or restored, and an approved row
+// keeps its person and role. Re-adding someone creates a new row that needs a new approval.
+export const isAllowedReviewerRowsChange = (
+  answers: FormValue,
+  key: string,
+  newValue: unknown,
+): boolean => {
+  const answer = REVIEWER_ANSWERS.find((a) => a.key === key && a.trackRow)
+  if (!answer) return true
+
+  const rows = getAnswerReviewers(answers, answer)
+  if (!Array.isArray(newValue) || newValue.length < rows.length) return false
+
+  const approvedBy = getApprovedBy(answers)
+  return rows.every((row, index) => {
+    const newRow = newValue[index] as Reviewer | undefined
+    if (isRemoved(row)) return isRemoved(newRow)
+    if (
+      !row?.nationalId ||
+      !approvedBy.some(isSameApproval(getApproval(answer, row, index)))
+    ) {
+      return true
+    }
+    return (
+      !!newRow &&
+      newRow.nationalId === row.nationalId &&
+      getRole(answer, newRow) === getRole(answer, row)
+    )
+  })
 }
