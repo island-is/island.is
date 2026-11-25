@@ -2,7 +2,11 @@ import { TokenGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../test'
-import { CaseExistsForUpdateGuard, CaseExistsGuard, CaseTypeGuard } from '../../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseExistsGuard,
+  CaseTypeGuard,
+} from '../../case'
 import { AppealVerdictExistsGuard } from '../guards/appealVerdictExists.guard'
 import { AppealVerdictOnCaseGuard } from '../guards/appealVerdictOnCase.guard'
 import { ExternalPoliceAppealVerdictExistsGuard } from '../guards/externalPoliceAppealVerdictExists.guard'
