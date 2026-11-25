@@ -520,7 +520,7 @@ describe('verdictAppealActions', () => {
       ).toBe(false)
     })
 
-    it('should refuse after the statement deadline has expired', () => {
+    it('should allow filing after the statement deadline has expired', () => {
       expect(
         canDefenderFileVerdictStatementOf(
           theCase({
@@ -540,7 +540,7 @@ describe('verdictAppealActions', () => {
           appealDefendant,
           user,
         ),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it('should refuse a completed appeal', () => {

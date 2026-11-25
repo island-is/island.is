@@ -375,10 +375,11 @@ export const getDefenceUserAppealConfirmedPartyIds = (
 
 /**
  * Party an appeal-confirmed advocate should file a verdict-appeal statement
- * for: the one with the earliest still-open statement deadline among their
- * Landsréttur-confirmed parties who have not already filed. Used only when no
- * party is named in the URL — an explicit party link is resolved separately
- * and must not fall back here.
+ * for: the one with the earliest statement deadline among their
+ * Landsréttur-confirmed parties who have not already filed (expired deadlines
+ * still count — late filing is allowed). Used only when no party is named in
+ * the URL — an explicit party link is resolved separately and must not fall
+ * back here.
  */
 export const getVerdictAppealStatementParty = (
   workingCase: Pick<
@@ -410,7 +411,7 @@ export const getVerdictAppealStatementParty = (
       party,
     )
 
-    if (!statementDeadline?.deadline || statementDeadline.isExpired) {
+    if (!statementDeadline?.deadline) {
       continue
     }
 

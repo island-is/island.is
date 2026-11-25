@@ -155,7 +155,8 @@ const canAccessVerdictAppealStatementPage = (
       party,
     )
 
-    if (!statementDeadline?.deadline || statementDeadline.isExpired) {
+    // An expired deadline still allows access — late filing is accepted.
+    if (!statementDeadline?.deadline) {
       return false
     }
 

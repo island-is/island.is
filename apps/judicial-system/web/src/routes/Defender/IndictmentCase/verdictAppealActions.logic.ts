@@ -132,8 +132,8 @@ export const isVerdictAppealOpen = (
   )
 
 // Whether this appeal-confirmed defender may upload a greinargerð for this
-// defendant on the open verdict appeal. Requires a statement deadline and that
-// the party has not already filed.
+// defendant on the open verdict appeal. Requires a statement deadline (expired
+// is fine — late filing is allowed) and that the party has not already filed.
 export const canDefenderFileVerdictStatementOf = (
   workingCase: WorkingCase,
   defendant: Defendant,
@@ -155,7 +155,7 @@ export const canDefenderFileVerdictStatementOf = (
     party,
   )
 
-  if (!statementDeadline?.deadline || statementDeadline.isExpired) {
+  if (!statementDeadline?.deadline) {
     return false
   }
 

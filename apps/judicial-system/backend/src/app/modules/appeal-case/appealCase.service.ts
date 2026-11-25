@@ -77,7 +77,6 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
-  isStatementDeadlineExpired,
   isVerdictAppealOver,
   resolveDefenceParties,
   standingVerdictAppellants,
@@ -1248,11 +1247,8 @@ export class AppealCaseService {
         )
       }
 
-      if (isStatementDeadlineExpired(new Date(statementDeadline))) {
-        throw new BadRequestException(
-          `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
-        )
-      }
+      // An expired deadline still allows filing — the court may accept a late
+      // statement; the deadline is informational for the portal, not a hard gate.
 
       if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
         throw new BadRequestException(

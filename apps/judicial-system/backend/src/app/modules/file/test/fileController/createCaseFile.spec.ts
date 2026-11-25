@@ -732,9 +732,18 @@ describe('FileController - Create case file', () => {
       key: `${caseId}/${uuid()}/statement.pdf`,
       size: 99,
     }
+    const caseFile = {
+      ...createCaseFile,
+      id: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      defendantId,
+    }
     let then: Then
 
     beforeEach(async () => {
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(caseFile)
+
       then = await createDefendantCaseFileAs(
         caseId,
         defendantId,
@@ -744,11 +753,9 @@ describe('FileController - Create case file', () => {
       )
     })
 
-    it('should reject the upload', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe(
-        `Cannot upload a verdict appeal statement when the statement deadline for case ${caseId} is missing or has expired`,
-      )
+    it('should allow the upload', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
     })
   })
 

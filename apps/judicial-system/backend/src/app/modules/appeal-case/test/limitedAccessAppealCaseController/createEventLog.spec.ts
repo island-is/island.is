@@ -367,6 +367,15 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
           appealDefenderNationalId: defenderNationalId,
         },
       ],
+      caseFiles: [
+        {
+          id: uuid(),
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          defendantId,
+        },
+      ],
     } as unknown as Case
     const expiredDeadline = new Date()
     expiredDeadline.setDate(expiredDeadline.getDate() - 2)
@@ -393,12 +402,25 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
       )
     })
 
-    it('should reject the request', () => {
-      expect(then.error).toBeDefined()
-      expect(then.error.message).toBe(
-        `The statement deadline for the party on appeal case ${appealCaseId} of case ${caseId} has expired`,
+    it('should allow the request', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
       )
-      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          userRole: UserRole.DEFENDER,
+          defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
+        { transaction },
+      )
     })
   })
 

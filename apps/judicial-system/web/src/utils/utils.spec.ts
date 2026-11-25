@@ -2249,7 +2249,7 @@ describe('getVerdictAppealStatementParty', () => {
     ).toEqual({ defendantId: 'later_id' })
   })
 
-  it('skips a party whose deadline has expired', () => {
+  it('still selects a party whose deadline has expired', () => {
     expect(
       getVerdictAppealStatementParty(
         {
@@ -2271,7 +2271,7 @@ describe('getVerdictAppealStatementParty', () => {
         } as WorkingCase,
         defender,
       ),
-    ).toEqual({ defendantId: 'later_id' })
+    ).toEqual({ defendantId: 'earlier_id' })
   })
 
   it('returns undefined when every confirmed party is ineligible', () => {
@@ -2293,6 +2293,10 @@ describe('getVerdictAppealStatementParty', () => {
               },
             ],
             appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'earlier_id',
+              },
               {
                 eventType: AppealEventType.APPEAL_STATEMENT_SENT,
                 defendantId: 'later_id',

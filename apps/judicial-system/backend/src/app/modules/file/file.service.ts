@@ -43,7 +43,6 @@ import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   findAppealCaseOfCaseFile,
-  isStatementDeadlineExpired,
   isVerdictAppealOver,
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
@@ -564,12 +563,11 @@ export class FileService {
         party,
       )
 
-      if (
-        !statementDeadline?.deadline ||
-        isStatementDeadlineExpired(statementDeadline.deadline)
-      ) {
+      // An expired deadline still allows upload — late filing is accepted; only
+      // a missing deadline blocks (the court has not opened the statement window).
+      if (!statementDeadline?.deadline) {
         throw new BadRequestException(
-          `Cannot upload a verdict appeal statement when the statement deadline for case ${theCase.id} is missing or has expired`,
+          `Cannot upload a verdict appeal statement when the statement deadline for case ${theCase.id} is missing`,
         )
       }
     }
