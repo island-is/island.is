@@ -73,7 +73,7 @@ jobs:
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+      DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') || contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature') }}
       IDS_FEATURE_DEPLOY: ${{ contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature') }}
 
     steps:

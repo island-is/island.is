@@ -8,13 +8,19 @@ export default async function main({ github, context, core }) {
     return 1
   }
 
-  const label = process.env.LABEL
+  // LABEL may be a comma separated list. The check passes if any of them is present.
+  const wantedLabels = (process.env.LABEL ?? '')
+    .split(',')
+    .map((label) => label.trim())
+    .filter(Boolean)
 
   if (Number.isNaN(prNumber)) {
     process.exit(0)
   }
 
-  console.log(`Checking PR #${prNumber} for label: ${label}`)
+  console.log(
+    `Checking PR #${prNumber} for label: ${wantedLabels.join(' or ')}`,
+  )
 
   try {
     const { data: pullRequest } = await github.rest.pulls.get({
@@ -26,13 +32,17 @@ export default async function main({ github, context, core }) {
     const labels = pullRequest.labels.map((label) => label.name)
     console.log(`PR labels: ${labels.join(', ')}`)
 
-    const hasLabel = labels.includes(label)
-    console.log(`Is label "${label}" present: ${hasLabel}`)
+    const hasLabel = wantedLabels.some((wanted) => labels.includes(wanted))
+    console.log(`Is any of "${wantedLabels.join(', ')}" present: ${hasLabel}`)
 
     core.setOutput('has_label', hasLabel.toString())
 
     if (!hasLabel) {
-      core.warning(`Label "${label}" was not found - cancelling workflow`)
+      core.warning(
+        `None of the labels "${wantedLabels.join(
+          ', ',
+        )}" was found - cancelling workflow`,
+      )
       // This special command tells GitHub Actions to cancel the workflow
       console.log('::stop-commands::cancel-workflow')
       process.exit(1) // Exit with error to stop this job

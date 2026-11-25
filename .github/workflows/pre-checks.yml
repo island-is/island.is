@@ -138,19 +138,33 @@ jobs:
             exit 0
           fi
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            # The two labels are alternatives: ids-deploy-feature already deploys the
+            # feature, with its own identity-server stack. Having both is ambiguous.
+            hasDeployLabel=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            hasIdsLabel=${{ contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature') }}
+            if [[ "$hasDeployLabel" == "true" && "$hasIdsLabel" == "true" ]]; then
+              message="This PR has both the deploy-feature and ids-deploy-feature labels. Use only one: deploy-feature for a feature on the dev identity-server, or ids-deploy-feature for a feature with its own identity-server stack."
+              echo "::error title=Conflicting feature deployment labels::$message"
+              echo "### ❌ Conflicting feature deployment labels" >> "$GITHUB_STEP_SUMMARY"
+              echo "$message" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+
+            # Either label starts a feature deployment. ids-deploy-feature also
+            # adds the feature's own identity-server stack (see push.yml).
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
-              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )"
+              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" || "${{ github.event.label.name }}" == "ids-deploy-feature" ]] && echo true || echo false )"
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
-              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') || contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature') }}
             fi
             if [[ "$deployFeature" == "true" ]]; then
-              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "Pull request contains a feature deployment label, continuing with feature deployment"
               echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
               exit 0
             fi
-            echo "Pull request does not have deploy-feature label, exiting..."
+            echo "Pull request does not have the deploy-feature or ids-deploy-feature label, exiting..."
             exit 0
           fi
           for pre_pattern in ${PRE_RELEASE_PATTERN//,/ }

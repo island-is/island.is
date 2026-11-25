@@ -35,7 +35,7 @@ env:
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
-  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') || contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature') }}
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -335,7 +335,7 @@ jobs:
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 👉 Remove the \`deploy-feature\` or \`ids-deploy-feature\` labels if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
           exit 1
 
       - name: Collect

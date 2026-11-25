@@ -8,8 +8,8 @@ inputs:
     description: 'Working directory'
   label:
     required: false
-    default: 'deploy-feature'
-    description: 'The label that has to be set, will otherwise trigger workflow cancellation'
+    default: 'deploy-feature,ids-deploy-feature'
+    description: 'Comma separated labels. At least one has to be set, otherwise the workflow is cancelled'
   repository:
     required: false
     default: ${{ github.repository }}
