@@ -1089,7 +1089,7 @@ describe('NotificationsWorkerService', () => {
       // mockImplementation that may persist on the original jest.fn() after mockRestore()
       jest
         .spyOn(userProfileApi, 'userProfileControllerGetActorProfile')
-        .mockImplementation(({ xParamToNationalId }) => {
+        .mockImplementation(({ xParamToNationalId, include }) => {
           const profile = userProfiles.find(
             (u) => u.nationalId === xParamToNationalId,
           )
@@ -1100,8 +1100,11 @@ describe('NotificationsWorkerService', () => {
             emailVerified: profile?.emailVerified ?? false,
             documentNotifications: profile?.documentNotifications ?? false,
             // This override persists for later tests, so it must keep
-            // honouring the flag the actor profile preference tests toggle
+            // honouring what the actor profile preference tests toggle
             onlyActionablePriorityNotifications: mockActorOnlyActionable,
+            ...(include?.includes(UserProfileInclude.NotificationSettings)
+              ? { blockedCategories: mockActorBlockedCategories }
+              : {}),
           } as ActorProfileDto)
         })
 

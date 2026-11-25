@@ -15,7 +15,7 @@ import type {
   InferCreationAttributes,
 } from 'sequelize'
 import { ActorProfile } from './actor-profile.model'
-import { CategoryLabel } from './blockedNotification.model'
+import type { CategoryLabel } from './blockedNotification.model'
 
 @Table({
   tableName: 'actor_blocked_notifications',
