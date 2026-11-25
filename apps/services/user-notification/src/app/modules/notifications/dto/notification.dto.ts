@@ -159,6 +159,17 @@ export class RenderedNotificationDto {
   @IsIn(HNIPP_TEMPLATE_SOURCE_TYPES)
   sourceType!: HnippTemplateSourceType
 
+  @ApiPropertyOptional({
+    type: Date,
+    nullable: true,
+    example: '2026-12-01T16:00:00.000Z',
+    description:
+      'Deadline related to the notification, for display only. Returned in UTC; display in Icelandic time (Atlantic/Reykjavik, UTC+0 all year).',
+  })
+  @IsOptional()
+  @IsDate()
+  deadline?: Date | null
+
   @ApiProperty({
     example: 'heilbrigdismal',
     description: 'Category key, null for the default category (almennt)',

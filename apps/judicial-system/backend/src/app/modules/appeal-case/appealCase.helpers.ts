@@ -35,8 +35,10 @@ import {
 // has saved on it and whether or not it has confirmed it: the outcome is
 // withheld, a confirmed appeal reads as APPEALED under advisement whatever
 // status the court records, and before confirmation a recorded status of
-// completed reads as under advisement. Once completed, nothing is withheld or
-// rewritten. The court's ruling document is not part of this: it stays with
+// completed reads as under advisement. Statement deadlines are kept: an appeal
+// under advisement still carries the deadlines that ran out, and dropping them
+// at confirmation would tell everyone the court has concluded. Once completed,
+// nothing is withheld or rewritten. The court's ruling document is not part of this: it stays with
 // the court in every state (canUserAccessCaseFileCategory).
 export const getVerdictAppealOutcomeOverride = (
   verdictAppealCase: AppealCase,
@@ -300,8 +302,13 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 
 // A statement deadline is a day, stored as the midnight that day starts on,
 // and the party has the whole of it: the deadline runs until the day is over.
+export const isStatementDeadlineExpired = (
+  deadline: Date,
+  now: Date = new Date(Date.now()),
+): boolean => now.getTime() >= deadline.getTime() + DAY_IN_MILLISECONDS
+
 const isStatementDeadlineRunning = (deadline: Date, now: Date): boolean =>
-  now.getTime() < deadline.getTime() + DAY_IN_MILLISECONDS
+  !isStatementDeadlineExpired(deadline, now)
 
 export const verdictAppealProgress = (
   appealCase: Pick<

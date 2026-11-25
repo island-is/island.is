@@ -98,7 +98,7 @@ const VerdictAppealOverview = () => {
               defendant={defendant}
             />
           ))}
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment appealCase={verdictAppealCase ?? null} />
           {/* Both sets of operative words. This court's own is absent until
               the step that writes one is built. */}
           <VerdictAppealConclusions />

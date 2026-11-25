@@ -16,6 +16,7 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
+import type { Props } from './InfoCardClosedIndictment'
 import InfoCardClosedIndictment from './InfoCardClosedIndictment'
 
 const DEFENDER_NATIONAL_ID = '1234567890'
@@ -35,12 +36,13 @@ const renderClosedIndictment = (
   theCase: WorkingCase,
   userRole: UserRole = UserRole.PROSECUTOR,
   nationalId?: string,
+  props: Props = {},
 ) =>
   render(
     <IntlProviderWrapper>
       <UserContextWrapper userRole={userRole} nationalId={nationalId}>
         <FormContextWrapper theCase={theCase}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment {...props} />
         </FormContextWrapper>
       </UserContextWrapper>
     </IntlProviderWrapper>,
@@ -403,6 +405,58 @@ describe('InfoCardClosedIndictment', () => {
 
         await screen.findByText('L-300/2026')
         expect(screen.queryByText('Lyktir')).toBeNull()
+      })
+
+      // A page that is only about the verdict appeal hands the card that
+      // appeal, so a URL naming no appeal does not fall back to the ruling
+      // appeal on the same case.
+      describe('given the appeal directly', () => {
+        const caseWithRulingAndVerdictAppeal = () =>
+          ({
+            ...caseWithAppeal(verdictAppeal),
+            appealCase: caseLevelAppeal,
+          } as unknown as WorkingCase)
+
+        it('shows the given appeal when the query string names none', async () => {
+          const theCase = caseWithRulingAndVerdictAppeal()
+
+          renderClosedIndictment(
+            theCase,
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            undefined,
+            { appealCase: theCase.verdictAppealCase },
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.queryByText('L-100/2026')).toBeNull()
+          expect(screen.queryByText('Case Level Assistant')).toBeNull()
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+        })
+
+        it('shows no section when given no appeal', async () => {
+          renderClosedIndictment(
+            caseWithRulingAndVerdictAppeal(),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            undefined,
+            { appealCase: null },
+          )
+
+          await screen.findByText('007-2021-202000')
+          expect(screen.queryByText('L-100/2026')).toBeNull()
+          expect(screen.queryByText('L-300/2026')).toBeNull()
+        })
+
+        it('falls back to the case level appeal without it', async () => {
+          renderClosedIndictment(
+            caseWithRulingAndVerdictAppeal(),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+          )
+
+          await screen.findByText('L-100/2026')
+          expect(screen.queryByText('L-300/2026')).toBeNull()
+          expect(screen.queryByText('Lyktir')).toBeNull()
+        })
       })
 
       it('shows no outcome for an appeal of a ruling', async () => {

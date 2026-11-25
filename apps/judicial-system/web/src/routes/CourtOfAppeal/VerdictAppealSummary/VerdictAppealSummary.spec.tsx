@@ -114,6 +114,10 @@ jest.mock(
   }),
 )
 
+// The appeal the URL names. A legacy link names none, which is when the
+// shared resolver answers with the case level ruling appeal.
+let mockAppealCaseIdQuery: string | undefined
+
 // The footer's back button goes through the default router export, the page
 // itself through the hook, so both are mocked onto the same push.
 jest.mock('next/router', () => ({
@@ -122,7 +126,7 @@ jest.mock('next/router', () => ({
   useRouter() {
     return {
       pathname: '',
-      query: { appealCaseId: 'verdict-appeal' },
+      query: { appealCaseId: mockAppealCaseIdQuery },
       push: mockPush,
     }
   },
@@ -312,6 +316,7 @@ describe('VerdictAppealSummary', () => {
     mockGetFileUrl.mockResolvedValue('https://files.dummy.dd/domur.pdf')
     mockToastError.mockReset()
     mockFileIsGone = false
+    mockAppealCaseIdQuery = 'verdict-appeal'
   })
 
   it('shows the outcome, both conclusions and the document', () => {
@@ -679,6 +684,43 @@ describe('VerdictAppealSummary', () => {
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
   })
+
+  // A case can carry a ruling appeal as well. The info card describes the
+  // verdict appeal like the rest of the page, whatever the URL names.
+  it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+    'shows the %s verdict appeal on the info card when the url names no appeal',
+    (appealState) => {
+      mockAppealCaseIdQuery = undefined
+
+      renderPage({
+        ...withAppeal({ appealState }),
+        appealCase: {
+          id: 'ruling-appeal',
+          appealType: AppealCaseType.RULING,
+          appealState: AppealCaseState.COMPLETED,
+          appealCaseNumber: '100/2026',
+          appealAssistant: { id: 'assistant', name: 'Aðstoðarmaður úrskurðar' },
+        },
+      } as unknown as WorkingCase)
+
+      const appealNumberItem = screen.getByRole('heading', {
+        name: 'Málsnúmer Landsréttar',
+      }).parentElement
+
+      if (!appealNumberItem) {
+        throw new Error('The appeal number has no item on the info card')
+      }
+
+      expect(within(appealNumberItem).getByText('555/2026')).toBeInTheDocument()
+      expect(screen.queryByText('100/2026')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Aðstoðarmaður úrskurðar'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { name: 'Lyktir' }),
+      ).toBeInTheDocument()
+    },
+  )
 
   it('shows no info card before the appeal is confirmed', () => {
     renderPage()

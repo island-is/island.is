@@ -40,7 +40,9 @@ export const FieldSettingsFragment = gql`
     familyType
     showBiologicalChildren
     showChildrenInCustody
-    hasDescription
+    subLabel {
+      ...LanguageFields
+    }
     isAddressRequired
     isPhoneRequired
     isEmailRequired

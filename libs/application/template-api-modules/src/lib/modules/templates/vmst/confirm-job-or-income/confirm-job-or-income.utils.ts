@@ -197,6 +197,20 @@ const buildPensionPayments = (
     { toRow: toPensionRow },
   )
 
+// The request only carries creates, updates and delete markers, so an empty
+// request means the user did not add, edit or remove anything.
+export const hasIncomeChanges = (
+  request: GaldurExternalDomainRequestsIncomeCreateIncomesRequest,
+): boolean =>
+  [
+    request.irregularJobs,
+    request.partTimeJobs,
+    request.contractorJobs,
+    request.capitalIncomePayments,
+    request.trPayments,
+    request.pensionPayments,
+  ].some((rows) => (rows?.length ?? 0) > 0)
+
 export const buildCreateIncomesRequest = (
   answers: FormValue,
   externalData: ExternalData,

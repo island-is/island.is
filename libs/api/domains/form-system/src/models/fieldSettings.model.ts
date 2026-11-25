@@ -100,8 +100,8 @@ export class FieldSettings {
   @Field(() => Boolean, { nullable: true })
   showChildrenInCustody?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  hasDescription?: boolean
+  @Field(() => LanguageType, { nullable: true })
+  subLabel?: LanguageType
 
   @Field(() => Boolean, { nullable: true })
   isAddressRequired?: boolean

@@ -2,6 +2,32 @@
 
 This library was generated with [Nx](https://nx.dev).
 
+## Field content
+
+Fields store localized `informationText` above their inputs and localized
+`tooltip` help text. `MESSAGE` uses `informationText` as its body instead of
+rendering a second information block. Applicant fields do not display
+`informationText` or `tooltip`, including previously saved tooltip content.
+Large checkboxes store their localized
+sublabel in `fieldSettings.subLabel`. Content is displayed only when the active
+language contains non-whitespace text; no `hasDescription` flag is required.
+
+Information text above inputs and message bodies support `<strong>` and `<em>`,
+including nested formatting, while preserving line breaks. Other HTML tags and
+all attributes are removed before rendering.
+
+The editor preserves the `isLarge` checkbox and prevents disabling it while a
+sublabel exists in either language. Information and tooltip editors are available
+for their supported field types. Preview and live applications use the same
+content rendering.
+
+## Number validation
+
+Number fields validate their configured value and digit-count limits. In live
+applications, `allowProceedOnValidationFail` permits forward navigation despite
+these errors, as it does for other inputs. Validation still runs, and the parties
+section always requires valid input.
+
 ## Family fields
 
 The FAMILY / CHILD dropdown uses `showBiologicalChildren` and
@@ -26,6 +52,11 @@ child in both lists. The normal child-source settings filter these fixtures, so
 enabling both shows three unique children and disabling both shows none.
 Preview mock lists ignore cached real children and are not written to the field
 configuration.
+
+Bank account fields do not request or prefill profile bank information in
+preview, even when it is cached. When `fetchBankAccountFromMyPages` is enabled
+(the default), they prefill the mock bank account instead. Saved values and
+manual edits are preserved.
 
 ## Running unit tests
 

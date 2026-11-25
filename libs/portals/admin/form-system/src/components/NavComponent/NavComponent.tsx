@@ -56,7 +56,7 @@ export const NavComponent = ({
     field.fieldType === FieldTypesEnum.MESSAGE &&
     !data.name?.is?.trim()
       ? HtmlParser(
-          sanitizeHtml(field.description?.is ?? '', {
+          sanitizeHtml(field.informationText?.is ?? '', {
             allowedTags: [],
             allowedAttributes: {},
           }),

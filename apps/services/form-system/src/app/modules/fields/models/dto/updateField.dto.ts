@@ -21,7 +21,13 @@ export class UpdateFieldDto {
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
-  description?: LanguageType
+  informationText?: LanguageType
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  tooltip?: LanguageType
 
   @IsOptional()
   @ApiPropertyOptional({ type: Boolean })
