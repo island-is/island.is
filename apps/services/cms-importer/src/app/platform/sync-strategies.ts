@@ -21,7 +21,7 @@ export interface SyncCreateOnlyConfig<Item, Link> {
   contentType: ContentTypeOptions
   logLabel: string
   getItems: () => Promise<Item[]>
-  getExistingKeys: () => Promise<Set<string>>
+  getExistingKeys: (items: Item[]) => Promise<Set<string>>
   keyOf: (item: Item) => string
   resolveLink: (item: Item, publish: boolean) => Promise<Link | undefined>
   mapEntry: (item: Item, link: Link) => EntryCreationDto | undefined
@@ -49,7 +49,7 @@ export const syncCreateOnly = async <Item, Link>({
     return
   }
 
-  const existingKeys = await getExistingKeys()
+  const existingKeys = await getExistingKeys(items)
   const seen = new Set<string>()
 
   const newItems = items
