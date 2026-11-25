@@ -61,6 +61,9 @@ export class ApplicationJson {
   @Field(() => String)
   slug!: string
 
+  @Field(() => LanguageType, { nullable: true })
+  formName?: LanguageType
+
   @Field(() => Boolean)
   isTest!: boolean
 

@@ -74,7 +74,7 @@ export const FieldContent = ({
               <ToggleSwitchCheckbox
                 className={styles.identifierToggle}
                 name="enableIdentifierEditing"
-                label="Gera breytingu á identifier"
+                label="Gera breytingu á identifier (má vera textastrengur)"
                 checked={identifierEditingEnabled}
                 disabled={control.isReadOnly}
                 onChange={setIdentifierEditingEnabled}
