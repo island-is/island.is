@@ -172,7 +172,11 @@ export const authStore = create<AuthStore>((set, get) => ({
           name: 'TimeoutError',
         })
       }
-      throw error
+      // No answer came, e.g. without a connection.
+      throw Object.assign(new Error("Couldn't reach userinfo"), {
+        name: 'NetworkError',
+        cause: error,
+      })
     } finally {
       clearTimeout(timer)
     }

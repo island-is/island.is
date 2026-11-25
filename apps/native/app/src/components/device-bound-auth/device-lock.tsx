@@ -78,7 +78,10 @@ interface DeviceLockProps {
   status?: DeviceLockStatus
   /** Shown in place of the biometrics error, as the more recent one. */
   electronicIdError?: ElectronicIdError
-  /** No network: said in place of the other messages, as the likely cause. */
+  /**
+   * No network, or the last try didn't get through: said in place of the
+   * other messages, as the likely cause.
+   */
   isOffline?: boolean
   onBiometricsPress(): void
   onElectronicIdPress(): void

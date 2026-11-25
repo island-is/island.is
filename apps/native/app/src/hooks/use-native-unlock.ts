@@ -9,6 +9,7 @@ import {
   getIasErrorCode,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
+  isIasUnreachable,
   isTooManyElectronicIdRequests,
 } from '@/lib/ias'
 import { getSystemIntl } from '@/components/providers/locale-provider'
@@ -46,6 +47,9 @@ export function useNativeUnlock({
   const [status, setStatus] = useState<NativeUnlockStatus>('idle')
   const [electronicIdError, setElectronicIdError] =
     useState<ElectronicIdError>()
+  // The phone can be on a network that doesn't get through, e.g. a wifi
+  // without internet: only the request knows.
+  const [isUnreachable, setIsUnreachable] = useState(false)
   // Shown by the lock in place of itself: a screen pushed over the lock,
   // itself a modal, would end up behind it.
   const electronicId = useElectronicIdUnlock('unlock', { inline: true })
@@ -104,6 +108,7 @@ export function useNativeUnlock({
     isUnlockingWithBiometrics.current = true
     const isCurrent = watchSession()
     setElectronicIdError(undefined)
+    setIsUnreachable(false)
     setStatus('prompting')
     try {
       const tokens = await ias.unlockWithBiometrics({
@@ -150,6 +155,11 @@ export function useNativeUnlock({
         }
         return
       }
+      if (isIasUnreachable(error)) {
+        setIsUnreachable(true)
+        setStatus('idle')
+        return
+      }
       // IAS refused the key, or anything else: electronic ID still works.
       console.warn('Biometric unlock failed', error)
       setStatus('failed')
@@ -166,6 +176,7 @@ export function useNativeUnlock({
     }
     const isCurrent = watchSession()
     setElectronicIdError(undefined)
+    setIsUnreachable(false)
     setStatus('electronicId')
     try {
       const tokens = await electronicId.unlock()
@@ -189,7 +200,9 @@ export function useNativeUnlock({
         onAppLoginGone()
         return
       }
-      if (!isCancelled(error)) {
+      if (isIasUnreachable(error)) {
+        setIsUnreachable(true)
+      } else if (!isCancelled(error)) {
         console.warn('Electronic ID unlock failed', error)
         setElectronicIdError(
           isTooManyElectronicIdRequests(error) ? 'tooManyRequests' : 'failed',
@@ -203,6 +216,8 @@ export function useNativeUnlock({
     status,
     /** Why the last electronic ID attempt failed; cleared on the next try. */
     electronicIdError,
+    /** The last try didn't reach IAS; cleared on the next try. */
+    isUnreachable,
     isBiometricsEnabled,
     /** Shown while electronic ID waits; undefined until IAS sends it. */
     verificationCode: electronicId.verificationCode,

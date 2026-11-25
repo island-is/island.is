@@ -12,6 +12,7 @@ import {
   isAppLoginRemoved,
   isAttestationChallengeUnknown,
   isBiometricKeyInvalidated,
+  isIasUnreachable,
 } from './errors'
 import { attestationPop, deviceKeyAssertion, dpopProof } from './jwt'
 import { sleep } from './sleep'
@@ -93,8 +94,9 @@ const APP_ATTEST_RETRY_DELAYS_MS = [2_000, 4_000]
 const REQUEST_TIMEOUT_MS = 30_000
 
 /**
- * fetch, failing with a TimeoutError when IAS doesn't answer in time. The
- * caller's own `signal` still cancels it, as an AbortError.
+ * fetch, failing with a TimeoutError when IAS doesn't answer in time, and a
+ * NetworkError when the request doesn't reach it. The caller's own `signal`
+ * still cancels it, as an AbortError.
  */
 async function fetchWithTimeout(
   url: string,
@@ -124,17 +126,24 @@ async function fetchWithTimeout(
         { name: 'TimeoutError' },
       )
     }
-    throw error
+    if (signal?.aborted) {
+      throw error
+    }
+    // An answer, even an error status, resolves: fetch rejects only when
+    // none came, e.g. without a connection.
+    throw Object.assign(
+      new Error(
+        `Couldn't reach IAS (${
+          error instanceof Error ? error.message : String(error)
+        }): ${url}`,
+      ),
+      { name: 'NetworkError', cause: error },
+    )
   } finally {
     clearTimeout(timer)
     signal?.removeEventListener('abort', abort)
   }
 }
-
-/** The request didn't reach IAS, or got no answer in time. */
-const isUnreachable = (error: unknown) =>
-  (error instanceof TypeError && /network request/i.test(error.message)) ||
-  (error instanceof Error && error.name === 'TimeoutError')
 
 const encodeForm = (values: Record<string, string>) =>
   Object.entries(values)
@@ -637,7 +646,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
           )
         } catch (error) {
           const code = getIasErrorCode(error)
-          if (isUnreachable(error)) {
+          if (isIasUnreachable(error)) {
             unreachable = error
             continue
           }

@@ -71,7 +71,8 @@ export default function LoginIdentifierScreen() {
           ? intl.formatMessage({ id: loginErrorTitleId[error] })
           : undefined
       }
-      isOffline={isOffline}
+      // A request that didn't get through, as when there's no network.
+      isOffline={isOffline || error === 'noConnection'}
     />
   )
 }

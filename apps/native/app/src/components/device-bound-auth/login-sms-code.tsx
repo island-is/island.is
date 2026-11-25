@@ -37,6 +37,8 @@ interface LoginSmsCodeProps {
   error?: string
   /** Bold, above the error */
   errorTitle?: string
+  /** The last try didn't get through: said in place of the error. */
+  isOffline?: boolean
 }
 
 /**
@@ -53,6 +55,7 @@ export function LoginSmsCode({
   loading,
   error,
   errorTitle,
+  isOffline,
 }: LoginSmsCodeProps) {
   const intl = useIntl()
 
@@ -89,14 +92,26 @@ export function LoginSmsCode({
             autoFocus
             editable={!loading}
           />
-          {error && (
+          {isOffline ? (
             <Alert
-              type="error"
+              type="warning"
               size="small"
               hasBorder
-              title={errorTitle}
-              message={error}
+              title={intl.formatMessage({ id: 'offline.title' })}
+              message={intl.formatMessage({
+                id: 'offline.loginMessage',
+              })}
             />
+          ) : (
+            error && (
+              <Alert
+                type="error"
+                size="small"
+                hasBorder
+                title={errorTitle}
+                message={error}
+              />
+            )
           )}
           <Button
             title={intl.formatMessage({ id: 'login.smsCode.submit' })}

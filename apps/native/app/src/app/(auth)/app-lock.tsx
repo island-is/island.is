@@ -369,7 +369,7 @@ function NativeLock({
           : 'idle'
       }
       electronicIdError={unlock.electronicIdError}
-      isOffline={isOffline}
+      isOffline={isOffline || unlock.isUnreachable}
       onBiometricsPress={unlock.unlockWithBiometrics}
       onElectronicIdPress={unlock.unlockWithElectronicId}
       onLogoutPress={onLogoutPress}

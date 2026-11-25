@@ -182,6 +182,17 @@ export function isTooManyElectronicIdRequests(error: unknown) {
 }
 
 /**
+ * The request didn't reach IAS, or got no answer in time: no connection, or
+ * one where nothing gets through, e.g. a wifi without internet.
+ */
+export function isIasUnreachable(error: unknown) {
+  return (
+    error instanceof Error &&
+    (error.name === 'NetworkError' || error.name === 'TimeoutError')
+  )
+}
+
+/**
  * The enrolled biometrics changed, so the biometric key can never sign
  * again. The client deletes it: biometrics are off until enabled again.
  */

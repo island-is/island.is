@@ -90,6 +90,7 @@ export default function LoginSmsCodeScreen() {
           ? intl.formatMessage({ id: loginErrorTitleId[failure.error] })
           : undefined
       }
+      isOffline={failure?.error === 'noConnection'}
     />
   )
 }
