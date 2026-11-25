@@ -58,7 +58,14 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  description!: LanguageType
+  informationText!: LanguageType
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: false,
+    defaultValue: () => new LanguageType(),
+  })
+  tooltip!: LanguageType
 
   @Column({
     type: DataType.BOOLEAN,

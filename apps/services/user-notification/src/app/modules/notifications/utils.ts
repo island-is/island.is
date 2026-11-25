@@ -65,6 +65,16 @@ export const toSourceType = (value?: string | null): HnippTemplateSourceType =>
   HNIPP_TEMPLATE_SOURCE_TYPES.find((type) => type === value) ??
   DEFAULT_HNIPP_TEMPLATE_SOURCE_TYPE
 
+const UTC_OFFSET_SUFFIX = /(Z|[+-]\d{2}(:?\d{2})?)$/i
+
+/**
+ * Normalizes a validated ISO 8601 deadline to a UTC ISO string. A value
+ * without a UTC offset is Icelandic time, which is UTC+0 all year (no
+ * daylight saving time), so it is never read in the server's local time zone.
+ */
+export const toDeadlineIso = (value: string): string =>
+  new Date(UTC_OFFSET_SUFFIX.test(value) ? value : `${value}Z`).toISOString()
+
 /**
  * Slugifies an Icelandic HnippCategory label into a category key part,
  * e.g. 'Heilbrigðismál & Æfingar' -> 'heilbrigdismal-og-aefingar'.

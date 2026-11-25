@@ -1256,10 +1256,35 @@ export const m = defineMessages({
     defaultMessage: 'Hámarksfjöldi stafa',
     description: 'Maximum text length',
   },
-  hasDescription: {
-    id: 'form.system:has-description',
-    defaultMessage: 'Hefur lýsingu',
-    description: 'Has description',
+  informationText: {
+    id: 'form.system:information-text',
+    defaultMessage: 'Upplýsingatexti',
+    description: 'Information displayed above a field, or the message body',
+  },
+  informationTextEnglish: {
+    id: 'form.system:information-text-english',
+    defaultMessage: 'Upplýsingatexti á ensku',
+    description: 'Information text in English',
+  },
+  tooltip: {
+    id: 'form.system:tooltip',
+    defaultMessage: 'Hjálpartexti',
+    description: 'Field tooltip text',
+  },
+  tooltipEnglish: {
+    id: 'form.system:tooltip-english',
+    defaultMessage: 'Hjálpartexti á ensku',
+    description: 'Field tooltip text in English',
+  },
+  subLabel: {
+    id: 'form.system:sub-label',
+    defaultMessage: 'Undirtexti',
+    description: 'Checkbox sublabel',
+  },
+  subLabelEnglish: {
+    id: 'form.system:sub-label-english',
+    defaultMessage: 'Undirtexti á ensku',
+    description: 'Checkbox sublabel in English',
   },
   inProgress: {
     id: 'form.system:in-progress',

@@ -231,6 +231,13 @@ const renderFooter = (
   isHidden = false,
   pendingUploads = 0,
   initialValue = '12',
+  {
+    allowProceedOnValidationFail = true,
+    sectionType = SectionTypes.INPUT,
+  }: {
+    allowProceedOnValidationFail?: boolean
+    sectionType?: string
+  } = {},
 ) => {
   const inputScreen: FormSystemScreen = {
     id: 'screen',
@@ -250,7 +257,7 @@ const renderFooter = (
   }
   const section = {
     id: 'section',
-    sectionType: SectionTypes.INPUT,
+    sectionType,
     isHidden: false,
     screens: [inputScreen],
   }
@@ -264,7 +271,7 @@ const renderFooter = (
       { id: 'completed', sectionType: SectionTypes.COMPLETED, isHidden: false },
     ],
     screens: [inputScreen],
-    application: { id: 'application', allowProceedOnValidationFail: true },
+    application: { id: 'application', allowProceedOnValidationFail },
   }
   let latestState = initialState
   let guard = initialState
@@ -353,8 +360,10 @@ it('re-enables both navigation directions only after the last upload finishes', 
   )
 })
 
-it('blocks invalid number fields despite validation bypass and continues after correction', async () => {
-  renderFooter()
+it('blocks invalid number fields when validation bypass is disabled and continues after correction', async () => {
+  renderFooter('NUMBERBOX', false, 0, '12', {
+    allowProceedOnValidationFail: false,
+  })
   fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
   await waitFor(() =>
     expect(dispatch).toHaveBeenCalledWith({
@@ -376,17 +385,38 @@ it('blocks invalid number fields despite validation bypass and continues after c
 
 it.each([
   { fieldType: 'TEXTBOX', isHidden: false },
+  { fieldType: 'NUMBERBOX', isHidden: false },
   { fieldType: 'NUMBERBOX', isHidden: true },
 ])(
   'preserves validation bypass for $fieldType with hidden=$isHidden',
   async ({ fieldType, isHidden }) => {
-    renderFooter(fieldType, isHidden)
+    const { getState, validator } = renderFooter(fieldType, isHidden)
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() =>
       expect(dispatch).toHaveBeenCalledWith({ type: 'INCREMENT' }),
     )
+    expect(validator).toHaveBeenCalled()
+    expect(getState().isValid).toBe(false)
+    expect(getState().currentSection.index).toBe(2)
   },
 )
+
+it('still blocks invalid number fields in the parties section when validation bypass is enabled', async () => {
+  renderFooter('NUMBERBOX', false, 0, '12', {
+    sectionType: SectionTypes.PARTIES,
+  })
+
+  fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  await waitFor(() =>
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_VALIDITY',
+      payload: { isValid: false },
+    }),
+  )
+
+  expect(mutate).not.toHaveBeenCalled()
+  expect(dispatch).not.toHaveBeenCalledWith({ type: 'INCREMENT' })
+})
 
 it.each([true, false])(
   'checks premises eligibility only after confirmation and proceeds when successful=%s',

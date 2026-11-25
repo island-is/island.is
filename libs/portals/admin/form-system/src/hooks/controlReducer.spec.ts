@@ -26,6 +26,73 @@ const createState = (sections: FormSystemSection[] = []): ControlState => ({
   isReadOnly: false,
 })
 
+describe('CHANGE_FIELD_TEXT', () => {
+  const field: FormSystemField = {
+    id: 'field',
+    name: { is: 'Field' },
+    screenId: 'screen',
+    isRequired: false,
+    isPartOfMultiset: false,
+    informationText: { is: 'Instructions', en: 'English instructions' },
+    tooltip: { is: 'Help', en: 'English help' },
+    fieldSettings: {
+      isLarge: true,
+      subLabel: { is: 'Sublabel', en: 'English sublabel' },
+    },
+  }
+
+  it.each(['informationText', 'tooltip', 'subLabel'] as const)(
+    'updates localized %s in both the active field and form without losing other content',
+    (property) => {
+      const state = createState()
+      state.activeItem = { type: 'Field', data: field }
+      state.form.fields = [field]
+
+      const result = controlReducer(state, {
+        type: 'CHANGE_FIELD_TEXT',
+        payload: { property, lang: 'is', newValue: 'Updated' },
+      })
+      const updated = result.form.fields?.[0]
+      const text =
+        property === 'subLabel'
+          ? updated?.fieldSettings?.subLabel
+          : updated?.[property]
+      expect(text?.is).toBe('Updated')
+      expect(text?.en).toBe(
+        property === 'subLabel'
+          ? field.fieldSettings?.subLabel?.en
+          : field[property]?.en,
+      )
+      expect(result.activeItem.data).toBe(updated)
+      expect(updated?.fieldSettings?.isLarge).toBe(true)
+      expect(field.informationText?.is).toBe('Instructions')
+      expect(field.tooltip?.is).toBe('Help')
+      expect(field.fieldSettings?.subLabel?.is).toBe('Sublabel')
+    },
+  )
+
+  it('updates applicant content without replacing the selected section', () => {
+    const state = createState()
+    state.activeItem = { type: 'Section', data: { id: 'parties' } }
+    state.form.fields = [field]
+
+    const result = controlReducer(state, {
+      type: 'CHANGE_FIELD_TEXT',
+      payload: {
+        property: 'informationText',
+        fieldId: field.id,
+        lang: 'is',
+        newValue: 'Applicant instructions',
+      },
+    })
+
+    expect(result.activeItem).toBe(state.activeItem)
+    expect(result.form.fields?.[0]?.informationText?.is).toBe(
+      'Applicant instructions',
+    )
+  })
+})
+
 describe('ADD_SECTION', () => {
   it('inserts before summary and preserves the surrounding sections', () => {
     const state = createState([
