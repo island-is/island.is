@@ -29,6 +29,7 @@ import {
   CaseFileRepositoryService,
   CivilClaimant,
   CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
 } from '../repository'
 import { InternalUpdateCivilClaimantDto } from './dto/internalUpdateCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
@@ -239,9 +240,7 @@ export class CivilClaimantService {
     update: InternalUpdateCivilClaimantDto,
     transaction: Transaction,
   ): Promise<CivilClaimant> {
-    let effectiveUpdate: InternalUpdateCivilClaimantDto & {
-      isAppealSpokespersonConfirmed?: boolean
-    } = { ...update }
+    let effectiveUpdate: UpdateCivilClaimant = { ...update }
 
     if (
       civilClaimant.isAppealSpokespersonConfirmed &&
