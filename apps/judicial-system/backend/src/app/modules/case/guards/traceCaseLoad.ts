@@ -3,7 +3,8 @@ import tracer from 'dd-trace'
 /**
  * The include profile a guard loads the case with. `case` is the full
  * aggregate (`caseInclude`), `limitedAccess` the defender's view of it,
- * `defendantIndictment` the indictment narrowed to one defendant, and
+ * `defendantIndictment` the indictment narrowed to one defendant,
+ * `civilClaimantIndictment` the indictment narrowed to one civil claimant, and
  * `minimal` the case row alone. A guard that loads with a new profile names
  * it here, so that the profile shows up in the breakdown below.
  */
@@ -11,6 +12,7 @@ export type CaseLoadInclude =
   | 'case'
   | 'limitedAccess'
   | 'defendantIndictment'
+  | 'civilClaimantIndictment'
   | 'minimal'
 
 // Underscore, not hyphen: the Datadog agent normalises span names and turns a

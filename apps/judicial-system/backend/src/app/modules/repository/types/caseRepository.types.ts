@@ -819,26 +819,39 @@ export const defendantIndictmentCaseListInclude: Includeable[] = [
 // defendant's own subpoenas and verdicts, who is handling the case, its dates,
 // the event that sent it to the public prosecutor, and the judgement text from
 // the court session that delivered it.
-export const defendantIndictmentCaseInclude: Includeable[] = [
-  {
-    model: Defendant,
-    as: 'defendants',
-    include: [
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-      {
-        model: Verdict,
-        as: 'verdicts',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-    ],
-  },
+const digitalMailboxAppealSummonsInclude: Includeable = {
+  model: AppealCase,
+  as: 'verdictAppealCase',
+  required: false,
+  attributes: ['id', 'appealCaseNumber'],
+  include: [
+    {
+      model: AppealSummons,
+      as: 'appealSummonses',
+      required: false,
+      order: [['created', 'DESC']],
+      separate: true,
+      include: [
+        {
+          model: AppealSummonsDefendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+        },
+        {
+          model: AppealSummonsServiceRecipient,
+          as: 'services',
+          required: false,
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      ],
+    },
+  ],
+}
+
+const digitalMailboxIndictmentCaseSharedInclude: Includeable[] = [
   { model: Institution, as: 'court' },
   { model: Institution, as: 'prosecutorsOffice' },
   { model: User, as: 'judge' },
@@ -869,6 +882,48 @@ export const defendantIndictmentCaseInclude: Includeable[] = [
       ruling_type: CourtSessionRulingType.JUDGEMENT,
     },
   },
+  digitalMailboxAppealSummonsInclude,
+]
+
+// One indictment case as the digital mailbox shows it to a defendant. Does not
+// load civil claimants — co-party PII stays off the defendant mailbox read.
+export const defendantIndictmentCaseInclude: Includeable[] = [
+  {
+    model: Defendant,
+    as: 'defendants',
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+  },
+  ...digitalMailboxIndictmentCaseSharedInclude,
+]
+
+// Same mailbox shape for a civil claimant. Scopes civilClaimants to the
+// authenticated national id and never loads defendants (co-party PII).
+export const getCivilClaimantIndictmentCaseInclude = (
+  civilClaimantNationalId: string,
+): Includeable[] => [
+  {
+    model: CivilClaimant,
+    as: 'civilClaimants',
+    required: true,
+    where: {
+      national_id: civilClaimantNationalId.replace(/-/g, ''),
+    },
+  },
+  ...digitalMailboxIndictmentCaseSharedInclude,
 ]
 
 // A case waiting for its indictment review: only the defendants no one has

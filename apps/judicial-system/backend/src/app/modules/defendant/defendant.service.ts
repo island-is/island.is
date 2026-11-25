@@ -718,6 +718,22 @@ export class DefendantService {
         (update.defenderNationalId &&
           defendant?.defenderNationalId !== update.defenderNationalId))
 
+    // Citizen appeal-counsel updates cannot assert confirmation; clear it when
+    // the advocate identity or waive decision changes after court confirmation.
+    const resetAppealDefenderConfirmed =
+      defendant.isAppealDefenderConfirmed &&
+      (update.isAppealDefenderWaived !== undefined ||
+        namesADifferentAdvocate(
+          {
+            name: defendant.appealDefenderName,
+            nationalId: defendant.appealDefenderNationalId,
+          },
+          {
+            name: update.appealDefenderName,
+            nationalId: update.appealDefenderNationalId,
+          },
+        ))
+
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
@@ -725,6 +741,9 @@ export class DefendantService {
         ...update,
         ...(resetDefenderChoiceConfirmed && {
           isDefenderChoiceConfirmed: false,
+        }),
+        ...(resetAppealDefenderConfirmed && {
+          isAppealDefenderConfirmed: false,
         }),
       },
       transaction,

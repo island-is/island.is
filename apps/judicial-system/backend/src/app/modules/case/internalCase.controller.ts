@@ -41,6 +41,7 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { IndictmentCaseExistsForCivilClaimantGuard } from './guards/indictmentCaseExistsForCivilClaimant.guard'
 import { IndictmentCaseExistsForDefendantGuard } from './guards/indictmentCaseExistsForDefendant.guard'
 import {
   CaseInterceptor,
@@ -180,6 +181,26 @@ export class InternalCaseController {
         transaction,
       ),
     )
+  }
+
+  @UseGuards(IndictmentCaseExistsForCivilClaimantGuard)
+  @Get('case/indictment/:caseId/civilClaimant/:civilClaimantNationalId')
+  @ApiOkResponse({
+    type: Case,
+    description:
+      'Gets an existing indictment case by id for a given civil claimant',
+  })
+  @UseInterceptors(CaseInterceptor)
+  getCivilClaimantIndictmentCaseById(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantNationalId') _civilClaimantNationalId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(
+      `Getting indictment case ${caseId} by id for a given civil claimant`,
+    )
+
+    return Promise.resolve(theCase)
   }
 
   @UseGuards(

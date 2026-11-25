@@ -22,8 +22,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { UpdateAppealSummonsDto } from './dto/appealSummons.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
+import { AppealSummonsResponse } from './models/appealSummons.response'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { SubpoenaResponse } from './models/subpoena.response'
@@ -144,6 +146,64 @@ export class CaseController {
       caseId,
       user.nationalId,
       defenderAssignment,
+      query?.locale,
+    )
+  }
+
+  @Get('case/:caseId/appeal-summons')
+  @ApiOkResponse({
+    type: () => AppealSummonsResponse,
+    description: 'Returns appeal summons by case id for the authenticated user',
+  })
+  @CommonApiResponses
+  @ApiResponse({
+    status: 404,
+    description:
+      'Appeal summons for given case id and authenticated user not found',
+  })
+  @ApiLocaleQuery
+  getAppealSummons(
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+    @CurrentUser() user: User,
+    @Query() query?: { locale: string },
+  ): Promise<AppealSummonsResponse> {
+    this.logger.debug(`Getting appeal summons by case id ${caseId}`)
+
+    return this.caseService.getAppealSummons(
+      caseId,
+      user.nationalId,
+      query?.locale,
+    )
+  }
+
+  @Patch('case/:caseId/appeal-summons')
+  @ApiOkResponse({
+    type: () => AppealSummonsResponse,
+    description: 'Updates appeal summons counsel choice',
+  })
+  @CommonApiResponses
+  @ApiResponse({
+    status: 404,
+    description:
+      'Appeal summons for given case id and authenticated user not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'User is not allowed to update appeal summons counsel choice',
+  })
+  @ApiLocaleQuery
+  updateAppealSummons(
+    @CurrentUser() user: User,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+    @Body() counselAssignment: UpdateAppealSummonsDto,
+    @Query() query?: { locale: string },
+  ): Promise<AppealSummonsResponse> {
+    this.logger.debug(`Updating appeal summons for case id ${caseId}`)
+
+    return this.caseService.updateAppealSummons(
+      caseId,
+      user.nationalId,
+      counselAssignment,
       query?.locale,
     )
   }

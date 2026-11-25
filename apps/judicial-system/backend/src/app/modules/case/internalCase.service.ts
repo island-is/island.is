@@ -1677,6 +1677,23 @@ export class InternalCaseService {
     return theCase
   }
 
+  async findByIdAndCivilClaimantNationalId(
+    caseId: string,
+    civilClaimantNationalId: string,
+  ): Promise<Case> {
+    const theCase =
+      await this.caseRepositoryService.findIndictmentCaseByIdAndCivilClaimantNationalId(
+        caseId,
+        civilClaimantNationalId,
+      )
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
   async getDefendantIndictmentCase(
     theCase: Case,
     defendantNationalId: string,

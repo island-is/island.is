@@ -30,6 +30,7 @@ import {
   CivilClaimant,
   CivilClaimantRepositoryService,
 } from '../repository'
+import { InternalUpdateCivilClaimantDto } from './dto/internalUpdateCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -226,6 +227,61 @@ export class CivilClaimantService {
     )
 
     return updatedCivilClaimant
+  }
+
+  // Digital-mailbox / outside APIs: only appeal-spokesperson fields the
+  // citizen may set. Staff updates go through update() with a real user.
+  // Confirmation is never accepted from this surface — only cleared when the
+  // citizen changes a previously confirmed spokesperson.
+  async updateRestricted(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+    update: InternalUpdateCivilClaimantDto,
+    transaction: Transaction,
+  ): Promise<CivilClaimant> {
+    let effectiveUpdate: InternalUpdateCivilClaimantDto & {
+      isAppealSpokespersonConfirmed?: boolean
+    } = { ...update }
+
+    if (
+      civilClaimant.isAppealSpokespersonConfirmed &&
+      (update.hasAppealSpokesperson !== undefined ||
+        namesADifferentAdvocate(
+          {
+            name: civilClaimant.appealSpokespersonName,
+            nationalId: civilClaimant.appealSpokespersonNationalId,
+          },
+          {
+            name: update.appealSpokespersonName,
+            nationalId: update.appealSpokespersonNationalId,
+          },
+        ))
+    ) {
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        isAppealSpokespersonConfirmed: false,
+      }
+    }
+
+    const { numberOfAffectedRows, civilClaimants } =
+      await this.civilClaimantRepositoryService.updateByIdAndCase(
+        civilClaimant.id,
+        theCase.id,
+        effectiveUpdate,
+        { transaction },
+      )
+
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimant.id} of case ${theCase.id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update civil claimant ${civilClaimant.id} of case ${theCase.id}`,
+      )
+    }
+
+    return civilClaimants[0]
   }
 
   async deliverIndictmentCivilClaimantToCourt(

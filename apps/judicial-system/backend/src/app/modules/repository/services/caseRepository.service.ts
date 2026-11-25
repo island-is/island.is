@@ -40,6 +40,7 @@ import {
   caseStatisticsInclude,
   defendantIndictmentCaseInclude,
   defendantIndictmentCaseListInclude,
+  getCivilClaimantIndictmentCaseInclude,
   getLimitedAccessCaseInclude,
   indictmentCaseEventExportInclude,
   indictmentReviewCaseInclude,
@@ -593,6 +594,56 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error(`Error finding indictment case ${caseId}:`, { error })
+
+      throw error
+    }
+  }
+
+  // Same digital-mailbox case shape as for a defendant, but keyed by a civil
+  // claimant national id so appeal-summons service for claimants can be read.
+  async findIndictmentCaseByIdAndCivilClaimantNationalId(
+    caseId: string,
+    civilClaimantNationalId: string,
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(
+        `Finding indictment case ${caseId} for a civil claimant`,
+      )
+
+      const result = await this.caseModel.findOne({
+        where: {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+          '$civilClaimants.national_id$': civilClaimantNationalId.replace(
+            /-/g,
+            '',
+          ),
+        },
+        include: getCivilClaimantIndictmentCaseInclude(civilClaimantNationalId),
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+          'ruling',
+        ],
+      })
+
+      this.logger.debug(
+        `Indictment case ${caseId} ${
+          result ? 'found' : 'not found'
+        } for civil claimant`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding indictment case ${caseId} for a civil claimant:`,
+        { error },
+      )
 
       throw error
     }

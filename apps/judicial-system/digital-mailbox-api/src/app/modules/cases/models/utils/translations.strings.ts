@@ -11,12 +11,18 @@ type Translations = {
     arraignmentDate: string
     appealDecisionAccept: string
     appealDecisionPostpone: string
+    appealSummons: string
+    appealSummonsInfoText: string
+    appealSummonsSpokespersonInfoText: string
+    appealSummonsServed: string
     caseNumber: string
+    civilClaimant: string
     completed: string
     court: string
     courtCaseNumber: string
     courtCeremony: string
     courtContactInfo: string
+    courtContactInfoSpokesperson: string
     date: string
     defendant: string
     defender: string
@@ -33,6 +39,7 @@ type Translations = {
     parliamentaryConfirmation: string
     phoneNumber: string
     prosecutor: string
+    publicProsecutor: string
     prosecutorsOffice: string
     ruling: string
     rulingDate: string
@@ -59,14 +66,24 @@ const translations: Translations = {
       'I accept the judgement and waive the right of appeal',
     appealDecisionPostpone:
       'I reserve the right to appeal within the appeal period',
+    appealSummons: 'Appeal summons',
+    appealSummonsInfoText:
+      'You have been served an appeal summons. Please choose whether you want a defender appointed or waive the right to counsel.',
+    appealSummonsSpokespersonInfoText:
+      'You have been served an appeal summons. Please choose whether you want a legal representative appointed or waive the right to counsel.',
+    appealSummonsServed:
+      'Confirmation of appeal summons service has been sent to the police and court',
     arraignmentDate: 'Arraignment date',
     caseNumber: 'Case number',
+    civilClaimant: 'Civil claimant',
     completed: 'Completed',
     court: 'Court',
     courtCaseNumber: 'Case number',
     courtCeremony: 'Court ceremony',
     courtContactInfo:
       'Please contact the court if you wish to change your choice of defender',
+    courtContactInfoSpokesperson:
+      'Please contact the court if you wish to change your choice of legal representative',
     date: 'Date',
     defendant: 'Defendant',
     defender: 'Defender',
@@ -83,6 +100,7 @@ const translations: Translations = {
     parliamentaryConfirmation: 'Parliamentary confirmation',
     phoneNumber: 'Phone Nr.',
     prosecutor: 'Prosecutor',
+    publicProsecutor: 'Public prosecutor',
     prosecutorsOffice: 'Institution',
     ruling: 'Sentence',
     rulingDate: 'Date of judgement',
@@ -106,14 +124,24 @@ const translations: Translations = {
     appealDecisionPostpone: 'Ég tek áfrýjunarfrest.',
     appealDecisionText:
       'Ég staðfesti að ég hef tekið við leiðbeiningunum um rétt til áfrýjunar og áfrýjunarfrests sem sjá má hér að neðan.',
+    appealSummons: 'Áfrýjunarstefna',
+    appealSummonsInfoText:
+      'Þér hefur verið birt áfrýjunarstefna. Vinsamlegast veldu hvort þú óskir eftir að lögmaður verði skipaður verjandi þinn eða óskir ekki eftir verjanda.',
+    appealSummonsSpokespersonInfoText:
+      'Þér hefur verið birt áfrýjunarstefna. Vinsamlegast veldu hvort þú óskir eftir að lögmaður verði skipaður réttargæslumaður þinn eða óskir ekki eftir réttargæslumanni.',
+    appealSummonsServed:
+      'Staðfesting á móttöku áfrýjunarstefnu hefur verið send á lögreglu og dómstóla',
     arraignmentDate: 'Verður tekið fyrir á dómþingi',
     caseNumber: 'Málsnúmer',
+    civilClaimant: 'Einkaréttarkröfuhafi',
     completed: 'Lokið',
     court: 'Dómstóll',
     courtCaseNumber: 'Málsnúmer héraðsdóms',
     courtCeremony: 'Dómsathöfn',
     courtContactInfo:
       'Vinsamlegast hafið samband við dómstól til að breyta verjanda vali',
+    courtContactInfoSpokesperson:
+      'Vinsamlegast hafið samband við dómstól til að breyta vali á réttargæslumanni',
     date: 'Dagsetning',
     defendant: 'Varnaraðili',
     defender: 'Verjandi',
@@ -130,6 +158,7 @@ const translations: Translations = {
     parliamentaryConfirmation: 'Þingfesting',
     phoneNumber: 'Símanúmer',
     prosecutor: 'Ákærandi',
+    publicProsecutor: 'Saksóknari',
     prosecutorsOffice: 'Embætti',
     ruling: 'Dómsorð',
     rulingDate: 'Dómur kveðinn upp',
