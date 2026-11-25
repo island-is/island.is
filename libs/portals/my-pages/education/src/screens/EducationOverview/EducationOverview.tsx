@@ -16,12 +16,13 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
+import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
 import { useNavigate } from 'react-router-dom'
 import { educationOverviewMessages as om } from '../../lib/messages'
 import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
 import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
-import { useOwnContact } from './useOwnContact'
+import { toE164, useOwnContact } from './useOwnContact'
 
 export const EducationOverview = () => {
   useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
@@ -48,6 +49,8 @@ export const EducationOverview = () => {
         </Box>
       )
     }
+
+    const phone = toE164(contact.phone ?? '')
 
     return (
       <KeyInfoSection
@@ -82,7 +85,9 @@ export const EducationOverview = () => {
         )}
         <InfoLine
           label={m.telNumber}
-          content={contact.phone || notRegistered}
+          content={
+            phone ? formatPhoneNumberWithIcelandicCountryCode(phone) : notRegistered
+          }
           paddingY={3}
         />
         <Divider />
