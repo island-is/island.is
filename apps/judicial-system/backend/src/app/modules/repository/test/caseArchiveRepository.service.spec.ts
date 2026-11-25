@@ -94,6 +94,21 @@ describe('CaseArchiveRepositoryService', () => {
       expect(result).toEqual({ id, created, content: undefined })
     })
 
+    it('should keep the decrypted text out of the logs when it is not JSON', async () => {
+      const created = await service.create(
+        caseId,
+        { archiveJson: 'original_archive_text' },
+        { transaction },
+      )
+      model.findOne.mockResolvedValueOnce(created)
+
+      const result = await service.findLatestByCaseId(caseId, { transaction })
+
+      expect(result?.content).toBeUndefined()
+      expect(logger.error).toHaveBeenCalledTimes(1)
+      expect(JSON.stringify(logger.error.mock.calls)).not.toContain('original')
+    })
+
     it('should return no content for an archive that is not a JSON object', async () => {
       const created = await service.create(
         caseId,

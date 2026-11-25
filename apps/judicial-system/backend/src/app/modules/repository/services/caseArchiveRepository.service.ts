@@ -126,10 +126,11 @@ export class CaseArchiveRepositoryService {
       }
 
       return content as { [key: string]: unknown }
-    } catch (error) {
-      // The reason only - the archive itself must never reach the logs
+    } catch {
+      // A fixed reason only - the archive itself must never reach the logs, and
+      // the message of a parse error quotes the text it could not parse
       this.logger.error(`Error decrypting case archive ${caseArchive.id}:`, {
-        reason: error instanceof Error ? error.message : 'Unknown error',
+        reason: 'The archive could not be decrypted and read as a JSON object',
       })
 
       return undefined
