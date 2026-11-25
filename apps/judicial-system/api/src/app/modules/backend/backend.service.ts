@@ -438,9 +438,13 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
       eventType,
+      defendantId,
+      civilClaimantId,
     })
   }
 
@@ -1078,10 +1082,12 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
-      { eventType },
+      { eventType, defendantId, civilClaimantId },
     )
   }
 
