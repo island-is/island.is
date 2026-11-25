@@ -24,6 +24,7 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
 import VerdictAppealConclusions from './VerdictAppealConclusions'
 import { getVerdictAppealOverviewHeaderLines } from './VerdictAppealOverview.logic'
@@ -64,6 +65,7 @@ const VerdictAppealOverview = () => {
     )
 
   const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
 
   return (
     <PageLayout
@@ -81,6 +83,11 @@ const VerdictAppealOverview = () => {
               page is about is the appeal. */}
           <Box>
             <PageTitle marginBottom={1}>Yfirlit</PageTitle>
+            {caseNumber && (
+              <Text as="h2" variant="h2">
+                {caseNumber}
+              </Text>
+            )}
             {headerLines.map((line) => (
               <Text key={line} as="h5" variant="h5">
                 {line}

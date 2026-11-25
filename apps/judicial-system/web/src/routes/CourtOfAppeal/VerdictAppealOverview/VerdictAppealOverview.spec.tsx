@@ -75,6 +75,17 @@ describe('VerdictAppealOverview', () => {
     mockAppealCaseId = undefined
   })
 
+  it('leads with the number of the verdict appeal, not the ruling appeal', () => {
+    renderOverview()
+
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Mál nr. 555/2026' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'Mál nr. 100/2026' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('carries the verdict appeal on to the next step', async () => {
     mockAppealCaseId = 'verdict-appeal'
     renderOverview()
