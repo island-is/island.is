@@ -148,10 +148,10 @@ A role with `read: 'all'` or `write: 'all'` receives every answer and
 
 - **Flag:**
   - A new GraphQL resolver that returns personal data without `@Audit`.
-  - A new template-api action that fetches financial, health or
-    third-party data with no `AuditService.audit` call. Ask whether it
-    should be audited.
-- **Severity:** medium for resolvers; low (a question) for actions.
+- **Not flagged:** template and template-api actions without an audit
+  call. The application controller audits them (see
+  `libs/application/AGENTS.md`).
+- **Severity:** medium.
 
 ### SE8. User-influenced server fetches
 
