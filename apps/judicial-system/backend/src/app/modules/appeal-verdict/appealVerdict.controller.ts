@@ -36,8 +36,8 @@ import {
   CurrentCase,
 } from '../case'
 import { AppealVerdict, Case } from '../repository'
-import { AppealVerdictService } from './appealVerdict.service'
 import { SendAppealVerdictToServiceDto } from './dto/sendAppealVerdictToService.dto'
+import { AppealVerdictService } from './appealVerdict.service'
 
 @Controller('api/case/:caseId/appealVerdict')
 @ApiTags('appeal verdicts')

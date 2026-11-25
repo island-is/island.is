@@ -35,7 +35,6 @@ import {
   CurrentCase,
 } from '../case'
 import { AppealVerdict, Case } from '../repository'
-import { AppealVerdictService } from './appealVerdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { PoliceUpdateAppealVerdictDto } from './dto/policeUpdateAppealVerdict.dto'
 import { CurrentAppealVerdict } from './guards/appealVerdict.decorator'
@@ -43,6 +42,7 @@ import { AppealVerdictExistsGuard } from './guards/appealVerdictExists.guard'
 import { AppealVerdictOnCaseGuard } from './guards/appealVerdictOnCase.guard'
 import { ExternalPoliceAppealVerdictExistsGuard } from './guards/externalPoliceAppealVerdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import { AppealVerdictService } from './appealVerdict.service'
 
 @Controller('api/internal')
 @ApiTags('internal appeal verdict')
