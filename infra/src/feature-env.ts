@@ -37,6 +37,7 @@ interface Arguments extends ArgumentsCamelCase {
   jobImage?: string
   cleanupImage?: string
   withMocks?: 'true' | 'false'
+  ownIds?: boolean
 }
 
 const writeToOutput = async (data: string, output?: string) => {
@@ -74,6 +75,7 @@ const parseArguments = (argv: Arguments) => {
   const env = {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
+    ownIds: argv.ownIds === true,
   }
   logger.debug('parseArguments', { envName, chart, feature, images, env })
 
@@ -452,6 +454,12 @@ yargs(process.argv.slice(2))
     output: {
       description:
         'Where to output the yaml file. If omitted, will use stdout.',
+    },
+    ownIds: {
+      type: 'boolean',
+      default: false,
+      description:
+        'The feature has its own identity-server stack. When false, services keep using the dev identity-server.',
     },
   })
   .demandCommand().argv

@@ -670,7 +670,8 @@ const getFeatureInternalUrl = (env: EnvironmentConfig, value: string) => {
   const url = new URL(value)
   const internalSuffixes = [
     `.internal.${env.domain}`,
-    `.internal.identity-server.${env.domain}`,
+    // Internal identity-server hosts only exist for features with their own IDS.
+    ...(env.ownIds ? [`.internal.identity-server.${env.domain}`] : []),
   ]
   const suffix = internalSuffixes.find((candidate) =>
     url.hostname.endsWith(candidate),
@@ -755,88 +756,92 @@ function rewriteIdsFeatureServiceUrls(
     }
   }
 
-  if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
-    s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
-      s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
-      (value) => {
-        const issuers = JSON.parse(value) as string[]
-        const featureIssuer = getFeatureIdsUrl(env)
+  // Everything below points services at the feature's own identity-server.
+  // Features without one keep using the dev identity-server.
+  if (env.ownIds) {
+    if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
+      s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
+        s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
+        (value) => {
+          const issuers = JSON.parse(value) as string[]
+          const featureIssuer = getFeatureIdsUrl(env)
 
-        return JSON.stringify([
-          featureIssuer,
-          ...issuers.filter((issuer) => issuer !== featureIssuer),
-        ])
-      },
-    )
-  }
-
-  const idsUrlVariables = [
-    'IDENTITY_SERVER_ISSUER_URL',
-    'AUTH_PUBLIC_API_URL',
-    'AUTH_ADMIN_API_PATH',
-    'AUTH_IDS_API_URL',
-  ] as const
-
-  for (const name of idsUrlVariables) {
-    const value = s.env[name]
-
-    if (value === undefined) {
-      continue
-    }
-
-    s.env[name] = rewriteDevEnv(value, (currentValue) => {
-      const url = new URL(currentValue)
-      const path = url.pathname === '/' ? '' : url.pathname
-
-      return getFeatureIdsUrl(env, `${path}${url.search}${url.hash}`)
-    })
-  }
-
-  if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
-    s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
-      s.env.AUTH_ADMIN_API_PATHS,
-      (value) => {
-        const paths = JSON.parse(value) as Record<string, string>
-        const developmentPath = paths.development
-          ? new URL(paths.development)
-          : null
-
-        return JSON.stringify({
-          ...paths,
-          ...(developmentPath
-            ? {
-                development: getFeatureIdsUrl(
-                  env,
-                  `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
-                ),
-              }
-            : {}),
-        })
-      },
-    )
-  }
-
-  if (idsServices.includes(serviceName)) {
-    const rewriteIdsUrl = (value: string) => {
-      const url = new URL(value)
-      return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
-    }
-
-    if (s.env.PUBLIC_URL !== undefined) {
-      s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
-    }
-    if (s.env.BASE_URL !== undefined) {
-      s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
-    }
-    if (s.env.NEXTAUTH_URL !== undefined) {
-      s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
-    }
-
-    if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
-      s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
-        s.env.IDENTITYSERVER_DOMAIN,
-        () => featureIdsHost,
+          return JSON.stringify([
+            featureIssuer,
+            ...issuers.filter((issuer) => issuer !== featureIssuer),
+          ])
+        },
       )
+    }
+
+    const idsUrlVariables = [
+      'IDENTITY_SERVER_ISSUER_URL',
+      'AUTH_PUBLIC_API_URL',
+      'AUTH_ADMIN_API_PATH',
+      'AUTH_IDS_API_URL',
+    ] as const
+
+    for (const name of idsUrlVariables) {
+      const value = s.env[name]
+
+      if (value === undefined) {
+        continue
+      }
+
+      s.env[name] = rewriteDevEnv(value, (currentValue) => {
+        const url = new URL(currentValue)
+        const path = url.pathname === '/' ? '' : url.pathname
+
+        return getFeatureIdsUrl(env, `${path}${url.search}${url.hash}`)
+      })
+    }
+
+    if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
+      s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
+        s.env.AUTH_ADMIN_API_PATHS,
+        (value) => {
+          const paths = JSON.parse(value) as Record<string, string>
+          const developmentPath = paths.development
+            ? new URL(paths.development)
+            : null
+
+          return JSON.stringify({
+            ...paths,
+            ...(developmentPath
+              ? {
+                  development: getFeatureIdsUrl(
+                    env,
+                    `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
+                  ),
+                }
+              : {}),
+          })
+        },
+      )
+    }
+
+    if (idsServices.includes(serviceName)) {
+      const rewriteIdsUrl = (value: string) => {
+        const url = new URL(value)
+        return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
+      }
+
+      if (s.env.PUBLIC_URL !== undefined) {
+        s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
+      }
+      if (s.env.BASE_URL !== undefined) {
+        s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
+      }
+      if (s.env.NEXTAUTH_URL !== undefined) {
+        s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
+      }
+
+      if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
+        s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+          s.env.IDENTITYSERVER_DOMAIN,
+          () => featureIdsHost,
+        )
+      }
     }
   }
 

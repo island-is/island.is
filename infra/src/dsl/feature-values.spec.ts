@@ -45,6 +45,7 @@ const getValues = async (
 describe('Feature-deployment support', () => {
   let values: HelmValueFile
   let dev: EnvironmentConfig
+  let renderValues: (env: EnvironmentConfig) => Promise<HelmValueFile>
 
   beforeEach(async () => {
     const dependencyA = service('service-a').namespace('A')
@@ -99,14 +100,17 @@ describe('Feature-deployment support', () => {
         },
       })
       .redis()
+    renderValues = async (env: EnvironmentConfig) => {
+      const services1 = await getFeatureAffectedServices(
+        [apiService, dependencyA, dependencyB, bff],
+        [dependencyA, dependencyC, bff],
+        [dependencyC],
+        env,
+      )
+      return getValues(services1.included, env)
+    }
     dev = getEnvironment()
-    const services1 = await getFeatureAffectedServices(
-      [apiService, dependencyA, dependencyB, bff],
-      [dependencyA, dependencyC, bff],
-      [dependencyC],
-      dev,
-    )
-    values = await getValues(services1.included, dev)
+    values = await renderValues(dev)
   })
 
   it('dynamic service name generation', () => {
@@ -125,12 +129,22 @@ describe('Feature-deployment support', () => {
       DB_EXTENSIONS: 'foo',
     })
   })
+  it('uses the feature identity-server issuer only when the feature has its own IDS', async () => {
+    const withIds = await renderValues({ ...dev, ownIds: true })
+    expect(
+      withIds.services['services-bff-portals-admin'].env
+        .IDENTITY_SERVER_ISSUER_URL,
+    ).toEqual('https://feature-A.identity-server.dev01.devland.is')
+    expect(
+      values.services['services-bff-portals-admin'].env
+        .IDENTITY_SERVER_ISSUER_URL,
+    ).toEqual('https://identity-server.dev01.devland.is')
+  })
   it('bff feature env urls', () => {
     expect(values.services['services-bff-portals-admin'].env).toEqual({
       IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes('stjornbord')),
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-stjornbord`,
-      IDENTITY_SERVER_ISSUER_URL:
-        'https://feature-A.identity-server.dev01.devland.is',
+      IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_BASE_PATH: '/stjornbord',
       BFF_GLOBAL_PREFIX: `/stjornbord/bff`,
