@@ -136,8 +136,10 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
   it('exposes a waived counsel choice for a defendant', () => {
     const internalCase = baseCase()
     const defendant = internalCase.defendants?.[0]
-    expect(defendant).toBeDefined()
-    defendant!.isAppealDefenderWaived = true
+    if (!defendant) {
+      throw new Error('expected defendant in fixture')
+    }
+    defendant.isAppealDefenderWaived = true
 
     const response = AppealSummonsResponse.fromInternalCaseResponse(
       internalCase,
@@ -158,11 +160,13 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
   it('exposes a chosen appeal spokesperson for a civil claimant', () => {
     const internalCase = baseCase()
     const civilClaimant = internalCase.civilClaimants?.[0]
-    expect(civilClaimant).toBeDefined()
+    if (!civilClaimant) {
+      throw new Error('expected civil claimant in fixture')
+    }
 
-    civilClaimant!.hasAppealSpokesperson = true
-    civilClaimant!.appealSpokespersonNationalId = '2222222222'
-    civilClaimant!.appealSpokespersonName = 'Lára Lögmann'
+    civilClaimant.hasAppealSpokesperson = true
+    civilClaimant.appealSpokespersonNationalId = '2222222222'
+    civilClaimant.appealSpokespersonName = 'Lára Lögmann'
 
     const response = AppealSummonsResponse.fromInternalCaseResponse(
       internalCase,
@@ -183,8 +187,10 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
     const internalCase = baseCase()
     const service =
       internalCase.verdictAppealCase?.appealSummonses?.[0]?.services?.[0]
-    expect(service).toBeDefined()
-    service!.externalPoliceDocumentId = undefined
+    if (!service) {
+      throw new Error('expected appeal summons service in fixture')
+    }
+    service.externalPoliceDocumentId = undefined
 
     expect(
       AppealSummonsResponse.fromInternalCaseResponse(
@@ -211,9 +217,11 @@ describe('AppealSummonsResponse.fromInternalCaseResponse', () => {
     // Civil-claimant mailbox payload has no defendants.
     internalCase.defendants = undefined
     const civilClaimant = internalCase.civilClaimants?.[0]
-    expect(civilClaimant).toBeDefined()
-    civilClaimant!.hasAppealSpokesperson = false
-    civilClaimant!.appealSpokespersonNationalId = undefined
+    if (!civilClaimant) {
+      throw new Error('expected civil claimant in fixture')
+    }
+    civilClaimant.hasAppealSpokesperson = false
+    civilClaimant.appealSpokespersonNationalId = undefined
 
     const response = AppealSummonsResponse.fromInternalCaseResponse(
       internalCase,
