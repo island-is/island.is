@@ -14,6 +14,14 @@ const field = node.extend({
   fieldType: z
     .string()
     .refine((value) => Object.values(FieldTypesEnum).includes(value)),
+  informationText: language.nullish(),
+  tooltip: language.nullish(),
+  fieldSettings: z
+    .object({
+      subLabel: language.nullish(),
+    })
+    .passthrough()
+    .nullish(),
   list: z.array(listItem).nullish(),
 })
 const screen = node.extend({
@@ -32,7 +40,7 @@ const section = node.extend({
 
 export const formExportSchema = z.object({
   format: z.literal('island.is/form-system'),
-  version: z.literal(1),
+  version: z.literal(2),
   form: node.extend({
     name: language,
     slug: z.string().nullish(),

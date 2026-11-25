@@ -38,6 +38,17 @@ describe('CaseInterceptor - a verdict appeal from appeal to completion', () => {
     appealRulingDate: new Date('2024-03-01'),
   }
 
+  // A statement deadline that ran out before the court took the appeal under
+  // advisement.
+  const statementDeadline = {
+    id: 'prosecution_deadline',
+    deadline: new Date('2024-02-01T00:00:00.000Z'),
+    toJSON: () => ({
+      id: 'prosecution_deadline',
+      deadline: new Date('2024-02-01T00:00:00.000Z'),
+    }),
+  }
+
   // Confirming requires a recorded status of completed, so the appeal carries
   // it before it is confirmed as well.
   const recorded = {
@@ -46,6 +57,7 @@ describe('CaseInterceptor - a verdict appeal from appeal to completion', () => {
     appealState: AppealCaseState.APPEALED,
     appealCaseNumber: '2/2024',
     verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+    statementDeadlines: [statementDeadline],
     ...outcome,
   }
 
@@ -144,6 +156,12 @@ describe('CaseInterceptor - a verdict appeal from appeal to completion', () => {
       appealRulingType: undefined,
       appealConclusion: undefined,
       appealRulingDate: undefined,
+      statementDeadlines: [
+        expect.objectContaining({
+          id: 'prosecution_deadline',
+          isExpired: true,
+        }),
+      ],
     })
     expect(afterConfirming.caseFiles.map((file) => file.id)).toEqual([
       'district_ruling',

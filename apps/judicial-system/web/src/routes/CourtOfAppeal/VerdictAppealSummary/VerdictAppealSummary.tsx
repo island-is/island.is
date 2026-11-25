@@ -32,6 +32,7 @@ import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForC
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/VerdictAppealStatus.logic'
 import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDate from './VerdictAppealRulingDate'
@@ -93,6 +94,7 @@ const VerdictAppealSummary = () => {
     )
 
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
   const decisionLabel = getVerdictAppealRulingDecisionLabel(verdictAppealCase)
   const stage = getVerdictAppealSummaryStage(verdictAppealCase)
   const isConfirmed = stage !== 'IN_PROGRESS'
@@ -166,6 +168,8 @@ const VerdictAppealSummary = () => {
     }
 
     closeModal()
+    // The confirmed page changes at its top, above where the modal was opened.
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -194,14 +198,25 @@ const VerdictAppealSummary = () => {
         <FormContentContainer>
           <div className={stack({ gap: 5 })}>
             <Box>
-              <PageTitle marginBottom={1}>Samantekt</PageTitle>
-              {headerLines.map((line) => (
-                <Text key={line} as="h5" variant="h5">
-                  {line}
-                </Text>
-              ))}
+              <PageTitle marginBottom={caseNumber ? 5 : 1}>Samantekt</PageTitle>
+              <div className={stack({ gap: 1 })}>
+                {caseNumber && (
+                  <Text as="h2" variant="h2">
+                    {caseNumber}
+                  </Text>
+                )}
+                {headerLines.map((line) => (
+                  <Text key={line} as="h5" variant="h5">
+                    {line}
+                  </Text>
+                ))}
+              </div>
             </Box>
-            {isConfirmed && <InfoCardClosedIndictment />}
+            {isConfirmed && (
+              <InfoCardClosedIndictment
+                appealCase={verdictAppealCase ?? null}
+              />
+            )}
             <VerdictAppealConclusionBoxes workingCase={workingCase} />
             <VerdictAppealFiles />
             <VerdictAppealRulingDocument workingCase={workingCase} />

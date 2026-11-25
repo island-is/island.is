@@ -1024,6 +1024,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
         appealState: AppealCaseState
         appealCaseNumber: string
         verdictAppealStatus: VerdictAppealStatus
+        statementDeadlines?: { id: string }[]
       }
       caseFiles: { id: string }[]
     }
@@ -1037,11 +1038,22 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
     const interceptor = new CaseInterceptor({
       findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
     } as unknown as CaseRepositoryService)
+    const prosecutionDeadline = {
+      id: 'prosecution_deadline',
+      deadline: new Date('2026-09-14T00:00:00.000Z'),
+      toJSON() {
+        return {
+          id: 'prosecution_deadline',
+          deadline: new Date('2026-09-14T00:00:00.000Z'),
+        }
+      },
+    }
     const verdictAppealCase = {
       id: 'verdict_appeal',
       appealState,
       appealCaseNumber: '2/2024',
       verdictAppealStatus,
+      statementDeadlines: [prosecutionDeadline],
       ...outcome,
     }
 
@@ -1145,6 +1157,23 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       })
     })
 
+    // An appeal under advisement still carries the statement deadlines the
+    // user may see, so a confirmed one carries exactly the same.
+    it('presents the statement deadlines of a confirmed appeal as before it was confirmed', async () => {
+      const appealed = await givenWhenThen(
+        AppealCaseState.APPEALED,
+        currentUser,
+      )
+      const confirmed = await givenWhenThen(
+        AppealCaseState.READY_TO_COMPLETE,
+        currentUser,
+      )
+
+      expect(confirmed.result.verdictAppealCase.statementDeadlines).toEqual(
+        appealed.result.verdictAppealCase.statementDeadlines,
+      )
+    })
+
     // The court can record another status after confirming. Outside the court
     // a confirmed appeal is under advisement, whatever it records.
     it.each([
@@ -1244,6 +1273,12 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
           appealState,
           verdictAppealStatus: VerdictAppealStatus.COMPLETED,
         })
+      })
+
+      it('keeps statement deadlines for the court of appeals', () => {
+        expect(then.result.verdictAppealCase.statementDeadlines).toEqual([
+          expect.objectContaining({ id: 'prosecution_deadline' }),
+        ])
       })
 
       it('includes the court of appeals ruling in the case files', () => {
@@ -1647,7 +1682,11 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     jest.restoreAllMocks()
   })
 
-  it('leaves statement deadlines unenriched for non-defence users', async () => {
+  it('serializes isExpired on every statement deadline for non-defence users', async () => {
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-16T12:00:00.000Z').getTime())
+
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
@@ -1671,13 +1710,48 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
       }
     }
 
-    expect(
-      result.verdictAppealCase.statementDeadlines.map((d) => d.id),
-    ).toEqual(['own_deadline', 'other_deadline', 'prosecution_deadline'])
-    expect(
-      result.verdictAppealCase.statementDeadlines.every(
-        (deadline) => !('isExpired' in deadline),
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: true }),
+      expect.objectContaining({ id: 'other_deadline', isExpired: false }),
+      expect.objectContaining({ id: 'prosecution_deadline', isExpired: false }),
+    ])
+
+    jest.restoreAllMocks()
+  })
+
+  it('keeps a midnight deadline open through the whole deadline day', async () => {
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-15T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
       ),
-    ).toBe(true)
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    // own_deadline is 2026-11-15T00:00:00.000Z — still open at noon that day.
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: false }),
+    ])
+
+    jest.restoreAllMocks()
   })
 })

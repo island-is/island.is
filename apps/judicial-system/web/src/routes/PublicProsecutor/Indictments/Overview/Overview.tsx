@@ -21,6 +21,7 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -272,6 +273,9 @@ export const Overview = () => {
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />
+          <AppealCourtSessionScheduledCard
+            verdictAppealCase={workingCase.verdictAppealCase}
+          />
           <Box component="section">
             <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
           </Box>

@@ -1,8 +1,10 @@
 import {
   IsArray,
   IsBoolean,
+  IsISO8601,
   IsOptional,
   IsString,
+  Matches,
   ValidateNested,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -77,6 +79,25 @@ export class CreateHnippNotificationDto {
     ],
   })
   args!: ArgumentDto[]
+
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  // Calendar date and time only (no ordinal or week dates), optional offset
+  @Matches(
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?$/i,
+    {
+      message:
+        'deadline must be a calendar date and time, e.g. 2026-12-01T16:00:00',
+    },
+  )
+  @ApiPropertyOptional({
+    type: String,
+    format: 'date-time',
+    example: '2026-12-01T16:00:00Z',
+    description:
+      'Deadline related to the notification, e.g. when an office closes, for display only. ISO 8601 date and time. A value without a UTC offset is interpreted as Icelandic time, which is UTC+0 all year (no daylight saving time). An explicit offset (e.g. Z or +00:00) is honoured. Returned in UTC.',
+  })
+  deadline?: string
 }
 
 export class InternalCreateHnippNotificationDto extends CreateHnippNotificationDto {

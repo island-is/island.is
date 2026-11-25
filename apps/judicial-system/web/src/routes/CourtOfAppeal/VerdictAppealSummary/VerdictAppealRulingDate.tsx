@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isCourtOfAppealsUser } from '@island.is/judicial-system/types'
@@ -38,6 +38,13 @@ const VerdictAppealRulingDate: FC = () => {
   // The picker keeps what was typed or picked in its own state; remounting it
   // puts it back to the date on record when that is not saved.
   const [pickerKey, setPickerKey] = useState(0)
+  // The picker stays editable while a date is being saved, so saves can
+  // overlap and their responses arrive in any order. Each save takes the next
+  // number, and only the response to the latest one is applied.
+  const latestSaveRef = useRef(0)
+  // Saves still unanswered. While there is one, the date on record is about
+  // to change, so a pick of that same date has to be sent after it.
+  const pendingSavesRef = useRef(0)
 
   if (!isCourtOfAppealsUser(user)) {
     return null
@@ -58,6 +65,7 @@ const VerdictAppealRulingDate: FC = () => {
     }
 
     if (
+      pendingSavesRef.current === 0 &&
       isSameVerdictAppealRulingDate(verdictAppealCase.appealRulingDate, date)
     ) {
       return
@@ -66,10 +74,20 @@ const VerdictAppealRulingDate: FC = () => {
     const caseId = workingCase.id
     const appealCaseId = verdictAppealCase.id
     const appealRulingDate = formatDateForServer(date)
+    const save = latestSaveRef.current + 1
+    latestSaveRef.current = save
 
+    pendingSavesRef.current += 1
     const updated = await updateAppealCase(caseId, appealCaseId, {
       appealRulingDate,
     })
+    pendingSavesRef.current -= 1
+
+    // A later pick has been sent since. Its response decides what the working
+    // case holds and whether the picker is put back.
+    if (save !== latestSaveRef.current) {
+      return
+    }
 
     if (!updated) {
       showStoredDate()
