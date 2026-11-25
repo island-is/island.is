@@ -477,6 +477,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Lykillinn hættir að virka að gildistíma loknum. Hægt er að afturkalla hann hvenær sem er.',
   },
+  validityNone: {
+    id: 'sp.directorate-of-equality:validity-none',
+    defaultMessage: 'Ótímabundinn',
+  },
   validity3: {
     id: 'sp.directorate-of-equality:validity-3',
     defaultMessage: '3 mán.',
