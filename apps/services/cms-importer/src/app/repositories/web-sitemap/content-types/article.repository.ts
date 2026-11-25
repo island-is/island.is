@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { ManagementClientService } from '../../../../platform/managementClient/managementClient.service'
-import type { SitemapUrl, SitemapUrlFetcher } from '../utils'
-import { EN_LOCALE, LOCALE } from '../../../../constants'
+import { ManagementClientService } from '../../cms/managementClient/managementClient.service'
+import type { SitemapUrl, SitemapUrlFetcher } from '../../../web-sitemap/utils'
+import { EN_LOCALE, LOCALE } from '../../../constants'
 
 @Injectable()
 export class ArticleRepository implements SitemapUrlFetcher {

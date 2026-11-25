@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
-import type { SitemapUrl, SitemapUrlFetcher } from '../utils'
-import { ManagementClientService } from '../../../../platform/managementClient/managementClient.service'
-import { LOCALE } from '../../../../constants'
-import { EN_LOCALE } from '../../../../constants'
+import type { SitemapUrl, SitemapUrlFetcher } from '../../../web-sitemap/utils'
+import { ManagementClientService } from '../../cms/managementClient/managementClient.service'
+import { LOCALE } from '../../../constants'
+import { EN_LOCALE } from '../../../constants'
 
 @Injectable()
 export class ProjectNewsRepository implements SitemapUrlFetcher {

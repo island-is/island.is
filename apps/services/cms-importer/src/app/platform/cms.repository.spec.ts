@@ -1,5 +1,5 @@
 import { CmsRepository } from './cms.repository'
-import { ManagementClientService } from './managementClient/managementClient.service'
+import { ManagementClientService } from '../repositories/cms/managementClient/managementClient.service'
 import { LOCALE } from '../constants'
 
 describe('asset reuse across importer jobs', () => {

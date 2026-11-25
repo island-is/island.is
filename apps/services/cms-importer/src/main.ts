@@ -42,7 +42,7 @@ switch (job) {
     break
   }
   case 'web-sitemap': {
-    import('./app/contentful-maintenance/jobs/web-sitemap/web-sitemap-worker')
+    import('./app/web-sitemap/web-sitemap-worker')
       .then((app) => app.webSitemapWorker())
       .catch((error) => {
         console.error(
@@ -53,7 +53,7 @@ switch (job) {
     break
   }
   case 'cms-cleanup': {
-    import('./app/contentful-maintenance/jobs/cms-cleanup/cms-cleanup-worker')
+    import('./app/cms-cleanup/cms-cleanup-worker')
       .then((app) => app.cmsCleanupWorker())
       .catch((error) => {
         console.error(

@@ -1,4 +1,4 @@
-import { EN_LOCALE, LOCALE } from '../../../constants'
+import { EN_LOCALE, LOCALE } from '../constants'
 
 export interface SitemapUrlFetcher {
   getSitemapUrls(

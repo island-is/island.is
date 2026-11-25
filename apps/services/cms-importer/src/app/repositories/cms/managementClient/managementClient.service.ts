@@ -11,7 +11,7 @@ import {
   QueryOptions,
 } from 'contentful-management'
 import { ContentfulFetchResponse } from './managementClient.types'
-import { SPACE_ID, ENVIRONMENT } from '../../constants'
+import { SPACE_ID, ENVIRONMENT } from '../../../constants'
 
 @Injectable()
 export class ManagementClientService {

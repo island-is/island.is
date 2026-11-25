@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Asset } from 'contentful-management'
 import { logger } from '@island.is/logging'
-import { ManagementClientService } from '../../../platform/managementClient/managementClient.service'
-import { ENVIRONMENT, LOCALE } from '../../../constants'
+import { ManagementClientService } from '../repositories/cms/managementClient/managementClient.service'
+import { ENVIRONMENT, LOCALE } from '../constants'
 
 @Injectable()
 export class CmsCleanupService {

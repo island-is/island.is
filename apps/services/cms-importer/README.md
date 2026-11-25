@@ -29,14 +29,15 @@ node dist/apps/services/cms-importer/main.cjs --job <job> [flags]
 | FSRE                    | [Building import](src/app/organizations/fsre-buildings/README.md)                                                                             |
 | Lyfjastofnun (disabled) | [Instructions, lists and forms](src/app/organizations/lyfjastofnun/README.md), [news](src/app/organizations/lyfjastofnun/jobs/news/README.md) |
 | RSK (disabled)          | [Double taxation treaties](src/app/organizations/rsk/README.md)                                                                               |
-| Contentful maintenance  | [Sitemap and cleanup jobs](src/app/contentful-maintenance/README.md)                                                                          |
+| Contentful maintenance  | [Web sitemap](src/app/web-sitemap/), [CMS cleanup](src/app/cms-cleanup/)                                                                      |
 
 Lyfjastofnun and RSK imports are disabled pending testing and have no runnable
 CLI routes or Nx targets.
 
 ## Structure
 
-`src/main.ts` routes jobs. `src/app/platform/` provides shared Contentful access,
-sync strategies, localization and mappers. Organization-specific jobs live under
+`src/main.ts` routes jobs. `src/app/platform/` provides the shared CMS repository,
+sync strategies, localization and mappers; the Contentful management client lives
+in `src/app/repositories/cms/`. Organization-specific jobs live under
 `src/app/organizations/<organization>/jobs/`; grants and maintenance jobs have
 their own directories under `src/app/`.

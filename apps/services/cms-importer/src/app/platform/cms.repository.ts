@@ -8,7 +8,7 @@ import {
   Entry,
   KeyValueMap,
 } from 'contentful-management'
-import { ManagementClientService } from './managementClient/managementClient.service'
+import { ManagementClientService } from '../repositories/cms/managementClient/managementClient.service'
 import {
   GENERIC_LIST_ITEM_CONTENT_TYPE,
   LOCALE,
@@ -23,7 +23,7 @@ import {
   Localized,
 } from './cms.types'
 import chunk from 'lodash/chunk'
-import { ContentfulFetchResponse } from './managementClient/managementClient.types'
+import { ContentfulFetchResponse } from '../repositories/cms/managementClient/managementClient.types'
 
 @Injectable()
 export class CmsRepository {
