@@ -3,12 +3,18 @@ import { logger } from '@island.is/logging'
 import { LOCALE } from '../../../../constants'
 import { CmsRepository } from '../../../../platform/cms.repository'
 import { EntryCreationDto } from '../../../../platform/cms.types'
+import { toAssetFileName } from '../../../../platform/sync-strategies'
 import { RskTreatiesRepository } from '../../rskTreaties.repository'
 import { RskTreatyDocument, RskTreatyItem } from '../../dto/rskTreaty.dto'
-import { GENERIC_LIST_ID, TAB_KEY_DOCUMENT_TYPE_LABELS } from './constants'
+import {
+  GENERIC_LIST_ID,
+  OWNER_TAG,
+  TAB_KEY_DOCUMENT_TYPE_LABELS,
+} from './constants'
 import {
   ResolvedRskDocument,
   ResolvedRskLink,
+  hasUniformLinkType,
   isSimpleShape,
   mapEntryCreationDto,
   mapSlug,
@@ -148,11 +154,13 @@ export class RskTreatiesImportService {
       return undefined
     }
 
-    return mapEntryCreationDto({
-      name: item.name,
-      tabKeys: item.tabKeys,
-      documents,
-    })
+    const resolvedItem = { name: item.name, tabKeys: item.tabKeys, documents }
+    return mapEntryCreationDto(
+      resolvedItem,
+      simple &&
+        isSimpleShape(resolvedItem) &&
+        hasUniformLinkType(documents[0]),
+    )
   }
 
   private async resolveDocument(
@@ -245,7 +253,11 @@ export class RskTreatiesImportService {
     return {
       kind: link.kind,
       label: link.label,
-      resolved: { type: 'externalLinkEntry', entryId: entry.sys.id },
+      resolved: {
+        type: 'externalLinkEntry',
+        entryId: entry.sys.id,
+        url: resolved.url,
+      },
     }
   }
 
@@ -253,10 +265,13 @@ export class RskTreatiesImportService {
     fileUrl: string,
     title: string,
   ): Promise<string | null> {
-    const fileName = fileUrl.split('/').pop()?.split('?')[0]
+    const fileName = toAssetFileName(fileUrl)
     if (!fileName) return null
 
-    const existing = await this.cmsRepository.findAssetByFileName(fileName)
+    const existing = await this.cmsRepository.findAssetByFileName(
+      fileName,
+      OWNER_TAG,
+    )
     if (existing) {
       logger.info('Asset already exists in Contentful, reusing', {
         fileName,
@@ -269,6 +284,9 @@ export class RskTreatiesImportService {
 
     const asset = await this.cmsRepository.createAsset(
       {
+        metadata: {
+          tags: [{ sys: { type: 'Link', linkType: 'Tag', id: OWNER_TAG } }],
+        },
         fields: {
           title: { [LOCALE]: title },
           file: {

@@ -32,7 +32,9 @@ export const mapSlug = (item: LyfjastofnunScrapedItem): string =>
   slugify(resolveTitleIs(item))
 
 const resolveTitleEn = (item: LyfjastofnunScrapedItem): string | undefined =>
-  item.titleEn ?? TITLE_TRANSLATIONS_EN[item.title]
+  item.titleEn ??
+  TITLE_TRANSLATIONS_EN[item.title] ??
+  (item.title in TITLE_OVERRIDES_IS ? item.title : undefined)
 
 export const mapEntryCreationDto = (
   item: LyfjastofnunScrapedItem,

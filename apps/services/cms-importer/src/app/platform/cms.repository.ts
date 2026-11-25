@@ -126,13 +126,17 @@ export class CmsRepository {
     return entries.filter(isDefined)
   }
 
-  findAssetByFileName = async (fileName: string): Promise<Asset | null> => {
+  findAssetByFileName = async (
+    fileName: string,
+    ownerTag: string,
+  ): Promise<Asset | null> => {
     // Contentful's query API only supports equality search on top-level
     // fields, not nested properties like file.fileName — filter client-side
     // instead. Search every page so older assets can also be reused.
     const limit = 1000
     for (let skip = 0; ; skip += limit) {
       const response = await this.managementClient.getAssets({
+        'metadata.tags.sys.id[in]': ownerTag,
         order: 'sys.id',
         limit,
         skip,
@@ -187,9 +191,15 @@ export class CmsRepository {
 
     try {
       const processed = await createResult.data.processForAllLocales()
-      return publish ? processed.publish() : processed
+      return publish ? await processed.publish() : processed
     } catch (error) {
       logger.error('Failed to process asset', { error })
+      await createResult.data.delete().catch((deleteError) =>
+        logger.error('Failed to delete unprocessed asset', {
+          assetId: createResult.data.sys.id,
+          error: deleteError,
+        }),
+      )
       return null
     }
   }
@@ -325,7 +335,17 @@ export class CmsRepository {
       logger.debug('Entry created', {
         id: createdEntry.data.sys.id,
       })
-      return publish ? createdEntry.data.publish() : createdEntry.data
+      if (!publish) return createdEntry.data
+      try {
+        return await createdEntry.data.publish()
+      } catch (error) {
+        logger.warn('Entry publish failed, deleting draft so a rerun retries', {
+          id: createdEntry.data.sys.id,
+          error,
+        })
+        await createdEntry.data.delete()
+        throw error
+      }
     }
 
     if (createdEntry && !createdEntry.ok) {

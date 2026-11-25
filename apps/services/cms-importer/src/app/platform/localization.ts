@@ -1,5 +1,5 @@
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
-import { decode } from 'html-entities'
+import { parse } from 'node-html-parser'
 import { LOCALE, EN_LOCALE } from '../constants'
 import {
   CmsRichTextDocument,
@@ -9,8 +9,10 @@ import {
   RichTextValue,
 } from './cms.types'
 
+export const decodeEntities = (value: string): string => parse(value).text
+
 export const stripHtml = (html: string): string =>
-  decode(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')).trim()
+  decodeEntities(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')).trim()
 
 export const makeTagMetadata = (
   ...tagIds: string[]

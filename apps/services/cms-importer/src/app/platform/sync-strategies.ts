@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import { Entry } from 'contentful-management'
 import { isDefined } from '@island.is/shared/utils'
 import { logger } from '@island.is/logging'
@@ -49,10 +50,18 @@ export const syncCreateOnly = async <Item, Link>({
   }
 
   const existingKeys = await getExistingKeys()
+  const seen = new Set<string>()
 
   const newItems = items
     .filter((item) => {
       const key = keyOf(item)
+      if (seen.has(key)) {
+        logger.info(`${logLabel}: duplicate item in source data, skipping`, {
+          key,
+        })
+        return false
+      }
+      seen.add(key)
       if (existingKeys.has(key)) {
         logger.info(`${logLabel}: skipping item, already exists`, { key })
         return false
@@ -103,6 +112,20 @@ export const guessFileContentType = (
 ): string => {
   const ext = url.split('.').pop()?.split('?')[0]?.toLowerCase()
   return fileContentTypeMap[ext ?? ''] ?? 'application/octet-stream'
+}
+
+export const toAssetFileName = (
+  fileUrl: string,
+  fallbackExtension = 'pdf',
+): string | null => {
+  const [path, query] = fileUrl.split('?')
+  const baseName = path.split('/').pop()
+  if (!baseName) return null
+  if (!query) return baseName
+
+  const stem = baseName.replace(/\.[^.]+$/, '')
+  const hash = createHash('sha1').update(fileUrl).digest('hex').slice(0, 10)
+  return `${stem}-${hash}.${fallbackExtension}`
 }
 
 export const getExistingGenericListSlugs = async (
@@ -161,10 +184,10 @@ export const resolveAsset = async (
   publish: boolean,
   fileContentTypeMap: Record<string, string>,
 ): Promise<string | null> => {
-  const fileName = fileUrl.split('/').pop()?.split('?')[0]
+  const fileName = toAssetFileName(fileUrl)
   if (!fileName) return null
 
-  const existing = await cmsRepository.findAssetByFileName(fileName)
+  const existing = await cmsRepository.findAssetByFileName(fileName, ownerTag)
   if (existing) {
     logger.info('Asset already exists in Contentful, reusing', {
       fileName,

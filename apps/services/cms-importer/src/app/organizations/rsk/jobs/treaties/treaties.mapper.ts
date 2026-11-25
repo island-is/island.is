@@ -27,7 +27,7 @@ export interface ResolvedRskLink {
     | { type: 'hyperlink'; url: string }
     // A `linkUrl` Entry id — used for the SIMPLE shape's `externalLink`
     // field only, which points at an Entry rather than a bare URL.
-    | { type: 'externalLinkEntry'; entryId: string }
+    | { type: 'externalLinkEntry'; entryId: string; url: string }
 }
 
 export interface ResolvedRskDocument {
@@ -56,8 +56,14 @@ export const isSimpleShape = (item: {
   documents: Array<{ links: Array<{ kind: RskTreatyLinkKind }> }>
 }): boolean =>
   item.documents.length === 1 &&
+  item.documents[0].links.some((link) => link.kind === 'is') &&
   item.documents[0].links.every(
     (link) => link.kind === 'is' || link.kind === 'en',
+  )
+
+export const hasUniformLinkType = (document: ResolvedRskDocument): boolean =>
+  document.links.every(
+    (link) => link.resolved.type === document.links[0]?.resolved.type,
   )
 
 export const mapSlug = (nameIs: string): Localized<string> =>
@@ -74,6 +80,7 @@ const mapTitle = (item: ResolvedRskItem): Localized<string> =>
 
 export const mapEntryCreationDto = (
   item: ResolvedRskItem,
+  simple = isSimpleShape(item),
 ): EntryCreationDto | undefined => {
   const tagIds = Array.from(new Set(item.tabKeys.map((key) => TAG_IDS[key])))
 
@@ -87,7 +94,7 @@ export const mapEntryCreationDto = (
       title: mapTitle(item),
       slug: mapSlug(item.name),
       tagIds,
-      ...(isSimpleShape(item)
+      ...(simple
         ? mapSimpleLinkProperties(item.documents[0])
         : { content: mapContentField(item.documents) }),
     },
@@ -144,11 +151,6 @@ const buildContentParagraphs = (
     }
 
     for (const link of document.links) {
-      if (link.resolved.type === 'externalLinkEntry') {
-        // Should never occur in the CONTENT shape — externalLinkEntry is only
-        // produced for the SIMPLE shape's externalLink field.
-        continue
-      }
       paragraphs.push({
         values: [
           {

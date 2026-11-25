@@ -1,10 +1,11 @@
 import sanitizeHtml from 'sanitize-html'
+import { HTMLElement, Node, TextNode, parse } from 'node-html-parser'
 import {
-  Block,
   BLOCKS,
   Document,
   Inline,
   INLINES,
+  MARKS,
   Text,
   TopLevelBlock,
 } from '@contentful/rich-text-types'
@@ -26,99 +27,186 @@ const HEADING_TAG_TO_BLOCK: Record<string, BLOCKS> = {
   h6: BLOCKS.HEADING_6,
 }
 
-const makeTextNode = (value: string): Text => ({
+const INLINE_MARKS: Record<string, MARKS> = {
+  strong: MARKS.BOLD,
+  em: MARKS.ITALIC,
+}
+
+const LIST_TAG_TO_BLOCK: Record<string, BLOCKS.UL_LIST | BLOCKS.OL_LIST> = {
+  ul: BLOCKS.UL_LIST,
+  ol: BLOCKS.OL_LIST,
+}
+
+const tagOf = (node: Node): string | undefined =>
+  node instanceof HTMLElement ? node.rawTagName?.toLowerCase() : undefined
+
+const isInlineNode = (node: Node): boolean => {
+  const tag = tagOf(node)
+  return (
+    node instanceof TextNode ||
+    tag === 'a' ||
+    tag === 'br' ||
+    (tag !== undefined && tag in INLINE_MARKS)
+  )
+}
+
+const makeTextNode = (value: string, marks: MARKS[]): Text => ({
   nodeType: 'text',
   value,
-  marks: [],
+  marks: marks.map((type) => ({ type })),
   data: {},
 })
 
-const makeHyperlinkNode = (uri: string, text: string): Inline => ({
-  nodeType: INLINES.HYPERLINK,
-  data: { uri },
-  content: [makeTextNode(text)],
-})
+const toInlineNodes = (
+  nodes: Node[],
+  marks: MARKS[] = [],
+): Array<Text | Inline> =>
+  nodes.flatMap((node): Array<Text | Inline> => {
+    if (node instanceof TextNode) {
+      const value = node.text.replace(/\s+/g, ' ')
+      return value ? [makeTextNode(value, marks)] : []
+    }
+    const tag = tagOf(node)
+    if (tag === 'br') return [makeTextNode(' ', marks)]
+    if (tag && tag in INLINE_MARKS) {
+      return toInlineNodes(node.childNodes, [...marks, INLINE_MARKS[tag]])
+    }
+    if (tag === 'a' && node instanceof HTMLElement) {
+      const uri = node.getAttribute('href')
+      const content = toInlineNodes(node.childNodes, marks).filter(
+        (child): child is Text => child.nodeType === 'text',
+      )
+      if (!uri) return content
+      return content.length
+        ? [{ nodeType: INLINES.HYPERLINK, data: { uri }, content }]
+        : []
+    }
+    return toInlineNodes(node.childNodes, marks)
+  })
 
-const htmlToInlineNodes = (html: string): Array<Text | Inline> => {
-  const nodes: Array<Text | Inline> = []
-  const linkPattern = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
-  let lastIndex = 0
-  let match: RegExpExecArray | null
-
-  while ((match = linkPattern.exec(html)) !== null) {
-    const before = stripHtml(html.slice(lastIndex, match.index))
-    const beforeWithSpace =
-      before &&
-      /\s$/.test(html.slice(lastIndex, match.index).replace(/<[^>]+>/g, ''))
-        ? before + ' '
-        : before
-    if (beforeWithSpace) nodes.push(makeTextNode(beforeWithSpace))
-
-    const href = match[1]
-    const linkText = stripHtml(match[2])
-    if (linkText) nodes.push(makeHyperlinkNode(href, linkText))
-
-    lastIndex = match.index + match[0].length
+const trimInlineNodes = (
+  nodes: Array<Text | Inline>,
+): Array<Text | Inline> => {
+  const trimEdge = (node: Text | Inline, trim: (s: string) => string) => {
+    if (node.nodeType === 'text') return { ...node, value: trim(node.value) }
+    return node
   }
-
-  const afterHtml = html.slice(lastIndex)
-  const after = stripHtml(afterHtml)
-  const afterNeedsSpace =
-    after &&
-    /^\s/.test(afterHtml.replace(/<[^>]+>/g, '')) &&
-    !/^[.,;:!?)}\]'"]/.test(after)
-  const afterWithSpace = afterNeedsSpace ? ' ' + after : after
-  if (afterWithSpace) nodes.push(makeTextNode(afterWithSpace))
-
-  if (nodes.length === 0) {
-    const text = stripHtml(html)
-    if (text) nodes.push(makeTextNode(text))
-  }
-
-  return nodes
+  const trimmed = nodes.map((node, index) => {
+    let result = node
+    if (index === 0) result = trimEdge(result, (s) => s.trimStart())
+    if (index === nodes.length - 1) result = trimEdge(result, (s) => s.trimEnd())
+    return result
+  })
+  return trimmed.filter((node) => node.nodeType !== 'text' || node.value)
 }
 
-const makeBlockNode = (nodeType: BLOCKS, html: string): TopLevelBlock =>
-  ({ nodeType, data: {}, content: htmlToInlineNodes(html) } as TopLevelBlock)
+const hasText = (nodes: Array<Text | Inline>): boolean =>
+  nodes.some((node) =>
+    node.nodeType === 'text'
+      ? node.value.trim().length > 0
+      : hasText(node.content as Array<Text | Inline>),
+  )
 
-const makeListItemNode = (html: string): Block =>
-  ({
-    nodeType: BLOCKS.LIST_ITEM,
-    data: {},
-    content: [makeBlockNode(BLOCKS.PARAGRAPH, html)],
-  } as Block)
+const makeInlineBlock = (
+  nodeType: BLOCKS,
+  nodes: Node[],
+): TopLevelBlock | null => {
+  const content = trimInlineNodes(toInlineNodes(nodes))
+  if (!hasText(content)) return null
+  return { nodeType, data: {}, content } as TopLevelBlock
+}
 
 const makeListNode = (
   nodeType: BLOCKS.UL_LIST | BLOCKS.OL_LIST,
-  items: Block[],
-): TopLevelBlock => ({ nodeType, data: {}, content: items } as TopLevelBlock)
+  list: HTMLElement,
+): TopLevelBlock | null => {
+  const items = list.childNodes
+    .filter((child) => tagOf(child) === 'li')
+    .map((li) => ({
+      nodeType: BLOCKS.LIST_ITEM,
+      data: {},
+      content: toBlocks(li.childNodes),
+    }))
+    .filter((item) => item.content.length > 0)
+  if (items.length === 0) return null
+  return { nodeType, data: {}, content: items } as TopLevelBlock
+}
 
-const makeTableNode = (inner: string): TopLevelBlock | null => {
-  const rowPattern = /<tr[^>]*>([\s\S]*?)<\/tr>/gi
-  const rows: Block[] = []
-  let rowMatch: RegExpExecArray | null
-  while ((rowMatch = rowPattern.exec(inner)) !== null) {
-    const cellPattern = /<(td|th)[^>]*>([\s\S]*?)<\/\1>/gi
-    const cells: Block[] = []
-    let cellMatch: RegExpExecArray | null
-    while ((cellMatch = cellPattern.exec(rowMatch[1])) !== null) {
-      const isHeader = cellMatch[1].toLowerCase() === 'th'
-      cells.push({
-        nodeType: isHeader ? BLOCKS.TABLE_HEADER_CELL : BLOCKS.TABLE_CELL,
-        data: {},
-        content: [makeBlockNode(BLOCKS.PARAGRAPH, cellMatch[2])],
-      } as Block)
-    }
-    if (cells.length > 0) {
-      rows.push({
-        nodeType: BLOCKS.TABLE_ROW,
-        data: {},
-        content: cells,
-      } as Block)
-    }
-  }
+const makeTableNode = (table: HTMLElement): TopLevelBlock | null => {
+  const rows = table
+    .querySelectorAll('tr')
+    .map((tr) => ({
+      nodeType: BLOCKS.TABLE_ROW,
+      data: {},
+      content: tr.childNodes
+        .filter((cell) => tagOf(cell) === 'td' || tagOf(cell) === 'th')
+        .map((cell) => ({
+          nodeType:
+            tagOf(cell) === 'th'
+              ? BLOCKS.TABLE_HEADER_CELL
+              : BLOCKS.TABLE_CELL,
+          data: {},
+          content: [
+            makeInlineBlock(BLOCKS.PARAGRAPH, cell.childNodes) ?? {
+              nodeType: BLOCKS.PARAGRAPH,
+              data: {},
+              content: [makeTextNode('', [])],
+            },
+          ],
+        })),
+    }))
+    .filter((row) => row.content.length > 0)
   if (rows.length === 0) return null
   return { nodeType: BLOCKS.TABLE, data: {}, content: rows } as TopLevelBlock
+}
+
+const toBlock = (node: HTMLElement, tag: string): Array<TopLevelBlock | null> => {
+  if (tag in HEADING_TAG_TO_BLOCK) {
+    return [makeInlineBlock(HEADING_TAG_TO_BLOCK[tag], node.childNodes)]
+  }
+  if (tag === 'p') return [makeInlineBlock(BLOCKS.PARAGRAPH, node.childNodes)]
+  if (tag === 'blockquote') {
+    const paragraph = makeInlineBlock(BLOCKS.PARAGRAPH, node.childNodes)
+    return [
+      paragraph &&
+        ({
+          nodeType: BLOCKS.QUOTE,
+          data: {},
+          content: [paragraph],
+        } as TopLevelBlock),
+    ]
+  }
+  if (tag in LIST_TAG_TO_BLOCK) {
+    return [makeListNode(LIST_TAG_TO_BLOCK[tag], node)]
+  }
+  if (tag === 'table') return [makeTableNode(node)]
+  if (tag === 'hr') return [{ nodeType: BLOCKS.HR, data: {}, content: [] }]
+  return toBlocks(node.childNodes)
+}
+
+const toBlocks = (nodes: Node[]): TopLevelBlock[] => {
+  const blocks: Array<TopLevelBlock | null> = []
+  let pendingInline: Node[] = []
+
+  const flushInline = () => {
+    if (pendingInline.length) {
+      blocks.push(makeInlineBlock(BLOCKS.PARAGRAPH, pendingInline))
+      pendingInline = []
+    }
+  }
+
+  for (const node of nodes) {
+    const tag = tagOf(node)
+    if (isInlineNode(node)) {
+      pendingInline.push(node)
+    } else if (tag && node instanceof HTMLElement) {
+      flushInline()
+      blocks.push(...toBlock(node, tag))
+    }
+  }
+  flushInline()
+
+  return blocks.filter((block): block is TopLevelBlock => block !== null)
 }
 
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
@@ -182,54 +270,15 @@ const transformSpecialDivs = (html: string): string =>
     )
 
 export const htmlToRichTextDocument = (html: string): Document => {
-  const topLevel: TopLevelBlock[] = []
   const normalized = transformSpecialDivs(
     sanitizeHtml(html, SANITIZE_OPTIONS).replace(/\r\n/g, '\n').trim(),
   )
 
-  const blockPattern =
-    /<(h[2-6]|p|ul|ol|blockquote|table)[^>]*>([\s\S]*?)<\/\1>|<(hr)\s*\/?>/gi
-  let match: RegExpExecArray | null
-
-  while ((match = blockPattern.exec(normalized)) !== null) {
-    const tag = (match[1] || match[3])?.toLowerCase()
-    const inner = (match[2] ?? '').trim()
-
-    if (!inner && tag !== 'hr') continue
-
-    if (tag && tag in HEADING_TAG_TO_BLOCK) {
-      topLevel.push(makeBlockNode(HEADING_TAG_TO_BLOCK[tag], inner))
-    } else if (tag === 'p') {
-      topLevel.push(makeBlockNode(BLOCKS.PARAGRAPH, inner))
-    } else if (tag === 'blockquote') {
-      topLevel.push({
-        nodeType: BLOCKS.QUOTE,
-        data: {},
-        content: [makeBlockNode(BLOCKS.PARAGRAPH, inner)],
-      } as TopLevelBlock)
-    } else if (tag === 'ul' || tag === 'ol') {
-      const listType = tag === 'ul' ? BLOCKS.UL_LIST : BLOCKS.OL_LIST
-      const itemPattern = /<li[^>]*>([\s\S]*?)<\/li>/gi
-      const items: Block[] = []
-      let liMatch: RegExpExecArray | null
-      while ((liMatch = itemPattern.exec(inner)) !== null) {
-        if (stripHtml(liMatch[1])) items.push(makeListItemNode(liMatch[1]))
-      }
-      if (items.length > 0) topLevel.push(makeListNode(listType, items))
-    } else if (tag === 'table') {
-      const tableNode = makeTableNode(inner)
-      if (tableNode) topLevel.push(tableNode)
-    } else if (tag === 'hr') {
-      topLevel.push({ nodeType: BLOCKS.HR, data: {}, content: [] })
-    }
+  return {
+    nodeType: BLOCKS.DOCUMENT,
+    data: {},
+    content: toBlocks(parse(normalized).childNodes),
   }
-
-  if (topLevel.length === 0) {
-    const fallback = stripHtml(normalized)
-    if (fallback) topLevel.push(makeBlockNode(BLOCKS.PARAGRAPH, normalized))
-  }
-
-  return { nodeType: BLOCKS.DOCUMENT, data: {}, content: topLevel }
 }
 
 export const buildNewsEntry = (

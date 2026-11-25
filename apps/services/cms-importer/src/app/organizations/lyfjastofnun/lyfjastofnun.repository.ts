@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'
+import { decodeEntities } from '../../platform/localization'
 import {
   EYDUBLOD_URL,
   EYDUBLOD_URL_EN,
@@ -274,7 +275,8 @@ export class LyfjastofnunRepository {
       )
     if (!linkMatch) return null
 
-    const [, url, linkType] = linkMatch
+    const [, rawUrl, linkType] = linkMatch
+    const url = decodeEntities(rawUrl)
 
     return {
       title,

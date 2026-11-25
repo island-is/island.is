@@ -25,10 +25,11 @@ describe('asset reuse across importer jobs', () => {
         data: { items: [asset], total: 1001 },
       })
 
-    await expect(repository.findAssetByFileName('treaty.pdf')).resolves.toBe(
-      asset,
-    )
+    await expect(
+      repository.findAssetByFileName('treaty.pdf', 'ownerTest'),
+    ).resolves.toBe(asset)
     expect(getAssets).toHaveBeenLastCalledWith({
+      'metadata.tags.sys.id[in]': 'ownerTest',
       order: 'sys.id',
       limit: 1000,
       skip: 1000,
@@ -37,7 +38,9 @@ describe('asset reuse across importer jobs', () => {
 
   it('stops on a failed lookup rather than treating it as a missing asset', async () => {
     getAssets.mockResolvedValue({ ok: false, error: new Error('Unavailable') })
-    await expect(repository.findAssetByFileName('treaty.pdf')).rejects.toThrow(
+    await expect(
+      repository.findAssetByFileName('treaty.pdf', 'ownerTest'),
+    ).rejects.toThrow(
       'Failed to look up asset',
     )
   })
