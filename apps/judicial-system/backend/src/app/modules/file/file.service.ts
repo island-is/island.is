@@ -19,6 +19,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -500,6 +501,16 @@ export class FileService {
     ) {
       throw new BadRequestException(
         `Case ${theCase.id} has no verdict appeal to rule on`,
+      )
+    }
+
+    // Once its outcome has been released, the court's document is part of it.
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+    ) {
+      throw new ForbiddenException(
+        `The verdict appeal of case ${theCase.id} has been completed and its ruling can no longer be replaced`,
       )
     }
 
