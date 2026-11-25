@@ -33,6 +33,7 @@ import {
 import VerdictAppealSummary from './VerdictAppealSummary'
 
 const mockPush = jest.fn()
+const mockScrollTo = jest.fn()
 const mockTransitionAppealCase = jest.fn()
 const mockUpdateAppealCase = jest.fn()
 const mockGetFileUrl = jest.fn()
@@ -317,11 +318,16 @@ describe('VerdictAppealSummary', () => {
     mockToastError.mockReset()
     mockFileIsGone = false
     mockAppealCaseIdQuery = 'verdict-appeal'
+    mockScrollTo.mockReset()
+    window.scrollTo = mockScrollTo
   })
 
   it('shows the outcome, both conclusions and the document', () => {
     renderPage()
 
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Mál nr. 555/2026' }),
+    ).toBeInTheDocument()
     expect(screen.getByText('Niðurstaða Landsréttar')).toBeInTheDocument()
     expect(screen.getByText('Staðfesting')).toBeInTheDocument()
     expect(screen.getByText('Dómsorð héraðsdóms')).toBeInTheDocument()
@@ -519,6 +525,8 @@ describe('VerdictAppealSummary', () => {
     ).toBeInTheDocument()
     expect(screen.getByLabelText(/Dagsetning lykta/)).toBeEnabled()
     expect(mockPush).not.toHaveBeenCalled()
+    // What changed is at the top of the page, above the button that was used.
+    expect(mockScrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
   })
 
   // Without the document the page cannot be confirmed at all, so it never
@@ -583,6 +591,7 @@ describe('VerdictAppealSummary', () => {
     await waitFor(() => expect(mockTransitionAppealCase).toHaveBeenCalled())
     expect(screen.getByText(modalTitle)).toBeInTheDocument()
     expect(mockPush).not.toHaveBeenCalled()
+    expect(mockScrollTo).not.toHaveBeenCalled()
   })
 
   it('confirms the appeal once however often it is confirmed', async () => {
