@@ -1,4 +1,3 @@
-import { createHash } from 'crypto'
 import slugify from '@sindresorhus/slugify'
 import { EN_LOCALE, LOCALE } from '../../../../constants'
 import {
@@ -22,19 +21,8 @@ export const resolveCategoryTagId = (groupTitle: string): string => {
   return CATEGORY_TAG_IDS.other
 }
 
-export const mapLegacySlug = (item: LyfjastofnunScrapedItem): string =>
-  slugify(item.title)
-
-const slugForTitle = (item: LyfjastofnunScrapedItem, title: string): string => {
-  const source = item.fileUrl
-    ? `file:${item.fileUrl}`
-    : `external:${item.externalUrl ?? ''}`
-  const suffix = createHash('sha256').update(source).digest('hex').slice(0, 16)
-  return [slugify(title), suffix].filter(Boolean).join('-')
-}
-
 export const mapSlug = (item: LyfjastofnunScrapedItem): string =>
-  slugForTitle(item, item.title)
+  slugify(item.title)
 
 const resolveTitleEn = (item: LyfjastofnunScrapedItem): string | undefined =>
   item.titleEn
@@ -79,10 +67,7 @@ export const mapEntryCreationDto = (
     properties: {
       internalTitle: `Lyfjastofnun: ${item.title}`,
       title: mapLocalizedValue(item.title, titleEn),
-      slug: mapLocalizedValue(
-        slug,
-        titleEn ? slugForTitle(item, titleEn) : undefined,
-      ),
+      slug: mapLocalizedValue(slug, titleEn ? slugify(titleEn) : undefined),
       tagIds: [resolveCategoryTagId(item.groupTitle)],
       cardIntro: buildCardIntro(item),
       assetId: link.assetId,

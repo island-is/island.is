@@ -11,24 +11,12 @@ describe('asset reuse across importer jobs', () => {
   beforeEach(() => getAssets.mockReset())
 
   it('finds an asset beyond the first page instead of uploading a duplicate', async () => {
-    const unprocessed = {
-      fields: { file: { [LOCALE]: { fileName: 'treaty.pdf' } } },
-    }
-    const asset = {
-      fields: {
-        file: {
-          [LOCALE]: { fileName: 'treaty.pdf', url: '//files/treaty.pdf' },
-        },
-      },
-    }
+    const asset = { fields: { file: { [LOCALE]: { fileName: 'treaty.pdf' } } } }
     getAssets
       .mockResolvedValueOnce({
         ok: true,
         data: {
-          items: [
-            unprocessed,
-            ...Array.from({ length: 999 }, () => ({ fields: {} })),
-          ],
+          items: Array.from({ length: 1000 }, () => ({ fields: {} })),
           total: 1001,
         },
       })

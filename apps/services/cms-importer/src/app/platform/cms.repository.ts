@@ -154,17 +154,6 @@ export class CmsRepository {
     }
   }
 
-  getAssetFileName = async (assetId: string): Promise<string | undefined> => {
-    const response = await this.managementClient.getAssets({
-      'sys.id': assetId,
-      limit: 1,
-    })
-    if (!response.ok) {
-      throw new Error(`Failed to look up asset: ${assetId}`)
-    }
-    return response.data.items[0]?.fields.file?.[LOCALE]?.fileName
-  }
-
   requireImageAsset = async (
     assetId: string,
     publish = false,
@@ -357,13 +346,10 @@ export class CmsRepository {
           error,
         })
         await draft.delete().catch((deleteError) =>
-          logger.error(
-            'Failed to delete unpublished draft, remove it manually',
-            {
-              id: draft.sys.id,
-              error: deleteError,
-            },
-          ),
+          logger.error('Failed to delete unpublished draft, remove it manually', {
+            id: draft.sys.id,
+            error: deleteError,
+          }),
         )
         throw error
       }
