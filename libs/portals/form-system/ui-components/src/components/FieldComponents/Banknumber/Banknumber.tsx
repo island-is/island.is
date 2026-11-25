@@ -173,7 +173,7 @@ export const Banknumber = ({
         <Text variant="h4">{item.name?.[lang]}</Text>
       </Row>
       <Row marginTop={1}>
-        <Column span="4/12">
+        <Column span={['6/12', '6/12', '4/12']}>
           <Controller
             key={`${item.id}-${valueIndex}-bank`}
             name={bankField}
@@ -217,7 +217,7 @@ export const Banknumber = ({
             )}
           />
         </Column>
-        <Column span="3/12">
+        <Column span={['6/12', '6/12', '3/12']}>
           <Controller
             key={`${item.id}-${valueIndex}-ledger`}
             name={ledgerField}
@@ -261,7 +261,7 @@ export const Banknumber = ({
             )}
           />
         </Column>
-        <Column span="4/12">
+        <Column span={['7/12', '7/12', '4/12']} paddingTop={[2, 2, 0]}>
           <Controller
             key={`${item.id}-${valueIndex}-account`}
             name={accountField}

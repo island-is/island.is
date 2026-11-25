@@ -38,6 +38,12 @@ present in both lists appear once, matched by national ID. Disabling both
 produces an empty list. The selected list is cached on the field for subsequent
 renders.
 
+## Asset fields
+
+Vehicle registration and property-number inputs use the full width on mobile.
+Read-only asset details have spacing between rows when stacked, while retaining
+their existing desktop column layout.
+
 ## Preview mock data
 
 Edit [`src/lib/previewMockData.ts`](src/lib/previewMockData.ts) to maintain
@@ -57,6 +63,10 @@ Bank account fields do not request or prefill profile bank information in
 preview, even when it is cached. When `fetchBankAccountFromMyPages` is enabled
 (the default), they prefill the mock bank account instead. Saved values and
 manual edits are preserved.
+
+On mobile, bank account fields show the bank and ledger inputs side by side,
+with the account number on a separate row, slightly wider than the bank input.
+Tablet and desktop layouts keep all three inputs on one row.
 
 ## Running unit tests
 
