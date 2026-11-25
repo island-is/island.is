@@ -18,17 +18,13 @@ export const processJob = () =>
   yargs(hideBin(process.argv))
     .option('job', {
       string: true,
+      // Lyfjastofnun and RSK jobs remain unregistered pending testing.
       choices: [
         'energy-fund-import',
         'grant-import',
         'fsre-buildings-import',
         'web-sitemap',
         'cms-cleanup',
-        'rsk-treaties-import',
-        'lyfjastofnun-forms-import',
-        'lyfjastofnun-instructions-import',
-        'lyfjastofnun-lists-import',
-        'lyfjastofnun-news-import',
       ] as const,
       description: 'Indicate what import application should run',
     })

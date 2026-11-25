@@ -75,46 +75,6 @@
         "args": ["--job", "cms-cleanup"]
       }
     },
-    "lyfjastofnun-forms-import": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-cms-importer:build",
-        "buildTargetOptions": {
-          "outputPath": "dist/apps/services/cms-importer"
-        },
-        "args": ["--job", "lyfjastofnun-forms-import"]
-      }
-    },
-    "lyfjastofnun-instructions-import": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-cms-importer:build",
-        "buildTargetOptions": {
-          "outputPath": "dist/apps/services/cms-importer"
-        },
-        "args": ["--job", "lyfjastofnun-instructions-import"]
-      }
-    },
-    "lyfjastofnun-lists-import": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-cms-importer:build",
-        "buildTargetOptions": {
-          "outputPath": "dist/apps/services/cms-importer"
-        },
-        "args": ["--job", "lyfjastofnun-lists-import"]
-      }
-    },
-    "lyfjastofnun-news-import": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-cms-importer:build",
-        "buildTargetOptions": {
-          "outputPath": "dist/apps/services/cms-importer"
-        },
-        "args": ["--job", "lyfjastofnun-news-import"]
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
@@ -127,16 +87,6 @@
     },
     "docker-express-yarn": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
-    },
-    "rsk-treaties-import": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-cms-importer:build",
-        "buildTargetOptions": {
-          "outputPath": "dist/apps/services/cms-importer"
-        },
-        "args": ["--job", "rsk-treaties-import"]
-      }
     }
   }
 }

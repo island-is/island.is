@@ -63,63 +63,6 @@ switch (job) {
       })
     break
   }
-  case 'lyfjastofnun-forms-import': {
-    import('./app/organizations/lyfjastofnun/jobs/forms/forms.worker')
-      .then((app) => app.lyfjastofnunFormsImportWorker())
-      .catch((error) => {
-        console.error(
-          'Failed to import or execute the lyfjastofnun forms import worker:',
-          error,
-        )
-      })
-    break
-  }
-  case 'lyfjastofnun-instructions-import': {
-    import(
-      './app/organizations/lyfjastofnun/jobs/instructions/instructions.worker'
-    )
-      .then((app) => app.lyfjastofnunInstructionsImportWorker())
-      .catch((error) => {
-        console.error(
-          'Failed to import or execute the lyfjastofnun instructions import worker:',
-          error,
-        )
-      })
-    break
-  }
-  case 'lyfjastofnun-lists-import': {
-    import('./app/organizations/lyfjastofnun/jobs/lists/lists.worker')
-      .then((app) => app.lyfjastofnunListsImportWorker())
-      .catch((error) => {
-        console.error(
-          'Failed to import or execute the lyfjastofnun lists import worker:',
-          error,
-        )
-      })
-    break
-  }
-  case 'lyfjastofnun-news-import': {
-    import('./app/organizations/lyfjastofnun/jobs/news/news.worker')
-      .then((app) => app.lyfjastofnunNewsImportWorker())
-      .catch((error) => {
-        console.error(
-          'Failed to import or execute the lyfjastofnun news import worker:',
-          error,
-        )
-      })
-    break
-  }
-  case 'rsk-treaties-import': {
-    import('./app/organizations/rsk/jobs/treaties/treaties.worker')
-      .then((app) => app.rskTreatiesImportWorker())
-      .catch((error) => {
-        console.error(
-          'Failed to import or execute the rsk treaties import worker:',
-          error,
-        )
-      })
-    break
-  }
   default: {
     console.debug('No argument provided, nothing executed')
   }

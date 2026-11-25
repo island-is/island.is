@@ -149,6 +149,31 @@ export class CmsRepository {
     }
   }
 
+  requireImageAsset = async (
+    assetId: string,
+    publish = false,
+  ): Promise<void> => {
+    const response = await this.managementClient.getAssets({
+      'sys.id': assetId,
+      limit: 1,
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to validate news image asset: ${assetId}`)
+    }
+    const asset = response.data.items[0]
+    const file = asset?.fields.file?.[LOCALE]
+    if (!file?.contentType?.startsWith('image/') || !file.url) {
+      throw new Error(
+        `News image asset is missing or is not a processed image: ${assetId}`,
+      )
+    }
+    if (publish && (!asset.isPublished() || asset.isUpdated())) {
+      throw new Error(
+        `Publish the news image asset before importing published news: ${assetId}`,
+      )
+    }
+  }
+
   createAsset = async (
     data: Omit<AssetProps, 'sys'>,
     publish = false,

@@ -1,3 +1,4 @@
+import { readNewsImageAssignments } from '../../../../platform/news-images'
 import { parseCliFlags, runWorker } from '../../../../utils'
 import { LyfjastofnunNewsImportModule } from './news.module'
 import { LyfjastofnunNewsImportService } from './news.service'
@@ -7,9 +8,15 @@ export const lyfjastofnunNewsImportWorker = () => {
   return runWorker(
     'Lyfjastofnun news import',
     LyfjastofnunNewsImportModule,
-    (app) =>
-      app
-        .get(LyfjastofnunNewsImportService)
-        .run({ publish, slug, months, limit }),
+    async (app) => {
+      const imageAssetIdsBySlug = await readNewsImageAssignments()
+      await app.get(LyfjastofnunNewsImportService).run({
+        publish,
+        slug,
+        months,
+        limit,
+        imageAssetIdsBySlug,
+      })
+    },
   )
 }

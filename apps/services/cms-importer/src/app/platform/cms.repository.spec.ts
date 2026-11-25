@@ -41,4 +41,83 @@ describe('asset reuse across importer jobs', () => {
       'Failed to look up asset',
     )
   })
+
+  it.each([
+    [],
+    [
+      {
+        fields: {
+          file: {
+            [LOCALE]: {
+              contentType: 'application/pdf',
+              url: '//files/document.pdf',
+            },
+          },
+        },
+      },
+    ],
+    [{ fields: { file: { [LOCALE]: { contentType: 'image/jpeg' } } } }],
+  ])('rejects missing or unusable image assets', async (...items) => {
+    getAssets.mockResolvedValue({ ok: true, data: { items } })
+    await expect(repository.requireImageAsset('image')).rejects.toThrow(
+      'not a processed image',
+    )
+  })
+
+  it('accepts an existing processed image for draft news', async () => {
+    getAssets.mockResolvedValue({
+      ok: true,
+      data: {
+        items: [
+          {
+            fields: {
+              file: {
+                [LOCALE]: {
+                  contentType: 'image/jpeg',
+                  url: '//files/image.jpg',
+                },
+              },
+            },
+          },
+        ],
+      },
+    })
+    await expect(repository.requireImageAsset('image')).resolves.toBeUndefined()
+    expect(getAssets).toHaveBeenCalledWith({ 'sys.id': 'image', limit: 1 })
+  })
+
+  it.each([
+    [false, false],
+    [true, true],
+    [true, false],
+  ])(
+    'requires an already published, unchanged image for published news (%s, %s)',
+    async (published, updated) => {
+      getAssets.mockResolvedValue({
+        ok: true,
+        data: {
+          items: [
+            {
+              fields: {
+                file: {
+                  [LOCALE]: {
+                    contentType: 'image/jpeg',
+                    url: '//files/image.jpg',
+                  },
+                },
+              },
+              isPublished: () => published,
+              isUpdated: () => updated,
+            },
+          ],
+        },
+      })
+      const result = repository.requireImageAsset('image', true)
+      if (published && !updated) {
+        await expect(result).resolves.toBeUndefined()
+      } else {
+        await expect(result).rejects.toThrow('Publish the news image asset')
+      }
+    },
+  )
 })

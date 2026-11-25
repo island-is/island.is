@@ -18,19 +18,24 @@ export const generateNewsEntry = ({
 }: {
   ownerTags: string[]
   properties: NewsEntryProps
-}): EntryCreationDto => ({
-  metadata: makeTagMetadata(...ownerTags),
-  fields: {
-    organization: mapLocalizedValue<unknown>({
-      sys: { id: properties.organizationId, linkType: 'Entry' },
-    }),
-    title: properties.title,
-    slug: properties.slug,
-    date: properties.date,
-    intro: properties.intro,
-    content: properties.content,
-    image: mapLocalizedValue<unknown>({
-      sys: { id: properties.imageAssetId, linkType: 'Asset' },
-    }),
-  },
-})
+}): EntryCreationDto => {
+  if (!properties.imageAssetId?.trim()) {
+    throw new Error('Imported news requires an image asset ID')
+  }
+  return {
+    metadata: makeTagMetadata(...ownerTags),
+    fields: {
+      organization: mapLocalizedValue<unknown>({
+        sys: { id: properties.organizationId, linkType: 'Entry' },
+      }),
+      title: properties.title,
+      slug: properties.slug,
+      date: properties.date,
+      intro: properties.intro,
+      content: properties.content,
+      image: mapLocalizedValue<unknown>({
+        sys: { id: properties.imageAssetId, linkType: 'Asset' },
+      }),
+    },
+  }
+}
