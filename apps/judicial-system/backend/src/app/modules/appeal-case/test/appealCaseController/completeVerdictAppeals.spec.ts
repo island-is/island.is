@@ -97,6 +97,10 @@ const confirmedVerdictAppeal = (
   }
 }
 
+// Lets work started in the background, but not awaited, run to its end.
+const flushBackgroundWork = () =>
+  new Promise((resolve) => setImmediate(resolve))
+
 describe('AppealCaseController - Complete verdict appeals', () => {
   const user = {
     id: uuid(),
@@ -304,11 +308,12 @@ describe('AppealCaseController - Complete verdict appeals', () => {
     // Each is an áfrýjun, announced as the per-appeal route announces it.
     it('should announce each completion of a verdict appeal once the transaction has committed', async () => {
       expect(mockEventService.postEvent).not.toHaveBeenCalled()
-      expect(transactionContext?.afterCommit).toHaveLength(3)
+      expect(transactionContext?.afterCommit).toHaveLength(1)
 
       await Promise.all(
         (transactionContext?.afterCommit ?? []).map((callback) => callback()),
       )
+      await flushBackgroundWork()
 
       expect(mockEventService.postEvent).toHaveBeenCalledTimes(3)
 
@@ -318,6 +323,42 @@ describe('AppealCaseController - Complete verdict appeals', () => {
           theCase,
         )
       }
+    })
+
+    // The commit interceptor awaits its callbacks before the response is
+    // sent; the announcements are not part of that wait.
+    it('should not make the commit wait for the announcements', async () => {
+      let releaseFirstPost: () => void = () => undefined
+      const mockPostEvent = mockEventService.postEvent as jest.Mock
+      mockPostEvent.mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            releaseFirstPost = resolve
+          }),
+      )
+
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledTimes(1)
+
+      releaseFirstPost()
+      await flushBackgroundWork()
+
+      expect(mockEventService.postEvent).toHaveBeenCalledTimes(3)
+    })
+
+    it('should go on announcing after an announcement fails', async () => {
+      const mockPostEvent = mockEventService.postEvent as jest.Mock
+      mockPostEvent.mockRejectedValueOnce(new Error('Some error'))
+
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+      await flushBackgroundWork()
+
+      expect(mockEventService.postEvent).toHaveBeenCalledTimes(3)
     })
   })
 
@@ -400,6 +441,33 @@ describe('AppealCaseController - Complete verdict appeals', () => {
         expect.anything(),
         expect.anything(),
       )
+    })
+  })
+
+  // A uuid in upper case names the same appeal as the stored lower-case id.
+  describe('with ids in upper case, one of them twice', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      appeals = [confirmedVerdictAppeal(), confirmedVerdictAppeal()]
+
+      const [first, second] = appeals.map(({ appealCase }) => appealCase.id)
+
+      then = await givenWhenThen([
+        first.toUpperCase(),
+        second.toUpperCase(),
+        second,
+      ])
+    })
+
+    it('should find each appeal and complete it once', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.findByIds).toHaveBeenCalledWith(
+        appeals.map(({ appealCase }) => appealCase.id).sort(),
+        { transaction },
+      )
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(2)
+      expect(then.result).toHaveLength(2)
     })
   })
 

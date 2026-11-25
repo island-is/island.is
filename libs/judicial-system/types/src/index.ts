@@ -97,6 +97,7 @@ export {
   VerdictAppealStatus,
   APPEAL_JUDGE_COUNT,
   MAX_APPEAL_JUDGE_COUNT,
+  MAX_COMPLETED_VERDICT_APPEALS,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,

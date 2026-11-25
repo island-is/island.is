@@ -2,10 +2,9 @@ import { plainToInstance } from 'class-transformer'
 import { validateSync } from 'class-validator'
 import { v4 as uuid } from 'uuid'
 
-import {
-  CompleteVerdictAppealsDto,
-  MAX_COMPLETED_VERDICT_APPEALS,
-} from '../../dto/completeVerdictAppeals.dto'
+import { MAX_COMPLETED_VERDICT_APPEALS } from '@island.is/judicial-system/types'
+
+import { CompleteVerdictAppealsDto } from '../../dto/completeVerdictAppeals.dto'
 
 const errorsOf = (plain: Record<string, unknown>) =>
   validateSync(plainToInstance(CompleteVerdictAppealsDto, plain))

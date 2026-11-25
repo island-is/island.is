@@ -8,9 +8,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-// How many verdict appeals one request may complete. Each is read with its
-// whole case under a lock held until the request commits.
-export const MAX_COMPLETED_VERDICT_APPEALS = 100
+import { MAX_COMPLETED_VERDICT_APPEALS } from '@island.is/judicial-system/types'
 
 export class CompleteVerdictAppealsDto {
   @IsArray()

@@ -397,14 +397,33 @@ export class AppealCaseController {
     )
 
     // Each completion is an áfrýjun and is announced as the per-appeal route
-    // announces one, once the transaction has committed.
-    for (const { theCase } of completed) {
-      registerAfterCommit(() =>
-        this.eventService.postEvent('COMPLETE_VERDICT_APPEAL', theCase),
-      )
-    }
+    // announces one, once the transaction has committed. The commit
+    // interceptor awaits its callbacks before the response is sent, and a
+    // request may complete up to a hundred appeals, so the one callback only
+    // starts the announcements: they are posted one after another in the
+    // background, and the response does not wait for them.
+    const cases = completed.map(({ theCase }) => theCase)
+
+    registerAfterCommit(async () => {
+      void this.announceVerdictAppealCompletions(cases)
+    })
 
     return completed.map(({ appealCase }) => appealCase)
+  }
+
+  // Never rejects: a failed announcement is logged and the next one is
+  // posted all the same.
+  private async announceVerdictAppealCompletions(cases: Case[]): Promise<void> {
+    for (const theCase of cases) {
+      try {
+        await this.eventService.postEvent('COMPLETE_VERDICT_APPEAL', theCase)
+      } catch (error) {
+        this.logger.error(
+          `Failed to announce the completion of the verdict appeal of case ${theCase.id}`,
+          { error },
+        )
+      }
+    }
   }
 
   // The public prosecution office prosecutes the appeal and is copied on the

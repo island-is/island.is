@@ -86,7 +86,8 @@ const toComparable = (value: unknown): unknown =>
 // update leaves out changes nothing, nor does one sent with the value already
 // stored - a form that saves every field it shows sends those back. A note in
 // the modification history is always a change: it is appended to what is
-// there.
+// there. An empty or null history is not a note but a value written over the
+// stored history, so it is a change unless the stored history is the same.
 export const changedVerdictAppealOutcomeFields = (
   appealCase: Pick<AppealCase, VerdictAppealOutcomeField>,
   update: Partial<Record<VerdictAppealOutcomeField, unknown>>,
@@ -98,8 +99,8 @@ export const changedVerdictAppealOutcomeFields = (
       return false
     }
 
-    if (field === 'appealRulingModifiedHistory') {
-      return Boolean(value)
+    if (field === 'appealRulingModifiedHistory' && value) {
+      return true
     }
 
     // Dates arrive as dates or as the ISO strings they were sent as.

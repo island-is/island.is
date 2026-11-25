@@ -1786,7 +1786,9 @@ export class AppealCaseService {
     user: User,
     transaction: Transaction,
   ): Promise<{ theCase: Case; appealCase: AppealCase }[]> {
-    const ids = [...new Set(appealCaseIds)].sort()
+    // Ids are stored in lower case; a uuid sent in upper case names the same
+    // appeal, and is matched and deduplicated as such.
+    const ids = [...new Set(appealCaseIds.map((id) => id.toLowerCase()))].sort()
 
     this.logger.debug(`Completing verdict appeals ${ids}`)
 

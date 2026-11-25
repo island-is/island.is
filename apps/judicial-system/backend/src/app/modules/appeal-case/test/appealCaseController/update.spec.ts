@@ -379,6 +379,38 @@ describe('AppealCaseController - Update', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
     })
 
+    // An empty history is written over the stored one, so it would blank it.
+    it.each([
+      ['an empty', ''],
+      ['a null', null],
+    ])(
+      'should refuse %s modification history once the appeal is completed',
+      async (_, appealRulingModifiedHistory) => {
+        const then = await givenWhenThen(
+          theCase,
+          {
+            ...recorded,
+            appealState: AppealCaseState.COMPLETED,
+            appealRulingModifiedHistory: 'An earlier correction',
+          } as AppealCase,
+          { appealRulingModifiedHistory } as unknown as UpdateAppealCaseDto,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      },
+    )
+
+    it('should store a null modification history on a completed appeal that has none', async () => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+        { appealRulingModifiedHistory: null } as unknown as UpdateAppealCaseDto,
+      )
+
+      expect(then.error).toBeUndefined()
+    })
+
     it('should store a change outside the outcome of a completed appeal', async () => {
       const then = await givenWhenThen(
         theCase,
