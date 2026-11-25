@@ -6,6 +6,7 @@ import {
   getValue,
   IndividualApplicant,
   LegalEntity,
+  FieldInformation,
 } from '@island.is/form-system/ui'
 import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
@@ -168,6 +169,7 @@ export const Applicants = ({ applicantField }: Props) => {
 
   return (
     <>
+      <FieldInformation item={applicantField} />
       {isIndividualType && (
         <IndividualApplicant
           applicant={applicantField}

@@ -286,6 +286,7 @@ export const NationalId = ({
               <Input
                 label={item.name[lang] ?? formatMessage(m.nationalId)}
                 name="kennitala"
+                tooltip={item.tooltip?.[lang]?.trim() || undefined}
                 required={item?.isRequired ?? false}
                 backgroundColor="blue"
                 value={field.value}

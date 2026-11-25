@@ -35,7 +35,7 @@ const renderMessage = (description: string) => {
   const item: FormSystemField = {
     id: 'message',
     name: { is: 'Message', en: 'Message' },
-    description: {
+    informationText: {
       is: description,
       en: 'English <strong>description</strong>',
     },

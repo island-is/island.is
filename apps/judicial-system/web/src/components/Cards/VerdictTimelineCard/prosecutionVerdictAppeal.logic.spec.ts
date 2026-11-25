@@ -5,6 +5,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  defendantHasStandingVerdictAppeal,
   getProsecutionVerdictAppealDate,
   getProsecutionVerdictAppealItem,
 } from './prosecutionVerdictAppeal.logic'
@@ -142,5 +143,101 @@ describe('getProsecutionVerdictAppealItem', () => {
         'defendant_id',
       ),
     ).toEqual({ text: 'Ákæruvaldið áfrýjaði 10.06.2026' })
+  })
+})
+
+describe('defendantHasStandingVerdictAppeal', () => {
+  it('is true while either side still stands', () => {
+    expect(
+      defendantHasStandingVerdictAppeal(
+        {
+          appealEventLogs: [
+            {
+              id: 'prosecution_appealed',
+              created: '2026-05-25T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.PROSECUTOR,
+            },
+            {
+              id: 'defence_appealed',
+              created: '2026-05-26T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.DEFENDER,
+            },
+          ],
+        },
+        'defendant_id',
+      ),
+    ).toBe(true)
+  })
+
+  // A later defence withdrawal must not erase a standing prosecution appeal —
+  // statement-deadline bullets stay on that defendant's card.
+  it('keeps the prosecution side after a later defence withdrawal', () => {
+    expect(
+      defendantHasStandingVerdictAppeal(
+        {
+          appealEventLogs: [
+            {
+              id: 'prosecution_appealed',
+              created: '2026-05-25T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.PROSECUTOR,
+            },
+            {
+              id: 'defence_appealed',
+              created: '2026-05-26T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.DEFENDER,
+            },
+            {
+              id: 'defence_withdrawn',
+              created: '2026-05-27T10:00:00.000Z',
+              eventType: AppealEventType.APPEAL_WITHDRAWN,
+              defendantId: 'defendant_id',
+              userRole: UserRole.DEFENDER,
+            },
+          ],
+        },
+        'defendant_id',
+      ),
+    ).toBe(true)
+  })
+
+  it('is false once both sides have withdrawn', () => {
+    expect(
+      defendantHasStandingVerdictAppeal(
+        {
+          appealEventLogs: [
+            {
+              id: 'prosecution_appealed',
+              created: '2026-05-25T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'defendant_id',
+              userRole: UserRole.PROSECUTOR,
+            },
+            {
+              id: 'prosecution_withdrawn',
+              created: '2026-05-28T10:00:00.000Z',
+              eventType: AppealEventType.APPEAL_WITHDRAWN,
+              defendantId: 'defendant_id',
+              userRole: UserRole.PROSECUTOR,
+            },
+            {
+              id: 'defence_withdrawn',
+              created: '2026-05-27T10:00:00.000Z',
+              eventType: AppealEventType.APPEAL_WITHDRAWN,
+              defendantId: 'defendant_id',
+              userRole: UserRole.DEFENDER,
+            },
+          ],
+        },
+        'defendant_id',
+      ),
+    ).toBe(false)
   })
 })

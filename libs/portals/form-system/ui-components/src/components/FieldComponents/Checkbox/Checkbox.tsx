@@ -1,4 +1,4 @@
-import { FormSystemField, FormSystemFieldSettings } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { Checkbox as CheckboxField, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
@@ -18,7 +18,7 @@ export const Checkbox = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { control, trigger } = useFormContext()
   const { formatMessage } = useIntl()
   const { fieldSettings } = item
-  const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
+  const { isLarge, subLabel } = fieldSettings ?? {}
   const { lang } = useLocale()
 
   const label = (
@@ -50,7 +50,8 @@ export const Checkbox = ({ item, valueIndex = 0, dispatch }: Props) => {
           name={field.name}
           label={label}
           large={isLarge ?? false}
-          subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
+          subLabel={subLabel?.[lang]?.trim() || undefined}
+          tooltip={item.tooltip?.[lang]?.trim() || undefined}
           checked={field.value ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)

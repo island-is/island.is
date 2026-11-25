@@ -7,6 +7,7 @@ import {
   DatePicker,
   Email,
   FieldTypesEnum,
+  FieldInformation,
   FileUpload,
   List,
   MessageWithLink,
@@ -83,6 +84,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
 
   return (
     <Box marginTop={4}>
+      <FieldInformation item={field} />
       {FieldComponent ? <FieldComponent {...fieldItems} /> : null}
     </Box>
   )

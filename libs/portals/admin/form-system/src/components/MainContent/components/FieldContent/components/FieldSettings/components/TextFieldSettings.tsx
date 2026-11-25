@@ -10,38 +10,22 @@ export const TextFieldSettings = () => {
     useContext(ControlContext)
   const { activeItem, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const { fieldSettings } = currentItem
-  const { isLarge, hasDescription, maxLength } = fieldSettings || {}
+  const { isLarge, maxLength } = currentItem.fieldSettings || {}
   const { formatMessage } = useIntl()
 
   return (
     <Stack space={2}>
-      <Checkbox
-        checked={hasDescription ?? false}
-        label={formatMessage(m.hasDescription)}
-        disabled={isReadOnly}
-        onChange={(e) =>
-          controlDispatch({
-            type: 'SET_FIELD_SETTINGS',
-            payload: {
-              property: 'hasDescription',
-              value: e.target.checked,
-              update: updateActiveItem,
-            },
-          })
-        }
-      />
       <Inline space={2}>
         <Checkbox
           checked={isLarge ?? false}
           label={formatMessage(m.largeTextArea)}
           disabled={isReadOnly}
-          onChange={(e) =>
+          onChange={(event) =>
             controlDispatch({
               type: 'SET_FIELD_SETTINGS',
               payload: {
                 property: 'isLarge',
-                value: e.target.checked,
+                value: event.target.checked,
                 update: updateActiveItem,
               },
             })
@@ -56,17 +40,19 @@ export const TextFieldSettings = () => {
             size="sm"
             backgroundColor="blue"
             readOnly={isReadOnly}
-            onChange={(e) =>
+            onChange={(event) =>
               controlDispatch({
                 type: 'SET_ANY_FIELD_SETTING',
                 payload: {
                   property: 'maxLength',
-                  value: Number(e.target.value),
+                  value: Number(event.target.value),
                 },
               })
             }
-            onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            onFocus={(event) => setFocus(event.target.value)}
+            onBlur={(event) =>
+              event.target.value !== focus && updateActiveItem()
+            }
           />
         )}
       </Inline>

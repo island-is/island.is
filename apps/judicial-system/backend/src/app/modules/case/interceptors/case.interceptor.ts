@@ -44,6 +44,10 @@ import { getRequestTransaction } from '../../../middleware'
 import {
   getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
+  // Whole-day rule for midnight verdict-appeal statement deadlines. Distinct
+  // from the local `isStatementDeadlineExpired` in getAppealCaseInfo, which
+  // uses an exact-instant comparison for ruling-appeal statement deadlines.
+  isStatementDeadlineExpired as isMidnightStatementDeadlineExpired,
   resolveDefenceParties,
 } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
@@ -746,8 +750,8 @@ const serializeVerdictAppealStatementDeadline = (
   deadline: NonNullable<AppealCase['statementDeadlines']>[number],
 ) => ({
   ...deadline.toJSON(),
-  // Same clock as isStatementDeadlineExpired on kæra appealCase rows.
-  isExpired: Date.now() >= new Date(deadline.deadline).getTime(),
+  // Whole-day rule: midnight rows stay open through the deadline date.
+  isExpired: isMidnightStatementDeadlineExpired(new Date(deadline.deadline)),
 })
 
 const transformVerdictAppealCaseForUser = (
@@ -949,6 +953,9 @@ const transformCase = (
   // Defence users only see their own parties' verdict-appeal deadlines and
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
+  // Non-defence keeps every deadline, but still gets server `isExpired` so
+  // the web does not fall back to the browser clock. Outcome masking (main)
+  // spreads last and may strip statementDeadlines when COMPLETED is hidden.
   const verdictAppealCaseOverride = theCase.verdictAppealCase
     ? {
         verdictAppealCase: {
@@ -958,7 +965,13 @@ const transformCase = (
                 theCase,
                 user,
               )
-            : theCase.verdictAppealCase.toJSON()),
+            : {
+                ...theCase.verdictAppealCase.toJSON(),
+                statementDeadlines:
+                  theCase.verdictAppealCase.statementDeadlines?.map(
+                    serializeVerdictAppealStatementDeadline,
+                  ),
+              }),
           ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
         },
       }
