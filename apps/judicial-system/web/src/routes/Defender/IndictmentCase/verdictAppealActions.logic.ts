@@ -117,6 +117,20 @@ export const getVerdictAppealActions = (
   return actions
 }
 
+// Whether the verdict appeal is still open for defence actions (not completed
+// or withdrawn). Shared by statement CTA visibility and timeline card logic.
+export const isVerdictAppealOpen = (
+  appeal:
+    | Pick<NonNullable<WorkingCase['verdictAppealCase']>, 'appealState'>
+    | null
+    | undefined,
+): boolean =>
+  Boolean(
+    appeal &&
+      appeal.appealState !== AppealCaseState.COMPLETED &&
+      appeal.appealState !== AppealCaseState.WITHDRAWN,
+  )
+
 // Whether this appeal-confirmed defender may upload a greinargerð for this
 // defendant on the open verdict appeal. Requires a statement deadline and that
 // the party has not already filed.
@@ -127,11 +141,7 @@ export const canDefenderFileVerdictStatementOf = (
 ): boolean => {
   const appeal = workingCase.verdictAppealCase
 
-  if (
-    !appeal ||
-    appeal.appealState === AppealCaseState.COMPLETED ||
-    appeal.appealState === AppealCaseState.WITHDRAWN
-  ) {
+  if (!isVerdictAppealOpen(appeal)) {
     return false
   }
 
@@ -141,7 +151,7 @@ export const canDefenderFileVerdictStatementOf = (
 
   const party = { defendantId: defendant.id }
   const statementDeadline = findAppealStatementDeadline(
-    appeal.statementDeadlines,
+    appeal?.statementDeadlines,
     party,
   )
 
@@ -149,5 +159,5 @@ export const canDefenderFileVerdictStatementOf = (
     return false
   }
 
-  return !hasFiledAppealStatement(appeal.appealEventLogs, party)
+  return !hasFiledAppealStatement(appeal?.appealEventLogs, party)
 }

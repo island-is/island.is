@@ -6,11 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  hasFiledAppealStatement,
-  isAppealFileDeletionLocked,
-  verdictAppealStatementFileCategories,
-} from '@island.is/judicial-system/types'
+import { getAppealFileDeletionLockReason } from '@island.is/judicial-system/types'
 
 import { findAppealCaseOfCaseFile } from '../../appeal-case'
 import { Case, CaseFile } from '../../repository'
@@ -56,19 +52,21 @@ export class DeleteAppealCaseFileGuard implements CanActivate {
       civilClaimantId: caseFile.civilClaimantId,
     }
 
-    if (isAppealFileDeletionLocked(caseFile.category, appealCase, party)) {
-      const lockedByStatementSent =
-        Boolean(
-          caseFile.category &&
-            verdictAppealStatementFileCategories.includes(caseFile.category),
-        ) &&
-        hasFiledAppealStatement(appealCase?.appealEventLogs, party) &&
-        !appealCase?.appealCaseNumber
+    const lockReason = getAppealFileDeletionLockReason(
+      caseFile.category,
+      appealCase,
+      party,
+    )
 
+    if (lockReason === 'statement_filed') {
       throw new ForbiddenException(
-        lockedByStatementSent
-          ? 'Forbidden when the appeal statement has already been filed'
-          : 'Forbidden when the court of appeals has registered its case number',
+        'Forbidden when the appeal statement has already been filed',
+      )
+    }
+
+    if (lockReason) {
+      throw new ForbiddenException(
+        'Forbidden when the court of appeals has registered its case number',
       )
     }
 

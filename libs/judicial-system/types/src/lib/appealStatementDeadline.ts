@@ -23,7 +23,7 @@ export const findAppealStatementDeadline = <T extends AppealStatementParty>(
 ): T | undefined =>
   deadlines?.find((deadline) => isSameAppealStatementParty(deadline, party))
 
-interface AppealStatementEvent extends AppealStatementParty {
+export interface AppealStatementEvent extends AppealStatementParty {
   eventType?: string | null
   userRole?: string | null
   created?: string | Date | null

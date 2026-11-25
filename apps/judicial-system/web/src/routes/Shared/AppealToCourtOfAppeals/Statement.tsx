@@ -38,14 +38,18 @@ import {
   RulingFileLabel,
   SectionHeading,
   UserContext,
+  type WorkingCase,
 } from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import {
-  AppealCaseState,
   AppealEventType,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { canDefenderFileVerdictStatementOf } from '@island.is/judicial-system-web/src/routes/Defender/IndictmentCase/verdictAppealActions.logic'
+import {
+  canDefenderFileVerdictStatementOf,
+  isVerdictAppealOpen,
+} from '@island.is/judicial-system-web/src/routes/Defender/IndictmentCase/verdictAppealActions.logic'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useAppealCase,
@@ -73,8 +77,8 @@ interface Props {
 }
 
 const resolveVerdictAppealParty = (
-  workingCase: Parameters<typeof getVerdictAppealStatementParty>[0],
-  user: Parameters<typeof getVerdictAppealStatementParty>[1],
+  workingCase: WorkingCase,
+  user: User | undefined,
   query: {
     defendantId?: string | string[]
     civilClaimantId?: string | string[]
@@ -112,17 +116,13 @@ const resolveVerdictAppealParty = (
 }
 
 const canAccessVerdictAppealStatementPage = (
-  workingCase: Parameters<typeof canDefenderFileVerdictStatementOf>[0],
-  user: Parameters<typeof canDefenderFileVerdictStatementOf>[2],
+  workingCase: WorkingCase,
+  user: User | undefined,
   party: DefenceUserPartyIds,
 ): boolean => {
   const appeal = workingCase.verdictAppealCase
 
-  if (
-    !appeal ||
-    appeal.appealState === AppealCaseState.COMPLETED ||
-    appeal.appealState === AppealCaseState.WITHDRAWN
-  ) {
+  if (!isVerdictAppealOpen(appeal)) {
     return false
   }
 
@@ -151,7 +151,7 @@ const canAccessVerdictAppealStatementPage = (
     }
 
     const statementDeadline = findAppealStatementDeadline(
-      appeal.statementDeadlines,
+      appeal?.statementDeadlines,
       party,
     )
 
@@ -159,7 +159,7 @@ const canAccessVerdictAppealStatementPage = (
       return false
     }
 
-    return !hasFiledAppealStatement(appeal.appealEventLogs, party)
+    return !hasFiledAppealStatement(appeal?.appealEventLogs, party)
   }
 
   return false
@@ -174,24 +174,28 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const routeCaseId =
-    typeof router.query.id === 'string' ? router.query.id : undefined
-  const isLoadedCaseMatchingRoute =
-    Boolean(routeCaseId) && workingCase.id === routeCaseId
   const { defendantId, civilClaimantId } = isVerdictAppeal
     ? resolveVerdictAppealParty(workingCase, user, router.query)
     : getDefenceUserPartyIds(workingCase, user)
-  const filingPartyName = isVerdictAppeal
-    ? defendantId
-      ? workingCase.defendants?.find(
-          (defendant) => defendant.id === defendantId,
-        )?.name
-      : civilClaimantId
-      ? workingCase.civilClaimants?.find(
-          (civilClaimant) => civilClaimant.id === civilClaimantId,
-        )?.name
-      : undefined
-    : undefined
+  const filingPartyName = (() => {
+    if (!isVerdictAppeal) {
+      return undefined
+    }
+
+    if (defendantId) {
+      return workingCase.defendants?.find(
+        (defendant) => defendant.id === defendantId,
+      )?.name
+    }
+
+    if (civilClaimantId) {
+      return workingCase.civilClaimants?.find(
+        (civilClaimant) => civilClaimant.id === civilClaimantId,
+      )?.name
+    }
+
+    return undefined
+  })()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -223,18 +227,16 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
     rulingFileId,
   )
 
+  // Verdict-appeal Statement is only mounted under /verjandi, so prosecutor
+  // verdict-appeal categories are unreachable here.
   const appealStatementType = isVerdictAppeal
-    ? isDefenceUser(user)
-      ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT
-      : CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT
+    ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT
     : isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
     : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
 
   const appealCaseFilesType = isVerdictAppeal
-    ? isDefenceUser(user)
-      ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
-      : CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE
+    ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
     : isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
     : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
@@ -254,12 +256,7 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   // Overview already hides the CTA once the appeal is over; keep the direct
   // route from becoming a back door for completed / withdrawn appeals.
   useEffect(() => {
-    if (
-      !isVerdictAppeal ||
-      isLoadingWorkingCase ||
-      !isLoadedCaseMatchingRoute ||
-      !user
-    ) {
+    if (!isVerdictAppeal || isLoadingWorkingCase || !user) {
       return
     }
 
@@ -274,7 +271,6 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   }, [
     isVerdictAppeal,
     isLoadingWorkingCase,
-    isLoadedCaseMatchingRoute,
     user,
     workingCase,
     defendantId,
@@ -289,10 +285,15 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
     }
 
     // Do not file against a stale FormProvider case while the route case loads.
-    if (
-      isVerdictAppeal &&
-      (isLoadingWorkingCase || !isLoadedCaseMatchingRoute)
-    ) {
+    if (isVerdictAppeal && isLoadingWorkingCase) {
+      return
+    }
+
+    if (!targetAppealCaseId) {
+      return
+    }
+
+    if (isVerdictAppeal && !defendantId && !civilClaimantId) {
       return
     }
 
@@ -305,14 +306,6 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
       )
 
       if (uploadResult !== 'ALL_SUCCEEDED') {
-        return
-      }
-
-      if (!targetAppealCaseId) {
-        return
-      }
-
-      if (isVerdictAppeal && !defendantId && !civilClaimantId) {
         return
       }
 
@@ -333,7 +326,6 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
     isSubmitting,
     isVerdictAppeal,
     isLoadingWorkingCase,
-    isLoadedCaseMatchingRoute,
     handleUpload,
     uploadFiles,
     updateUploadFile,
@@ -405,8 +397,7 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   )
 
   const showFilingControls =
-    !isVerdictAppeal ||
-    (!isLoadingWorkingCase && isLoadedCaseMatchingRoute && !caseNotFound)
+    !isVerdictAppeal || (!isLoadingWorkingCase && !caseNotFound)
 
   return (
     <PageLayout

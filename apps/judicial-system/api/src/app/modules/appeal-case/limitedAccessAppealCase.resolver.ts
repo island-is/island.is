@@ -14,7 +14,6 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   AppealCaseType,
-  AppealEventType,
   Feature,
   type User,
 } from '@island.is/judicial-system/types'
@@ -72,11 +71,9 @@ export class LimitedAccessAppealCaseResolver {
     const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
       input
 
-    // Party-scoped APPEAL_STATEMENT_SENT is the verdict-appeal filing write.
-    // Create is already gated on the flag; keep the same door closed here so a
-    // hidden feature cannot be finished through a direct event-log call.
+    // Backend only accepts party IDs on verdict-appeal statement events, so a
+    // party id is enough to know this write is behind the feature flag.
     if (
-      eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
       (defendantId || civilClaimantId) &&
       this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
     ) {

@@ -1,5 +1,8 @@
-import type { AppealStatementParty } from './appealStatementDeadline'
-import { hasFiledAppealStatement } from './appealStatementDeadline'
+import {
+  type AppealStatementEvent,
+  type AppealStatementParty,
+  hasFiledAppealStatement,
+} from './appealStatementDeadline'
 
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
@@ -123,20 +126,25 @@ export const verdictAppealFileCategories = [
 // declaration is the appeal itself, not a document filed in support of one, and
 // it is filed long before Landsréttur has a case number to register. Taking it
 // back means withdrawing the appeal.
-export const isAppealFileDeletionLocked = (
+export type AppealFileDeletionLockReason =
+  | 'declaration'
+  | 'statement_filed'
+  | 'case_number'
+
+export const getAppealFileDeletionLockReason = (
   category?: string | null,
   appealCase?: {
     appealCaseNumber?: string | null
-    appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
+    appealEventLogs?: AppealStatementEvent[] | null
   } | null,
   party?: AppealStatementParty,
-): boolean => {
+): AppealFileDeletionLockReason | null => {
   if (!appealCase) {
-    return false
+    return null
   }
 
   if (isVerdictAppealDeclarationCategory(category)) {
-    return true
+    return 'declaration'
   }
 
   if (
@@ -144,15 +152,29 @@ export const isAppealFileDeletionLocked = (
     party &&
     hasFiledAppealStatement(appealCase.appealEventLogs, party)
   ) {
-    return true
+    return 'statement_filed'
   }
 
-  return (
+  if (
     (isPartyAppealFileCategory(category) ||
       isVerdictAppealStatementCategory(category)) &&
     Boolean(appealCase.appealCaseNumber)
-  )
+  ) {
+    return 'case_number'
+  }
+
+  return null
 }
+
+export const isAppealFileDeletionLocked = (
+  category?: string | null,
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: AppealStatementEvent[] | null
+  } | null,
+  party?: AppealStatementParty,
+): boolean =>
+  getAppealFileDeletionLockReason(category, appealCase, party) !== null
 
 // A ruling order pronounced during the course of a case is usually delivered
 // orally in the court session, and only written up as a document if a party

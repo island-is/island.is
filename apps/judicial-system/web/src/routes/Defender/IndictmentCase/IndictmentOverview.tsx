@@ -76,6 +76,7 @@ import type { VerdictAppealAction } from './verdictAppealActions.logic'
 import {
   canDefenderFileVerdictStatementOf,
   getVerdictAppealActions,
+  isVerdictAppealOpen,
 } from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
@@ -214,16 +215,12 @@ const IndictmentOverview: FC = () => {
     }
 
     const appeal = workingCase.verdictAppealCase
-    if (
-      !appeal ||
-      appeal.appealState === AppealCaseState.COMPLETED ||
-      appeal.appealState === AppealCaseState.WITHDRAWN
-    ) {
+    if (!isVerdictAppealOpen(appeal)) {
       return false
     }
 
     // Landsréttur can record a statement without setting a portal deadline.
-    return hasFiledAppealStatement(appeal.appealEventLogs, {
+    return hasFiledAppealStatement(appeal?.appealEventLogs, {
       defendantId: defendant.id,
     })
   }

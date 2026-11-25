@@ -1235,7 +1235,6 @@ export class AppealCaseService {
         theCase,
         user,
         party ?? {},
-        { appealConfirmationOnly: true },
       )
 
       const statementDeadline = findAppealStatementDeadline(
@@ -1249,12 +1248,7 @@ export class AppealCaseService {
         )
       }
 
-      if (
-        isStatementDeadlineExpired(
-          new Date(statementDeadline),
-          new Date(Date.now()),
-        )
-      ) {
+      if (isStatementDeadlineExpired(new Date(statementDeadline))) {
         throw new BadRequestException(
           `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
         )
@@ -1311,17 +1305,14 @@ export class AppealCaseService {
     return appealCase
   }
 
-  // Validates that the defence user is confirmed for the named party and
-  // returns a single party row for writeEventLogRows. Verdict-appeal statement
-  // events require Landsréttur confirmation only (appealConfirmationOnly).
+  // Validates that the defence user is Landsréttur-confirmed for the named
+  // party and returns a single party row for writeEventLogRows. Used only for
+  // verdict-appeal statement events.
   private resolveScopedDefenceParty(
     theCase: Case,
     user: User,
     party: { defendantId?: string; civilClaimantId?: string },
-    options: { appealConfirmationOnly?: boolean } = {},
   ): { defendantId?: string; civilClaimantId?: string } {
-    const { appealConfirmationOnly = false } = options
-
     if (party.defendantId && party.civilClaimantId) {
       throw new BadRequestException(
         'Provide either defendantId or civilClaimantId, not both',
@@ -1339,19 +1330,13 @@ export class AppealCaseService {
         )
       }
 
-      const isAppealConfirmed = Defendant.isConfirmedAppealDefenderOfDefendant(
-        user.nationalId,
-        [defendant],
-      )
-      const isDistrictConfirmed =
-        !appealConfirmationOnly &&
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
-
-      if (!isAppealConfirmed && !isDistrictConfirmed) {
+      if (
+        !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])
+      ) {
         throw new ForbiddenException(
-          appealConfirmationOnly
-            ? `Current user is not a confirmed appeal defender of defendant ${party.defendantId}`
-            : `Current user is not a confirmed defender of defendant ${party.defendantId}`,
+          `Current user is not a confirmed appeal defender of defendant ${party.defendantId}`,
         )
       }
 
@@ -1369,22 +1354,14 @@ export class AppealCaseService {
         )
       }
 
-      const isAppealConfirmed =
-        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+      if (
+        !CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
           user.nationalId,
           [civilClaimant],
         )
-      const isDistrictConfirmed =
-        !appealConfirmationOnly &&
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ])
-
-      if (!isAppealConfirmed && !isDistrictConfirmed) {
+      ) {
         throw new ForbiddenException(
-          appealConfirmationOnly
-            ? `Current user is not a confirmed appeal spokesperson of civil claimant ${party.civilClaimantId}`
-            : `Current user is not a confirmed spokesperson of civil claimant ${party.civilClaimantId}`,
+          `Current user is not a confirmed appeal spokesperson of civil claimant ${party.civilClaimantId}`,
         )
       }
 

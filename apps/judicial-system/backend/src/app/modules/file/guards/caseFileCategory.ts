@@ -1,4 +1,5 @@
 import {
+  type AppealStatementEvent,
   CaseFileCategory,
   CaseState,
   CaseType,
@@ -221,7 +222,7 @@ const canDefenceUserViewVerdictAppealStatementFile = (
   defendantId: string | undefined,
   civilClaimantId: string | null | undefined,
   fileCreated: Date | undefined,
-  appealEventLogs: Parameters<typeof findFiledAppealStatementEvent>[0],
+  appealEventLogs: AppealStatementEvent[] | null | undefined,
 ): boolean => {
   if (!verdictAppealStatementFileCategories.includes(caseFileCategory)) {
     return true
@@ -289,7 +290,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
-  appealEventLogs?: Parameters<typeof findFiledAppealStatementEvent>[0]
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -308,14 +309,7 @@ const canDefenceUserViewCaseFile = ({
     // cutoff — they must not see later co-defendant statements through this
     // exemption alone.
     const isVerdictAppealStatementFile =
-      caseFileCategory ===
-        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT ||
-      caseFileCategory ===
-        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE ||
-      caseFileCategory ===
-        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
-      caseFileCategory ===
-        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE
+      verdictAppealStatementFileCategories.includes(caseFileCategory)
 
     const hasConfirmedAppealAppointment =
       Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
@@ -456,7 +450,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
-  appealEventLogs?: Parameters<typeof findFiledAppealStatementEvent>[0]
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (!caseFileCategory) {
     return false
