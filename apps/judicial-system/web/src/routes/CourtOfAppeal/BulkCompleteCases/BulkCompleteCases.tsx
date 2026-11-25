@@ -531,6 +531,8 @@ const BulkCompleteCases: FC = () => {
   // Tracks transfers already decided in this drag before React re-renders.
   const caseListsRef = useRef(caseLists)
   caseListsRef.current = caseLists
+  // Snapshot at drag start so Escape / cancel can undo mid-drag transfers.
+  const dragStartListsRef = useRef<CaseLists | null>(null)
 
   const armSkipClick = () => {
     skipClickRef.current = true
@@ -699,10 +701,22 @@ const BulkCompleteCases: FC = () => {
     didCrossListDuringDrag.current = false
   }
 
+  const restoreListsFromDragStart = () => {
+    const snapshot = dragStartListsRef.current
+    if (!snapshot) {
+      return
+    }
+
+    caseListsRef.current = snapshot
+    setCaseLists(snapshot)
+    dragStartListsRef.current = null
+  }
+
   const handleDragStart = (event: DragStartEvent) => {
     recentlyMovedToNewList.current = false
     didCrossListDuringDrag.current = false
     dragWasActiveRef.current = true
+    dragStartListsRef.current = caseListsRef.current
     setActiveCaseId(String(event.active.id))
   }
 
@@ -732,11 +746,15 @@ const BulkCompleteCases: FC = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    finishActiveDrag()
 
     if (!over) {
+      restoreListsFromDragStart()
+      finishActiveDrag()
       return
     }
+
+    dragStartListsRef.current = null
+    finishActiveDrag()
 
     const activeId = String(active.id)
     const overId = String(over.id)
@@ -768,6 +786,7 @@ const BulkCompleteCases: FC = () => {
   }
 
   const handleDragCancel = () => {
+    restoreListsFromDragStart()
     finishActiveDrag()
   }
 
