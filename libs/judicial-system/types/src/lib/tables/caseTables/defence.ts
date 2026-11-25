@@ -83,8 +83,30 @@ export const defenceIndictmentsAppealed: CaseTable = {
   columns: pickColumns(defenceIndictmentsAppealedColumnKeys),
 }
 
+// Verdict appeals, where the list above is about ruling appeals. The columns
+// follow the appeal at the court of appeals rather than the district court
+// case, so every appeal column reads the verdict appeal.
+const defenceIndictmentsVerdictAppealedColumnKeys: CaseTableColumnKey[] = [
+  'verdictAppealCaseNumber',
+  'defendants',
+  'caseType',
+  'verdictAppealDate',
+  'verdictAppealProgress',
+  'verdictAppealCourtSession',
+]
+
+export const defenceIndictmentsVerdictAppealed: CaseTable = {
+  title: 'Sakamál í áfrýjunarferli',
+  hasMyCasesFilter: false,
+  columnKeys: defenceIndictmentsVerdictAppealedColumnKeys,
+  columns: pickColumns(defenceIndictmentsVerdictAppealedColumnKeys),
+}
+
+// A concluded case may have gone on to the court of appeals as a verdict
+// appeal, and then its number there leads the case number cell, as it does for
+// an appealed ruling.
 const defenceIndictmentsCompletedColumnKeys: CaseTableColumnKey[] = [
-  'caseNumber',
+  'latestAppealCaseNumber',
   'defendants',
   'caseType',
   'rulingDate',

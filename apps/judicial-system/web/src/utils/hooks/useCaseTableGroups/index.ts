@@ -24,6 +24,8 @@ const tableFeatures: Partial<Record<CaseTableType, Feature>> = {
     Feature.INDICTMENT_APPEAL,
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]:
     Feature.INDICTMENT_APPEAL,
+  [CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED]:
+    Feature.INDICTMENT_APPEAL,
 }
 
 export const getVisibleCaseTableGroups = (
