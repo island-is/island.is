@@ -139,7 +139,10 @@ export class RenderedNotificationDto {
   @ApiProperty({
     example: true,
     description:
-      'Whether the notification was delivered to the recipient, false if it was suppressed e.g. by the recipient only wanting actionable notifications',
+      "False only when the recipient's preferences suppressed the notification: they only want actionable notifications and it was neither actionable nor urgent, or they blocked the sender's category and it was not urgent. " +
+      'True otherwise, so it does not guarantee that anything was delivered: it stays true when push and email are turned off or the recipient has no profile. ' +
+      'It describes push and email only, since SMS for templates with smsDelivery bypasses these preferences. ' +
+      'Intended for metrics.',
   })
   @IsBoolean()
   wasSent!: boolean
@@ -335,7 +338,9 @@ export class ActorNotificationDto {
   @ApiProperty({
     example: true,
     description:
-      'Whether the notification was delivered to the delegate, false if it was suppressed',
+      "False only when the delegate's actor profile suppressed the notification because they only want actionable notifications and it was neither actionable nor urgent. " +
+      'True otherwise, so it does not guarantee that anything was delivered: it stays true when email is turned off or the delegate has no email address. ' +
+      'Intended for metrics.',
   })
   @IsBoolean()
   wasSent!: boolean
