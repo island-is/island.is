@@ -141,6 +141,7 @@ describe('CaseInterceptor - a verdict appeal from appeal to completion', () => {
     expect(completed).toEqual({
       ...appealed,
       appealState: AppealCaseState.COMPLETED,
+      appealCompletedDate: expect.any(Date),
     })
   })
 
