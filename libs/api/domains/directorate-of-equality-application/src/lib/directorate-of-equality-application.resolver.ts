@@ -27,6 +27,7 @@ import {
   DeleteEqualityAttachmentInput,
   EqualityAttachmentsInput,
   PresignEqualityAttachmentInput,
+  PresignEqualityPlanInput,
 } from './dto/equalityAttachment.input'
 import {
   EqualityAttachmentModel,
@@ -120,6 +121,23 @@ export class DirectorateOfEqualityApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.directorateOfEqualityApplicationService.editEqualityContent(
+      input,
+      user,
+    )
+  }
+
+  // The plan PDF goes from the browser straight to the presigned URL; the key
+  // then comes back on the content mutations above.
+  @Mutation(() => PresignedUploadModel, {
+    name: 'directorateOfEqualityPresignEqualityPlan',
+  })
+  @Scopes(ApiScope.directorateOfEquality)
+  @Audit()
+  presignEqualityPlan(
+    @Args('input') input: PresignEqualityPlanInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.presignEqualityPlan(
       input,
       user,
     )
