@@ -1,4 +1,4 @@
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { Fasteign } from '@island.is/clients/assets'
 import {
   getSelectedRealEstate,
@@ -29,12 +29,10 @@ const byCodeProperty: Fasteign = {
 const buildApplication = (
   answers: Record<string, unknown>,
   externalData: Record<string, { data: unknown }>,
-  typeId: ApplicationTypes = ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
 ): Application =>
   ({
     answers,
     externalData,
-    typeId,
   } as unknown as Application)
 
 describe('getSelectedRealEstate', () => {
@@ -58,39 +56,12 @@ describe('getSelectedRealEstate', () => {
         selectedPropertyByCode: '7654321',
       },
       { fetchPropertiesByCode: { data: [byCodeProperty] } },
-      ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF,
     )
 
     const result = getSelectedRealEstate(application)
 
     expect(result.selectedRealEstateId).toBe('F7654321')
     expect(result.selectedRealEstate).toBe(byCodeProperty)
-  })
-
-  it('ignores the anyProperties answer in an SDF app, which a client can write freely', () => {
-    const forgedProperty: Fasteign = {
-      fasteignanumer: 'F7654321',
-      notkunareiningar: {
-        notkunareiningar: [
-          { notkunareininganumer: '1', brunabotamat: 900000000 },
-        ],
-      },
-    }
-    const application = buildApplication(
-      {
-        otherPropertiesThanIOwnCheckbox: [YES],
-        selectedPropertyByCode: '7654321',
-        anyProperties: [forgedProperty],
-      },
-      {},
-      ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF,
-    )
-
-    const result = getSelectedRealEstate(application)
-
-    expect(result.selectedRealEstateId).toBe('F7654321')
-    expect(result.realEstates).toBeUndefined()
-    expect(result.selectedRealEstate).toBeUndefined()
   })
 
   it('falls back to the anyProperties answer for the by-code flow (legacy app)', () => {

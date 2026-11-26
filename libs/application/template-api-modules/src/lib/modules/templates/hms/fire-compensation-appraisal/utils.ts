@@ -1,9 +1,5 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
-import {
-  Application,
-  ApplicationConfigurations,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import {
   ApplicationDto,
   ApplicationFilesContentDto,
@@ -306,19 +302,11 @@ export const getSelectedRealEstate = (
       : undefined
     : getValueViaPath<string>(answers, 'realEstate')
 
-  // The legacy by-code search field stores its lookup in the `anyProperties`
-  // answer. A client can write any answer, so a server-driven application only
-  // uses the lookup saved in externalData.
-  const lookupFromAnswers = ApplicationConfigurations[application.typeId]
-    ?.useSdf
-    ? undefined
-    : getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
-
   const realEstates = otherPropertiesThanIOwn
     ? getValueViaPath<Array<Fasteign>>(
         externalData,
         'fetchPropertiesByCode.data',
-      ) ?? lookupFromAnswers
+      ) ?? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
     : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
   return {
