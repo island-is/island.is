@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
@@ -54,11 +53,22 @@ export class OvernightStaysRegistrationService extends BaseTemplateApiService {
   async getHomeLodgings({
     auth,
   }: TemplateApiModuleActionProps): Promise<HomeLodging[]> {
-    return this.fetchHomeLodgings(auth)
+    const homeLodgings = await this.fetchHomeLodgings(auth)
+
+    if (homeLodgings.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: 'Engin heimagisting skráð',
+          summary:
+            'Engin heimagisting er skráð á þína kennitölu hjá Sýslumönnum, því er ekki hægt að skila yfirliti.',
+        },
+        400,
+      )
+    }
+
+    return homeLodgings
   }
 
-  // Sýslumenn have not published the "Skila inn yfirliti" endpoint yet, so the
-  // submission itself is still mocked after validating against live data.
   async submitApplication({
     application,
     auth,
@@ -81,9 +91,42 @@ export class OvernightStaysRegistrationService extends BaseTemplateApiService {
       )
     }
 
+    const response = await this.homeLodgingsService
+      .submitOvernightStays(auth, submission)
+      .catch((error) => {
+        this.logger.error('Failed to submit overnight stays to Sýslumenn', {
+          applicationId: application.id,
+          error,
+        })
+        throw new TemplateApiError(
+          {
+            title: 'Ekki tókst að skila yfirliti',
+            summary:
+              'Villa kom upp við að skila yfirliti til Sýslumanna. Vinsamlegast reyndu aftur síðar.',
+          },
+          500,
+        )
+      })
+
+    if (response.error || !response.id) {
+      this.logger.warn('Sýslumenn rejected the overnight stays submission', {
+        applicationId: application.id,
+        error: response.error,
+      })
+      throw new TemplateApiError(
+        {
+          title: 'Ekki tókst að skila yfirliti',
+          summary:
+            response.error ??
+            'Sýslumenn tóku ekki við yfirlitinu. Vinsamlegast reyndu aftur síðar.',
+        },
+        400,
+      )
+    }
+
     return {
-      id: randomUUID(),
-      submittedAt: new Date().toISOString(),
+      id: response.id,
+      submittedAt: response.submittedAt ?? new Date().toISOString(),
       errors: [],
     }
   }

@@ -1,4 +1,8 @@
-import { HeimagistingDetailKT } from '../../gen/fetch'
+import {
+  HeimagistingarKTSetjaModel,
+  HeimagistingDetailKT,
+  HeimagistingKTSvar,
+} from '../../gen/fetch'
 
 export interface HomeLodgingYearDto {
   year: number
@@ -48,3 +52,69 @@ export const mapHomeLodgingDto = (
     years,
   }
 }
+
+export interface HomeLodgingSubmissionDateRangeDto {
+  /** ISO date (`YYYY-MM-DD`) of the check-in day. */
+  from: string
+  /** ISO date (`YYYY-MM-DD`) of the checkout day, which is not a night. */
+  to: string
+  amount?: number
+}
+
+export interface HomeLodgingSubmissionMonthDto {
+  /** Month of the year, 1-12. */
+  month: number
+  dateRanges: HomeLodgingSubmissionDateRangeDto[]
+  numberOfNights: number
+  rentalIncome: number
+}
+
+export interface HomeLodgingSubmissionDto {
+  homeLodgingId: string
+  year: number
+  advertisementUrls: string[]
+  hasActiveAdvertisement: boolean
+  nights: HomeLodgingSubmissionMonthDto[]
+  comments?: string
+}
+
+export interface HomeLodgingSubmissionResponseDto {
+  id?: string
+  submittedAt?: string
+  error?: string
+}
+
+const toUtcDate = (date: string): Date => new Date(`${date}T00:00:00Z`)
+
+export const mapHomeLodgingSubmission = (
+  submission: HomeLodgingSubmissionDto,
+): HeimagistingarKTSetjaModel => ({
+  id: submission.homeLodgingId,
+  year: String(submission.year),
+  urls: submission.advertisementUrls.map((url) => ({
+    url,
+    active: submission.hasActiveAdvertisement,
+  })),
+  nights: submission.nights.map((month) => ({
+    month: String(month.month),
+    dates: month.dateRanges.map(({ from, to, amount }) => ({
+      from: toUtcDate(from),
+      to: toUtcDate(to),
+      amount,
+    })),
+    numberOfNights: month.numberOfNights,
+    rentalIncome: month.rentalIncome,
+  })),
+  comments: submission.comments,
+})
+
+export const mapHomeLodgingSubmissionResponse = (
+  response: HeimagistingKTSvar,
+): HomeLodgingSubmissionResponseDto => ({
+  id: response.id?.trim() || undefined,
+  submittedAt:
+    response.submittedAt && !Number.isNaN(response.submittedAt.getTime())
+      ? response.submittedAt.toISOString()
+      : undefined,
+  error: response.error?.trim() || undefined,
+})

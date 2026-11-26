@@ -5,7 +5,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { IslandISHeimagistingarApi } from '../../gen/fetch'
-import { HomeLodgingDto, mapHomeLodgingDto } from './homeLodgings.dto'
+import {
+  HomeLodgingDto,
+  HomeLodgingSubmissionDto,
+  HomeLodgingSubmissionResponseDto,
+  mapHomeLodgingDto,
+  mapHomeLodgingSubmission,
+  mapHomeLodgingSubmissionResponse,
+} from './homeLodgings.dto'
 
 @Injectable()
 export class DistrictCommissionersHomeLodgingsService {
@@ -38,5 +45,16 @@ export class DistrictCommissionersHomeLodgingsService {
 
     const homeLodgings = await response.value()
     return homeLodgings.map(mapHomeLodgingDto).filter(isDefined)
+  }
+
+  async submitOvernightStays(
+    user: User,
+    submission: HomeLodgingSubmissionDto,
+  ): Promise<HomeLodgingSubmissionResponseDto> {
+    const response = await this.apiWithAuth(user).islandISHeimagistingarPost({
+      heimagistingarKTSetjaModel: mapHomeLodgingSubmission(submission),
+    })
+
+    return mapHomeLodgingSubmissionResponse(response)
   }
 }

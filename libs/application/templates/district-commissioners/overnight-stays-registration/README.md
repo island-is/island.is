@@ -16,7 +16,7 @@ The application was generated with `yarn generate-application-template district-
 
 1. **prerequisites** – the applicant approves data from Þjóðskrá, the user profile and Sýslumenn (home lodgings).
 2. **draft** – the applicant selects a home lodging and year, records nights, prices and comments, then reviews the submission.
-3. **completed** – the confirmation screen after the (still mocked) submission action succeeds.
+3. **completed** – the confirmation screen after the submission to Sýslumenn succeeds.
 
 ## Backend contract
 
@@ -55,12 +55,18 @@ Everything year related is derived from the `years` lists through the helpers in
 Gervimaður Færeyja (`0101302399`, phone `010-2399` on the dev identity server)
 has one home lodging in IS-DEV, `HG00016707` (Gervistaðir) for 2024.
 
-`submitApplication` represents `POST - Skila inn yfirliti`, which Sýslumenn
-have not published yet. It validates the selected lodging and year against the
-live data and then returns a mocked response containing `id`, `submittedAt` and
-an empty `errors` list. The submitted payload contains the selected
-registration and year, advertisement data, monthly date ranges, number of
-nights, rental income and comments.
+`submitApplication` validates the selected lodging and year against freshly
+fetched data and then sends the payload from `buildSubmissionPayload()` to
+`POST /api/IslandISHeimagistingar` (“Skila inn yfirliti”). The payload
+contains the selected registration and year, advertisement URLs, monthly date
+ranges, number of nights, rental income and comments. The client converts it to
+Sýslumenn's shape: `year` and `month` as strings, each URL with
+`active: hasActiveAdvertisement`, and date ranges as UTC midnight timestamps.
+
+The action fails with a `TemplateApiError` when the request fails (500), or when
+Sýslumenn return an `error` or no receipt `id` (400, showing Sýslumenn's error
+when there is one). On success it returns Sýslumenn's `id` and `submittedAt`
+with an empty `errors` list.
 
 ## Answer shape
 
@@ -146,8 +152,11 @@ registers a native `<input>`, which is meant for string values.
 ## Known issues (work in progress)
 
 - **Production gate.** The template has no `featureFlag` or
-  `readyForProduction: false`, so it is available in production once merged,
-  while the submission is still mocked.
+  `readyForProduction: false`, so it is available in production once merged.
+- **Payload format not confirmed.** The swagger types `month` and `year` as
+  free strings and the dates as date-times. The client sends `"1"`–`"12"`,
+  `"2024"` and UTC midnight timestamps; this has not been confirmed with
+  Sýslumenn.
 
 ## Registration in the application system
 
@@ -166,10 +175,11 @@ These steps (from `libs/application/templates/examples/README.md`) are already d
 - [x] Add Þjóðskrá, user-profile and home-lodging data providers
 - [x] Show the selected registration, monthly totals and comments on the overview screen
 - [x] Replace the mocked GET template API action with the real Sýslumenn client
-- [ ] Replace the mocked POST (`Skila inn yfirliti`) once Sýslumenn publish the endpoint
+- [x] Replace the mocked POST (`Skila inn yfirliti`) with `POST /api/IslandISHeimagistingar`
+- [ ] Confirm the POST payload format (`month`, `year`, dates) with Sýslumenn and test a submission in IS-DEV
 - [ ] Add a payment state if the registration has a fee
 - [ ] Extract the strings to Contentful with `yarn nx run application-templates-district-commissioners-overnight-stays-registration:extract-strings`
-- [ ] Keep the application out of production until the POST is real: add a `featureFlag` (from `Features` in `@island.is/feature-flags`) or `readyForProduction: false`
+- [ ] Decide on a production gate: add a `featureFlag` (from `Features` in `@island.is/feature-flags`) or `readyForProduction: false`
 - [ ] Ask Sýslumenn whether the night of 31 December must be reportable
 - [x] List the gervimenn that can be used to test the application (see Backend contract)
 

@@ -3,7 +3,9 @@
 Client for Sýslumenn's home lodging (heimagisting) registrations of the
 authenticated user.
 
-- **Endpoint:** `GET /api/IslandISHeimagistingar` on the `IslandMinarSidur`
+- **Endpoints:** `GET /api/IslandISHeimagistingar` (`getHomeLodgings`) and
+  `POST /api/IslandISHeimagistingar` (`submitOvernightStays`, “Skila inn
+  yfirliti”) on the `IslandMinarSidur`
   X-Road service (`XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH`, e.g.
   `IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur`).
 - **Auth:** token exchange of the user's token. Sýslumenn have no dedicated
