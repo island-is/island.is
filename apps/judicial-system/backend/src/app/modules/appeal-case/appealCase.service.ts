@@ -153,7 +153,9 @@ export class AppealCaseService {
   // Writes one appeal event-log row per given party. Callers decide which
   // parties an event applies to: writeEventLog to every party the user
   // represents (an appeal / statement covers all of them), the withdrawal flow
-  // to only the parties actually being withdrawn.
+  // to only the parties actually being withdrawn. An act of the court of
+  // appeals itself - completing a verdict appeal - names no party and is
+  // written as a single row without one.
   private async writeEventLogRows(
     theCase: Case,
     appealCase: AppealCase,
@@ -171,10 +173,10 @@ export class AppealCaseService {
             caseId: theCase.id,
             appealCaseId: appealCase.id,
             eventType,
-            // Everything written here is a party acting outside the court
-            // record; in-court APPEALED events are built by
-            // buildInCourtAppealedEvent instead. Origin is only meaningful for
-            // APPEALED.
+            // An APPEALED event written here is a party appealing outside the
+            // court record; in-court APPEALED events are built by
+            // buildInCourtAppealedEvent instead. No other event has an origin,
+            // whether a party's or the court of appeals' own APPEAL_COMPLETED.
             appealOrigin:
               eventType === AppealEventType.APPEALED
                 ? AppealOrigin.OUT_OF_COURT
