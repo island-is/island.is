@@ -42,6 +42,7 @@ import {
   getConfirmableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealSummaryStage,
+  isVerdictAppealOutcomeShown,
 } from './VerdictAppealSummary.logic'
 
 /**
@@ -181,13 +182,15 @@ const VerdictAppealSummary = () => {
           description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
         />
       )}
-      {stage === 'IN_PROGRESS' && decisionLabel && (
-        <AlertBanner
-          variant="warning"
-          title="Niðurstaða Landsréttar"
-          description={decisionLabel}
-        />
-      )}
+      {stage === 'IN_PROGRESS' &&
+        decisionLabel &&
+        isVerdictAppealOutcomeShown(verdictAppealCase) && (
+          <AlertBanner
+            variant="warning"
+            title="Niðurstaða Landsréttar"
+            description={decisionLabel}
+          />
+        )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

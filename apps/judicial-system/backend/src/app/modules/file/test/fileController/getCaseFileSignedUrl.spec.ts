@@ -243,20 +243,51 @@ describe('FileController - Get case file signed url', () => {
       )
     })
 
-    // Clearing the hash is what makes the next read stamp the document again.
-    it('has its hash cleared when the date it is stamped with changes', async () => {
+    // When the date it is stamped with changes, the ruling's hash is cleared,
+    // and the next read stamps the document again instead of serving the
+    // stamped copy that carries the old date.
+    it('is stamped again once the date it is stamped with changes', async () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingDate: new Date('2026-11-21T10:00:00Z'),
+        },
+      } as Case
       const transaction = {} as Transaction
+      const mockGetConfirmedSignedUrl =
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl as jest.Mock
+      mockGetConfirmedSignedUrl.mockResolvedValueOnce(url)
 
       await fileService.invalidateVerdictAppealRulingConfirmation(
         caseId,
         transaction,
       )
+      // The file as the clearing leaves it.
+      const then = await givenWhenThen(caseId, theCase, fileId, {
+        ...caseFile,
+        hash: null,
+        hashAlgorithm: null,
+      } as unknown as CaseFile)
 
       expect(
         mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
       ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
         transaction,
       })
+      expect(then.result).toEqual({ url })
+      expect(
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+      ).toHaveBeenCalledWith(
+        CaseType.INDICTMENT,
+        key,
+        true,
+        expect.any(Function),
+        undefined,
+        false,
+      )
     })
   })
 
