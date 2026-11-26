@@ -12,20 +12,18 @@ import { EstateCase as EstateCaseModel } from './models/case.model'
 import { Estate as EstateModel } from './models/estate.model'
 
 export const mapToEstate = (e: Estate): EstateModel | undefined => {
-  if (!e.caseId || !e.deceased?.name || !e.deceased?.sid) {
+  if (!e.caseId || !e.deceased?.name) {
     return undefined
   }
 
   return {
     id: e.caseId,
     nameOfDeceased: e.deceased.name,
-    nationalIdOfDeceased: e.deceased.sid,
     dateOfDeath: e.dateOfDeath ?? undefined,
     isFinished: e.status?.isOpen !== undefined ? !e.status.isOpen : undefined,
-    representative:
-      e.representative?.name && e.representative?.sid
-        ? { name: e.representative.name, nationalId: e.representative.sid }
-        : undefined,
+    representative: e.representative?.name
+      ? { name: e.representative.name }
+      : undefined,
   }
 }
 
@@ -91,10 +89,9 @@ export const mapToEstatesCase = (
 
   const representative = (() => {
     const r = c.representative
-    if (!r?.name || !r?.sid) return undefined
+    if (!r?.name) return undefined
     return {
       name: r.name,
-      nationalId: r.sid,
       text: resolveText(r.text, locale),
     }
   })()
@@ -104,7 +101,6 @@ export const mapToEstatesCase = (
     if (!m?.name) return undefined
     return {
       name: m.name ?? undefined,
-      nationalId: m.sid ?? undefined,
     }
   })()
 

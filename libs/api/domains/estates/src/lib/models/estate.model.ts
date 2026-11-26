@@ -11,9 +11,6 @@ export class Estate {
   @Field()
   nameOfDeceased!: string
 
-  @Field()
-  nationalIdOfDeceased!: string
-
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateOfDeath?: Date
 

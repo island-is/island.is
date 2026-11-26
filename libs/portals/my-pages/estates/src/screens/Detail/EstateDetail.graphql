@@ -22,12 +22,10 @@ query EstateDetail($input: EstatesCaseInput!) {
     }
     representative {
       name
-      nationalId
       text
     }
     estateManager {
       name
-      nationalId
     }
     status {
       code

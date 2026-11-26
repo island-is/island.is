@@ -5,17 +5,16 @@ import { mapToEstateCollection, mapToEstatesCase } from './mapper'
 const BASE_URL = 'https://download.test'
 
 describe('mapToEstateCollection', () => {
-  it('skips estates missing caseId, deceased name or deceased sid', () => {
+  it('skips estates missing caseId or deceased name', () => {
     const complete = {
       caseId: 'c1',
-      deceased: { name: 'Jón', sid: '0000000000' },
+      deceased: { name: 'Jón' },
     }
 
     const result = mapToEstateCollection([
       complete,
       { ...complete, caseId: null },
-      { ...complete, deceased: { name: 'Jón' } },
-      { ...complete, deceased: { sid: '0000000000' } },
+      { ...complete, deceased: {} },
     ])
 
     expect(result.map((e) => e.id)).toEqual(['c1'])
