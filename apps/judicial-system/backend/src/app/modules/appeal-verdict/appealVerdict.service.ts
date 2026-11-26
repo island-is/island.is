@@ -187,9 +187,7 @@ export class AppealVerdictService {
       return { delivered: true }
     }
 
-    if (
-      theCase.verdictAppealCase?.appealState !== AppealCaseState.COMPLETED
-    ) {
+    if (theCase.verdictAppealCase?.appealState !== AppealCaseState.COMPLETED) {
       throw new BadRequestException(
         `Verdict appeal case ${
           theCase.verdictAppealCase?.id ?? 'unknown'
