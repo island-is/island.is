@@ -34,6 +34,7 @@ import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/util
 import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import {
   getStatementFileCategories,
+  getStatementUploadFileRepresentative,
   getStatementUploadHeaderLine,
   getStatementUploadParty,
   isPartyStatementFile,
@@ -115,6 +116,9 @@ const VerdictAppealStatementUpload = () => {
       status: FileUploadStatus.done,
       defendantId: party?.ids.defendantId ?? undefined,
       civilClaimantId: party?.ids.civilClaimantId ?? undefined,
+      fileRepresentative: party
+        ? getStatementUploadFileRepresentative(workingCase, party)
+        : undefined,
     })
 
   // A staged file only has a row to lose. One the submit already uploaded,
