@@ -202,6 +202,33 @@ describe('BulkCompleteCaseLists', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('shows that all cases are selected when every row is staged', async () => {
+    const { container } = renderLists()
+    await turnOnSelection()
+
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Gunna Gunnarsdóttir')
+    await stage('S-3/2026, Siggi Sigurðsson')
+
+    const sourceTable = container.querySelectorAll('table')[1]
+    expect(screen.getByText('Öll mál valin')).toBeInTheDocument()
+    expect(
+      within(sourceTable).queryByRole('button', { name: /Raða eftir dálki/ }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Velja mál til að ljúka')).toBeChecked()
+
+    await user.click(
+      screen.getByRole('button', {
+        name: unstageLabel('S-2/2026, Gunna Gunnarsdóttir'),
+      }),
+    )
+
+    expect(screen.queryByText('Öll mál valin')).not.toBeInTheDocument()
+    expect(
+      within(sourceTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
+    ).toHaveLength(columns.length)
+  })
+
   it('moves a row to the staging list and back on click', async () => {
     renderLists()
     await turnOnSelection()

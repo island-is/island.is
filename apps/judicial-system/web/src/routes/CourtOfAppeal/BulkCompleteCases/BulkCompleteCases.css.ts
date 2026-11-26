@@ -16,8 +16,8 @@ export const stagingSection = style({
   paddingBottom: theme.spacing[5],
 })
 
-// Stands in for the rows of the staging table while nothing is staged.
-export const emptyStaging = style({
+// Stands in for the rows of a list that has none.
+export const emptyList = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

@@ -60,6 +60,12 @@ const WithPresence: FC<{ children: (isPresent: boolean) => ReactNode }> = ({
   return children(isPresent)
 }
 
+const EmptyList: FC<{ text: string }> = ({ text }) => (
+  <div className={styles.emptyList}>
+    <Text variant="small">{text}</Text>
+  </div>
+)
+
 const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
   const { openCaseInNewTab } = useOpenCaseInNewTab()
   const {
@@ -261,11 +267,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                       sortable={staged.length > 0}
                     />
                     {staged.length === 0 && (
-                      <div className={styles.emptyStaging}>
-                        <Text variant="small">
-                          Engin mál valin – smelltu á mál til að velja það
-                        </Text>
-                      </div>
+                      <EmptyList text="Engin mál valin – smelltu á mál til að velja það" />
                     )}
                   </div>
                 </div>
@@ -284,14 +286,18 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                 />
               </div>
             </div>
-            <GenericTable
-              tableId="bulk-complete-cases-source"
-              columns={tableColumns}
-              rows={source.map((r) => getTableRow(r, false))}
-              loadingIndicator={LoadingIndicator}
-              fadeInNewRows
-              fixedLayout
-            />
+            <div>
+              <GenericTable
+                tableId="bulk-complete-cases-source"
+                columns={tableColumns}
+                rows={source.map((r) => getTableRow(r, false))}
+                loadingIndicator={LoadingIndicator}
+                fadeInNewRows
+                fixedLayout
+                sortable={source.length > 0}
+              />
+              {source.length === 0 && <EmptyList text="Öll mál valin" />}
+            </div>
           </div>
         </div>
       )}
