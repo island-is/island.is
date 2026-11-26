@@ -403,6 +403,61 @@ describe('getVerdictAppealFileGroups', () => {
     )
   })
 
+  it('should not reconstruct filer initials from the current advocate on a redacted statement', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          defendant: {
+            id: 'other_client_id',
+            name: 'Annar sakborningur',
+            appealDefenderName: 'Verjandi Vilhjálmsdóttir',
+          },
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        },
+      ),
+    ).toBe('Verjandi sendi inn')
+  })
+
+  it('should fall back to the current advocate only for declarations without stored attribution', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          defendant: {
+            id: 'own_client_id',
+            name: 'Eigin sakborningur',
+            appealDefenderName: 'Verjandi Vilhjálmsdóttir',
+          },
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        },
+      ),
+    ).toBe('Verjandi (VV) sendi inn')
+  })
+
+  it('should not reconstruct filer initials from the current spokesperson on a redacted civil-claimant statement', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          civilClaimant: {
+            id: 'claimant_id',
+            name: 'Bótakröfuhafi',
+            appealSpokespersonName: 'Lóa Lögmaður',
+            appealSpokespersonIsLawyer: true,
+          } as never,
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        },
+      ),
+    ).toBe('Lögmaður sendi inn')
+  })
+
   it('should group a civil-claimant greinargerð under the claimant', () => {
     const theCaseWithClaimant = {
       ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),

@@ -33,6 +33,13 @@ import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/uti
 
 import { hasStandingVerdictAppeal } from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
 
+const isVerdictAppealDeclarationFile = (
+  category?: CaseFileCategory | null,
+): boolean =>
+  Boolean(
+    category && verdictAppealDeclarationFileCategories.includes(category),
+  )
+
 // Re-exported because this is where the section's callers and its spec have
 // always asked for them; the rules themselves are shared with the advocate
 // screen and live beside it.
@@ -289,13 +296,18 @@ export const getVerdictAppealFileGroupTitle = (
 
 // Who sent the row in. Prefer the filer stored on the file so a later
 // advocate replacement does not re-attribute an earlier upload. Fall back to
-// the party's current representative for declarations registered without that
-// field (e.g. letter appeals at the public prosecution office).
+// the party's current representative only for declarations registered without
+// that field (e.g. letter appeals at the public prosecution office). Statement
+// rows with no stored attribution stay role-only — co-party statements are
+// redacted on the backend, and reconstructing initials from the current
+// advocate would undo that.
 export const getVerdictAppealFileSentInBy = (
   group: VerdictAppealFileGroup,
   file?: Pick<CaseFile, 'submittedBy' | 'fileRepresentative' | 'category'>,
 ): string => {
   const storedName = file?.fileRepresentative ?? file?.submittedBy
+  const mayUseCurrentRepresentative =
+    !storedName && isVerdictAppealDeclarationFile(file?.category)
   const isProsecutorCategory =
     file?.category === CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
     file?.category ===
@@ -311,8 +323,10 @@ export const getVerdictAppealFileSentInBy = (
   if (group.civilClaimant) {
     const initials = getInitials(
       storedName ??
-        group.civilClaimant.appealSpokespersonName ??
-        group.civilClaimant.spokespersonName,
+        (mayUseCurrentRepresentative
+          ? group.civilClaimant.appealSpokespersonName ??
+            group.civilClaimant.spokespersonName
+          : undefined),
     )
     const role =
       group.civilClaimant.appealSpokespersonIsLawyer ??
@@ -325,8 +339,9 @@ export const getVerdictAppealFileSentInBy = (
 
   const initials = getInitials(
     storedName ??
-      group.defendant?.appealDefenderName ??
-      group.defendant?.defenderName,
+      (mayUseCurrentRepresentative
+        ? group.defendant?.appealDefenderName ?? group.defendant?.defenderName
+        : undefined),
   )
 
   return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
