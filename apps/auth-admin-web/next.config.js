@@ -5,6 +5,8 @@ const { createSecureHeaders } = require('next-secure-headers')
 
 module.exports = withNx(
   withVanillaExtract({
+    // Next 16.4 type-checks with tsc, incl. specs; keep the old checker
+    experimental: { useTypeScriptCli: false },
     basePath: '/admin',
     cssModules: false,
     webpack: (config, { isServer, dev }) => {

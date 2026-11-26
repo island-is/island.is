@@ -6,6 +6,8 @@ const { BASE_PATH = '/samradsgatt' } = process.env
 const withVanillaExtract = createVanillaExtractPlugin()
 module.exports = withNx(
   withVanillaExtract({
+    // Next 16.4 type-checks with tsc, incl. specs; keep the old checker
+    experimental: { useTypeScriptCli: false },
     webpack: (config, { isServer, dev }) => {
       if (process.env.ANALYZE === 'true' && !isServer) {
         config.plugins.push(

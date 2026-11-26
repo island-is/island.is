@@ -6,6 +6,8 @@ const withVanillaExtract = createVanillaExtractPlugin()
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // Next 16.4 type-checks with tsc, incl. specs; keep the old checker
+  experimental: { useTypeScriptCli: false },
   webpack: (config, { isServer, dev }) => {
     if (!dev && isServer) {
       config.devtool = 'source-map'
