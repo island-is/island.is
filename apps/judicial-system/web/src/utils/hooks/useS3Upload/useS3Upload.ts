@@ -397,7 +397,13 @@ const useS3Upload = (
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            updateFile({ ...file, percent })
+            // Keep uploading — spreading the original file would restore
+            // status: done from handleChange and re-enable submit mid-flight.
+            updateFile({
+              ...file,
+              percent,
+              status: FileUploadStatus.uploading,
+            })
           })
 
           const newFileId = await addFileToCaseState({
@@ -457,7 +463,11 @@ const useS3Upload = (
         const presignedPost = await getPresignedPost(file)
 
         await uploadToS3(file, presignedPost, (percent) => {
-          updateFile({ ...file, percent })
+          updateFile({
+            ...file,
+            percent,
+            status: FileUploadStatus.uploading,
+          })
         })
 
         const { data } = await attachRulingOrderDocument({

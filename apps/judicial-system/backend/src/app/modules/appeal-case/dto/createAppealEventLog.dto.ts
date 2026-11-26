@@ -1,6 +1,6 @@
-import { IsIn } from 'class-validator'
+import { IsIn, IsOptional, IsUUID } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { AppealEventType } from '@island.is/judicial-system/types'
 
@@ -14,4 +14,16 @@ export class CreateAppealEventLogDto {
   @IsIn(recordableAppealEventTypes)
   @ApiProperty({ enum: recordableAppealEventTypes })
   readonly eventType!: AppealEventType
+
+  // Verdict-appeal statements are per party. When set, the event log is
+  // scoped to this party instead of every party the defence user represents.
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly defendantId?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly civilClaimantId?: string
 }

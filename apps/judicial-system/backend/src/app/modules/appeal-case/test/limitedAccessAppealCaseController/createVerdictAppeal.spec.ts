@@ -31,7 +31,6 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
-  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
@@ -93,10 +92,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         {
           id: defendantId,
           isDefenderChoiceConfirmed: true,
-          defenderName: 'Lára Lögmann',
           defenderNationalId,
-          defenderEmail: 'lara@dummy.dd',
-          defenderPhoneNumber: '0000001',
           verdicts: [verdict],
         },
       ],
@@ -111,7 +107,6 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
-  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
   let mockSequelize: Sequelize
   let transaction: Transaction
@@ -125,7 +120,6 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
-      defendantRepositoryService,
       verdictRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
@@ -133,7 +127,6 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
-    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
@@ -248,24 +241,6 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       )
     })
 
-    // The court of appeals still confirms the defender; until then the record
-    // grants no access.
-    it('should record the defender of record as the unconfirmed appeal defender', () => {
-      expect(mockDefendantRepositoryService.update).toHaveBeenCalledTimes(1)
-      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        defendantId,
-        {
-          appealDefenderName: 'Lára Lögmann',
-          appealDefenderNationalId: defenderNationalId,
-          appealDefenderEmail: 'lara@dummy.dd',
-          appealDefenderPhoneNumber: '0000001',
-          isAppealDefenderConfirmed: false,
-        },
-        { transaction },
-      )
-    })
-
     // The notification to the public prosecution office is its own story, and none of the
     // ruling appeal notifications apply to a verdict appeal.
     // The public prosecution is told when a defender files through the portal.
@@ -281,43 +256,6 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
           type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
         },
       })
-    })
-  })
-
-  // The court of appeals can settle a defendant's counsel on an appeal the
-  // prosecution filed, before that defendant's own defender appeals.
-  describe.each`
-    stance                               | appealDefender
-    ${'named an appeal defender'}        | ${{ appealDefenderName: 'Njáll Nýr', isAppealDefenderConfirmed: true }}
-    ${'recorded that counsel is waived'} | ${{ isAppealDefenderWaived: true }}
-    ${'recorded that counsel is kept'}   | ${{ isAppealDefenderWaived: false }}
-  `('when the court of appeals has $stance', ({ appealDefender }) => {
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(
-        buildCase({
-          defendants: [
-            {
-              id: defendantId,
-              isDefenderChoiceConfirmed: true,
-              defenderName: 'Lára Lögmann',
-              defenderNationalId,
-              verdicts: [verdict],
-              ...appealDefender,
-            },
-          ],
-        } as unknown as Partial<Case>),
-        dto,
-      )
-    })
-
-    it('should appeal without touching the appeal defender', () => {
-      expect(then.error).toBeUndefined()
-      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

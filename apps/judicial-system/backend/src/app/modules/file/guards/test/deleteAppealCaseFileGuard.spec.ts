@@ -8,6 +8,7 @@ import {
 
 import {
   AppealCaseState,
+  AppealEventType,
   CaseFileCategory,
   courtOfAppealsRoles,
   InstitutionType,
@@ -256,6 +257,65 @@ describe('Delete Appeal Case File Guard', () => {
 
       it('should throw ForbiddenException', () => {
         expect(then.error).toBeInstanceOf(ForbiddenException)
+      })
+    })
+  })
+
+  describe('verdict appeal statement after APPEAL_STATEMENT_SENT', () => {
+    const defendantId = uuid()
+
+    describe('party has filed and Landsréttur has no case number', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: {
+            verdictAppealCase: {
+              id: uuid(),
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                  defendantId,
+                },
+              ],
+            },
+          },
+          caseFile: {
+            category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            defendantId,
+          },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(
+          'Forbidden when the appeal statement has already been filed',
+        )
+      })
+    })
+
+    describe('party has not filed yet', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: {
+            verdictAppealCase: { id: uuid(), appealEventLogs: [] },
+          },
+          caseFile: {
+            category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            defendantId,
+          },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
       })
     })
   })
