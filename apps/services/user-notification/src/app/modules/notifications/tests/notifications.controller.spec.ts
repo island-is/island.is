@@ -173,6 +173,36 @@ describe('NotificationsController', () => {
         ],
       })
     })
+
+    it.each([
+      ['2026-12-01T16:00:00', '2026-12-01T16:00:00.000Z'],
+      ['2026-12-01T17:00:00+01:00', '2026-12-01T16:00:00.000Z'],
+    ])(
+      'should queue the deadline %s normalized to UTC',
+      async (deadline, expected) => {
+        const args = [{ key: 'organization', value: 'Test Organization' }]
+        jest.spyOn(notificationsService, 'getTemplate').mockResolvedValue({
+          templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+          title: 'Test Template',
+          externalBody: 'Test body',
+          clickActionUrl: 'https://island.is/test',
+          args: ['organization'],
+          scope: '@island.is/documents',
+        } as HnippTemplate)
+        jest.spyOn(notificationsService, 'sanitize').mockReturnValue(args)
+
+        await controller.createHnippNotification({
+          recipient: '1234567890',
+          templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+          args,
+          deadline,
+        })
+
+        expect(queueService.add).toHaveBeenCalledWith(
+          expect.objectContaining({ deadline: expected }),
+        )
+      },
+    )
   })
 
   describe('findActorNotifications', () => {

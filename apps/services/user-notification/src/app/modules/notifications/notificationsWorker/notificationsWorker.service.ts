@@ -37,6 +37,7 @@ import {
 import {
   HnippTemplate,
   HnippTemplatePriorityType,
+  HnippTemplateSourceType,
 } from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
@@ -564,16 +565,18 @@ export class NotificationsWorkerService {
       scope,
       shouldSendNotification,
       template.priorityType,
+      template.sourceType,
     )
     if (dbRecord) {
-      await this.recordNotificationSender(
-        message.recipient,
-        message.senderId,
-        message.templateId,
-        toTemplateCategory(template.hnippCategoryIs),
-        template.priorityType,
+      await this.recordNotificationSender({
+        recipient: message.recipient,
+        senderId: message.senderId,
+        templateId: message.templateId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        priorityType: template.priorityType,
+        sourceType: template.sourceType,
         messageId,
-      )
+      })
     }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
@@ -917,6 +920,7 @@ export class NotificationsWorkerService {
     scope: string,
     wasSent: boolean,
     priorityType: HnippTemplatePriorityType,
+    sourceType: HnippTemplateSourceType,
   ) {
     const { messageId, ...message } = args
     const existing = await this.notificationModel.findOne({
@@ -941,6 +945,8 @@ export class NotificationsWorkerService {
         scope,
         wasSent,
         priorityType,
+        sourceType,
+        deadline: message.deadline ? new Date(message.deadline) : null,
       })
       this.logger.info('notification written to db', {
         messageId,
@@ -982,22 +988,31 @@ export class NotificationsWorkerService {
     }
   }
 
-  private async recordNotificationSender(
-    recipient: string,
-    senderId: string | undefined,
-    templateId: string,
-    category: string | null,
-    priorityType: HnippTemplatePriorityType,
-    messageId: string,
-  ): Promise<void> {
+  private async recordNotificationSender({
+    recipient,
+    senderId,
+    templateId,
+    category,
+    priorityType,
+    sourceType,
+    messageId,
+  }: {
+    recipient: string
+    senderId: string | undefined
+    templateId: string
+    category: string | null
+    priorityType: HnippTemplatePriorityType
+    sourceType: HnippTemplateSourceType
+    messageId: string
+  }): Promise<void> {
     const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
     if (!isValidSenderId(normalizedSenderId)) {
       return
     }
 
     try {
-      // Keep the latest category and priority type, since a template can
-      // change them
+      // Keep the latest category, priority type and source type, since a
+      // template can change them
       await this.userNotificationSenderModel.bulkCreate(
         [
           {
@@ -1006,11 +1021,12 @@ export class NotificationsWorkerService {
             templateId,
             category,
             priorityType: priorityType ?? null,
+            sourceType: sourceType ?? null,
           },
         ],
         {
           conflictAttributes: ['recipient', 'senderId', 'templateId'],
-          updateOnDuplicate: ['category', 'priorityType'],
+          updateOnDuplicate: ['category', 'priorityType', 'sourceType'],
         },
       )
     } catch (error) {
@@ -1114,6 +1130,7 @@ export class NotificationsWorkerService {
               senderId: message.senderId,
               messageId: messageId,
               urgent: message.urgent,
+              deadline: message.deadline,
             },
             message.recipient,
           )

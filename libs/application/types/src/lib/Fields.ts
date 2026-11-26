@@ -627,6 +627,12 @@ export interface SubmitField extends BaseField {
     | ((event?: string) => boolean)
   readonly renderLongErrors?: boolean
   formatLongErrorMessage?: (message: string) => string
+  /**
+   * When the submit actions are placed in the footer, the footer sticks to the
+   * bottom of the viewport while the screen content is taller than the viewport.
+   * Enabled by default, set to false to opt out.
+   */
+  readonly stickyFooter?: boolean
 }
 
 export interface DividerField extends BaseField {

@@ -438,9 +438,13 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
       eventType,
+      defendantId,
+      civilClaimantId,
     })
   }
 
@@ -737,7 +741,7 @@ export class BackendService {
 
   createAppealSummons(
     caseId: string,
-    createAppealSummons: { defendants: unknown[] },
+    createAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
   }
@@ -745,7 +749,7 @@ export class BackendService {
   updateAppealSummons(
     caseId: string,
     appealSummonsId: string,
-    updateAppealSummons: { defendants: unknown[] },
+    updateAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}`,
@@ -1078,10 +1082,12 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
-      { eventType },
+      { eventType, defendantId, civilClaimantId },
     )
   }
 

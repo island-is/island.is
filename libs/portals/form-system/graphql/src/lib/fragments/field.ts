@@ -12,7 +12,10 @@ export const FieldFragment = gql`
     name {
       ...LanguageFields
     }
-    description {
+    informationText {
+      ...LanguageFields
+    }
+    tooltip {
       ...LanguageFields
     }
     isPartOfMultiset

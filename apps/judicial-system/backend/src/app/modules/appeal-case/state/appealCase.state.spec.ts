@@ -1,6 +1,9 @@
+import { ForbiddenException } from '@nestjs/common'
+
 import {
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   CaseType,
 } from '@island.is/judicial-system/types'
 
@@ -47,6 +50,75 @@ describe('transitionAppealCase', () => {
 
       expect(appealCaseUpdate.appealState).toBe(AppealCaseState.COMPLETED)
       expect(appealCaseUpdate.appealRulingDate).toBe(now)
+    })
+  })
+  describe('a verdict appeal', () => {
+    const theCase = { type: CaseType.INDICTMENT } as Case
+    const verdictAppeal = (appealState: AppealCaseState) =>
+      ({ appealType: AppealCaseType.VERDICT, appealState } as AppealCase)
+
+    it('is completed from the state it is filed in', () => {
+      const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.COMPLETE_APPEAL,
+        theCase,
+        verdictAppeal(AppealCaseState.APPEALED),
+      )
+
+      expect(caseUpdate).toEqual({})
+      expect(appealCaseUpdate).toEqual({
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDate: now,
+      })
+    })
+
+    it.each([
+      AppealCaseState.RECEIVED,
+      AppealCaseState.WITHDRAWN,
+      AppealCaseState.COMPLETED,
+    ])('is not completed from %s', (appealState) => {
+      expect(() =>
+        transitionAppealCase(
+          AppealCaseTransition.COMPLETE_APPEAL,
+          theCase,
+          verdictAppeal(appealState),
+        ),
+      ).toThrow(ForbiddenException)
+    })
+
+    it.each([
+      [AppealCaseTransition.RECEIVE_APPEAL, AppealCaseState.APPEALED],
+      [AppealCaseTransition.REOPEN_APPEAL, AppealCaseState.COMPLETED],
+    ])('is never transitioned with %s', (transition, appealState) => {
+      expect(() =>
+        transitionAppealCase(transition, theCase, verdictAppeal(appealState)),
+      ).toThrow(ForbiddenException)
+    })
+
+    it('is withdrawn from the state it is filed in', () => {
+      const { appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.WITHDRAW_APPEAL,
+        theCase,
+        verdictAppeal(AppealCaseState.APPEALED),
+      )
+
+      expect(appealCaseUpdate).toEqual({
+        appealState: AppealCaseState.WITHDRAWN,
+      })
+    })
+  })
+
+  describe('a ruling appeal', () => {
+    it('is not completed before it is received', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = { appealState: AppealCaseState.APPEALED } as AppealCase
+
+      expect(() =>
+        transitionAppealCase(
+          AppealCaseTransition.COMPLETE_APPEAL,
+          theCase,
+          appealCase,
+        ),
+      ).toThrow(ForbiddenException)
     })
   })
 })

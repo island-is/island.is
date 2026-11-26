@@ -104,7 +104,7 @@ export const GrantServiceProviderModal = ({
           id="grant-service-provider-label"
           marginBottom={2}
         >
-          {formatMessage(coreMessages.serviceProvider)}
+          {formatMessage(messages.grantSystemLabel)}
         </Text>
         {loading && <SkeletonLoader height={72} repeat={2} space={2} />}
         {!loading && error && <Problem error={error} noBorder={false} />}

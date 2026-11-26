@@ -55,7 +55,7 @@ describe('getVerdictAppealReceivedDate', () => {
 })
 
 describe('getVerdictAppealOverviewHeaderLines', () => {
-  it('names the case, the ruling and the arrival of the appeal', () => {
+  it('names the district case, the ruling and the arrival of the appeal', () => {
     expect(
       getVerdictAppealOverviewHeaderLines({
         courtCaseNumber: 'S-14/2026',

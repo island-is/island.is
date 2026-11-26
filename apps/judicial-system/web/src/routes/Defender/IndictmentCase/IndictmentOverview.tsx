@@ -8,11 +8,13 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
   DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE,
+  DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE,
   getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Feature,
+  hasFiledAppealStatement,
   isCompletedCase,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
@@ -71,7 +73,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import type { VerdictAppealAction } from './verdictAppealActions.logic'
-import { getVerdictAppealActions } from './verdictAppealActions.logic'
+import {
+  canDefenderFileVerdictStatementOf,
+  getVerdictAppealActions,
+  isVerdictAppealOpen,
+} from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
   defendant: Defendant
@@ -170,9 +176,72 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
-  // What the verdict timeline card offers for a defendant: file a verdict
-  // appeal, register that the defendant accepts the verdict, or take back the
-  // appeal this defender filed. Which is decided by getVerdictAppealActions.
+  const showReopenNotice =
+    Boolean(workingCase.reopenReason) && !isCompletedCase(workingCase.state)
+
+  const showVerdictStatusAlerts = Boolean(
+    workingCase.defendants?.some((defendant) => defendant.verdict),
+  )
+
+  const showServiceNotices =
+    !caseIsClosed &&
+    Boolean(
+      workingCase.defendants?.some(
+        (defendant) =>
+          Boolean(defendant.alternativeServiceDescription) ||
+          Boolean(
+            defendant.subpoenas?.some((subpoena) =>
+              isSuccessfulServiceStatus(subpoena.serviceStatus),
+            ),
+          ),
+      ),
+    )
+
+  const shouldShowDefenderVerdictTimelineCard = (
+    defendant: Defendant,
+  ): boolean => {
+    if (!defendant.verdict) {
+      return false
+    }
+
+    if (hasVerdictServiceDecision(defendant.verdict)) {
+      return true
+    }
+
+    // Statement CTA / filed status without a service decision — keep the card
+    // after filing so "Greinargerð send" remains visible.
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      return true
+    }
+
+    const appeal = workingCase.verdictAppealCase
+    if (!isVerdictAppealOpen(appeal)) {
+      return false
+    }
+
+    // Landsréttur can record a statement without setting a portal deadline.
+    return hasFiledAppealStatement(appeal?.appealEventLogs, {
+      defendantId: defendant.id,
+    })
+  }
+
+  const showVerdictTimelineCards =
+    displayVerdictTimeline &&
+    Boolean(
+      workingCase.defendants?.some((defendant) =>
+        shouldShowDefenderVerdictTimelineCard(defendant),
+      ),
+    )
+
+  const showTopNotices =
+    showReopenNotice ||
+    showVerdictStatusAlerts ||
+    showVerdictTimelineCards ||
+    showServiceNotices
+
+  // Appeal / withdraw / accept stay behind the service-decision gate. The card
+  // can mount earlier for greinargerð, but widening those actions was not in
+  // scope. Statement filing is separate.
   const getVerdictTimelineMenuItems = (
     defendant: Defendant,
   ): ContextMenuItem[] => {
@@ -194,12 +263,30 @@ const IndictmentOverview: FC = () => {
       },
     }
 
-    return getVerdictAppealActions(
-      workingCase,
-      defendant,
-      user,
-      features.includes(Feature.INDICTMENT_APPEAL),
-    ).map((action) => menuItems[action])
+    const items: ContextMenuItem[] = []
+
+    if (hasVerdictServiceDecision(defendant.verdict)) {
+      items.push(
+        ...getVerdictAppealActions(
+          workingCase,
+          defendant,
+          user,
+          features.includes(Feature.INDICTMENT_APPEAL),
+        ).map((action) => menuItems[action]),
+      )
+    }
+
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      items.push({
+        title: 'Senda greinargerð',
+        onClick: () =>
+          router.push(
+            `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+          ),
+      })
+    }
+
+    return items
   }
 
   const handleAcceptVerdict = async () => {
@@ -272,77 +359,74 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer>
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
-            <Box marginBottom={2}>
-              <AlertMessage
-                title="Mál enduropnað"
-                message={
-                  <Text variant="small" whiteSpace="preWrap">
-                    {workingCase.reopenReason}
-                  </Text>
-                }
-                type="info"
-              />
-            </Box>
-          )}
-          {workingCase.defendants?.map(
-            (defendant) =>
-              defendant.verdict && (
-                <Box
-                  key={`${defendant.id}${defendant.verdict.id}`}
-                  marginBottom={2}
-                >
-                  <VerdictStatusAlert
-                    defendant={defendant}
-                    verdict={defendant.verdict}
-                  />
-                </Box>
-              ),
-          )}
-          {displayVerdictTimeline &&
-            workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict &&
-                hasVerdictServiceDecision(defendant.verdict) && (
-                  <Box
-                    key={`${defendant.id}${defendant.verdict.id}-timeline`}
-                    marginBottom={2}
-                    dataTestId="defenderVerdictTimelineCard"
-                  >
-                    <DefenderVerdictTimelineCard
-                      defendant={defendant}
-                      verdictAppealCase={workingCase.verdictAppealCase}
-                      contextMenuItems={getVerdictTimelineMenuItems(defendant)}
-                    />
-                  </Box>
-                ),
-            )}
-          {!caseIsClosed &&
-            workingCase.defendants?.map((defendant) => (
-              <Fragment key={defendant.id}>
-                {defendant.alternativeServiceDescription && (
-                  <AlternativeServiceAnnouncement
-                    alternativeServiceDescription={
-                      defendant.alternativeServiceDescription
+          <div className={stack({ gap: 5 })}>
+            {showTopNotices && (
+              <div className={stack({ gap: 2 })}>
+                {showReopenNotice && (
+                  <AlertMessage
+                    title="Mál enduropnað"
+                    message={
+                      <Text variant="small" whiteSpace="preWrap">
+                        {workingCase.reopenReason}
+                      </Text>
                     }
-                    defendantName={defendant.name}
+                    type="info"
                   />
                 )}
-                {defendant.subpoenas
-                  ?.filter((subpoena) =>
-                    isSuccessfulServiceStatus(subpoena.serviceStatus),
-                  )
-                  .map((subpoena) => (
-                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                      <ServiceAnnouncement
+                {workingCase.defendants?.map(
+                  (defendant) =>
+                    defendant.verdict && (
+                      <VerdictStatusAlert
+                        key={`${defendant.id}${defendant.verdict.id}`}
                         defendant={defendant}
-                        subpoena={subpoena}
+                        verdict={defendant.verdict}
                       />
-                    </Box>
+                    ),
+                )}
+                {displayVerdictTimeline &&
+                  workingCase.defendants?.map(
+                    (defendant) =>
+                      shouldShowDefenderVerdictTimelineCard(defendant) && (
+                        <Box
+                          key={`${defendant.id}${defendant.verdict?.id}-timeline`}
+                          dataTestId="defenderVerdictTimelineCard"
+                        >
+                          <DefenderVerdictTimelineCard
+                            defendant={defendant}
+                            verdictAppealCase={workingCase.verdictAppealCase}
+                            contextMenuItems={getVerdictTimelineMenuItems(
+                              defendant,
+                            )}
+                          />
+                        </Box>
+                      ),
+                  )}
+                {!caseIsClosed &&
+                  workingCase.defendants?.map((defendant) => (
+                    <Fragment key={defendant.id}>
+                      {defendant.alternativeServiceDescription && (
+                        <AlternativeServiceAnnouncement
+                          alternativeServiceDescription={
+                            defendant.alternativeServiceDescription
+                          }
+                          defendantName={defendant.name}
+                        />
+                      )}
+                      {defendant.subpoenas
+                        ?.filter((subpoena) =>
+                          isSuccessfulServiceStatus(subpoena.serviceStatus),
+                        )
+                        .map((subpoena) => (
+                          <ServiceAnnouncement
+                            key={`${defendant.id}${subpoena.id}`}
+                            defendant={defendant}
+                            subpoena={subpoena}
+                          />
+                        ))}
+                    </Fragment>
                   ))}
-              </Fragment>
-            ))}
-          <div className={stack({ gap: 5 })}>
+              </div>
+            )}
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
@@ -427,14 +511,13 @@ const IndictmentOverview: FC = () => {
                 </Button>
               </Box>
             )}
-            {caseIsClosed && (
-              <Box component="section">
-                <ZipButton
-                  caseId={workingCase.id}
-                  courtCaseNumber={workingCase.courtCaseNumber}
-                />
-              </Box>
-            )}
+            <Box component="section">
+              <ZipButton
+                caseId={workingCase.id}
+                courtCaseNumber={workingCase.courtCaseNumber}
+                policeCaseNumbers={workingCase.policeCaseNumbers}
+              />
+            </Box>
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>

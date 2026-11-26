@@ -404,9 +404,10 @@ export class FileController {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
-    // Given a transaction, the service removes the file from S3 only after
-    // the request has committed, so a rollback or a failed commit leaves
-    // both the row and the object in place.
+    // Holds the case row so DeleteAppealCaseFileGuard's SENT / case-number
+    // read cannot race a concurrent APPEAL_STATEMENT_SENT commit. Given a
+    // transaction, the service removes the file from S3 only after the
+    // request has committed, so a rollback leaves both the row and the object.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.deleteCaseFile(theCase, caseFile, transaction)

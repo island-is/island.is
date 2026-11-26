@@ -709,7 +709,9 @@ describe('verdict appeal progress', () => {
     ).toBeUndefined()
   })
 
-  it('is completed once the appeal itself is completed', () => {
+  // Lists outside the court of appeals read this, and they are shown nothing
+  // of how the appeal ended until the court releases it.
+  it('stays under advisement once the appeal itself is completed', () => {
     expect(
       verdictAppealProgress(
         appealCase({
@@ -719,7 +721,7 @@ describe('verdict appeal progress', () => {
         }),
         now,
       ),
-    ).toBe('COMPLETED')
+    ).toBe('UNDER_ADVISEMENT')
   })
 
   // What the court of appeals records outranks what can be read off the
@@ -766,16 +768,16 @@ describe('verdict appeal progress', () => {
     ).toBeUndefined()
   })
 
-  it('is completed once the appeal itself is completed, whatever status was recorded', () => {
+  it('stays under advisement once the appeal itself is completed, whatever status was recorded', () => {
     expect(
       verdictAppealProgress(
         appealCase({
           appealState: AppealCaseState.COMPLETED,
-          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+          verdictAppealStatus: VerdictAppealStatus.POSTPONED,
         }),
         now,
       ),
-    ).toBe('COMPLETED')
+    ).toBe('UNDER_ADVISEMENT')
   })
 
   describe('the session to show', () => {

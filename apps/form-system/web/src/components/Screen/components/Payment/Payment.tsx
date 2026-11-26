@@ -6,6 +6,7 @@ import {
   getValue,
   m,
   SectionTypes,
+  FieldInformation,
 } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -194,7 +195,12 @@ export const Payment = () => {
 
               {paymentFields.map((field, index) => {
                 if (!field) return null
-                return <QuantityStack field={field} index={index} key={index} />
+                return (
+                  <Box key={field.id}>
+                    {isPaymentSection && <FieldInformation item={field} />}
+                    <QuantityStack field={field} index={index} />
+                  </Box>
+                )
               })}
               <Divider />
               <Box display="flex" justifyContent="spaceBetween">
