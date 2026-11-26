@@ -10,18 +10,12 @@ import {
 } from '../../../gen/fetch'
 
 /**
- * Phase 3 Gate — Latency Baseline
+ * Regression guard for the GraphQL resolver's own overhead.
  *
- * These tests measure the GQL layer overhead (resolver → service → mock REST
- * response → mapping). The REST-to-AstAdapter portion is mocked with realistic
- * response shapes matching the parental-leave template.
- *
- * Targets (§8, Constraint 17):
- *   - getScreen:      <300ms p95
- *   - executeAction:  <500ms p95
- *
- * Since these tests mock the REST layer, they measure GQL-layer overhead only.
- * The AstAdapter pipeline timing was baselined in Phase 2.
+ * `SdfService` is mocked to return a canned screen, so only the resolver's
+ * dispatch is timed. The REST call, the server-side screen pipeline and the
+ * network are not part of the measurement, so the limits below (p50 < 5 ms,
+ * p95 < 20 ms) say nothing about the end-to-end latency a user sees.
  */
 
 const MOCK_APP_ID = '00000000-0000-0000-0000-000000000001'
@@ -210,7 +204,7 @@ const percentile = (sorted: number[], p: number): number => {
   return sorted[Math.max(0, idx)]
 }
 
-describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
+describe('SDF resolver dispatch overhead (service mocked)', () => {
   let resolver: SdfResolver
   let sdfService: jest.Mocked<SdfService>
 
