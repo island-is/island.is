@@ -1,15 +1,8 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import GenericTable from './GenericTable'
 import * as styles from './Table.css'
-
-let mockReduceMotion = true
-
-jest.mock('motion/react', () => ({
-  ...jest.requireActual('motion/react'),
-  useReducedMotion: () => mockReduceMotion,
-}))
 
 describe('GenericTable', () => {
   let user: ReturnType<typeof userEvent.setup>
@@ -49,7 +42,6 @@ describe('GenericTable', () => {
   beforeEach(() => {
     user = userEvent.setup()
     window.localStorage.clear()
-    mockReduceMotion = true
   })
 
   it('marks the sortable column header with aria-sort', async () => {
@@ -130,16 +122,16 @@ describe('GenericTable', () => {
   const customTable = (
     rows: ReturnType<typeof row>[],
     {
-      fadeRows,
+      fadeInNewRows,
       fixedLayout,
-    }: { fadeRows?: boolean; fixedLayout?: boolean } = {},
+    }: { fadeInNewRows?: boolean; fixedLayout?: boolean } = {},
   ) => (
     <GenericTable
       tableId="test-table"
       columns={columns}
       rows={rows}
       loadingIndicator={() => <span>loading</span>}
-      fadeRows={fadeRows}
+      fadeInNewRows={fadeInNewRows}
       fixedLayout={fixedLayout}
     />
   )
@@ -185,12 +177,12 @@ describe('GenericTable', () => {
   it('shows a row added after the first render, and it can be clicked and focused at once', async () => {
     const onClick = jest.fn()
     const { rerender } = render(
-      customTable([row('1', 'R-123/2021')], { fadeRows: true }),
+      customTable([row('1', 'R-123/2021')], { fadeInNewRows: true }),
     )
 
     rerender(
       customTable([row('1', 'R-123/2021'), row('2', 'R-456/2021', onClick)], {
-        fadeRows: true,
+        fadeInNewRows: true,
       }),
     )
 
@@ -204,119 +196,8 @@ describe('GenericTable', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  const bodyRows = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll('tbody tr'))
-
-  it('removes a faded row once it has faded out under reduced motion', async () => {
-    const { container, rerender } = render(
-      customTable([row('1', 'R-123/2021'), row('2', 'R-456/2021')], {
-        fadeRows: true,
-      }),
-    )
-
-    rerender(customTable([row('2', 'R-456/2021')], { fadeRows: true }))
-
-    await waitFor(() => expect(bodyRows(container)).toHaveLength(1))
-    expect(bodyRows(container)[0]).toHaveAttribute(
-      'aria-label',
-      'Opna mál R-456/2021',
-    )
-  })
-
-  it('keeps a row that is fading out away from the user', async () => {
-    mockReduceMotion = false
-    const onClick = jest.fn()
-    const { container, rerender } = render(
-      customTable([row('1', 'R-123/2021', onClick), row('2', 'R-456/2021')], {
-        fadeRows: true,
-      }),
-    )
-
-    rerender(customTable([row('2', 'R-456/2021')], { fadeRows: true }))
-
-    const exiting = container.querySelector('tr[data-exiting]')
-    expect(exiting).toHaveAttribute('aria-label', 'Opna mál R-123/2021')
-    expect(exiting).toHaveAttribute('aria-hidden', 'true')
-    expect(exiting).toHaveAttribute('tabindex', '-1')
-    expect(exiting).toHaveAttribute('inert')
-    expect(exiting).toHaveStyle({ pointerEvents: 'none' })
-    expect(
-      screen.queryByRole('button', { name: 'Opna mál R-123/2021' }),
-    ).not.toBeInTheDocument()
-
-    if (exiting) {
-      fireEvent.click(exiting)
-      fireEvent.keyDown(exiting, { key: 'Enter' })
-    }
-    expect(onClick).not.toHaveBeenCalled()
-
-    await waitFor(() => expect(bodyRows(container)).toHaveLength(1))
-  })
-
-  it('turns a row that comes back while fading out into one live row', async () => {
-    mockReduceMotion = false
-    const onClick = jest.fn()
-    const { container, rerender } = render(
-      customTable([row('1', 'R-123/2021', onClick), row('2', 'R-456/2021')], {
-        fadeRows: true,
-      }),
-    )
-
-    rerender(customTable([row('2', 'R-456/2021')], { fadeRows: true }))
-    expect(container.querySelector('tr[data-exiting]')).toBeInTheDocument()
-
-    rerender(
-      customTable([row('1', 'R-123/2021', onClick), row('2', 'R-456/2021')], {
-        fadeRows: true,
-      }),
-    )
-
-    expect(bodyRows(container)).toHaveLength(2)
-    expect(container.querySelector('tr[data-exiting]')).not.toBeInTheDocument()
-
-    // Long enough for any fade still running to have ended.
-    await new Promise((resolve) => setTimeout(resolve, 400))
-
-    expect(bodyRows(container)).toHaveLength(2)
-    const returned = screen.getByRole('button', { name: 'Opna mál R-123/2021' })
-    await user.click(returned)
-    expect(onClick).toHaveBeenCalledTimes(1)
-  })
-
-  it('wraps the content of each body cell when rows fade', () => {
-    const { container } = render(
-      customTable([row('1', 'R-123/2021')], { fadeRows: true }),
-    )
-
-    expect(container.querySelector('table')).toHaveClass(styles.fadeRowsTable)
-
-    const cells = Array.from(container.querySelectorAll('tbody td'))
-    expect(cells).toHaveLength(2)
-    cells.forEach((cell) => {
-      const content = cell.firstElementChild?.firstElementChild
-      expect(content).toHaveClass(styles.fadingCellContent)
-    })
-    expect(
-      container.querySelector(`.${styles.fadingCellContent} > span`),
-    ).toHaveTextContent('R-123/2021')
-  })
-
-  it('leaves the cell markup as it is when rows do not fade', () => {
-    const { container } = renderTable()
-
-    expect(container.querySelector('table')).not.toHaveClass(
-      styles.fadeRowsTable,
-    )
-    expect(
-      container.querySelector(`.${styles.fadingCellContent}`),
-    ).not.toBeInTheDocument()
-
-    const firstCell = container.querySelector('tbody td')
-    expect(firstCell?.innerHTML).toBe('<span>R-123/2021</span>')
-  })
-
   it('starts the rows of the first render fully shown when new rows fade in', () => {
-    render(customTable([row('1', 'R-123/2021')], { fadeRows: true }))
+    render(customTable([row('1', 'R-123/2021')], { fadeInNewRows: true }))
 
     expect(
       screen.getByRole('button', { name: 'Opna mál R-123/2021' }),
@@ -326,12 +207,12 @@ describe('GenericTable', () => {
   it('keeps a row in place when another row leaves, with new rows fading in', () => {
     const { rerender } = render(
       customTable([row('1', 'R-123/2021'), row('2', 'R-456/2021')], {
-        fadeRows: true,
+        fadeInNewRows: true,
       }),
     )
     const kept = screen.getByRole('button', { name: 'Opna mál R-456/2021' })
 
-    rerender(customTable([row('2', 'R-456/2021')], { fadeRows: true }))
+    rerender(customTable([row('2', 'R-456/2021')], { fadeInNewRows: true }))
 
     expect(screen.getByRole('button', { name: 'Opna mál R-456/2021' })).toBe(
       kept,

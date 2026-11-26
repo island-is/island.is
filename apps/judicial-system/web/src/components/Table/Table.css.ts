@@ -48,20 +48,6 @@ globalStyle(`${fixedLayoutTable} ${fixedLayoutMenuColumn}`, {
   paddingRight: (menuColumnWidth - menuTriggerSize) / 2,
 })
 
-// In a table whose rows fade in and out, the cells' vertical padding sits on
-// the content inside them, so it closes with the row.
-export const fadeRowsTable = style({})
-
-globalStyle(`${fadeRowsTable} tbody td`, {
-  paddingTop: 0,
-  paddingBottom: 0,
-})
-
-export const fadingCellContent = style({
-  paddingTop: theme.spacing[2],
-  paddingBottom: theme.spacing[2],
-})
-
 export const thead = style({
   background: theme.color.blue100,
   textAlign: 'left',

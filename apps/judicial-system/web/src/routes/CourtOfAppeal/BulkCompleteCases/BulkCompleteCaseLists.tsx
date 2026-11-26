@@ -60,37 +60,10 @@ const WithPresence: FC<{ children: (isPresent: boolean) => ReactNode }> = ({
   return children(isPresent)
 }
 
-// The nearest row in the given direction that is not fading out of its list.
-const findLiveRow = (
-  row: HTMLTableRowElement,
-  direction: 'nextElementSibling' | 'previousElementSibling',
-): HTMLTableRowElement | undefined => {
-  let sibling = row[direction]
-
-  while (sibling) {
-    if (
-      sibling instanceof HTMLTableRowElement &&
-      !sibling.hasAttribute('data-exiting')
-    ) {
-      return sibling
-    }
-
-    sibling = sibling[direction]
-  }
-
-  return undefined
-}
-
-// Opens and closes on the same timing as the rows of the list above it, so
-// the last row leaving and the box arriving move together.
-const EmptyList: FC<{ show: boolean; text: string }> = ({ show, text }) => (
-  <ExpandingSection show={show}>
-    <div className={styles.emptyListSpacing}>
-      <div className={styles.emptyList}>
-        <Text variant="small">{text}</Text>
-      </div>
-    </div>
-  </ExpandingSection>
+const EmptyList: FC<{ text: string }> = ({ text }) => (
+  <div className={styles.emptyList}>
+    <Text variant="small">{text}</Text>
+  </div>
 )
 
 const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
@@ -133,8 +106,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
 
   // A row moved with the keyboard leaves its list, taking focus with it, so
   // focus goes to the row that takes its place, or to the selection toggle
-  // when the list is left empty. Rows still fading out of the list are
-  // passed over.
+  // when the list is left empty.
   const moveFocusFromMovedRow = () => {
     const movedRow = document.activeElement
 
@@ -143,10 +115,9 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     }
 
     const nextRow =
-      findLiveRow(movedRow, 'nextElementSibling') ??
-      findLiveRow(movedRow, 'previousElementSibling')
+      movedRow.nextElementSibling ?? movedRow.previousElementSibling
 
-    if (nextRow) {
+    if (nextRow instanceof HTMLTableRowElement) {
       nextRow.focus()
       return
     }
@@ -291,14 +262,13 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                       columns={tableColumns}
                       rows={staged.map((r) => getTableRow(r, true, isPresent))}
                       loadingIndicator={LoadingIndicator}
-                      fadeRows
+                      fadeInNewRows
                       fixedLayout
                       sortable={staged.length > 0}
                     />
-                    <EmptyList
-                      show={staged.length === 0}
-                      text="Engin mál valin – smelltu á mál til að velja það"
-                    />
+                    {staged.length === 0 && (
+                      <EmptyList text="Engin mál valin – smelltu á mál til að velja það" />
+                    )}
                   </div>
                 </div>
               )}
@@ -322,11 +292,11 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                 columns={tableColumns}
                 rows={source.map((r) => getTableRow(r, false))}
                 loadingIndicator={LoadingIndicator}
-                fadeRows
+                fadeInNewRows
                 fixedLayout
                 sortable={source.length > 0}
               />
-              <EmptyList show={source.length === 0} text="Öll mál valin" />
+              {source.length === 0 && <EmptyList text="Öll mál valin" />}
             </div>
           </div>
         </div>
