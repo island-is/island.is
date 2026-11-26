@@ -114,10 +114,10 @@ export class PatchActorProfileDto {
   @IsBoolean()
   emailNotifications?: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @IsUUID(4)
-  emailsId?: string
+  emailsId?: string | null
 
   @ApiPropertyOptional()
   @IsOptional()

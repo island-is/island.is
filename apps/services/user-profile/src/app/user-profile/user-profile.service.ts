@@ -905,7 +905,7 @@ export class UserProfileService {
    * @param toNationalId - The national ID of the delegation recipient
    * @param fromNationalId - The national ID of the delegation sender
    * @param emailNotifications - Optional flag to enable/disable email notifications
-   * @param emailsId - Optional ID of the email record to associate with the profile
+   * @param emailsId - Optional ID of the email record to associate with the profile, null clears it
    * @returns Promise<MeActorProfileDto> - The created/updated actor profile
    * @throws NoContentException if delegation doesn't exist
    * @throws Error if email record doesn't exist or profile creation fails
@@ -920,7 +920,7 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
     emailNotifications?: boolean
-    emailsId?: string
+    emailsId?: string | null
     onlyActionablePriorityNotifications?: boolean
   }): Promise<MeActorProfileDto> {
     // Verify delegation exists
@@ -992,7 +992,8 @@ export class UserProfileService {
         return row.update(
           {
             ...(isDefined(emailNotifications) && { emailNotifications }),
-            ...(isDefined(emailsId) && { emailsId }),
+            // null clears the linked email, undefined leaves it unchanged
+            ...(emailsId !== undefined && { emailsId }),
             ...onlyPrioNotificationsUpdate,
           },
           { transaction },
