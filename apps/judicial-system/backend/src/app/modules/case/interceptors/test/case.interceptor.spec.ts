@@ -1527,7 +1527,9 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
       }[]
     }
 
-    expect(result.caseFiles.find((file) => file.id === 'own_statement')).toEqual(
+    expect(
+      result.caseFiles.find((file) => file.id === 'own_statement'),
+    ).toEqual(
       expect.objectContaining({
         submittedBy: 'Own Filer',
         fileRepresentative: 'Own Advocate',

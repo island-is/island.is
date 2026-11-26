@@ -94,9 +94,7 @@ export const getStatementUploadFileRepresentative = (
       (entry) => entry.id === party.ids.defendantId,
     )
 
-    return (
-      defendant?.appealDefenderName ?? defendant?.defenderName ?? undefined
-    )
+    return defendant?.appealDefenderName ?? defendant?.defenderName ?? undefined
   }
 
   if (party.ids.civilClaimantId) {
