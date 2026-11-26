@@ -25,6 +25,7 @@ import { getOrCreateTransaction } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
+import { CreateFile } from '../../file.service'
 
 interface Then {
   result: CaseFile
@@ -33,7 +34,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  createCaseFile: CreateFileDto,
+  createCaseFile: CreateFile,
   theCase: Case,
 ) => Promise<Then>
 
@@ -47,7 +48,7 @@ describe('FileController - Create case file', () => {
   let givenWhenThen: GivenWhenThen
   let createCaseFileAs: (
     caseId: string,
-    createCaseFile: CreateFileDto,
+    createCaseFile: CreateFile,
     theCase: Case,
     actingUser: User,
   ) => Promise<Then>
@@ -81,7 +82,7 @@ describe('FileController - Create case file', () => {
     // instead.
     createCaseFileAs = async (
       caseId: string,
-      createCaseFile: CreateFileDto,
+      createCaseFile: CreateFile,
       theCase: Case,
       actingUser: User,
     ): Promise<Then> => {
@@ -609,7 +610,7 @@ describe('FileController - Create case file', () => {
       },
     } as Case
     const uuId = uuid()
-    const createCaseFile: CreateFileDto = {
+    const createCaseFile: CreateFile = {
       type: 'text/plain',
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuId}/statement.pdf`,
@@ -687,7 +688,7 @@ describe('FileController - Create case file', () => {
         ],
       },
     } as Case
-    const createCaseFile: CreateFileDto = {
+    const createCaseFile: CreateFile = {
       type: 'text/plain',
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuid()}/statement.pdf`,
@@ -726,7 +727,7 @@ describe('FileController - Create case file', () => {
         appealEventLogs: [],
       },
     } as Case
-    const createCaseFile: CreateFileDto = {
+    const createCaseFile: CreateFile = {
       type: 'text/plain',
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuid()}/statement.pdf`,
