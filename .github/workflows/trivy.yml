@@ -5,7 +5,7 @@ name: Trivy
 # never waits on or delays the PR / merge-queue pipelines.
 # Results: Security -> Code scanning. PRs only flag NEW alerts,
 # compared with the latest main analysis (push + nightly below).
-# Image scans run in merge-queue.yml after docker-build.
+# Image scans run in each merge-queue.yml docker-build leg.
 
 on:
   pull_request: {}
@@ -60,10 +60,4 @@ jobs:
 
       # Committed secrets and CRITICAL misconfig fail.
       - name: Gate
-        run: |
-          r="$RUNNER_TEMP/trivy.json"
-          jq -e '[.Results[]? | .Secrets[]?] | length == 0' "$r" >/dev/null \
-            || { echo "::error::Trivy found committed secrets"; exit 1; }
-          jq -e '[.Results[]? | .Misconfigurations[]?
-                  | select(.Status == "FAIL" and .Severity == "CRITICAL")] | length == 0' "$r" >/dev/null \
-            || { echo "::error::Trivy found CRITICAL misconfigurations"; exit 1; }
+        run: ./scripts/ci/trivy-gate.sh "$RUNNER_TEMP/trivy.json"

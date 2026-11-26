@@ -64,7 +64,8 @@ jobs:
     runs-on: arc-mergequeue
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
-      actions: read
+      # write: Trivy fail-fast cancels the run.
+      actions: write
       contents: read
     env:
       # Just so this is not an unassigned variable
@@ -192,79 +193,57 @@ jobs:
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
 
-  # Trivy scan of the images just pushed. Runs beside success, not in
-  # its needs: never delays merge or deploy. Report only unless the
-  # repo variable TRIVY_FAIL_ON is set (e.g. CRITICAL).
-  trivy-image:
-    needs:
-      - docker-build
-    if: ${{ !cancelled() && needs.docker-build.result != 'skipped' }}
-    runs-on: arc-mergequeue
-    timeout-minutes: 20
-    permissions:
-      actions: read
-      contents: read
-    env:
-      FAIL_ON: ${{ vars.TRIVY_FAIL_ON }}
-    steps:
-      - name: Get docker-build output
-        uses: cloudposse/github-action-matrix-outputs-read@v1
-        id: read
-        with:
-          matrix-step-name: docker-build
+      # Trivy: scan this leg's image right after push, so the
+      # check runs in parallel across legs. Blocks on secrets, and
+      # on vuln severities in repo variable TRIVY_FAIL_ON.
+      - name: Setup Trivy
+        id: trivy-setup
+        if: env.JSON_imageName != '' && env.JSON_imageTag != ''
+        uses: ./.github/actions/setup-trivy
 
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          sparse-checkout: |
-            /.github/actions/setup-trivy/
-            /scripts/ci/
-            /trivy.yaml
-            /.trivyignore.yaml
-          sparse-checkout-cone-mode: false
-
-      - uses: ./.github/actions/setup-trivy
-
-      - name: Docker login to ECR repo
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Scan images
-        env:
-          RESULT: ${{ steps.read.outputs.result }}
+      # Scan errors only block when TRIVY_FAIL_ON is set.
+      - name: Trivy scan
+        id: trivy
+        if: steps.trivy-setup.outcome == 'success'
+        continue-on-error: ${{ vars.TRIVY_FAIL_ON == '' }}
         run: |
-          [ -n "$RESULT" ] || RESULT='{}'
-          jq -r --arg r "$DOCKER_REGISTRY" '
-            (.imageTag // {}) as $t
-            | (.imageName // {}) | to_entries[]
-            | select(.value != "" and ($t[.key] // "") != "")
-            | "\($r)/\(.value):\($t[.key])"' <<< "$RESULT" | sort -u > "$RUNNER_TEMP/images.txt"
-          echo "Scanning $(wc -l < "$RUNNER_TEMP/images.txt") images"
+          echo "$DOCKER_REGISTRY/$JSON_imageName:$JSON_imageTag" > "$RUNNER_TEMP/images.txt"
           ./scripts/ci/trivy-images.sh "$RUNNER_TEMP/images.txt" "$RUNNER_TEMP/trivy"
 
-      - name: Summary
-        if: always()
+      - name: Trivy summary
+        if: always() && steps.trivy-setup.outcome == 'success'
         run: |
           shopt -s nullglob
-          ./scripts/ci/trivy-summary.sh Images "$RUNNER_TEMP"/trivy/*.json >> "$GITHUB_STEP_SUMMARY"
+          ./scripts/ci/trivy-summary.sh "$JSON_imageName" "$RUNNER_TEMP"/trivy/*.json >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        if: always()
+        if: always() && steps.trivy-setup.outcome == 'success'
         with:
-          name: trivy-images
+          name: trivy-${{ env.JSON_imageName }}
           path: ${{ runner.temp }}/trivy/
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: Gate
-        if: ${{ env.FAIL_ON != '' }}
+      - name: Trivy gate
+        id: trivy-gate
+        if: steps.trivy.outcome == 'success'
+        env:
+          TRIVY_FAIL_ON: ${{ vars.TRIVY_FAIL_ON }}
         run: |
           shopt -s nullglob
-          for r in "$RUNNER_TEMP"/trivy/*.json; do
-            trivy convert --exit-code 1 --severity "$FAIL_ON" --format table "$r"
-          done
+          ./scripts/ci/trivy-gate.sh "$RUNNER_TEMP"/trivy/*.json
+
+      # Fail fast: stop the run instead of waiting for tests.
+      # success runs on always(), so it still reports the failure.
+      - name: Cancel run on Trivy findings
+        if: failure() && steps.trivy-gate.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/cancel"
 
   e2e:
     uses: ./.github/workflows/e2e.yml
@@ -347,7 +326,9 @@ jobs:
 
   success:
     runs-on: arc-mergequeue
-    if: ${{ !cancelled() }}
+    # always(), not !cancelled(): a skipped required check counts as
+    # passed, so a cancelled run must still report a failure here.
+    if: ${{ always() }}
     needs:
       - prepare
       - tests

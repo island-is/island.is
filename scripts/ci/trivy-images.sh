@@ -18,15 +18,24 @@ fi
 trivy image --download-db-only
 
 scan() {
-  local image=$1 name
+  local image=$1 name raw
   name=$(basename "$image" | tr ':' '_')
+  raw="$OUT/$name.raw.json"
   # Memory scan cache: parallel runs can't share the bolt cache.
+  # All severities, so MEDIUM secrets are kept.
   if ! trivy image "$image" --quiet --skip-db-update \
     --cache-backend memory --image-src remote --platform linux/amd64 \
-    --scanners vuln --format json -o "$OUT/$name.json"; then
+    --scanners vuln,secret --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+    --format json -o "$raw"; then
     echo "::error::Trivy failed for $image"
     return 1
   fi
+  # Keep every secret, but only HIGH/CRITICAL vulnerabilities.
+  jq '(.Results // []) |= map(
+        if .Vulnerabilities then .Vulnerabilities |= map(
+          select(.Severity == "HIGH" or .Severity == "CRITICAL"))
+        else . end)' "$raw" > "$OUT/$name.json"
+  rm -f "$raw"
 }
 export -f scan
 export OUT
