@@ -5,7 +5,6 @@ import {
   ApplicationTypeSettings,
   ContentfulRepository,
   getApplicationTypeSettingsQueryParams,
-  getLocalApplicationTypeSettingsOverride,
   mapApplicationTypeSettings,
   sortApplicationTypeSettings,
 } from '@island.is/cms'
@@ -93,12 +92,6 @@ export class ApplicationTypeSettingsService {
     applicationType: string,
     locale: Locale,
   ): Promise<ApplicationTypeSettings[]> {
-    const localOverride =
-      getLocalApplicationTypeSettingsOverride(applicationType)
-    if (localOverride) {
-      return Promise.resolve(localOverride)
-    }
-
     const key = `${applicationType}:${locale}`
     const cached = this.cache.get(key)
 

@@ -34,7 +34,6 @@ import {
   sortApplicationTypeSettings,
 } from './models/applicationTypeSettings.model'
 import { GetApplicationTypeSettingsInput } from './dto/getApplicationTypeSettings.input'
-import { getLocalApplicationTypeSettingsOverride } from './applicationTypeSettings.localOverride'
 import { mapUrl, Url } from './models/url.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
@@ -1097,12 +1096,6 @@ export class CmsContentfulService {
     applicationType,
     lang,
   }: GetApplicationTypeSettingsInput): Promise<ApplicationTypeSettings[]> {
-    const localOverride =
-      getLocalApplicationTypeSettingsOverride(applicationType)
-    if (localOverride) {
-      return localOverride
-    }
-
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IApplicationTypeSettingsFields>(
         lang,

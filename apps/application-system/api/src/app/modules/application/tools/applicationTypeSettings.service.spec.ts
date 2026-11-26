@@ -1,11 +1,5 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'fs'
-import { tmpdir } from 'os'
-import { join } from 'path'
 import type { Logger } from '@island.is/logging'
-import {
-  APPLICATION_TYPE_SETTINGS_MOCK_FILE_ENV,
-  ContentfulRepository,
-} from '@island.is/cms'
+import { ContentfulRepository } from '@island.is/cms'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 import {
@@ -171,36 +165,6 @@ describe('ApplicationTypeSettingsService', () => {
 
     await expect(result).resolves.toBeUndefined()
     expect(logger.warn).toHaveBeenCalled()
-  })
-
-  it('uses the local settings file instead of Contentful when configured', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'application-type-settings-'))
-    const file = join(dir, 'settings.json')
-    writeFileSync(
-      file,
-      JSON.stringify([
-        {
-          applicationType: TYPE_ID,
-          disableLeavingPrerequisites: true,
-          blockedMessage: 'Local message',
-        },
-      ]),
-    )
-    process.env[APPLICATION_TYPE_SETTINGS_MOCK_FILE_ENV] = file
-
-    try {
-      const problem = await expectBlocked()
-      expect(problem).toMatchObject({ blockedMessage: 'Local message' })
-
-      writeFileSync(file, JSON.stringify([]))
-      await expect(
-        service.assertCanLeaveState(application(), 'is'),
-      ).resolves.toBeUndefined()
-      expect(getLocalizedEntries).not.toHaveBeenCalled()
-    } finally {
-      delete process.env[APPLICATION_TYPE_SETTINGS_MOCK_FILE_ENV]
-      rmSync(dir, { recursive: true, force: true })
-    }
   })
 
   it('caches settings per type and locale', async () => {

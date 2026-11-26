@@ -165,22 +165,6 @@ Dev reads Contentful drafts while staging and prod only read published
 entries, so test with an unpublished entry on dev. Publishing an entry makes
 it live on staging and prod at the same time.
 
-### Testing locally without Contentful
-
-Both the GraphQL API and the application system API can read the settings
-from a local JSON file instead of Contentful. This is ignored when
-`NODE_ENV` is `production`.
-
-```bash
-cp apps/application-system/applicationTypeSettings.local.example.json tmp/applicationTypeSettings.json
-APPLICATION_TYPE_SETTINGS_MOCK_FILE=$PWD/tmp/applicationTypeSettings.json yarn dev application-system-form
-```
-
-The file is an array of settings (see the example). Omitted fields get
-defaults. It is read on every request, so edit it and reload the page, no
-restart needed. Dismissed banners are remembered in a cookie unless
-`dismissedForDays` is `0`.
-
 ## Code owners and maintainers
 
 - [Origo](https://github.com/orgs/island-is/teams/origo/members)
