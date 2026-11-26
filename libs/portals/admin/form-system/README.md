@@ -71,7 +71,8 @@ Opening the preview focuses its header without drawing a focus outline around
 the whole header. Interactive controls retain their keyboard-focus styling.
 The sticky mobile stepper stays above the form content while scrolling, so the
 content cannot cover its center and leave only its background edges visible.
-The preview modal fills the browser height with a 16px margin above and below;
-the iframe fills the available space without an 800px height cap. The logo,
+The preview modal is capped at 1200px wide, leaves at least 48px on each side,
+and is 144px shorter than the browser height.
+The iframe fills the available space without an 800px height cap. The logo,
 organization and form name share the header row with the preview controls,
 matching form-system-web. Mobile view uses compact, accessibly labelled controls.
