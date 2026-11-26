@@ -94,6 +94,7 @@ header on the first page only, regardless of the PDF language. Content starts be
 header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
+Children are displayed without numbering, with a blank line between each child.
 
 ## File upload defaults
 

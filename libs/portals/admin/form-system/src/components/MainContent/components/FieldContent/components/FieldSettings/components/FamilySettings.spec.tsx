@@ -54,7 +54,7 @@ const renderSettings = (
       value={
         {
           control: {
-            activeItem: { data: { fieldSettings } },
+            activeItem: { data: { id: 'family', fieldSettings } },
             isReadOnly,
           },
           controlDispatch,
@@ -103,7 +103,18 @@ it.each([
   renderSettings({ familyType })
 
   expect(screen.queryByText(/Í listanum birtast börn/)).toBeNull()
+  expect(screen.queryAllByRole('radio')).toHaveLength(0)
 })
+
+it.each([false, true])(
+  'does not offer child display-mode options with read-only=%s',
+  (isReadOnly) => {
+    renderSettings({ familyType: FamilyTypes.CHILD }, isReadOnly)
+
+    expect(screen.queryAllByRole('radio')).toHaveLength(0)
+    expect(screen.getAllByRole('combobox')).toHaveLength(1)
+  },
+)
 
 it.each([false, true])(
   'offers the applicant family type with read-only=%s',

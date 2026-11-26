@@ -1,4 +1,5 @@
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
+import { FamilyTypes } from '@island.is/form-system/enums'
 import { FieldTypesEnum } from './enums'
 
 export type FieldTypeMapping = {
@@ -184,7 +185,13 @@ export const initializeField = (field: FormSystemField): FormSystemField => {
     (v): v is NonNullable<typeof v> => v != null,
   )
 
-  const baseValues = existingValues.length ? existingValues : [{}]
+  const isChildTable =
+    field.fieldType === FieldTypesEnum.FAMILY &&
+    field.fieldSettings?.familyType === FamilyTypes.CHILD
+  const baseValues =
+    existingValues.length || (isChildTable && field.values?.length === 0)
+      ? existingValues
+      : [{}]
 
   const updatedValues = baseValues.map((value) => {
     const cleanedJson = removeNullProperties(value.json || {})

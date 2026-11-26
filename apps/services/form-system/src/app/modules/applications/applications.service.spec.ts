@@ -810,6 +810,132 @@ describe.each([
   )
 })
 
+it.each([
+  {
+    children: [
+      { name: 'First child', nationalId: '0101202989' },
+      { name: 'Second child', nationalId: '0101212989' },
+    ],
+  },
+  { children: [{ name: 'Second child', nationalId: '0101212989' }] },
+  { children: [] },
+])(
+  'replaces child-table values with only selected children when saving a screen (case %#)',
+  async ({ children }) => {
+    const transaction = {}
+    const application = {
+      id: 'application',
+      formId: 'form',
+      save: jest.fn().mockResolvedValue(undefined),
+    }
+    const sections: SectionDto[] = [
+      {
+        id: 'section',
+        name: { is: '', en: '' },
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 0,
+        isHidden: false,
+        isCompleted: false,
+        screens: [
+          {
+            id: 'screen',
+            identifier: 'screen',
+            sectionId: 'section',
+            name: { is: '', en: '' },
+            displayOrder: 0,
+            isHidden: false,
+            isCompleted: false,
+            multiMax: 1,
+            isMulti: false,
+            shouldValidate: false,
+            fields: [
+              {
+                id: 'children',
+                identifier: 'children',
+                screenId: 'screen',
+                name: { is: 'Children', en: 'Children' },
+                informationText: { is: '', en: '' },
+                tooltip: { is: '', en: '' },
+                displayOrder: 0,
+                fieldType: FieldTypesEnum.FAMILY,
+                fieldSettings: {
+                  familyType: FamilyTypes.CHILD,
+                },
+                isHidden: false,
+                isPartOfMultiset: false,
+                isRequired: false,
+                values: children.map((json, order) => ({
+                  id: `child-${order}`,
+                  order,
+                  json,
+                })),
+              },
+            ],
+          },
+        ],
+      },
+    ]
+    const destroy = jest.fn().mockResolvedValue(2)
+    const create = jest.fn().mockResolvedValue(undefined)
+    const update = jest.fn()
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        applicationModel: {
+          findByPk: jest.fn().mockResolvedValue(application),
+        },
+        formModel: { findByPk: jest.fn().mockResolvedValue({}) },
+        getLoginTypes: jest.fn().mockResolvedValue([]),
+        hasDelegation: jest.fn().mockReturnValue(true),
+        doesUserMatchApplication: jest.fn().mockReturnValue(true),
+        valueModel: { destroy, create, update },
+        sequelize: {
+          transaction: jest.fn(async (callback) => callback(transaction)),
+        },
+      },
+    ) as ApplicationsService
+    const user: User = {
+      nationalId: '0101307789',
+      scope: [],
+      authorization: '',
+      client: 'test',
+    }
+
+    await service.saveScreen(
+      {
+        applicationId: application.id,
+        screenId: 'screen',
+        sectionId: 'section',
+        sections,
+      },
+      user,
+    )
+
+    expect(destroy).toHaveBeenCalledWith({
+      where: { fieldId: 'children', applicationId: application.id },
+      transaction,
+    })
+    expect(create).toHaveBeenCalledTimes(children.length)
+    children.forEach((json, order) => {
+      expect(create).toHaveBeenNthCalledWith(
+        order + 1,
+        {
+          fieldId: 'children',
+          fieldType: FieldTypesEnum.FAMILY,
+          applicationId: application.id,
+          order,
+          json,
+        },
+        { transaction },
+      )
+      expect(destroy.mock.invocationCallOrder[0]).toBeLessThan(
+        create.mock.invocationCallOrder[order],
+      )
+    })
+    expect(update).not.toHaveBeenCalled()
+  },
+)
+
 describe('ApplicationsService.calculateDraftTotalSteps', () => {
   it.each([
     { hasSummaryScreen: true, hiddenTotal: 3, visibleTotal: 3 },

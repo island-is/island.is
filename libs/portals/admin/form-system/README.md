@@ -43,6 +43,11 @@ saved edit. Updates to different fields can proceed independently.
 Selecting "Barn" shows guidance below the dropdown explaining that it contains children in
 the applicant's custody according to the National Registry, not children outside
 their custody. This guidance is also visible in read-only mode.
+Child fields always display all custody children in a table; there are no
+display-mode options or child `isDropdown` setting. Asset and payment-quantity
+fields retain their own dropdown settings.
+Each table row ends with a checkbox, initially checked. Saved selections are
+restored when returning to the screen, including when every child was unchecked.
 
 ## Forms list
 

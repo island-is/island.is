@@ -1371,7 +1371,11 @@ export class ApplicationsService {
           (filteredScreenDto.fields ?? [])
             .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
             .map(async (field) => {
-              if (field.isPartOfMultiset) {
+              if (
+                field.isPartOfMultiset ||
+                (field.fieldType === FieldTypesEnum.FAMILY &&
+                  field.fieldSettings?.familyType === FamilyTypes.CHILD)
+              ) {
                 await this.valueModel.destroy({
                   where: {
                     fieldId: field.id,

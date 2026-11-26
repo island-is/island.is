@@ -38,7 +38,7 @@ section always requires valid input.
 
 ## Family fields
 
-The FAMILY / CHILD dropdown uses the National Registry V3 applications client
+The FAMILY / CHILD table uses the National Registry V3 applications client
 (MidlunUmsoknir), calling `GET /Einstaklingar/{kennitala}/forsjaUndir` for the
 logged-in user through `formSystemCustodyChildren`. The existing client returns
 child national IDs; names are fetched using its MidlunUmsoknir `/lite` lookup.
@@ -46,6 +46,38 @@ It lists children in the user's custody,
 not biological children outside custody, and does not use `logforeldrar`.
 There are no child-source settings. The returned list is cached on the field
 for subsequent renders.
+Child fields always display all custody children in a table with names, national IDs, and a
+checkbox at the end of each row. Children are selected by default; saved
+selections are restored, including an empty selection. Saving the screen
+replaces the field's values with one name/national-ID value per selected child,
+removing values for unchecked children. The summary shows only saved selected
+children, with a separate name/national-ID block for each child using the
+national-ID field layout rather than a table. It does not rely on the cached
+registry list.
+If a required child field has no selected children, its summary displays the
+standard red "Vantar gildi" indicator. Optional empty selections display
+"Engin börn valin." instead.
+The obsolete child `isDropdown` setting is ignored and excluded from child
+field settings; assets and payment fields still support it. Required child
+fields show a black asterisk after the field name and require at least one
+selected child. Optional fields permit an empty selection. Empty
+lists and lookup failures are displayed explicitly. Lookup failures keep the
+field name and table headers visible, with the error message inside the table
+body, without overwriting selected values. Child fields use mock
+children in preview without fetching or caching registry data.
+In live applications, forward navigation is disabled while custody children
+are loading, including for optional fields and when validation bypass is enabled.
+Loading guards are cleared on success, failure, or leaving the field; backward
+navigation remains available.
+
+## Summary display
+
+National-ID, family, and applicant summaries display the name above the national
+ID, including each selected child.
+Selected children sit directly below the field heading, with spacing retained
+between children and no extra gap between each child's name and national ID.
+National-ID fields also use no extra gap between name and national ID, while
+retaining spacing before address details.
 
 ## Asset fields
 

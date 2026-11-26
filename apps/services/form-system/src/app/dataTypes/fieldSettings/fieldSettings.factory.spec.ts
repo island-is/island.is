@@ -49,11 +49,17 @@ it('preserves localized checkbox sublabels and removes the obsolete visibility f
   ).not.toHaveProperty('hasDescription')
 })
 
-it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
-  'drops obsolete child-source settings while preserving %s settings',
-  (type) => {
+it.each([
+  [FieldTypesEnum.FAMILY, true],
+  [FieldTypesEnum.FAMILY, false],
+  [FieldTypesEnum.CHILD, true],
+  [FieldTypesEnum.CHILD, false],
+])(
+  'drops obsolete child-source and dropdown settings for %s with isDropdown=%s',
+  (type, isDropdown) => {
     const settings = Object.assign(new FieldSettings(), {
       familyType: 'CHILD',
+      isDropdown,
       showBiologicalChildren: true,
       showChildrenInCustody: false,
       zendeskIsCustomField: true,
@@ -65,6 +71,15 @@ it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
       zendeskIsCustomField: true,
       zendeskCustomFieldId: 'custom-field',
     })
+  },
+)
+
+it.each([FieldTypesEnum.ASSETS, FieldTypesEnum.PAYMENT_QUANTITY])(
+  'retains the dropdown setting for %s',
+  (type) => {
+    const settings = Object.assign(new FieldSettings(), { isDropdown: true })
+
+    expect(FieldSettingsFactory.getClass(type, settings)?.isDropdown).toBe(true)
   },
 )
 
