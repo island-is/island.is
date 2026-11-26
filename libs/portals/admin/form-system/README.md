@@ -60,6 +60,8 @@ The Staðfesting settings also offer "Skoða skjá" to the right of the heading,
 opening the confirmation-screen preview without restrictions.
 The Aðilar settings offer the same heading-aligned button to preview applicants
 without restrictions.
+Previews opened from settings keep the settings navigation visible behind the
+modal, including after it closes.
 
 The preview header has a Farsímasýn toggle. It switches the same preview iframe
 between its full width and a 390px mobile viewport without resetting input or

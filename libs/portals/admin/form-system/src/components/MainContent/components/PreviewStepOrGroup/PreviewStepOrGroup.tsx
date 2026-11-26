@@ -101,7 +101,7 @@ const PreviewStepOrGroupContent = ({
   setOpenPreview,
   enforceRestrictions = false,
 }: Props) => {
-  const { control, setSelectStatus } = useContext(ControlContext)
+  const { control, inSettings, setSelectStatus } = useContext(ControlContext)
   const { lang, formatMessage, changeLanguage } = useLocale()
   const { activeItem, form } = control
   const [mobileView, setMobileView] = useState(false)
@@ -127,9 +127,11 @@ const PreviewStepOrGroupContent = ({
   )
 
   useEffect(() => {
+    if (inSettings) return
+
     setSelectStatus(NavbarSelectStatus.ON_WITHOUT_SELECT)
     return () => setSelectStatus(NavbarSelectStatus.OFF)
-  }, [setSelectStatus])
+  }, [inSettings, setSelectStatus])
 
   const loginOptions = [
     {

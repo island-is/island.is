@@ -17,6 +17,7 @@ import {
 } from '@testing-library/react'
 import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
+import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
 import { PreviewStepOrGroup } from './PreviewStepOrGroup'
 
 jest.mock('./PreviewStepOrGroup.css', () => ({}))
@@ -284,6 +285,7 @@ const renderPreview = (
   enforceRestrictions: boolean,
   allowProceedOnValidationFail?: boolean,
   previewForm = form,
+  contextOverrides: Partial<React.ContextType<typeof ControlContext>> = {},
 ) =>
   render(
     <ControlContext.Provider
@@ -294,6 +296,7 @@ const renderPreview = (
             activeItem: { type: 'Screen', data: { id: 'last' } },
           },
           setSelectStatus: jest.fn(),
+          ...contextOverrides,
         } as unknown as React.ContextType<typeof ControlContext>
       }
     >
@@ -303,6 +306,42 @@ const renderPreview = (
       />
     </ControlContext.Provider>,
   )
+
+it('keeps settings navigation unchanged when opening and closing an applicant preview', () => {
+  const setSelectStatus = jest.fn()
+  const { unmount } = renderPreview(false, undefined, form, {
+    inSettings: true,
+    setSelectStatus,
+    control: {
+      form,
+      activeItem: {
+        type: 'Section',
+        data: { id: 'applicants', sectionType: SectionTypes.PARTIES },
+      },
+    } as React.ContextType<typeof ControlContext>['control'],
+  })
+
+  expect(screen.getByTestId('preview-header')).toBeTruthy()
+  expect(setSelectStatus).not.toHaveBeenCalled()
+
+  unmount()
+  expect(setSelectStatus).not.toHaveBeenCalled()
+})
+
+it('retains the selection-navigation lifecycle for previews outside settings', () => {
+  const setSelectStatus = jest.fn()
+  const { unmount } = renderPreview(false, undefined, form, {
+    inSettings: false,
+    setSelectStatus,
+  })
+
+  expect(setSelectStatus).toHaveBeenCalledWith(
+    NavbarSelectStatus.ON_WITHOUT_SELECT,
+  )
+
+  unmount()
+  expect(setSelectStatus).toHaveBeenLastCalledWith(NavbarSelectStatus.OFF)
+})
 
 it('places the preview controls inside the form header', () => {
   renderPreview(false)
