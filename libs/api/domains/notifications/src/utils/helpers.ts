@@ -11,6 +11,7 @@ import {
   NotificationChannel,
   NotificationDelivery,
   NotificationPriorityType,
+  NotificationSourceType,
 } from '../lib/notifications.model'
 
 const cleanString = (str?: string) => {
@@ -20,10 +21,20 @@ const cleanString = (str?: string) => {
   return str.replace(/\s+/g, ' ').trim()
 }
 
+const NOTIFICATION_SOURCE_TYPES = Object.values(NotificationSourceType)
+
+/**
+ * Narrows the service's source type to the GraphQL enum, defaulting to
+ * General if the service sends a value this API does not know yet.
+ */
+const toNotificationSourceType = (value?: string): NotificationSourceType =>
+  NOTIFICATION_SOURCE_TYPES.find((type) => type === value) ??
+  NotificationSourceType.GENERAL
+
 /**
  * Maps a rendered notification from the user-notification service to the
- * GraphQL `Notification` model, including `wasSent`, `priorityType` and
- * `category`.
+ * GraphQL `Notification` model, including `wasSent`, `priorityType`,
+ * `sourceType`, `deadline` and `category`.
  */
 export const notificationMapper = (
   notification: RenderedNotificationDto,
@@ -40,6 +51,8 @@ export const notificationMapper = (
     priorityType: notification.priorityType as
       | NotificationPriorityType
       | undefined,
+    sourceType: toNotificationSourceType(notification.sourceType),
+    deadline: notification.deadline ?? undefined,
   },
   sender: {
     id: notification.senderId,

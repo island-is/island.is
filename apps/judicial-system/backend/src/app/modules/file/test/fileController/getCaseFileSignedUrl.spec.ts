@@ -1,13 +1,20 @@
+import { PDFDocument } from 'pdf-lib'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseFileCategory, CaseType } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  CaseFileCategory,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
+import { FileService } from '../../file.service'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {
@@ -25,11 +32,18 @@ type GivenWhenThen = (
 describe('FileController - Get case file signed url', () => {
   let mockAwsS3Service: AwsS3Service
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let fileService: FileService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, caseFileRepositoryService, fileController } =
-      await createTestingFileModule()
+    const {
+      awsS3Service,
+      caseFileRepositoryService,
+      fileService: service,
+      fileController,
+    } = await createTestingFileModule()
+
+    fileService = service
 
     mockAwsS3Service = awsS3Service
     mockCaseFileRepositoryService = caseFileRepositoryService
@@ -84,6 +98,186 @@ describe('FileController - Get case file signed url', () => {
         false,
       )
       expect(then.result).toEqual({ url })
+    })
+  })
+
+  describe('verdict appeal ruling', () => {
+    const caseId = uuid()
+    const fileId = uuid()
+    const key = `${caseId}/${uuid()}/domur.pdf`
+    const caseFile = {
+      id: fileId,
+      key,
+      isKeyAccessible: true,
+      category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    } as CaseFile
+    const url = `uploads/${key}`
+
+    beforeEach(() => {
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+    })
+
+    it('is served as uploaded while the appeal is in progress', async () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: { appealState: AppealCaseState.APPEALED },
+      } as Case
+      const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
+      mockGetSignedUrl.mockResolvedValueOnce(url)
+
+      const then = await givenWhenThen(caseId, theCase, fileId, caseFile)
+
+      expect(then.result).toEqual({ url })
+      expect(
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+      ).not.toHaveBeenCalled()
+    })
+
+    describe('once the appeal is completed', () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingDate: new Date('2026-11-20T10:00:00Z'),
+        },
+      } as Case
+      let then: Then
+      let confirm: (content: Buffer) => Promise<string | undefined>
+
+      beforeEach(async () => {
+        const mockGetConfirmedSignedUrl =
+          mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl as jest.Mock
+        mockGetConfirmedSignedUrl.mockImplementationOnce(
+          (_type, _key, _force, confirmContent) => {
+            confirm = confirmContent
+
+            return Promise.resolve(url)
+          },
+        )
+
+        then = await givenWhenThen(caseId, theCase, fileId, caseFile)
+      })
+
+      it('is served confirmed', () => {
+        expect(then.result).toEqual({ url })
+        expect(
+          mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+        ).toHaveBeenCalledWith(
+          CaseType.INDICTMENT,
+          key,
+          true,
+          expect.any(Function),
+          undefined,
+          false,
+        )
+        expect(mockAwsS3Service.getSignedUrl).not.toHaveBeenCalled()
+      })
+
+      it('is stamped and its hash stored', async () => {
+        const pdfDocument = await PDFDocument.create()
+        pdfDocument.addPage()
+        const pdf = Buffer.from(await pdfDocument.save())
+
+        const confirmed = await confirm(pdf)
+
+        expect(confirmed).toBeDefined()
+        expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+          fileId,
+          { hash: expect.any(String), hashAlgorithm: expect.any(String) },
+        )
+      })
+
+      it('is still stamped when its hash cannot be stored', async () => {
+        const mockUpdateById =
+          mockCaseFileRepositoryService.updateById as jest.Mock
+        mockUpdateById.mockRejectedValueOnce(new Error('Some error'))
+        const pdfDocument = await PDFDocument.create()
+        pdfDocument.addPage()
+        const pdf = Buffer.from(await pdfDocument.save())
+
+        const confirmed = await confirm(pdf)
+
+        expect(confirmed).toBeDefined()
+      })
+    })
+
+    it('is served from the stamped copy while its hash is stored', async () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingDate: new Date('2026-11-20T10:00:00Z'),
+        },
+      } as Case
+      const mockGetConfirmedSignedUrl =
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl as jest.Mock
+      mockGetConfirmedSignedUrl.mockResolvedValueOnce(url)
+
+      await givenWhenThen(caseId, theCase, fileId, {
+        ...caseFile,
+        hash: 'stored-hash',
+      } as CaseFile)
+
+      expect(
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+      ).toHaveBeenCalledWith(
+        CaseType.INDICTMENT,
+        key,
+        false,
+        expect.any(Function),
+        undefined,
+        false,
+      )
+    })
+
+    // When the date it is stamped with changes, the ruling's hash is cleared,
+    // and the next read stamps the document again instead of serving the
+    // stamped copy that carries the old date.
+    it('is stamped again once the date it is stamped with changes', async () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingDate: new Date('2026-11-21T10:00:00Z'),
+        },
+      } as Case
+      const transaction = {} as Transaction
+      const mockGetConfirmedSignedUrl =
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl as jest.Mock
+      mockGetConfirmedSignedUrl.mockResolvedValueOnce(url)
+
+      await fileService.invalidateVerdictAppealRulingConfirmation(
+        caseId,
+        transaction,
+      )
+      // The file as the clearing leaves it.
+      const then = await givenWhenThen(caseId, theCase, fileId, {
+        ...caseFile,
+        hash: null,
+        hashAlgorithm: null,
+      } as unknown as CaseFile)
+
+      expect(
+        mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+      ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
+        transaction,
+      })
+      expect(then.result).toEqual({ url })
+      expect(
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+      ).toHaveBeenCalledWith(
+        CaseType.INDICTMENT,
+        key,
+        true,
+        expect.any(Function),
+        undefined,
+        false,
+      )
     })
   })
 

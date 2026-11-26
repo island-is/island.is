@@ -4,6 +4,7 @@ import addDays from 'date-fns/addDays'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -11,15 +12,22 @@ import {
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
   AppealCourtSessionType,
+  AppealRulingType,
+  CaseFileCategory,
   CaseState,
   CaseType,
   UserRole,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  mockCase,
+  mockCaseFile,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   IntlProviderWrapper,
@@ -34,6 +42,8 @@ const mockUpdateAppealCourtSession = jest.fn()
 const mockDeleteAppealCourtSession = jest.fn()
 const mockUpdateAppealCase = jest.fn()
 let mockIsUpdatingAppealCase = false
+const mockHandleUpload = jest.fn()
+const mockHandleRemove = jest.fn()
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealCase',
@@ -57,6 +67,22 @@ jest.mock(
       isUpdatingAppealCourtSession: false,
       deleteAppealCourtSession: mockDeleteAppealCourtSession,
       isDeletingAppealCourtSession: false,
+    }),
+  }),
+)
+
+// The upload list is real; only the trip to storage is mocked.
+jest.mock(
+  '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload',
+  () => ({
+    ...jest.requireActual(
+      '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload',
+    ),
+    __esModule: true,
+    default: () => ({
+      handleUpload: mockHandleUpload,
+      handleRemove: mockHandleRemove,
+      handleRetry: jest.fn(),
     }),
   }),
 )
@@ -112,6 +138,83 @@ const caseWithBookedSession = {
     courtSessions: [bookedSession],
   },
 } as unknown as WorkingCase
+
+// An appeal the court has marked as finished, with how it ended on record.
+const finishedCase = {
+  ...theCase,
+  caseFiles: [
+    {
+      ...mockCaseFile(CaseFileCategory.VERDICT_APPEAL_RULING),
+      name: 'domur-landsrettar.pdf',
+    },
+  ],
+  verdictAppealCase: {
+    ...theCase.verdictAppealCase,
+    verdictAppealStatus: Status.COMPLETED,
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  },
+} as unknown as WorkingCase
+
+// Everything about how the appeal ended is on record but the document.
+const finishedCaseWithoutDocument = {
+  ...finishedCase,
+  caseFiles: [],
+} as unknown as WorkingCase
+
+// Stores each file the way a successful upload does: done, under the id the
+// server gave it.
+const uploadSucceeds = async (
+  files: TUploadFile[],
+  updateFile: (file: TUploadFile, newId?: string) => void,
+) => {
+  for (const file of files) {
+    updateFile(
+      {
+        ...file,
+        key: `uploads/${file.name}`,
+        percent: 100,
+        status: FileUploadStatus.done,
+      },
+      `stored-${file.name}`,
+    )
+  }
+
+  return 'ALL_SUCCEEDED'
+}
+
+const removeSucceeds = async (
+  file: TUploadFile,
+  callback?: (file: TUploadFile) => void,
+) => callback?.(file)
+
+const chooseRulingDocument = async (container: HTMLElement) => {
+  const input = container.querySelector('input[name="verdict-appeal-ruling"]')
+
+  if (!(input instanceof HTMLInputElement)) {
+    throw new Error('No ruling document input')
+  }
+
+  await userEvent.upload(
+    input,
+    new File(['%PDF'], 'nyr-domur.pdf', { type: 'application/pdf' }),
+  )
+}
+
+// Picks another status, waits for the form to fold away, and comes back.
+const leaveAndReturnToFinished = async () => {
+  await userEvent.click(screen.getByLabelText('Dómtekið'))
+  await waitFor(() =>
+    expect(
+      screen.queryByRole('group', { name: 'Lyktir' }),
+    ).not.toBeInTheDocument(),
+  )
+  await userEvent.click(screen.getByLabelText('Lokið'))
+  expect(
+    await screen.findByRole('group', { name: 'Lyktir' }),
+  ).toBeInTheDocument()
+}
 
 // Holds the case in state, unlike the shared wrapper, so what the page writes
 // back after booking, changing or cancelling a session shows in the list.
@@ -207,11 +310,18 @@ describe('VerdictAppealStatus', () => {
     mockUpdateAppealCase.mockReset()
     mockIsUpdatingAppealCase = false
     mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
+    mockHandleUpload.mockReset()
+    mockHandleUpload.mockImplementation(uploadSucceeds)
+    mockHandleRemove.mockReset()
+    mockHandleRemove.mockImplementation(removeSucceeds)
   })
 
   it('names the case and who appealed', () => {
     renderPage()
 
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Mál nr. 555/2026' }),
+    ).toBeInTheDocument()
     expect(
       screen.getByText('Málsnr. héraðsdóms S-123/2026'),
     ).toBeInTheDocument()
@@ -326,7 +436,7 @@ describe('VerdictAppealStatus', () => {
     )
     renderPage()
 
-    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByLabelText('Dómtekið'))
     await userEvent.click(screen.getByTestId('continueButton'))
 
     await waitFor(() => expect(mockPush).toHaveBeenCalled())
@@ -372,13 +482,13 @@ describe('VerdictAppealStatus', () => {
     mockUpdateAppealCase.mockResolvedValue(undefined)
     renderPage()
 
-    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByLabelText('Dómtekið'))
     await userEvent.click(screen.getByTestId('continueButton'))
 
     await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
     expect(mockPush).not.toHaveBeenCalled()
 
-    await waitFor(() => expect(screen.getByLabelText('Lokið')).toBeEnabled())
+    await waitFor(() => expect(screen.getByLabelText('Dómtekið')).toBeEnabled())
   })
 
   it('writes nothing when the saved status is left as it is', async () => {
@@ -539,6 +649,205 @@ describe('VerdictAppealStatus', () => {
     )
   })
 
+  describe('a finished appeal', () => {
+    it('asks how the appeal ended only once the court says it is finished', async () => {
+      renderPage()
+
+      expect(
+        screen.queryByRole('group', { name: 'Lyktir' }),
+      ).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(
+        await screen.findByRole('group', { name: 'Lyktir' }),
+      ).toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('group', { name: 'Lyktir' }),
+        ).not.toBeInTheDocument(),
+      )
+    })
+
+    it('holds the court on the page until how it ended is on record', async () => {
+      renderPage()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+      // Leaving it for another status lets the court go again.
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
+    it('opens on what the court recorded and lets it continue', async () => {
+      renderPage(finishedCase)
+
+      expect(screen.getByLabelText('Lokið')).toBeChecked()
+      expect(screen.getByLabelText('Staðfesting')).toBeChecked()
+      expect(screen.getByLabelText('Dómur')).toBeChecked()
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      // The status was already saved, so the court just moves on.
+      expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+      await waitFor(() =>
+        expect(mockPush).toHaveBeenCalledWith(
+          `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+        ),
+      )
+    })
+
+    it('saves the outcome when it is picked and the status when the court continues', async () => {
+      renderPage({
+        ...finishedCase,
+        verdictAppealCase: {
+          ...finishedCase.verdictAppealCase,
+          verdictAppealStatus: Status.UNDER_ADVISEMENT,
+          appealRulingDecision: null,
+          appealRulingType: null,
+        },
+      } as unknown as WorkingCase)
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+      await userEvent.click(await screen.findByLabelText('Staðfesting'))
+
+      expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        {
+          appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+          appealRulingType: AppealRulingType.VERDICT,
+        },
+      )
+
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+        'case-id',
+        'verdict-appeal',
+        { verdictAppealStatus: Status.COMPLETED },
+      )
+    })
+
+    it('lets the court continue with an outcome, a type, the words and the document', async () => {
+      renderPage(finishedCase)
+
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+    })
+
+    it('holds the court on the page without the document', () => {
+      renderPage(finishedCaseWithoutDocument)
+
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+    })
+
+    it('holds the court on the page without the concluding words', () => {
+      renderPage({
+        ...finishedCase,
+        verdictAppealCase: {
+          ...finishedCase.verdictAppealCase,
+          appealConclusion: null,
+        },
+      } as unknown as WorkingCase)
+
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+    })
+
+    // A ruling appeal on the same case keeps its ruling in a category of its
+    // own, and it has no place among this appeal's documents.
+    it('lists only the verdict appeal document', () => {
+      renderPage({
+        ...finishedCase,
+        caseFiles: [
+          {
+            ...mockCaseFile(CaseFileCategory.APPEAL_RULING),
+            name: 'urskurdur-kaera.pdf',
+          },
+        ],
+      } as unknown as WorkingCase)
+
+      expect(screen.queryByText('urskurdur-kaera.pdf')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+    })
+
+    it('keeps a document it has uploaded when the court picks another status and comes back', async () => {
+      const { container } = renderPage(finishedCaseWithoutDocument)
+
+      await chooseRulingDocument(container)
+
+      expect(mockHandleUpload).toHaveBeenCalledWith(
+        [
+          expect.objectContaining({
+            name: 'nyr-domur.pdf',
+            category: CaseFileCategory.VERDICT_APPEAL_RULING,
+          }),
+        ],
+        expect.any(Function),
+      )
+      expect(await screen.findByText('nyr-domur.pdf')).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+
+      await leaveAndReturnToFinished()
+
+      expect(screen.getByText('nyr-domur.pdf')).toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
+    it('turns a second document away while one is listed', async () => {
+      const { container } = renderPage(finishedCase)
+
+      await chooseRulingDocument(container)
+
+      expect(mockHandleUpload).not.toHaveBeenCalled()
+      expect(screen.queryByText('nyr-domur.pdf')).not.toBeInTheDocument()
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+    })
+
+    it('keeps a document it has removed away when the court picks another status and comes back', async () => {
+      renderPage(finishedCase)
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+      )
+
+      expect(mockHandleRemove).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'domur-landsrettar.pdf' }),
+        expect.any(Function),
+      )
+      await waitFor(() =>
+        expect(
+          screen.queryByText('domur-landsrettar.pdf'),
+        ).not.toBeInTheDocument(),
+      )
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+      await leaveAndReturnToFinished()
+
+      expect(
+        screen.queryByText('domur-landsrettar.pdf'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+    })
+  })
+
   describe('a booked session', () => {
     const openMenu = async () => {
       await userEvent.click(
@@ -597,7 +906,7 @@ describe('VerdictAppealStatus', () => {
       await clickMenuItem('Breyta þinghaldi')
       expect(await screen.findByText('Verið að breyta')).toBeInTheDocument()
 
-      await userEvent.click(screen.getByLabelText('Lokið'))
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
 
       expect(
         screen.queryByRole('button', { name: 'Hætta við' }),

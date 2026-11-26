@@ -33,7 +33,7 @@ export interface IListItem {
 export type ButtonTypes =
   | 'CHANGE_NAME'
   | 'CHANGE_FORM_NAME'
-  | 'CHANGE_DESCRIPTION'
+  | 'CHANGE_FIELD_TEXT'
   | 'SET_MESSAGE_WITH_LINK_SETTINGS'
 
 export type FormsLocationState = 'forms' | 'applications' | 'admin'

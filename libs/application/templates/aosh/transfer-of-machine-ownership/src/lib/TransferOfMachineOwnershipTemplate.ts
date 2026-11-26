@@ -293,13 +293,6 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: review.buttons.approve,
-                  type: 'primary',
-                },
-              ],
               write: {
                 answers: ['location', 'rejecter'],
               },

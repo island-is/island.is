@@ -10,6 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  ADMIN_CASE_LIFETIME_ROUTE,
   ADMIN_CHANGE_USER_ROUTE,
   ADMIN_CREATE_USER_ROUTE,
   ADMIN_MESSAGE_SUSPENSION_ROUTE,
@@ -119,6 +120,17 @@ export const Users = () => {
           Nýr notandi
         </Button>
         <Box display="flex" columnGap={2}>
+          {user?.role === UserRole.ADMIN && (
+            <Button
+              variant="ghost"
+              icon="time"
+              onClick={() => {
+                router.push(ADMIN_CASE_LIFETIME_ROUTE)
+              }}
+            >
+              Líftími R-mála
+            </Button>
+          )}
           {(user?.role === UserRole.ADMIN ||
             user?.canManageMessageSuspension) && (
             <Button
@@ -140,7 +152,7 @@ export const Users = () => {
                 router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
               }}
             >
-              Viðvörunar borði
+              Viðvörunarborði
             </Button>
           )}
           <Button

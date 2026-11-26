@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
-import { FamilyTypes, FieldTypesEnum } from '@island.is/form-system/enums'
+import { FamilyTypes } from '@island.is/form-system/enums'
 import { GET_FAMILY_MEMBERS } from '@island.is/form-system/graphql'
 import {
   Box,
@@ -13,6 +13,7 @@ import uniqBy from 'lodash/uniqBy'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 import { previewMockData } from '../../../lib/previewMockData'

@@ -17,6 +17,7 @@ import { createTestingAppealSummonsModule } from './createTestingAppealSummonsMo
 import { getOrCreateTransaction } from '../../../middleware'
 import { runInRequestContext } from '../../../test'
 import {
+  AppealCaseRepositoryService,
   AppealEventLog,
   AppealEventLogRepositoryService,
   AppealSummons,
@@ -71,6 +72,7 @@ describe('AppealSummonsController - Create', () => {
   const theCase = caseWithAppeal([appealedLog])
 
   const dto: CreateAppealSummonsDto = {
+    caseName: 'Ákæruvaldið gegn Jóni Jónssyni',
     defendants: [
       {
         defendantId,
@@ -94,6 +96,7 @@ describe('AppealSummonsController - Create', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -104,11 +107,13 @@ describe('AppealSummonsController - Create', () => {
       sequelize,
       appealSummonsRepositoryService,
       appealEventLogRepositoryService,
+      appealCaseRepositoryService,
       appealSummonsController: controller,
     } = await createTestingAppealSummonsModule()
 
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
     appealSummonsController = controller
     mockSequelize = sequelize
 
@@ -127,6 +132,7 @@ describe('AppealSummonsController - Create', () => {
     ;(
       mockAppealEventLogRepositoryService.create as jest.Mock
     ).mockResolvedValue({})
+    ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue({})
 
     givenWhenThen = async (theCase, dto, actingUser = user) => {
       const then = {} as Then
@@ -167,6 +173,11 @@ describe('AppealSummonsController - Create', () => {
       // call would be the handler opening a transaction of its own, which
       // would block on the guard's row lock and deadlock the request.
       expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { caseName: dto.caseName },
+        { transaction },
+      )
       expect(mockAppealSummonsRepositoryService.create).toHaveBeenCalledWith(
         { caseId, appealCaseId },
         { transaction },
@@ -213,6 +224,7 @@ describe('AppealSummonsController - Create', () => {
   it('rejects a defendant who is not on the case', async () => {
     const unknownDefendantId = uuid()
     const then = await givenWhenThen(theCase, {
+      ...dto,
       defendants: [
         {
           defendantId: unknownDefendantId,
@@ -238,6 +250,7 @@ describe('AppealSummonsController - Create', () => {
     } as AppealEventLog
 
     await givenWhenThen(caseWithAppeal([appealedLog, prosecutionLog]), {
+      ...dto,
       defendants: [
         {
           defendantId,
@@ -258,6 +271,7 @@ describe('AppealSummonsController - Create', () => {
 
   it('rejects a duplicate defendant', async () => {
     const then = await givenWhenThen(theCase, {
+      ...dto,
       defendants: [
         {
           defendantId,

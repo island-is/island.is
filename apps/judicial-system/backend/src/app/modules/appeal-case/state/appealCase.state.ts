@@ -4,6 +4,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   CaseDecision,
   CaseState,
   isRestrictionCase,
@@ -27,8 +28,14 @@ type AppealTransition = (
   appealCase: AppealCase,
 ) => AppealTransitionResult
 
+// A verdict appeal moves through fewer states than a ruling appeal: it is
+// never received, so it is concluded from the state it is filed in, and it is
+// neither received nor reopened. Each rule therefore names the states it
+// applies from for a verdict appeal separately; an empty list refuses the
+// transition for verdict appeals altogether.
 interface AppealCaseRule {
   fromAppealStates: AppealCaseState[]
+  fromVerdictAppealStates: AppealCaseState[]
   transition: AppealTransition
 }
 
@@ -38,6 +45,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.RECEIVE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.APPEALED],
+        fromVerdictAppealStates: [],
         transition: (): AppealTransitionResult => ({
           caseUpdate: {},
           appealCaseUpdate: {
@@ -51,6 +59,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.COMPLETE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
+        fromVerdictAppealStates: [AppealCaseState.APPEALED],
         transition: (
           theCase: Case,
           appealCase: AppealCase,
@@ -83,6 +92,16 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
             }
           }
 
+          // The court of appeals enters the date a verdict appeal ended
+          // itself, so it is kept; any other appeal is dated by its completion,
+          // also when it is completed again after being reopened.
+          if (appealCase.appealType === AppealCaseType.VERDICT) {
+            return {
+              caseUpdate,
+              appealCaseUpdate: { appealState: AppealCaseState.COMPLETED },
+            }
+          }
+
           return {
             caseUpdate,
             appealCaseUpdate: {
@@ -97,6 +116,7 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.REOPEN_APPEAL,
       {
         fromAppealStates: [AppealCaseState.COMPLETED],
+        fromVerdictAppealStates: [],
         transition: (): AppealTransitionResult => ({
           caseUpdate: {},
           appealCaseUpdate: { appealState: AppealCaseState.RECEIVED },
@@ -107,6 +127,10 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.WITHDRAW_APPEAL,
       {
         fromAppealStates: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+        fromVerdictAppealStates: [
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+        ],
         transition: (
           _: Case,
           appealCase: AppealCase,
@@ -148,12 +172,16 @@ export const transitionAppealCase = (
     )
   }
 
-  if (
-    !currentAppealState ||
-    !rule.fromAppealStates.includes(currentAppealState)
-  ) {
+  const isVerdictAppeal = appealCase.appealType === AppealCaseType.VERDICT
+  const fromAppealStates = isVerdictAppeal
+    ? rule.fromVerdictAppealStates
+    : rule.fromAppealStates
+
+  if (!currentAppealState || !fromAppealStates.includes(currentAppealState)) {
     throw new ForbiddenException(
-      `The appeal transition ${transition} cannot be applied to an appeal case in state ${currentAppealState}`,
+      `The appeal transition ${transition} cannot be applied to ${
+        isVerdictAppeal ? 'a verdict appeal' : 'an appeal case'
+      } in state ${currentAppealState}`,
     )
   }
 

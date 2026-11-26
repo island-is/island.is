@@ -29,6 +29,11 @@ export class UpdateAppealCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  readonly caseName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   readonly appealAssistantId?: string
 
   // The whole bench, in order: when present it replaces the judges of the
@@ -61,6 +66,14 @@ export class UpdateAppealCaseDto {
   @IsEnum(AppealRulingType)
   @ApiPropertyOptional({ enum: AppealRulingType })
   readonly appealRulingType?: AppealRulingType
+
+  // Only a verdict appeal takes it from the court of appeals; the service
+  // rejects it on a ruling appeal, whose date is set when it is completed.
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly appealRulingDate?: Date
 
   @IsOptional()
   @Type(() => Date)

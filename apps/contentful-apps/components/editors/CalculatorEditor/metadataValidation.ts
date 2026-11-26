@@ -12,6 +12,11 @@ export const hasMetadataValidationError = (
   const inputValueFields = (config.inputSections ?? []).flatMap((section) =>
     section.fields.filter(isInputValueField),
   )
+
+  if (inputValueFields.some((field) => field.key && !field.label?.is?.trim())) {
+    return true
+  }
+
   const placedInputKeys = new Set(
     inputValueFields.map((field) => field.key).filter(Boolean),
   )

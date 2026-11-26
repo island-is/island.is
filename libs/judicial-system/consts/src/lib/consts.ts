@@ -107,6 +107,8 @@ export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_CASE_ROUTE = '/verjandi/akaera'
 export const DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 export const DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE = '/verjandi/akaera/afryjun'
+export const DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE =
+  '/verjandi/akaera/greinargerd'
 
 export const DEFENDER_APPEAL_CASE_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_CASE_STATEMENT_ROUTE =
@@ -266,6 +268,7 @@ export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
 export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
 export const ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE =
   '/notendur/vidvorunar-bordi'
+export const ADMIN_CASE_LIFETIME_ROUTE = '/notendur/liftimi-mala'
 
 //#endregion Admin user routes
 

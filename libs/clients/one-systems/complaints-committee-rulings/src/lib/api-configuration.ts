@@ -2,6 +2,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 import { ComplaintsCommitteeRulingsClientConfig } from './complaints-committee-rulings.config'
+import { resolveApiRoot } from './resolve-api-root'
 
 export const AuthApiConfiguration = {
   provide: 'ComplaintsCommitteeRulingsAuthApiConfiguration',
@@ -13,7 +14,7 @@ export const AuthApiConfiguration = {
         name: 'clients-complaints-committee-rulings-auth',
         logErrorResponseBody: true,
       }),
-      basePath: `${config.basePath}/OneRulings`,
+      basePath: resolveApiRoot(config.basePath),
       headers: {
         Accept: 'application/json',
         'X-API-KEY': config.apiKey,
@@ -41,7 +42,7 @@ export const RulingsApiConfiguration = {
         logErrorResponseBody: true,
       })
       const response = await authFetch(
-        `${config.basePath}/OneRulings/api/auth/token`,
+        `${resolveApiRoot(config.basePath)}/api/auth/token`,
         {
           method: 'POST',
           headers: {
@@ -74,7 +75,7 @@ export const RulingsApiConfiguration = {
 
     return new Configuration({
       fetchApi: authenticatedFetch,
-      basePath: `${config.basePath}/OneRulings`,
+      basePath: resolveApiRoot(config.basePath),
       headers: {
         Accept: 'application/json',
       },

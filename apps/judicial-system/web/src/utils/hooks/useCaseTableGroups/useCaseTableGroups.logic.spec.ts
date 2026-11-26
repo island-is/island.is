@@ -54,6 +54,37 @@ describe('getVisibleCaseTableGroups', () => {
     ])
   })
 
+  // A gated table among ungated ones: the group stays and only the table goes.
+  it('hides the defence appealed verdicts list until the feature is on', () => {
+    const defenceIndictments: CaseTableGroup = {
+      title: 'Sakamál',
+      tables: [
+        {
+          type: CaseTableType.DEFENCE_INDICTMENTS_APPEALED,
+          route: 'sakamal-i-kaeruferli',
+          title: 'Sakamál í kæruferli',
+        },
+        {
+          type: CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED,
+          route: 'sakamal-i-afryjunarferli',
+          title: 'Sakamál í áfrýjunarferli',
+        },
+      ],
+    } as CaseTableGroup
+
+    expect(
+      getVisibleCaseTableGroups([defenceIndictments], [])[0].tables.map(
+        (t) => t.route,
+      ),
+    ).toEqual(['sakamal-i-kaeruferli'])
+    expect(
+      getVisibleCaseTableGroups(
+        [defenceIndictments],
+        [Feature.INDICTMENT_APPEAL],
+      )[0].tables.map((t) => t.route),
+    ).toEqual(['sakamal-i-kaeruferli', 'sakamal-i-afryjunarferli'])
+  })
+
   it('leaves groups with no gated tables alone', () => {
     expect(getVisibleCaseTableGroups([rulingAppeals], [])).toEqual([
       rulingAppeals,

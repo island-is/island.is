@@ -56,6 +56,28 @@ The previous configuration object will result in the following component:
 
 You can also use this field into a custom component by using `<SubmitFormField field={...} />` with the configuration object defined above.
 
+### Sticky footer on long screens
+
+When `placement` is `'footer'` (the default), the footer with the submit actions sticks to the bottom of the viewport while the screen content is taller than the viewport, for example on a long overview before submitting.
+On screens that fit the viewport the footer behaves as before. Set `stickyFooter: false` to opt out.
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildSubmitField({
+      id: 'submit',
+      title: 'Staðfesta',
+      stickyFooter: false,
+      actions: [
+        {
+          event: 'SUBMIT',
+          name: 'Senda umsókn',
+          type: 'primary',
+        },
+      ],
+    })`)}
+/>
+
 # Props
 
 ## SubmitFormField

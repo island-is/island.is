@@ -640,6 +640,14 @@ export class Case extends Model {
   isArchived?: boolean
 
   /**********
+   * A request case is not archived before this date, even if its regular
+   * lifetime has run out - optional, set by a super admin
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  archiveNotBefore?: Date
+
+  /**********
    * The date and time of when the defender in a case opened the case
    **********/
   @Column({ type: DataType.DATE, allowNull: true })
