@@ -84,6 +84,7 @@ describe('InternalCaseController - Archive', () => {
     const caseStringId1 = uuid()
     const caseStringId2 = uuid()
     const appealDecisionId = uuid()
+    const appealCaseId = uuid()
     const theCase = {
       id: caseId,
       description: 'original_description',
@@ -112,6 +113,7 @@ describe('InternalCaseController - Archive', () => {
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
       appealCase: {
+        id: appealCaseId,
         appealConclusion: 'original_appeal_conclusion',
         appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
       },
@@ -194,16 +196,19 @@ describe('InternalCaseController - Archive', () => {
       indictmentIntroduction: 'original_indictment_introduction',
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
       appealCase: {
+        id: appealCaseId,
         appealConclusion: 'original_appeal_conclusion',
         appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
       },
       defendants: [
         {
+          id: defendantId1,
           nationalId: 'original_nationalId1',
           name: 'original_name1',
           address: 'original_address1',
         },
         {
+          id: defendantId2,
           nationalId: 'original_nationalId2',
           name: 'original_name2',
           address: 'original_address2',
@@ -211,11 +216,13 @@ describe('InternalCaseController - Archive', () => {
       ],
       caseFiles: [
         {
+          id: caseFileId1,
           name: 'original_name1',
           key: 'original_key1',
           userGeneratedFilename: 'original_user_generated_filename1',
         },
         {
+          id: caseFileId2,
           name: 'original_name2',
           key: 'original_key2',
           userGeneratedFilename: 'original_user_generated_filename2',
@@ -223,21 +230,25 @@ describe('InternalCaseController - Archive', () => {
       ],
       indictmentCounts: [
         {
+          id: indictmentCountId1,
           vehicleRegistrationNumber: 'original_vehicle_registration_number1',
           incidentDescription: 'original_indictment_description1',
           legalArguments: 'original_legal_arguments1',
         },
         {
+          id: indictmentCountId2,
           vehicleRegistrationNumber: 'original_vehicle_registration_number2',
           incidentDescription: 'original_indictment_description2',
           legalArguments: 'original_legal_arguments2',
         },
       ],
       caseStrings: [
-        { value: 'original_comment1' },
-        { value: 'original_comment2' },
+        { id: caseStringId1, value: 'original_comment1' },
+        { id: caseStringId2, value: 'original_comment2' },
       ],
-      appealDecisions: [{ announcement: 'original_announcement' }],
+      appealDecisions: [
+        { id: appealDecisionId, announcement: 'original_announcement' },
+      ],
     })
     let then: Then
 

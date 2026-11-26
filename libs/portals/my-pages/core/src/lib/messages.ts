@@ -982,9 +982,9 @@ export const m = defineMessages({
     id: 'service.portal:company-settings-navigation',
     defaultMessage: 'Stillingar fyrirtækis',
   },
-  mySettingsInformation: {
-    id: 'service.portal:my-settings-information',
-    defaultMessage: 'Upplýsingar',
+  mySettingsPersonalInformation: {
+    id: 'service.portal:my-settings-personal-information',
+    defaultMessage: 'Persónuupplýsingar',
   },
   mySettingsNotifications: {
     id: 'service.portal:my-settings-notifications',

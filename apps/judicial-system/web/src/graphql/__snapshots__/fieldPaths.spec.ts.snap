@@ -1160,6 +1160,14 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ExtendCaseLifetime 1`] = `
+Array [
+  "extendCaseLifetime.archiveNotBefore",
+  "extendCaseLifetime.caseId",
+  "extendCaseLifetime.caseRestored",
+]
+`;
+
 exports[`GraphQL operations select these field paths FileAppealStatement 1`] = `
 Array [
   "fileAppealStatement.civilClaimantId",

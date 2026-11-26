@@ -236,6 +236,10 @@ export const msg = defineMessages({
     id: 'sp.settings:overlay-intro-text',
     defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,
   },
+  userProfileIntro: {
+    id: 'sp.settings:user-profile-intro-text',
+    defaultMessage: `Við komum til með að senda þér mikilvægar tilkynningar og því er gott að hafa netfang og símanúmer rétt skráð. Við meðhöndlum persónuupplýsingar í samræmi við [persónuverndarstefnu Ísland.is](https://island.is/s/stafraent-island/personuverndarstefna-island-is).`,
+  },
   companysSettingsIntro: {
     id: 'sp.settings:company-settings-intro-text',
     defaultMessage: `Hér getur þú breytt upplýsingum um fyrirtækið`,
