@@ -54,4 +54,11 @@ export const error = defineMessages({
       'Km skráning þarf að vera sama eða hærri en síðasta skráning',
     description: 'Invalid mileage error',
   },
+  approvedReviewerChanged: {
+    id: 'ta.tvo.application:error.approvedReviewerChanged',
+    defaultMessage:
+      'Ekki er hægt að breyta eða endurheimta meðeiganda eða umráðamann sem hefur verið samþykktur eða fjarlægður. Bættu viðkomandi við aftur.',
+    description:
+      'Error when the buyer restores a removed co-owner or operator, or changes one who has approved, in review',
+  },
 })

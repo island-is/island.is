@@ -46,6 +46,9 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
+  isApprovedByAllReviewers,
+  recordApproval,
+  resetApprovals,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -175,7 +178,7 @@ const template: ApplicationTemplate<
         ],
       }),
       [States.REVIEW]: {
-        entry: 'assignUsers',
+        entry: ['assignUsers', 'resetApprovals'],
         meta: {
           name: 'Breyting umráðamanns á ökutæki',
           status: 'inprogress',
@@ -319,16 +322,24 @@ const template: ApplicationTemplate<
                 },
               ],
               write: {
-                answers: ['ownerCoOwner', 'operators', 'rejecter'],
+                answers: ['rejecter'],
               },
               read: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: { target: States.REVIEW },
+          [DefaultEvents.APPROVE]: {
+            target: States.REVIEW,
+            actions: 'recordApproval',
+          },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          // SUBMIT is also used to retry when submitting to SGS failed after the last approval
+          [DefaultEvents.SUBMIT]: {
+            target: States.COMPLETED,
+            cond: (context) =>
+              isApprovedByAllReviewers(context.application.answers),
+          },
         },
       },
       [States.REJECTED]: {
@@ -414,6 +425,25 @@ const template: ApplicationTemplate<
         if (assigneeNationalIds.length > 0) {
           set(application, 'assignees', assigneeNationalIds)
         }
+        return context
+      }),
+      // Only when entering review from payment, not on the APPROVE self-transition
+      resetApprovals: assign((context, event) => {
+        const { application } = context
+        if (event.type === DefaultEvents.SUBMIT) {
+          set(application, 'answers', resetApprovals(application.answers))
+        }
+        return context
+      }),
+      recordApproval: assign((context, event) => {
+        const { application } = context
+        // The application system adds the authenticated user to the event
+        const { nationalId } = event as { nationalId?: string }
+        set(
+          application,
+          'answers',
+          recordApproval(application.answers, nationalId),
+        )
         return context
       }),
     },

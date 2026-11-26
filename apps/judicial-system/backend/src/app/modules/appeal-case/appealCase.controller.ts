@@ -284,6 +284,10 @@ export class AppealCaseController {
       dto.eventType,
       user,
       transaction,
+      {
+        defendantId: dto.defendantId,
+        civilClaimantId: dto.civilClaimantId,
+      },
     )
   }
 
