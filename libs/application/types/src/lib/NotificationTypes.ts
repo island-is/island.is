@@ -10,6 +10,7 @@ export enum NotificationType {
   TrainingLicenseOnWorkMachinePruned = 'TrainingLicenseOnWorkMachinePrunedNotification',
   TrainingLicenseOnWorkMachineRejected = 'TrainingLicenseOnWorkMachineRejectedNotification',
   TrainingLicenseOnWorkMachineApproved = 'TrainingLicenseOnWorkMachineApprovedNotification',
+  MachineLicenseRenewalApproved = 'MachineLicenseRenewalApprovedNotification',
   FireCompensationAppraisal = 'FireCompensationAppraisalNotification',
   NewPrimarySchoolAssignOtherGuardian = 'NewPrimarySchoolAssignOtherGuardianNotification',
   NewPrimarySchoolOtherGuardianApproved = 'NewPrimarySchoolOtherGuardianApprovedNotification',
@@ -150,6 +151,10 @@ interface NotificationKeysMap {
     rejectedBy: string
     applicationLink: string
   }
+  [NotificationType.MachineLicenseRenewalApproved]: {
+    renewedRightsIs: string
+    renewedRightsEn: string
+  }
 }
 
 const defineNotificationConfig = <
@@ -189,6 +194,9 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.TrainingLicenseOnWorkMachineApproved]: {
     templateId: 'HNIPP.AS.VER.TLWM.APPROVED',
+  },
+  [NotificationType.MachineLicenseRenewalApproved]: {
+    templateId: 'HNIPP.AS.VER.MLR.APPROVED',
   },
   [NotificationType.FireCompensationAppraisal]: {
     templateId: 'HNIPP.AS.HMS.FCA.NOTIFICATION',

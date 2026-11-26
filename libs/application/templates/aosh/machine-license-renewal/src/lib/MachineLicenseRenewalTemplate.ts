@@ -219,7 +219,10 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.APPROVED,
           lifecycle: pruneAfterDays(30),
-          // TODO: Send a Hnipp notification to the applicant on entry. Use throwOnError: false so a failed notification does not fail the APPROVE call from AOSH.
+          onEntry: defineTemplateApi({
+            action: ApiActions.sendApprovedNotification,
+            throwOnError: false,
+          }),
           actionCard: {
             tag: {
               label: applicationMessages.actionCardApproved,

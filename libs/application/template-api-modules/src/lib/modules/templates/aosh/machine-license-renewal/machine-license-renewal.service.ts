@@ -3,6 +3,7 @@ import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   FileUploadDto,
@@ -12,6 +13,7 @@ import {
   WorkMachineLicenseRenewalApplicationDto,
 } from '@island.is/clients/seminars-ver'
 import {
+  formatRenewedRights,
   getApplicationAnswers,
   getApplicationExternalData,
   isLegalDomicile,
@@ -24,6 +26,8 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { AttachmentS3Service } from '../../../shared/services'
+import { NotificationsService } from '../../../../notification/notifications.service'
+import { NotificationType } from '../../../../notification/notificationsTemplates'
 import { TemplateApiModuleActionProps } from '../../../../types'
 
 @Injectable()
@@ -31,6 +35,7 @@ export class MachineLicenseRenewalService extends BaseTemplateApiService {
   constructor(
     private readonly seminarsClientService: SeminarsClientService,
     private readonly attachmentService: AttachmentS3Service,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.MACHINE_LICENSE_RENEWAL)
   }
@@ -143,6 +148,27 @@ export class MachineLicenseRenewalService extends BaseTemplateApiService {
     }
 
     return paymentReceived
+  }
+
+  async sendApprovedNotification({
+    application,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const { workMachineLicense } = getApplicationExternalData(
+      application.externalData,
+    )
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.MachineLicenseRenewalApproved,
+      messageParties: {
+        recipient: application.applicant,
+        sender: InstitutionNationalIds.VINNUEFTIRLITID,
+      },
+      applicationId: application.id,
+      args: {
+        renewedRightsIs: formatRenewedRights(workMachineLicense, 'is'),
+        renewedRightsEn: formatRenewedRights(workMachineLicense, 'en'),
+      },
+    })
   }
 
   private async getMedicalCertificate(

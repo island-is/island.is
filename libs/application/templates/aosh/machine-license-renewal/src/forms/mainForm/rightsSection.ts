@@ -46,7 +46,7 @@ export const rightsSection = buildSection({
                 .workMachineLicense,
             ).map((right) => [
               formatRightName(right, locale),
-              right.validUntil ? formatDate(right.validUntil) : '',
+              right.validUntil ? formatDate(right.validUntil, locale) : '',
             ]),
         }),
         buildInteractiveTableField({
@@ -61,7 +61,7 @@ export const rightsSection = buildSection({
                 .workMachineLicense,
             ).map((right) => [
               formatRightName(right, locale),
-              right.validUntil ? formatDate(right.validUntil) : '',
+              right.validUntil ? formatDate(right.validUntil, locale) : '',
             ]),
         }),
       ],

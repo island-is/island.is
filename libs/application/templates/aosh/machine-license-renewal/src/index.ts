@@ -9,5 +9,6 @@ export {
   isOtherAddress,
   wantsPlasticCard,
 } from './utils/conditions'
+export { formatRenewedRights } from './utils/machineLicenseRights'
 
 export default template

@@ -26,6 +26,7 @@ export enum ApiActions {
   getWorkMachineLicense = 'getWorkMachineLicense',
   submitApplication = 'submitApplication',
   verifyPaymentReceived = 'verifyPaymentReceived',
+  sendApprovedNotification = 'sendApprovedNotification',
 }
 
 export enum DeliveryMethod {

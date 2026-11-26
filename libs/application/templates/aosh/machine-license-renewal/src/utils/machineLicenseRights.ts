@@ -5,11 +5,12 @@ import {
   WorkMachineLicenseDto,
   WorkMachineRightDto,
 } from '@island.is/clients/seminars-ver'
+import { dateFormat } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 
-export const formatDate = (date: string) => {
+export const formatDate = (date: string, locale: Locale) => {
   const parsedDate = parseISO(date)
-  return isValid(parsedDate) ? format(parsedDate, 'dd.MM.yyyy') : ''
+  return isValid(parsedDate) ? format(parsedDate, dateFormat[locale]) : ''
 }
 
 export const formatRightName = (right: WorkMachineRightDto, locale: Locale) => {
@@ -43,3 +44,24 @@ export const getOtherRights = (workMachineLicense?: WorkMachineLicenseDto) => {
     (right) => !renewableCategories.has(right.category),
   )
 }
+
+const validUntilLabel: Record<Locale, string> = {
+  is: 'gildir nú til',
+  en: 'valid until',
+}
+
+export const formatRenewedRights = (
+  workMachineLicense: WorkMachineLicenseDto | undefined,
+  locale: Locale,
+) =>
+  (workMachineLicense?.workMachineRightsRenewedDtos ?? [])
+    .map((right) => {
+      const name = formatRightName(right, locale)
+      const validUntil = right.validUntil
+        ? formatDate(right.validUntil, locale)
+        : ''
+      return validUntil
+        ? `${name} (${validUntilLabel[locale]} ${validUntil})`
+        : name
+    })
+    .join(', ')

@@ -1,6 +1,7 @@
 import { WorkMachineLicenseDto } from '@island.is/clients/seminars-ver'
 import {
   formatDate,
+  formatRenewedRights,
   formatRightName,
   getOtherRights,
   getRenewableRights,
@@ -13,7 +14,12 @@ const workMachineLicense: WorkMachineLicenseDto = {
     { category: 'P', categoryName: 'Hleðslukranar', validUntil: '2027-03-15' },
   ],
   workMachineRightsRenewedDtos: [
-    { category: 'D', categoryName: 'Körfukranar', validUntil: '2032-03-15' },
+    {
+      category: 'D',
+      categoryName: 'Körfukranar',
+      categoryNameEn: 'Aerial platforms',
+      validUntil: '2032-03-15',
+    },
     { category: 'P', categoryName: 'Hleðslukranar', validUntil: '2032-03-15' },
   ],
 }
@@ -58,12 +64,16 @@ describe('machineLicenseRights', () => {
   })
 
   describe('formatDate', () => {
-    it('formats a date-only value', () => {
-      expect(formatDate('2025-08-30')).toBe('30.08.2025')
+    it('formats a date-only value in Icelandic', () => {
+      expect(formatDate('2025-08-30', 'is')).toBe('30.08.2025')
+    })
+
+    it('formats a date-only value in English', () => {
+      expect(formatDate('2025-08-30', 'en')).toBe('30/08/2025')
     })
 
     it('returns an empty string for a value that cannot be parsed', () => {
-      expect(formatDate('30.08.2025')).toBe('')
+      expect(formatDate('30.08.2025', 'is')).toBe('')
     })
   })
 
@@ -100,6 +110,37 @@ describe('machineLicenseRights', () => {
       expect(formatRightName({ category: 'J', categoryName: null }, 'is')).toBe(
         'J',
       )
+    })
+  })
+
+  describe('formatRenewedRights', () => {
+    it('lists the renewed rights with their new validity in Icelandic', () => {
+      expect(formatRenewedRights(workMachineLicense, 'is')).toBe(
+        'D - Körfukranar (gildir nú til 15.03.2032), P - Hleðslukranar (gildir nú til 15.03.2032)',
+      )
+    })
+
+    it('lists the renewed rights with their new validity in English', () => {
+      expect(formatRenewedRights(workMachineLicense, 'en')).toBe(
+        'D - Aerial platforms (valid until 15/03/2032), P - Hleðslukranar (valid until 15/03/2032)',
+      )
+    })
+
+    it('leaves out the validity when it is missing', () => {
+      expect(
+        formatRenewedRights(
+          {
+            workMachineRightsRenewedDtos: [
+              { category: 'D', categoryName: 'Körfukranar' },
+            ],
+          },
+          'is',
+        ),
+      ).toBe('D - Körfukranar')
+    })
+
+    it('returns an empty string when there is no data', () => {
+      expect(formatRenewedRights(undefined, 'is')).toBe('')
     })
   })
 })

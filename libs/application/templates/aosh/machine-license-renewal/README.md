@@ -26,7 +26,7 @@ Data fetching from National Registry, User profile, The Administration of Occupa
 The applicant goes through the following screens:
 
 1. **Applicant:** personal information from National Registry, and email and phone number from User profile. The applicant can change the email and phone number for this application, which does not update User profile. Both are required.
-2. **Rights:** the license number, the rights that will be renewed and other valid rights. The table of other valid rights is hidden when all rights are renewable. Right names are shown in English (`categoryNameEn`) when the application is in English, with the Icelandic name (`categoryName`) as a fallback. This also applies to the overview.
+2. **Rights:** the license number, the rights that will be renewed and other valid rights. The table of other valid rights is hidden when all rights are renewable. Right names are shown in English (`categoryNameEn`) when the application is in English, with the Icelandic name (`categoryName`) as a fallback. This also applies to the overview. Dates use the shared `dateFormat` for the application's language (`dd.MM.yyyy` in Icelandic, `dd/MM/yyyy` in English).
 3. **Medical certificate:** upload of one medical certificate (`.pdf`, `.jpg`, `.jpeg` or `.png`). The certificate must not be older than six months. This is stated to the applicant but not validated.
 4. **License:** whether the applicant wants a plastic card. If so, the card is either sent to the applicant's legal domicile or to another address with an optional recipient. The postal code for another address is selected from the shared list of Icelandic postal codes (`postalCodes` in `@island.is/shared/utils`).
 5. **Overview:** summary of the application and approval of the terms of payment.
@@ -50,6 +50,10 @@ The Administration of Occupational Safety and Health moves it to the approved or
 ### Approved
 
 The Administration of Occupational Safety and Health has approved the application and renewed the rights.
+
+On entry, the applicant receives a Hnipp notification (template `HNIPP.AS.VER.MLR.APPROVED`). The renewed rights with their new validity, taken from `workMachineRightsRenewedDtos` fetched in prerequisites, are sent in two arguments: `renewedRightsIs` (for example `D - Körfukranar og steypudælur (gildir nú til 15.03.2037)`) for the Icelandic template and `renewedRightsEn` (English right names, `valid until 15/03/2037`) for the English template.
+
+A failed notification does not stop the application from moving to this state (`throwOnError: false`).
 
 ### Rejected
 
