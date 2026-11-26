@@ -417,6 +417,9 @@ export class NotificationsWorkerService {
     })
 
     if (existing) {
+      // wasSent is deliberately not updated on retries: it records the
+      // decision made when the row was first created, even if a retry
+      // evaluates the delegate's preferences differently.
       this.logger.info(
         'actor notification with messageId already exists in db',
         {
