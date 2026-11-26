@@ -52,6 +52,10 @@ form ID. The service selects only those columns, without loading form content,
 settings, or dependencies. Organization options remain available.
 Opening the editor or validating publication still fetches the complete form
 on demand.
+Status totals for the selected organization's forms appear in a horizontal row
+above the "Opna síu" and "Sía eftir leitarorði" controls, using the table's status
+tags. Totals include all loaded forms, regardless of the active filters.
+The "Nýtt" and "Flytja inn" buttons remain on the left.
 
 ## Publishing
 

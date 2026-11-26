@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
 import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
+import { StatusTag } from '../StatusTag/StatusTag'
 import * as tableStyles from '../tableHeader.css'
 import {
   SortColumn,
@@ -216,6 +217,23 @@ export const Forms = () => {
     return matchesStatus && matchesName
   }
 
+  const statusSummary = (
+    <Box display="flex" columnGap={2} rowGap={1} flexWrap="wrap">
+      {[
+        FormStatus.PUBLISHED,
+        FormStatus.IN_DEVELOPMENT,
+        FormStatus.PUBLISHED_BEING_CHANGED,
+      ].map((status) => (
+        <Box key={status} display="flex" alignItems="center" columnGap={1}>
+          <StatusTag status={status} />
+          <Text fontWeight="semiBold">
+            {forms.filter((form) => form.status === status).length}
+          </Text>
+        </Box>
+      ))}
+    </Box>
+  )
+
   return (
     <>
       <input
@@ -272,8 +290,8 @@ export const Forms = () => {
         display="flex"
         width="full"
         marginBottom={2}
-        justifyContent="flexEnd"
-        alignItems="baseline"
+        justifyContent="spaceBetween"
+        alignItems="flexEnd"
       >
         <Box display={['none', 'none', 'flex']} columnGap={2}>
           <Box display="flex" style={{ minWidth: 144 }}>
@@ -288,64 +306,69 @@ export const Forms = () => {
           </Box>
           {importButton}
         </Box>
-        <Filter
-          labelClearAll="Hreinsa allar síur"
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía API Vörulista"
-          labelResult="Sýna niðurstöður"
-          align="right"
-          onFilterClear={() =>
-            setFilter({
-              name: '',
-              formState: defaultFormState,
-            })
-          }
-          variant="popover"
-          filterInput={
-            <FilterInput
-              name="filter-input"
-              placeholder="Sía eftir leitarorði"
-              value={filter.name}
-              onChange={(value) => setFilter({ ...filter, name: value })}
-              button={{
-                label: 'Search',
-                onClick: () => undefined,
-              }}
-            />
-          }
-        >
-          <Box
-            paddingX={3}
-            paddingY={1}
-            borderRadius="large"
-            background="white"
+        <Box display="flex" flexDirection="column" rowGap={2}>
+          {statusSummary}
+          <Filter
+            labelClearAll="Hreinsa allar síur"
+            labelClear="Hreinsa síu"
+            labelOpen="Opna síu"
+            labelClose="Loka síu"
+            labelTitle="Sía API Vörulista"
+            labelResult="Sýna niðurstöður"
+            align="right"
+            onFilterClear={() =>
+              setFilter({
+                name: '',
+                formState: defaultFormState,
+              })
+            }
+            variant="popover"
+            filterInput={
+              <FilterInput
+                name="filter-input"
+                placeholder="Sía eftir leitarorði"
+                value={filter.name}
+                onChange={(value) => setFilter({ ...filter, name: value })}
+                button={{
+                  label: 'Search',
+                  onClick: () => undefined,
+                }}
+              />
+            }
           >
-            <Stack space={2}>
-              <Text variant="h4">Staða</Text>
-              {categories[0].filters.map((category) => (
-                <Checkbox
-                  key={category.value}
-                  name={category.value}
-                  label={category.label}
-                  value={category.value}
-                  checked={filter.formState.includes(category.value)}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    let newSelected = [...filter.formState]
-                    if (newSelected.includes(value)) {
-                      newSelected = newSelected.filter((item) => item !== value)
-                    } else {
-                      newSelected.push(value)
-                    }
-                    setFilter({ ...filter, formState: newSelected })
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Filter>
+            <Box
+              paddingX={3}
+              paddingY={1}
+              borderRadius="large"
+              background="white"
+            >
+              <Stack space={2}>
+                <Text variant="h4">Staða</Text>
+                {categories[0].filters.map((category) => (
+                  <Checkbox
+                    key={category.value}
+                    name={category.value}
+                    label={category.label}
+                    value={category.value}
+                    checked={filter.formState.includes(category.value)}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      let newSelected = [...filter.formState]
+                      if (newSelected.includes(value)) {
+                        newSelected = newSelected.filter(
+                          (item) => item !== value,
+                        )
+                      } else {
+                        newSelected.push(value)
+                      }
+                      setFilter({ ...filter, formState: newSelected })
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </Filter>
+        </Box>
       </Box>
       <Box className={tableStyles.tableWrapper}>
         <TableHeader
