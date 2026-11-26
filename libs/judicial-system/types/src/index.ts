@@ -143,6 +143,7 @@ export {
   getAppealFileDeletionLockReason,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
   PoliceFileTypeCode,
 } from './lib/file'
 export type { AppealFileDeletionLockReason } from './lib/file'

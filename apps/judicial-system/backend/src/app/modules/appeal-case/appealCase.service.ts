@@ -41,6 +41,7 @@ import {
   isPublicProsecutionUser,
   isSameAppealBench,
   isSameAppealStatementParty,
+  isStoredVerdictAppealRulingPdf,
   verdictAppealDeclarationFileCategories,
   VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
@@ -1079,6 +1080,25 @@ export class AppealCaseService {
       )
     }
 
+    // The date an appeal ended is never cleared: a completed appeal and the
+    // stamp on its ruling document both rest on it.
+    if (update.appealRulingDate === null) {
+      throw new BadRequestException(
+        `The ruling date of appeal case ${appealCase.id} cannot be cleared`,
+      )
+    }
+
+    // A ruling appeal is dated when it is completed; only the court of
+    // appeals' conclusion of a verdict appeal is dated by the court itself.
+    if (
+      update.appealRulingDate !== undefined &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and its ruling date is set when it is completed`,
+      )
+    }
+
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
     const data: UpdateAppealCase = { ...columnUpdate }
@@ -1101,6 +1121,21 @@ export class AppealCaseService {
       await this.appealCaseRepositoryService.update(appealCase.id, data, {
         transaction,
       })
+    }
+
+    // The confirmed copy of a completed verdict appeal's ruling document is
+    // stamped with this date, so a new date has it stamped again.
+    if (
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.COMPLETED &&
+      update.appealRulingDate &&
+      update.appealRulingDate.getTime() !==
+        appealCase.appealRulingDate?.getTime()
+    ) {
+      await this.fileService.invalidateVerdictAppealRulingConfirmation(
+        theCase.id,
+        transaction,
+      )
     }
 
     // The api's list is nullable, so a null bench arrives as well as an
@@ -1713,7 +1748,8 @@ export class AppealCaseService {
 
   // The court of appeals concludes a verdict appeal once everything about how
   // it ended is on record: a status of completed, the outcome, whether it is a
-  // judgment or a ruling, the concluding words and the document itself.
+  // judgment or a ruling, the concluding words, the date it ended and the
+  // document itself. That date is the court's own and is kept as entered.
   //
   // Nothing is announced. The outcome stays with the court until it is
   // released, so no message is queued and nothing is delivered - which is why
@@ -1738,12 +1774,8 @@ export class AppealCaseService {
       )
     }
 
-    // The document is stamped when it is opened, which only a PDF can be.
     const hasRulingFile = (theCase.caseFiles ?? []).some(
-      (file) =>
-        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-        file.type === 'application/pdf' &&
-        Boolean(file.key),
+      isStoredVerdictAppealRulingPdf,
     )
 
     if (
@@ -1751,10 +1783,11 @@ export class AppealCaseService {
       !appealCase.appealRulingDecision ||
       !appealCase.appealRulingType ||
       !appealCase.appealConclusion?.trim() ||
+      !appealCase.appealRulingDate ||
       !hasRulingFile
     ) {
       throw new BadRequestException(
-        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion and ruling document, a PDF, are in place`,
+        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion, date of conclusion and ruling document, a PDF, are in place`,
       )
     }
 

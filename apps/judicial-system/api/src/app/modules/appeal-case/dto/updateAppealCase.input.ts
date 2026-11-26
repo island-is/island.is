@@ -70,6 +70,11 @@ export class UpdateAppealCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
+  readonly appealRulingDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly appealValidToDate?: string
 
   @Allow()

@@ -92,6 +92,16 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
             }
           }
 
+          // The court of appeals enters the date a verdict appeal ended
+          // itself, so it is kept; any other appeal is dated by its completion,
+          // also when it is completed again after being reopened.
+          if (appealCase.appealType === AppealCaseType.VERDICT) {
+            return {
+              caseUpdate,
+              appealCaseUpdate: { appealState: AppealCaseState.COMPLETED },
+            }
+          }
+
           return {
             caseUpdate,
             appealCaseUpdate: {

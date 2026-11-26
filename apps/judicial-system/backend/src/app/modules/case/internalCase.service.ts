@@ -72,19 +72,15 @@ import {
 } from '../police'
 import {
   AppealCase,
-  AppealDecision,
   AppealDecisionRepositoryService,
   Case,
   CaseArchiveRepositoryService,
-  CaseFile,
   CaseRepositoryService,
-  CaseString,
   CaseStringRepositoryService,
   DateLog,
   Defendant,
   DefendantRepositoryService,
   EventLog,
-  IndictmentCount,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
@@ -96,82 +92,19 @@ import { ArchiveResponse } from './models/archive.response'
 import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
+import {
+  appealCaseEncryptionProperties,
+  appealDecisionEncryptionProperties,
+  caseEncryptionProperties,
+  caseFileEncryptionProperties,
+  caseStringEncryptionProperties,
+  collectEncryptionProperties,
+  defendantEncryptionProperties,
+  indictmentCountEncryptionProperties,
+  withArchivedRowId,
+} from './caseArchive'
 import { PdfService } from './pdf.service'
 import { wasVerdictServiceCertificateDeliveredToPolice } from './verdictServiceCertificateDelivery'
-
-const caseEncryptionProperties: (keyof Case)[] = [
-  'description',
-  'demands',
-  'requestedOtherRestrictions',
-  'caseFacts',
-  'legalArguments',
-  'prosecutorOnlySessionRequest',
-  'comments',
-  'caseFilesComments',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'sessionBookings',
-  'courtCaseFacts',
-  'introduction',
-  'courtLegalArguments',
-  'ruling',
-  'conclusion',
-  'endOfSessionBookings',
-  'caseModifiedExplanation',
-  'caseResentExplanation',
-  'crimeScenes',
-  'indictmentIntroduction',
-  'indictmentDeniedExplanation',
-]
-
-const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
-  'appealConclusion',
-  'appealRulingModifiedHistory',
-]
-
-const appealDecisionEncryptionProperties: (keyof AppealDecision)[] = [
-  'announcement',
-]
-
-const defendantEncryptionProperties: (keyof Defendant)[] = [
-  'nationalId',
-  'name',
-  'address',
-]
-
-const caseFileEncryptionProperties: (keyof CaseFile)[] = [
-  'name',
-  'key',
-  'userGeneratedFilename',
-]
-
-const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
-  'vehicleRegistrationNumber',
-  'incidentDescription',
-  'legalArguments',
-]
-
-const caseStringEncryptionProperties: (keyof CaseString)[] = ['value']
-
-const collectEncryptionProperties = (
-  properties: string[],
-  unknownSource: unknown,
-): [{ [key: string]: string | null }, { [key: string]: unknown }] => {
-  const source = unknownSource as { [key: string]: unknown }
-  return properties.reduce<
-    [{ [key: string]: string | null }, { [key: string]: unknown }]
-  >(
-    (data, property) => [
-      {
-        ...data[0],
-        [property]: typeof source[property] === 'string' ? '' : null,
-      },
-      { ...data[1], [property]: source[property] },
-    ],
-    [{}, {}],
-  )
-}
 
 @Injectable()
 export class InternalCaseService {
@@ -616,7 +549,7 @@ export class InternalCaseService {
           theCase.appealCase,
         )
 
-      appealCaseArchive = archive
+      appealCaseArchive = withArchivedRowId(theCase.appealCase, archive)
       Object.assign(clearedCaseProperties, clearedAppealCaseProperties)
     }
 
@@ -624,7 +557,7 @@ export class InternalCaseService {
     for (const defendant of theCase.defendants ?? []) {
       const [clearedDefendantProperties, defendantArchive] =
         collectEncryptionProperties(defendantEncryptionProperties, defendant)
-      defendantsArchive.push(defendantArchive)
+      defendantsArchive.push(withArchivedRowId(defendant, defendantArchive))
 
       await this.defendantService.updateDatabaseDefendant(
         theCase.id,
@@ -638,7 +571,7 @@ export class InternalCaseService {
     for (const caseFile of theCase.caseFiles ?? []) {
       const [clearedCaseFileProperties, caseFileArchive] =
         collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
-      caseFilesArchive.push(caseFileArchive)
+      caseFilesArchive.push(withArchivedRowId(caseFile, caseFileArchive))
 
       await this.fileService.updateCaseFile(
         theCase.id,
@@ -652,7 +585,9 @@ export class InternalCaseService {
     for (const count of theCase.indictmentCounts ?? []) {
       const [clearedIndictmentCountProperties, indictmentCountArchive] =
         collectEncryptionProperties(indictmentCountEncryptionProperties, count)
-      indictmentCountsArchive.push(indictmentCountArchive)
+      indictmentCountsArchive.push(
+        withArchivedRowId(count, indictmentCountArchive),
+      )
 
       await this.indictmentCountService.update(
         theCase.id,
@@ -666,7 +601,7 @@ export class InternalCaseService {
     for (const caseString of theCase.caseStrings ?? []) {
       const [clearedCaseStringProperties, caseStringArchive] =
         collectEncryptionProperties(caseStringEncryptionProperties, caseString)
-      caseStringsArchive.push(caseStringArchive)
+      caseStringsArchive.push(withArchivedRowId(caseString, caseStringArchive))
 
       await this.caseStringRepositoryService.updateByIdAndCase(
         caseString.id,
@@ -683,7 +618,9 @@ export class InternalCaseService {
           appealDecisionEncryptionProperties,
           appealDecision,
         )
-      appealDecisionsArchive.push(appealDecisionArchive)
+      appealDecisionsArchive.push(
+        withArchivedRowId(appealDecision, appealDecisionArchive),
+      )
 
       await this.appealDecisionRepositoryService.update(
         appealDecision.id,

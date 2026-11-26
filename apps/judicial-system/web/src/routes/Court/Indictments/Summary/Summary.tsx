@@ -47,11 +47,11 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as styles from '@island.is/judicial-system-web/src/utils/styles/modalPdfPreview.css'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
-import * as styles from './Summary.css'
 
 type modal = 'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'CORRECTION_EXPLANATION'
 
