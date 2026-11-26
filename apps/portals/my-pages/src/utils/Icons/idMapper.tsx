@@ -17,6 +17,7 @@ import Heart from '../../components/AnimatedIcon/Heart'
 import CardWithCheckmark from '../../components/AnimatedIcon/CardWithCheckmark'
 import Gavel from '../../components/AnimatedIcon/Gavel'
 import Election from '../../components/AnimatedIcon/Election'
+import Scale, { SCALE_ICON_ID } from '../../components/AnimatedIcon/Scale'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -72,6 +73,9 @@ export const iconIdMapper = (iconType: string) => {
       return 'eDi3AOmSGXe1'
     case 'election':
       return 'epyxrSILKQP1'
+    // Jafnrétti í vinnu
+    case 'scale':
+      return SCALE_ICON_ID
     default:
       return ''
   }
@@ -135,6 +139,9 @@ export const iconTypeToSVG = (iconType: string) => {
       return <Gavel />
     case 'election':
       return <Election />
+    // Jafnrétti í vinnu
+    case 'scale':
+      return <Scale />
     default:
       return undefined
   }

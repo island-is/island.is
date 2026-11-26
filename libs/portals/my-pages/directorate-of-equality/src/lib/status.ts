@@ -3,7 +3,22 @@ import { FormatMessage } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/my-pages/core'
 
 import { DirectorateOfEqualitySubmissionStatus } from '@island.is/api/schema'
+import { ApiKeyState } from './apiKeys'
 import { messages } from './messages'
+
+export const getApiKeyTag = (
+  state: ApiKeyState,
+  formatMessage: FormatMessage,
+): { label: string; variant: TagVariant } => {
+  switch (state) {
+    case 'revoked':
+      return { label: formatMessage(messages.keyRevoked), variant: 'red' }
+    case 'expired':
+      return { label: formatMessage(messages.keyExpired), variant: 'blue' }
+    default:
+      return { label: formatMessage(messages.active), variant: 'mint' }
+  }
+}
 
 export const getStatusTag = (
   status: DirectorateOfEqualitySubmissionStatus,

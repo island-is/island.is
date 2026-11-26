@@ -41,11 +41,9 @@ const ReportDetail = () => {
       : report?.salaryDataPeriod
       ? formatPeriodMonth(report.salaryDataPeriod, lang)
       : undefined
-  const title = !report
-    ? formatMessage(coreMessages.equalityReport)
-    : year
-    ? formatMessage(messages.reportTitle, { year })
-    : formatMessage(coreMessages.equalityReport)
+  const title = year
+    ? formatMessage(messages.reportYearTitle, { year })
+    : formatMessage(messages.report)
   const pdfUrl = report?.pdfUrl
   const improvementPlanPdfUrl = report?.improvementPlanPdfUrl
 

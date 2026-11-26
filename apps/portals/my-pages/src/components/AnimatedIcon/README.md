@@ -87,6 +87,9 @@ const onHover = (id: string) => {
 | `cardWithCheckmark` | `CardWithCheckmark` | Framfærslur      |
 | `gavel`             | `Gavel`             | Lög og reglur    |
 | `election`          | `Election`          | Kosningar        |
+| `scale`             | `Scale`             | Jafnrétti í vinnu |
+
+`Scale` is hand-written, not an SVGator export: on the same `click` event it sets the SVG `transform` attributes in a `requestAnimationFrame` loop, so it needs no player bootstrap. CSS/Web Animations transforms are avoided because Chrome can rasterise them, which blurs the thin strokes mid-animation.
 
 ## Adding a new animated icon
 

@@ -73,6 +73,7 @@ export * from './lib/ActionCard/ActionCard'
 export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
 export * from './lib/StatisticCard/StatisticCard'
+export * from './lib/KeyValueCard/KeyValueCard'
 
 // Core
 export { ButtonDeprecated } from './lib/ButtonDeprecated/Button'

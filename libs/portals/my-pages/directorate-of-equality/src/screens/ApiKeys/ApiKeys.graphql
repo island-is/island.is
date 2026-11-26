@@ -1,0 +1,16 @@
+query DirectorateOfEqualityApiKeys {
+  directorateOfEqualityApiKeys {
+    items {
+      id
+      keyId
+      type
+      label
+      createdAt
+      createdByName
+      createdByDirectorate
+      expiresAt
+      lastUsedAt
+      revokedAt
+    }
+  }
+}

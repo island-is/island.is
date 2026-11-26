@@ -2346,16 +2346,11 @@ export const m = defineMessages({
   },
   equality: {
     id: 'service.portal:equality',
-    defaultMessage: 'Jafnrétti á vinnumarkaði',
+    defaultMessage: 'Jafnrétti í vinnu',
   },
   equalityDescription: {
     id: 'service.portal:equality-description',
-    defaultMessage:
-      'Jafnréttisáætlanir, skýrslugjafir og aðgangslyklar fyrirtækisins',
-  },
-  equalitySubmissions: {
-    id: 'service.portal:equality-submissions',
-    defaultMessage: 'Innsendingar',
+    defaultMessage: 'Jafnréttisáætlanir, skýrslur og veflykill fyrirtækisins',
   },
   equalityPlans: {
     id: 'service.portal:equality-plans',
@@ -2364,10 +2359,6 @@ export const m = defineMessages({
   equalityPlan: {
     id: 'service.portal:equality-plan',
     defaultMessage: 'Jafnréttisáætlun',
-  },
-  equalityReports: {
-    id: 'service.portal:equality-reports',
-    defaultMessage: 'Skýrslugjafir',
   },
   equalityReport: {
     id: 'service.portal:equality-report',
@@ -2381,6 +2372,34 @@ export const m = defineMessages({
   equalityApiKeys: {
     id: 'service.portal:equality-api-keys',
     defaultMessage: 'Aðgangslyklar',
+  },
+  equalityServiceProvider: {
+    id: 'service.portal:equality-service-provider',
+    defaultMessage: 'Heimild',
+  },
+  equalityApiKey: {
+    id: 'service.portal:equality-api-key',
+    defaultMessage: 'Aðgangslykill',
+  },
+  equalityMyStatus: {
+    id: 'service.portal:equality-my-status',
+    defaultMessage: 'Mín staða',
+  },
+  equalityReportsList: {
+    id: 'service.portal:equality-reports-list',
+    defaultMessage: 'Skýrslur',
+  },
+  equalityServiceProviders: {
+    id: 'service.portal:equality-service-providers',
+    defaultMessage: 'Heimildir',
+  },
+  equalityGrantServiceProvider: {
+    id: 'service.portal:equality-grant-service-provider',
+    defaultMessage: 'Veita heimild',
+  },
+  equalityCreateApiKey: {
+    id: 'service.portal:equality-create-api-key',
+    defaultMessage: 'Búa til aðgangslykil',
   },
 })
 

@@ -1,0 +1,11 @@
+query DirectorateOfEqualityServiceProviders {
+  directorateOfEqualityServiceProviders {
+    items {
+      id
+      name
+      nationalId
+      grantedAt
+      grantedByName
+    }
+  }
+}

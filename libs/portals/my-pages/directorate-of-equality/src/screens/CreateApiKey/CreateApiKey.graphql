@@ -1,0 +1,8 @@
+mutation DirectorateOfEqualityIssueApiKey(
+  $input: DirectorateOfEqualityIssueApiKeyInput!
+) {
+  issueDirectorateOfEqualityApiKey(input: $input) {
+    id
+    key
+  }
+}

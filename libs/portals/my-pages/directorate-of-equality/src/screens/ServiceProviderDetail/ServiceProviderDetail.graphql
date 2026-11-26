@@ -1,4 +1,4 @@
-query DirectorateOfEqualityServiceProviders {
+query DirectorateOfEqualityServiceProviderDetail {
   directorateOfEqualityServiceProviders {
     items {
       id

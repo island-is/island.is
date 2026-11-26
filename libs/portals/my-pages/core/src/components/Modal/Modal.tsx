@@ -25,6 +25,7 @@ interface Props {
   buttons?: Array<{
     id: ButtonProps['id']
     type?: 'ghost' | 'primary' | 'utility'
+    colorScheme?: 'default' | 'destructive'
     onClick?: () => void
     text?: string
     loading?: boolean
@@ -147,6 +148,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                     <Button
                       key={b.id}
                       variant={b.type ?? 'primary'}
+                      colorScheme={b.colorScheme}
                       size="small"
                       onClick={b.onClick}
                       loading={b.loading}

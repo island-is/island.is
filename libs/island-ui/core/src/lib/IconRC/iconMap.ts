@@ -73,6 +73,7 @@ export type Icon =
   | 'reader'
   | 'receipt'
   | 'removeCircle'
+  | 'scale'
   | 'school'
   | 'search'
   | 'settings'
@@ -187,6 +188,7 @@ export default {
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
     star: 'Star',
+    scale: 'Scale',
     school: 'School',
     search: 'Search',
     settings: 'Settings',
@@ -296,6 +298,7 @@ export default {
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',
+    scale: 'ScaleOutline',
     school: 'SchoolOutline',
     search: 'SearchOutline',
     settings: 'SettingsOutline',

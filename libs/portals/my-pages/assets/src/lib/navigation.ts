@@ -55,6 +55,7 @@ export const assetsNavigation: PortalNavigationItem = {
           name: m.vehiclesRegisterMileage,
           description: m.vehiclesRegisterMileageIntro,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
+          icon: { icon: 'car' },
           customShortcut: {
             name: m.vehiclesRegisterMileage,
             description: m.vehicleMileageDescription,

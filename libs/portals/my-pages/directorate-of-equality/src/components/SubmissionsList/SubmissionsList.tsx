@@ -3,7 +3,7 @@ import {
   DirectorateOfEqualitySubmissionStatus,
   DirectorateOfEqualitySubmissionType,
 } from '@island.is/api/schema'
-import { Stack } from '@island.is/island-ui/core'
+import { Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -21,12 +21,12 @@ import { getPeriodYear } from '../../lib/format'
 import { messages } from '../../lib/messages'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
 import { getStatusTag } from '../../lib/status'
-import { useDirectorateOfEqualitySubmissionsQuery } from './SubmissionsTabContent.generated'
+import { useDirectorateOfEqualitySubmissionsQuery } from './SubmissionsList.generated'
 
 const getYear = (date?: string | null) =>
   date ? new Date(date).getFullYear() : null
 
-export const SubmissionsTabContent = ({
+export const SubmissionsList = ({
   type,
   hasAccess,
 }: {
@@ -55,22 +55,22 @@ export const SubmissionsTabContent = ({
     }
     const year = getPeriodYear(item.salaryDataPeriod)
     return year
-      ? formatMessage(messages.reportTitle, { year })
-      : formatMessage(coreMessages.equalityReport)
+      ? formatMessage(messages.reportYearTitle, { year })
+      : formatMessage(messages.report)
   }
 
   if (!hasAccess) {
     return (
       <Problem
-        type="no_data"
         noBorder={false}
-        title={formatMessage(messages.noAccessTitle)}
+        tag={formatMessage(coreMessages.accessDenied)}
+        title={formatMessage(messages.noPermissionTitle)}
         message={formatMessage(
           isPlan
             ? messages.noAccessPlansMessage
             : messages.noAccessReportsMessage,
         )}
-        imgSrc="./assets/images/jobsGrid.svg"
+        imgSrc="./assets/images/company.svg"
         titleSize="h2"
       />
     )
@@ -89,9 +89,11 @@ export const SubmissionsTabContent = ({
       <Problem
         type="no_data"
         noBorder={false}
-        title={formatMessage(messages.noSubmissionsTitle)}
+        title={formatMessage(messages.noDataTitle)}
         message={formatMessage(
-          isPlan ? messages.noPlansMessage : messages.noReportsMessage,
+          isPlan
+            ? messages.noPlansFoundMessage
+            : messages.noReportsFoundMessage,
         )}
         imgSrc="./assets/images/nodata.svg"
         titleSize="h2"
@@ -100,8 +102,17 @@ export const SubmissionsTabContent = ({
   }
 
   return (
-    <Stack space={2}>
-      {items.map((item) => {
+    <>
+      <Text
+        as="h2"
+        variant="eyebrow"
+        color="foregroundBrandSecondary"
+        marginBottom={2}
+      >
+        {formatMessage(messages.submissions)}
+      </Text>
+      <Stack space={2}>
+        {items.map((item) => {
         const heading = getHeading(item)
         const statusTag = getStatusTag(item.status, formatMessage)
         const canOpenApplication =
@@ -152,7 +163,8 @@ export const SubmissionsTabContent = ({
             }
           />
         )
-      })}
-    </Stack>
+        })}
+      </Stack>
+    </>
   )
 }

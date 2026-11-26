@@ -1,4 +1,4 @@
-query DirectorateOfEqualityApiKeys {
+query DirectorateOfEqualityApiKeyDetail {
   directorateOfEqualityApiKeys {
     items {
       id
@@ -12,15 +12,6 @@ query DirectorateOfEqualityApiKeys {
       lastUsedAt
       revokedAt
     }
-  }
-}
-
-mutation DirectorateOfEqualityIssueApiKey(
-  $input: DirectorateOfEqualityIssueApiKeyInput!
-) {
-  issueDirectorateOfEqualityApiKey(input: $input) {
-    id
-    key
   }
 }
 
