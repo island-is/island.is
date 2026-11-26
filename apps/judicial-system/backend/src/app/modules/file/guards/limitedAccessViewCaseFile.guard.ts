@@ -59,6 +59,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
             caseFile.id,
             accessControlCase.courtSessions,
           ),
+        appealEventLogs: accessControlCase.verdictAppealCase?.appealEventLogs,
       })
     ) {
       return true

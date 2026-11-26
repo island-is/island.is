@@ -1,0 +1,7 @@
+mutation ExtendCaseLifetime($input: ExtendCaseLifetimeInput!) {
+  extendCaseLifetime(input: $input) {
+    caseId
+    archiveNotBefore
+    caseRestored
+  }
+}

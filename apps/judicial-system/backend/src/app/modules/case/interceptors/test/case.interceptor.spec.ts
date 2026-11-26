@@ -1304,11 +1304,28 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     id: 'own_event',
     defendantId: 'own_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    created: new Date('2026-11-10T12:00:00.000Z'),
+    userName: 'Own Filer',
+    userTitle: 'Verjandi',
+    institutionName: 'Own firm',
   }
   const otherStatementEvent = {
     id: 'other_statement_event',
     defendantId: 'other_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    created: new Date('2026-11-11T12:00:00.000Z'),
+    userName: 'Other Filer',
+    userTitle: 'Verjandi',
+    institutionName: 'Other firm',
+  }
+  const prosecutionStatementEvent = {
+    id: 'prosecution_statement_event',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    userRole: UserRole.PROSECUTOR,
+    created: new Date('2026-11-12T12:00:00.000Z'),
+    userName: 'Prosecutor Filer',
+    userTitle: 'Saksóknari',
+    institutionName: 'Ákæruvaldið',
   }
   const coDefendantProsecutionAppeal = {
     id: 'co_defendant_prosecution_appeal',
@@ -1331,6 +1348,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     const appealEventLogs = [
       ownEvent,
       otherStatementEvent,
+      prosecutionStatementEvent,
       coDefendantProsecutionAppeal,
     ]
 
@@ -1384,7 +1402,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     mockHandle.mockReset()
   })
 
-  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+  it('keeps own-party rows, co-defendant statement filings, and prosecution appeal events', async () => {
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
@@ -1414,8 +1432,125 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     ).toEqual(['own_deadline'])
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
+      'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
+    // Co-party / unscoped prosecution SENT rows are filing-status only —
+    // created is kept for the file cutoff; filer PII is dropped.
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'other_statement_event',
+      ),
+    ).toEqual({
+      id: 'other_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      defendantId: 'other_defendant',
+      created: otherStatementEvent.created,
+      userRole: undefined,
+      civilClaimantId: undefined,
+    })
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'prosecution_statement_event',
+      ),
+    ).toEqual({
+      id: 'prosecution_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.PROSECUTOR,
+      created: prosecutionStatementEvent.created,
+      defendantId: undefined,
+      civilClaimantId: undefined,
+    })
+  })
+
+  it('strips filer identity from co-party verdict-appeal statement files', async () => {
+    const makeStatementFile = (fields: {
+      id: string
+      defendantId?: string
+      category: CaseFileCategory
+      submittedBy: string
+      fileRepresentative: string
+    }) => ({
+      ...fields,
+      state: CaseFileState.STORED_IN_RVG,
+      toJSON: () => ({ ...fields, state: CaseFileState.STORED_IN_RVG }),
+    })
+
+    const theCase = {
+      ...makeIndictmentWithVerdictAppeal(),
+      caseFiles: [
+        makeStatementFile({
+          id: 'own_statement',
+          defendantId: 'own_defendant',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Own Filer',
+          fileRepresentative: 'Own Advocate',
+        }),
+        makeStatementFile({
+          id: 'other_statement',
+          defendantId: 'other_defendant',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Other Filer',
+          fileRepresentative: 'Other Advocate',
+        }),
+        makeStatementFile({
+          id: 'prosecution_statement',
+          category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Prosecutor Filer',
+          fileRepresentative: 'Ákærandi',
+        }),
+      ],
+    }
+
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      caseFiles: {
+        id: string
+        submittedBy?: string
+        fileRepresentative?: string
+      }[]
+    }
+
+    expect(
+      result.caseFiles.find((file) => file.id === 'own_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: 'Own Filer',
+        fileRepresentative: 'Own Advocate',
+      }),
+    )
+    expect(
+      result.caseFiles.find((file) => file.id === 'other_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: undefined,
+        fileRepresentative: undefined,
+      }),
+    )
+    expect(
+      result.caseFiles.find((file) => file.id === 'prosecution_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: undefined,
+        fileRepresentative: undefined,
+      }),
+    )
   })
 
   it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {
@@ -1449,6 +1584,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
       'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
   })

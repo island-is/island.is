@@ -716,6 +716,7 @@ Array [
   "case.verdictAppealCase.appealJudges.user.id",
   "case.verdictAppealCase.appealJudges.user.name",
   "case.verdictAppealCase.appealJudges.userId",
+  "case.verdictAppealCase.appealRulingDate",
   "case.verdictAppealCase.appealRulingDecision",
   "case.verdictAppealCase.appealRulingType",
   "case.verdictAppealCase.appealState",
@@ -1156,6 +1157,14 @@ exports[`GraphQL operations select these field paths ExtendCase 1`] = `
 Array [
   "extendCase.id",
   "extendCase.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths ExtendCaseLifetime 1`] = `
+Array [
+  "extendCaseLifetime.archiveNotBefore",
+  "extendCaseLifetime.caseId",
+  "extendCaseLifetime.caseRestored",
 ]
 `;
 
@@ -2182,6 +2191,7 @@ Array [
   "updateAppealCase.appealJudges.user.name",
   "updateAppealCase.appealJudges.userId",
   "updateAppealCase.appealReceivedByCourtDate",
+  "updateAppealCase.appealRulingDate",
   "updateAppealCase.appealRulingDecision",
   "updateAppealCase.appealRulingModifiedHistory",
   "updateAppealCase.appealRulingType",

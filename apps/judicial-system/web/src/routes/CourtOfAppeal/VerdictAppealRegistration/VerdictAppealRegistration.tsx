@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -8,7 +7,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ExpandingList,
@@ -48,7 +47,6 @@ import {
 } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/AppealRoles/appealRoles.logic'
 import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import {
   appendAppealCaseIdQuery,
   applyAppealCaseUpdate,
@@ -75,7 +73,6 @@ const VerdictAppealRegistration = () => {
   // appeal when the URL names no appeal, and this page is never about that
   // one.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
 
@@ -174,7 +171,7 @@ const VerdictAppealRegistration = () => {
         isValid={stepIsValid}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={titleForCase(formatMessage, workingCase)} />
+        <PageHeader title={titles.courtOfAppeal.verdictAppeal.registration} />
         <FormContentContainer>
           <PageTitle>Skráning og úthlutun</PageTitle>
           <div className={stack({ gap: 5 })}>

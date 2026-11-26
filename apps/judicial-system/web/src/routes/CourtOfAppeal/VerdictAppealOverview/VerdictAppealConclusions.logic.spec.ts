@@ -1,7 +1,9 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  AppealCaseState,
   AppealRulingType,
   CaseIndictmentRulingDecision,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getVerdictAppealConclusions } from './VerdictAppealConclusions.logic'
@@ -68,6 +70,7 @@ describe('getVerdictAppealConclusions', () => {
       getVerdictAppealConclusions(
         caseWith({
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
             appealJudges: [
               { displayOrder: 0, user: { name: 'Jón Höskuldsson' } },
@@ -92,6 +95,7 @@ describe('getVerdictAppealConclusions', () => {
       getVerdictAppealConclusions(
         caseWith({
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealRulingType: AppealRulingType.RULING,
             appealConclusion: 'Málinu er vísað frá Landsrétti.',
           },
@@ -105,6 +109,7 @@ describe('getVerdictAppealConclusions', () => {
       getVerdictAppealConclusions(
         caseWith({
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
             appealJudges: [
               { displayOrder: 0, user: { name: 'Ásgeir Magnússon' } },
@@ -115,6 +120,37 @@ describe('getVerdictAppealConclusions', () => {
     ).toEqual(['Ásgeir Magnússon'])
   })
 
+  // Words recorded under "Lokið" stay on record when the status is moved away
+  // from it. The district court's words are shown regardless.
+  it('leaves out the court of appeals words while the appeal is not marked finished', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          courtSessions: [{ ruling: 'Ákærði sæti fangelsi í 12 mánuði.' }],
+          verdictAppealCase: {
+            appealState: AppealCaseState.APPEALED,
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        } as Partial<ConclusionCase>),
+      ).map((conclusion) => conclusion.title),
+    ).toEqual(['Dómsorð héraðsdóms'])
+  })
+
+  it('keeps the court of appeals words of a completed appeal under another status', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          verdictAppealCase: {
+            appealState: AppealCaseState.COMPLETED,
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        } as Partial<ConclusionCase>),
+      ).map((conclusion) => conclusion.title),
+    ).toEqual(['Dómsorð Landsréttar'])
+  })
+
   // Read side by side, district court first - the order the proceeding went in.
   it('puts the district court first when both have concluded', () => {
     expect(
@@ -122,6 +158,7 @@ describe('getVerdictAppealConclusions', () => {
         caseWith({
           courtSessions: [{ ruling: 'Ákærði sæti fangelsi í 12 mánuði.' }],
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
           },
         } as Partial<ConclusionCase>),

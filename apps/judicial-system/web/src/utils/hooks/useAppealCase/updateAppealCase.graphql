@@ -30,6 +30,7 @@ mutation UpdateAppealCase($input: UpdateAppealCaseInput!) {
     }
     appealRulingDecision
     appealRulingType
+    appealRulingDate
     appealConclusion
     appealRulingModifiedHistory
     requestAppealRulingNotToBePublished

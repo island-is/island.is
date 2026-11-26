@@ -1,3 +1,9 @@
+import {
+  type AppealStatementEvent,
+  type AppealStatementParty,
+  hasFiledAppealStatement,
+} from './appealStatementDeadline'
+
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
   STORED_IN_COURT = 'STORED_IN_COURT',
@@ -112,30 +118,63 @@ export const verdictAppealFileCategories = [
 
 // Kæra files are delivered to the court of appeals as soon as it registers its
 // case number, so from that point on they can no longer be deleted. A verdict
-// appeal statement follows the same rule.
+// appeal statement follows the same rule, and also locks once that party has
+// recorded APPEAL_STATEMENT_SENT — otherwise a delete after filing leaves the
+// party marked filed with no PDF and no way to file again.
 //
 // An áfrýjunaryfirlýsing locks earlier, and for a different reason: the
 // declaration is the appeal itself, not a document filed in support of one, and
 // it is filed long before Landsréttur has a case number to register. Taking it
 // back means withdrawing the appeal.
-export const isAppealFileDeletionLocked = (
+export type AppealFileDeletionLockReason =
+  | 'declaration'
+  | 'statement_filed'
+  | 'case_number'
+
+export const getAppealFileDeletionLockReason = (
   category?: string | null,
-  appealCase?: { appealCaseNumber?: string | null } | null,
-): boolean => {
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: AppealStatementEvent[] | null
+  } | null,
+  party?: AppealStatementParty,
+): AppealFileDeletionLockReason | null => {
   if (!appealCase) {
-    return false
+    return null
   }
 
   if (isVerdictAppealDeclarationCategory(category)) {
-    return true
+    return 'declaration'
   }
 
-  return (
+  if (
+    isVerdictAppealStatementCategory(category) &&
+    party &&
+    hasFiledAppealStatement(appealCase.appealEventLogs, party)
+  ) {
+    return 'statement_filed'
+  }
+
+  if (
     (isPartyAppealFileCategory(category) ||
       isVerdictAppealStatementCategory(category)) &&
     Boolean(appealCase.appealCaseNumber)
-  )
+  ) {
+    return 'case_number'
+  }
+
+  return null
 }
+
+export const isAppealFileDeletionLocked = (
+  category?: string | null,
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: AppealStatementEvent[] | null
+  } | null,
+  party?: AppealStatementParty,
+): boolean =>
+  getAppealFileDeletionLockReason(category, appealCase, party) !== null
 
 // A ruling order pronounced during the course of a case is usually delivered
 // orally in the court session, and only written up as a document if a party
@@ -155,6 +194,18 @@ export const isRulingOrderWithoutDocument = (file: {
   file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
   Boolean(file.isPronouncedOrally) &&
   !file.key
+
+// The Court of Appeals' document that a verdict appeal can be completed with:
+// a stored PDF. The document is stamped when it is opened, which only a PDF
+// can be.
+export const isStoredVerdictAppealRulingPdf = (file: {
+  category?: CaseFileCategory | null
+  type?: string | null
+  key?: string | null
+}): boolean =>
+  file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+  file.type === 'application/pdf' &&
+  Boolean(file.key)
 
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
 // of hash collision between files in our system. Since we still store MD5 alg types with each file hash

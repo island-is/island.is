@@ -135,6 +135,7 @@ export class LimitedAccessCaseService {
               file.id,
               accessCase.courtSessions,
             ),
+          appealEventLogs: accessCase.verdictAppealCase?.appealEventLogs,
         })
       ) {
         accessible.push({ file, owningCase })

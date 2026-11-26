@@ -38,6 +38,7 @@ import {
   ServiceRequirement,
   User,
   UserRole,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
@@ -738,13 +739,48 @@ const isProsecutionVerdictAppealTimelineEvent = (
   )
 }
 
+// Greinargerð overview lists every party's filed statement for defence users
+// who can download appeal files. Deadlines stay own-party only; these SENT
+// rows are the restricted filing-status signal that list needs (including
+// co-defendants and unscoped prosecution filings). Legacy defender backfill
+// names no party and must not count as the prosecution's.
+const isVerdictAppealStatementFilingStatusEvent = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+): boolean => {
+  if (eventLog.eventType !== AppealEventType.APPEAL_STATEMENT_SENT) {
+    return false
+  }
+
+  if (!eventLog.defendantId && !eventLog.civilClaimantId) {
+    return eventLog.userRole !== UserRole.DEFENDER
+  }
+
+  if (
+    eventLog.defendantId &&
+    theCase.defendants?.some(
+      (defendant) => defendant.id === eventLog.defendantId,
+    )
+  ) {
+    return true
+  }
+
+  return Boolean(
+    eventLog.civilClaimantId &&
+      theCase.civilClaimants?.some(
+        (civilClaimant) => civilClaimant.id === eventLog.civilClaimantId,
+      ),
+  )
+}
+
 const shouldKeepVerdictAppealEventLogForDefenceUser = (
   eventLog: AppealEventLog,
   theCase: Case,
   partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
 ): boolean =>
   isVerdictAppealPartyRow(eventLog, partyIds) ||
-  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase) ||
+  isVerdictAppealStatementFilingStatusEvent(eventLog, theCase)
 
 const serializeVerdictAppealStatementDeadline = (
   deadline: NonNullable<AppealCase['statementDeadlines']>[number],
@@ -769,13 +805,30 @@ const transformVerdictAppealCaseForUser = (
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
-    appealEventLogs: appealCase.appealEventLogs?.filter((eventLog) =>
-      shouldKeepVerdictAppealEventLogForDefenceUser(
-        eventLog,
-        theCase,
-        partyIds,
+    // Own-party and prosecution timeline rows stay full. Co-party /
+    // unscoped prosecution SENT rows are filing-status only — enough for
+    // the overview list, without filer name/title/institution.
+    appealEventLogs: appealCase.appealEventLogs
+      ?.filter((eventLog) =>
+        shouldKeepVerdictAppealEventLogForDefenceUser(
+          eventLog,
+          theCase,
+          partyIds,
+        ),
+      )
+      .map((eventLog) =>
+        isVerdictAppealPartyRow(eventLog, partyIds) ||
+        isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+          ? eventLog
+          : {
+              id: eventLog.id,
+              eventType: eventLog.eventType,
+              created: eventLog.created,
+              userRole: eventLog.userRole,
+              defendantId: eventLog.defendantId,
+              civilClaimantId: eventLog.civilClaimantId,
+            },
       ),
-    ),
   }
 }
 
@@ -978,6 +1031,10 @@ const transformCase = (
     : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
+  const defenceVerdictAppealPartyIds =
+    isDefence && user
+      ? getDefenceUserVerdictAppealPartyIds(theCase, user.nationalId)
+      : undefined
 
   return {
     ...theCase.toJSON(),
@@ -1063,10 +1120,30 @@ const transformCase = (
           isDistrictCourtUser(user) ||
           isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
       )
-      .map((file) => ({
-        ...file.toJSON(),
-        ...getRulingOrderAppealInfo(file, theCase),
-      })),
+      .map((file) => {
+        const json = {
+          ...file.toJSON(),
+          ...getRulingOrderAppealInfo(file, theCase),
+        }
+
+        // Co-party / prosecution greinargerð rows are listed for defence users
+        // who can download appeal files. Drop filer identity so the overview
+        // label cannot leak who uploaded another party's statement.
+        if (
+          defenceVerdictAppealPartyIds &&
+          file.category &&
+          verdictAppealStatementFileCategories.includes(file.category) &&
+          !isVerdictAppealPartyRow(file, defenceVerdictAppealPartyIds)
+        ) {
+          return {
+            ...json,
+            submittedBy: undefined,
+            fileRepresentative: undefined,
+          }
+        }
+
+        return json
+      }),
     caseRepresentatives: transformCaseRepresentatives(theCase, user),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),

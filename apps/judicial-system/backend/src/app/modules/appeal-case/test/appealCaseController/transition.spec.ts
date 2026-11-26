@@ -176,6 +176,7 @@ describe('AppealCaseController - Transition', () => {
   })
 
   describe('complete a verdict appeal', () => {
+    const concludedDate = new Date('2024-01-10T00:00:00Z')
     const rulingFile = {
       id: uuid(),
       key: `${caseId}/${uuid()}/domur.pdf`,
@@ -203,6 +204,7 @@ describe('AppealCaseController - Transition', () => {
       appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
       appealRulingType: AppealRulingType.VERDICT,
       appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      appealRulingDate: concludedDate,
     } as AppealCase
 
     describe('with everything on record', () => {
@@ -216,12 +218,13 @@ describe('AppealCaseController - Transition', () => {
         )
       })
 
-      it('should complete the appeal, dated now, in the transaction the guard opened', () => {
+      // The date is the one the court entered, not the day it confirmed.
+      it('should complete the appeal, keeping its date, in the transaction the guard opened', () => {
         expect(then.error).toBeUndefined()
         expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
         expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
           appealCaseId,
-          { appealState: AppealCaseState.COMPLETED, appealRulingDate: now },
+          { appealState: AppealCaseState.COMPLETED },
           { transaction },
         )
       })
@@ -236,6 +239,7 @@ describe('AppealCaseController - Transition', () => {
       ['an outcome', { appealRulingDecision: undefined }, theCase],
       ['a ruling type', { appealRulingType: undefined }, theCase],
       ['a conclusion', { appealConclusion: '  ' }, theCase],
+      ['a date of conclusion', { appealRulingDate: undefined }, theCase],
       ['a ruling document', {}, { ...theCase, caseFiles: [] } as Case],
       [
         'a ruling document that is a PDF',
@@ -391,10 +395,10 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
-    it('should move the appeal case to completed', () => {
+    it('should move the appeal case to completed, dated now', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
-        expect.objectContaining({ appealState: AppealCaseState.COMPLETED }),
+        { appealState: AppealCaseState.COMPLETED, appealRulingDate: now },
         { transaction },
       )
     })

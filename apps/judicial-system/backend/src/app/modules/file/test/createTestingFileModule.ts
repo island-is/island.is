@@ -71,6 +71,7 @@ export const createTestingFileModule = async () => {
           updateByIdAndCase: jest.fn(),
           updateByIdAndCaseWithoutDocument: jest.fn(),
           resetStoredInCourtFilesForCase: jest.fn(),
+          clearHashesForCaseAndCategory: jest.fn(),
         },
       },
       FileService,
