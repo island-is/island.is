@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'motion/react'
@@ -37,11 +37,15 @@ import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/Verdic
 import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDate from './VerdictAppealRulingDate'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
+import type { VerdictAppealConfirmationTarget } from './VerdictAppealSummary.logic'
 import {
   canConfirmVerdictAppeal,
   getConfirmableVerdictAppealRulingFile,
+  getVerdictAppealConfirmationTarget,
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealSummaryStage,
+  isSameVerdictAppealConfirmationTarget,
+  isVerdictAppealOutcomeShown,
 } from './VerdictAppealSummary.logic'
 
 /**
@@ -79,6 +83,31 @@ const VerdictAppealSummary = () => {
   // the modal can lock itself for as long as the request runs.
   const isConfirmingAppealRef = useRef(false)
   const [isConfirmingAppeal, setIsConfirmingAppeal] = useState(false)
+  // The case and appeal on the page now, for a response to check against
+  // once it arrives: the handlers that await it hold the ones they began
+  // with.
+  const currentTargetRef = useRef(
+    getVerdictAppealConfirmationTarget(workingCase),
+  )
+  const caseId = workingCase.id
+  const appealCaseId = verdictAppealCase?.id
+
+  // The page stays mounted when the user moves to another case or appeal, so
+  // a review begun for the one they left is dropped. This closes the modal
+  // even while a confirmation is under way: that request is for the appeal
+  // left behind and does not touch the one now on the page.
+  useEffect(() => {
+    currentTargetRef.current = { caseId, appealCaseId }
+    setIsConfirming(false)
+    setRulingUrl(undefined)
+    setIsFetchingRulingUrl(false)
+    setHasReviewed(false)
+    setPdfError(false)
+    setIsPdfLoading(true)
+  }, [caseId, appealCaseId])
+
+  const isStillOnPage = (started: VerdictAppealConfirmationTarget) =>
+    isSameVerdictAppealConfirmationTarget(started, currentTargetRef.current)
 
   const statusUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
@@ -124,29 +153,40 @@ const VerdictAppealSummary = () => {
       return
     }
 
+    const started = getVerdictAppealConfirmationTarget(workingCase)
+
     setIsFetchingRulingUrl(true)
 
     try {
       const url = await getFileUrl(rulingFile.id)
 
-      if (!url) {
+      if (!url || !isStillOnPage(started)) {
         return
       }
 
       setRulingUrl(url)
       setIsConfirming(true)
     } finally {
-      setIsFetchingRulingUrl(false)
+      // Moving to another appeal has already cleared this, and a fetch begun
+      // there since must keep it.
+      if (isStillOnPage(started)) {
+        setIsFetchingRulingUrl(false)
+      }
     }
   }
 
   // Confirms the appeal and closes the modal, staying in it when that fails.
   // The transition writes the confirmed appeal into the working case, so the
-  // page then shows it as confirmed.
+  // page then shows it as confirmed. It writes only to the appeal it was sent
+  // for, so when the user has moved to another appeal meanwhile, nothing on
+  // the page changes. The lock is held until the request ends, so no other
+  // appeal is confirmed while it runs.
   const confirmAppeal = async () => {
     if (!verdictAppealCase || isConfirmingAppealRef.current) {
       return
     }
+
+    const started = getVerdictAppealConfirmationTarget(workingCase)
 
     isConfirmingAppealRef.current = true
     setIsConfirmingAppeal(true)
@@ -159,7 +199,7 @@ const VerdictAppealSummary = () => {
         setWorkingCase,
       )
 
-      if (!confirmed) {
+      if (!confirmed || !isStillOnPage(started)) {
         return
       }
     } finally {
@@ -181,13 +221,15 @@ const VerdictAppealSummary = () => {
           description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
         />
       )}
-      {stage === 'IN_PROGRESS' && decisionLabel && (
-        <AlertBanner
-          variant="warning"
-          title="Niðurstaða Landsréttar"
-          description={decisionLabel}
-        />
-      )}
+      {stage === 'IN_PROGRESS' &&
+        decisionLabel &&
+        isVerdictAppealOutcomeShown(verdictAppealCase) && (
+          <AlertBanner
+            variant="warning"
+            title="Niðurstaða Landsréttar"
+            description={decisionLabel}
+          />
+        )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

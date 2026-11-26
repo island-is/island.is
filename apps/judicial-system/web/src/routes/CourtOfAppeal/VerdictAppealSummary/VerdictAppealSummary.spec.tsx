@@ -1,5 +1,5 @@
 import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 
@@ -29,6 +29,7 @@ import {
   IntlProviderWrapper,
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import VerdictAppealSummary from './VerdictAppealSummary'
 
@@ -174,6 +175,27 @@ const theCase = {
     appealRulingType: AppealRulingType.VERDICT,
     appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
     appealRulingDate: new Date(2026, 5, 10).toISOString(),
+    sentAppealSummonses: [
+      {
+        id: 'sent-summons',
+        sentToCourtOfAppealsDate: '2026-06-05T10:00:00.000Z',
+        defendants: [],
+        services: [],
+      },
+    ],
+  },
+} as unknown as WorkingCase
+
+// Another appeal ready to confirm, in another case, for moving between
+// appeals while the page stays mounted.
+const otherCase = {
+  ...theCase,
+  id: 'other-case',
+  caseFiles: [{ ...rulingFile, id: 'other-ruling-file' }],
+  verdictAppealCase: {
+    ...theCase.verdictAppealCase,
+    id: 'other-appeal',
+    appealCaseNumber: '556/2026',
   },
 } as unknown as WorkingCase
 
@@ -183,12 +205,16 @@ const withAppeal = (update: Record<string, unknown>) =>
     verdictAppealCase: { ...theCase.verdictAppealCase, ...update },
   } as unknown as WorkingCase)
 
-// Holds the case in state, so what the transition writes back shows.
+// Holds the case in state, so what the transition writes back shows. A new
+// case passed in replaces it, the way the form provider loads the case of the
+// route the user moves to without remounting the page.
 const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
   theCase,
   children,
 }) => {
   const [workingCase, setWorkingCase] = useState(theCase)
+
+  useEffect(() => setWorkingCase(theCase), [theCase])
 
   return (
     <FormContext.Provider
@@ -208,21 +234,25 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
   )
 }
 
+const page = (
+  c: WorkingCase = theCase,
+  userRole: UserRole = UserRole.COURT_OF_APPEALS_JUDGE,
+) => (
+  <IntlProviderWrapper>
+    <ApolloProviderWrapper>
+      <UserContextWrapper userRole={userRole}>
+        <StatefulFormContext theCase={c}>
+          <VerdictAppealSummary />
+        </StatefulFormContext>
+      </UserContextWrapper>
+    </ApolloProviderWrapper>
+  </IntlProviderWrapper>
+)
+
 const renderPage = (
   c: WorkingCase = theCase,
   userRole: UserRole = UserRole.COURT_OF_APPEALS_JUDGE,
-) =>
-  render(
-    <IntlProviderWrapper>
-      <ApolloProviderWrapper>
-        <UserContextWrapper userRole={userRole}>
-          <StatefulFormContext theCase={c}>
-            <VerdictAppealSummary />
-          </StatefulFormContext>
-        </UserContextWrapper>
-      </ApolloProviderWrapper>
-    </IntlProviderWrapper>,
-  )
+) => render(page(c, userRole))
 
 const modalTitle = 'Viltu staðfesta dómsúrlausn og ljúka máli?'
 const rulingDateHeading = 'Dagsetning lykta'
@@ -265,21 +295,18 @@ const notReleasedTitle = 'Niðurstaða skráð en ekki gefin út'
 
 // Confirms the appeal the way the real transition does: it writes the
 // confirmed appeal into the working case through the setter it is given.
+// Like the real one, it writes only to the appeal it was sent for.
 const confirmAppeal = (
   _caseId: string,
-  _appealCaseId: string,
+  appealCaseId: string,
   _transition: AppealCaseTransition,
   setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
 ) => {
-  setWorkingCase((current) => ({
-    ...current,
-    verdictAppealCase: current.verdictAppealCase
-      ? {
-          ...current.verdictAppealCase,
-          appealState: AppealCaseState.READY_TO_COMPLETE,
-        }
-      : current.verdictAppealCase,
-  }))
+  setWorkingCase((current) =>
+    applyAppealCaseUpdate(current, appealCaseId, {
+      appealState: AppealCaseState.READY_TO_COMPLETE,
+    }),
+  )
 
   return true
 }
@@ -383,6 +410,14 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
+  // The server refuses to confirm an appeal the public prosecution has not
+  // sent to the Court of Appeals.
+  it('cannot be confirmed before the appeal is sent to the Court of Appeals', () => {
+    renderPage(withAppeal({ sentAppealSummonses: [] }))
+
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+  })
+
   it('asks for the date the appeal ended', () => {
     renderPage()
 
@@ -444,10 +479,26 @@ describe('VerdictAppealSummary', () => {
     expect(screen.queryByLabelText(/Dagsetning lykta/)).not.toBeInTheDocument()
   })
 
-  it('cannot be confirmed while the appeal is not marked finished', () => {
+  // Moving the status away from "Lokið" keeps the outcome, its type, the
+  // concluding words and the document on record. None of it is shown for an
+  // appeal that has not ended.
+  it('hides how the appeal ended while it is not marked finished', () => {
     renderPage(withAppeal({ verdictAppealStatus: Status.UNDER_ADVISEMENT }))
 
-    expect(screen.getByText('Niðurstaða Landsréttar')).toBeInTheDocument()
+    expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
+    expect(screen.queryByText('Staðfesting')).not.toBeInTheDocument()
+    expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'Dómur Landsréttar' }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('domur-landsrettar.pdf')).not.toBeInTheDocument()
+    expect(screen.getByText('Dómsorð héraðsdóms')).toBeInTheDocument()
+    expect(
+      screen.getByText('Ákærði skal sæta fangelsi í 30 daga.'),
+    ).toBeInTheDocument()
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
@@ -679,6 +730,24 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
   })
 
+  // A confirmed appeal has ended, so how it ended stays on the page even when
+  // its status was later moved away from "Lokið".
+  it('keeps showing how a confirmed appeal ended under another status', () => {
+    renderPage(
+      withAppeal({
+        appealState: AppealCaseState.READY_TO_COMPLETE,
+        verdictAppealStatus: Status.UNDER_ADVISEMENT,
+      }),
+    )
+
+    expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
+    expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Dómur Landsréttar' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Lyktir' })).toBeInTheDocument()
+  })
+
   it('shows a completed appeal as it ended, released and with nothing more to do', () => {
     renderPage(withAppeal({ appealState: AppealCaseState.COMPLETED }))
 
@@ -736,5 +805,105 @@ describe('VerdictAppealSummary', () => {
 
     expect(screen.queryAllByText('Jón Jónsson')).toHaveLength(0)
     expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+  })
+
+  describe('moving to another appeal', () => {
+    it('does not open the document of the appeal left behind', async () => {
+      let resolveUrl: (url: string) => void = () => undefined
+      mockGetFileUrl.mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveUrl = resolve
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      expect(mockGetFileUrl).toHaveBeenCalledWith('ruling-file')
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+      rerender(page(otherCase))
+
+      await screen.findByRole('heading', { level: 2, name: 'Mál nr. 556/2026' })
+      await act(async () => resolveUrl('https://files.dummy.dd/domur.pdf'))
+
+      expect(screen.queryByText(modalTitle)).not.toBeInTheDocument()
+      expect(screen.queryByTestId('pdfViewer')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
+    it('drops the review of the appeal left behind', async () => {
+      const { rerender } = renderPage()
+
+      await openModal()
+      await reviewDocument()
+
+      expect(reviewedCheckbox()).toBeChecked()
+
+      rerender(page(otherCase))
+
+      await waitFor(() =>
+        expect(screen.queryByText(modalTitle)).not.toBeInTheDocument(),
+      )
+
+      mockGetFileUrl.mockResolvedValue('https://files.dummy.dd/annar-domur.pdf')
+
+      await openModal()
+
+      expect(mockGetFileUrl).toHaveBeenLastCalledWith('other-ruling-file')
+      expect(screen.getByTestId('pdfViewer')).toHaveAttribute(
+        'data-file',
+        'https://files.dummy.dd/annar-domur.pdf',
+      )
+      expect(reviewedCheckbox()).not.toBeChecked()
+      expect(reviewedCheckbox()).toBeDisabled()
+      expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+    })
+
+    it('leaves the appeal on the page alone when the one left behind is confirmed', async () => {
+      let finishTransition: (completed: boolean) => void = () => undefined
+      mockTransitionAppealCase.mockImplementationOnce(
+        (
+          caseId: string,
+          appealCaseId: string,
+          transition: AppealCaseTransition,
+          setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
+        ) =>
+          new Promise<boolean>((resolve) => {
+            finishTransition = (completed) => {
+              if (completed) {
+                confirmAppeal(caseId, appealCaseId, transition, setWorkingCase)
+              }
+
+              resolve(completed)
+            }
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await openModal()
+      await reviewDocument()
+      await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+
+      expect(mockTransitionAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+        expect.any(Function),
+      )
+
+      rerender(page(otherCase))
+
+      await waitFor(() =>
+        expect(screen.queryByText(modalTitle)).not.toBeInTheDocument(),
+      )
+
+      await act(async () => finishTransition(true))
+
+      expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+      expect(mockScrollTo).not.toHaveBeenCalled()
+    })
   })
 })
