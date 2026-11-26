@@ -4,8 +4,6 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const nextConfig = {
-  // Next 16.4 type-checks with tsc, incl. specs; keep the old checker
-  experimental: { useTypeScriptCli: false },
   webpack: (
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack },

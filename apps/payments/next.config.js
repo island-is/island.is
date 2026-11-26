@@ -11,8 +11,6 @@ const { BASEPATH = '/greida' } = process.env
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  // Next 16.4 type-checks with tsc, incl. specs; keep the old checker
-  experimental: { useTypeScriptCli: false },
   nx: {},
   webpack: (config, { dev }) => {
     // Workaround for Firefox "unterminated comment" when loading vanilla-extract

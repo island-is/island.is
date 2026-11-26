@@ -42763,7 +42763,7 @@ __metadata:
 
 "next@patch:next@npm%3A16.4.1#~/.yarn/patches/next-npm-16.4.1.patch":
   version: 16.4.1
-  resolution: "next@patch:next@npm%3A16.4.1#~/.yarn/patches/next-npm-16.4.1.patch::version=16.4.1&hash=dcd613"
+  resolution: "next@patch:next@npm%3A16.4.1#~/.yarn/patches/next-npm-16.4.1.patch::version=16.4.1&hash=3ab2ff"
   dependencies:
     "@next/env": "npm:16.4.1"
     "@next/swc-darwin-arm64": "npm:16.4.1"
@@ -42817,7 +42817,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10/593731b484f564be3b7f30f431c760c9960e6d6486abddb50fdf16451d0454b0579fbbfafa828fad1d204e5bd26334961d5fcae2d596ab40580a783db0c1a694
+  checksum: 10/3b37c29e016d8aff10325044baa8c5ff8f1eb1b4d1138f679652c39df2f1403a315e50b30db0c52c346fcc876dda9832d9dff473127f492677f90d939f393174
   languageName: node
   linkType: hard
 
