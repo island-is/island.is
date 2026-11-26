@@ -25,6 +25,9 @@ not change the selection or submit the form, including for large checkboxes.
 The icon turns blue on hover and stays blue while its tooltip is visible.
 Only checkbox squares and radio circles change selection when clicked; captions,
 sublabels, and surrounding cards do not. Keyboard activation remains supported.
+The PREMISES data-collection agreement uses this same interaction in both the
+admin preview and live applications: only the checkbox square toggles agreement,
+not the caption or surrounding card.
 
 ## Number validation
 
