@@ -350,13 +350,11 @@ export class CaseService {
       })
     } else {
       await this.patchDefendant(caseId, nationalId, {
-        isAppealDefenderWaived: waived,
-        appealDefenderNationalId: waived
+        requestedAppealDefenderChoice: counselAssignment.defenderChoice,
+        requestedAppealDefenderNationalId: waived
           ? null
           : counselAssignment.defenderNationalId,
-        appealDefenderName: waived ? null : chosenLawyer?.name,
-        appealDefenderEmail: waived ? null : chosenLawyer?.email,
-        appealDefenderPhoneNumber: waived ? null : chosenLawyer?.phoneNumber,
+        requestedAppealDefenderName: waived ? null : chosenLawyer?.name,
       })
     }
 

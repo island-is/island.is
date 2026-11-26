@@ -121,6 +121,16 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
 
+  // Citizen wish for CoA counsel; separate from court-settled appealDefender*.
+  @Field(() => DefenderChoice, { nullable: true })
+  readonly requestedAppealDefenderChoice?: DefenderChoice
+
+  @Field(() => String, { nullable: true })
+  readonly requestedAppealDefenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly requestedAppealDefenderName?: string
+
   // The defender who appealed the verdict, when the public prosecution office
   // registered the appeal on their letter. Information only; no access follows
   // until the court of appeals confirms them.

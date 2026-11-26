@@ -127,6 +127,28 @@ export class UpdateDefendantDto {
   readonly isDefenderChoiceConfirmed?: boolean
 
   /**********
+   * Citizen wish for CoA counsel (digital mailbox). Separate from the
+   * court-settled appealDefender* fields below.
+   **********/
+  @IsOptional()
+  @IsEnum(DefenderChoice)
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  readonly requestedAppealDefenderChoice?: DefenderChoice
+
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly requestedAppealDefenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly requestedAppealDefenderName?: string
+
+  /**********
    * The appeal proceeding's defender, which the court of appeals settles for
    * itself. The public prosecution office fills these in when it registers an
    * appeal arriving by letter; the court of appeals may replace them, waive

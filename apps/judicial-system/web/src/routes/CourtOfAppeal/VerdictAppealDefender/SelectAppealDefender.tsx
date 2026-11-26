@@ -19,6 +19,7 @@ import type {
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefenderChoice } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -48,6 +49,21 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
   const isConfirmed = Boolean(defendant.isAppealDefenderConfirmed)
   const hasWaived = Boolean(defendant.isAppealDefenderWaived)
   const appealDefender = getAppealDefender(defendant)
+
+  // Mirror district SelectDefender: show the citizen's mailbox wish, which is
+  // separate from the court-settled appealDefender* fields below.
+  const getRequestedAppealDefenderChoice = () => {
+    switch (defendant.requestedAppealDefenderChoice) {
+      case DefenderChoice.WAIVE:
+        return 'Ég óska ekki eftir verjanda.'
+      case DefenderChoice.CHOOSE:
+        return `${defendant.requestedAppealDefenderName ?? ''} ${
+          defendant.requestedAppealDefenderNationalId ?? ''
+        }`.trim()
+      default:
+        return 'Ekkert valið.'
+    }
+  }
 
   const send = (update: UpdateDefendant) =>
     setAndSendDefendantToServer(
@@ -116,6 +132,9 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
             />
           )}
         </Box>
+        {defendant.requestedAppealDefenderChoice && (
+          <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedAppealDefenderChoice()}`}</Text>
+        )}
         <Checkbox
           dataTestId={`isAppealDefenderWaived-${defendant.id}`}
           name={`isAppealDefenderWaived-${defendant.id}`}

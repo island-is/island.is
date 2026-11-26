@@ -248,6 +248,24 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithDefender?: boolean
 
+  // Citizen wish for CoA counsel (digital mailbox), separate from the
+  // court-settled appealDefender* columns below.
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  requestedAppealDefenderChoice?: DefenderChoice
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedAppealDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedAppealDefenderName?: string
+
   // The defender who appealed the verdict, when that is not the defender of
   // record - typically a defender with rights before the court of appeals,
   // reaching the public prosecution office by letter. Information only: no
