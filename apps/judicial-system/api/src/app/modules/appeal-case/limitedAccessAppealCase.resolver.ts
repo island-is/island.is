@@ -68,7 +68,17 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
   ): Promise<AppealCase> {
-    const { caseId, appealCaseId, eventType } = input
+    const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
+      input
+
+    // Backend only accepts party IDs on verdict-appeal statement events, so a
+    // party id is enough to know this write is behind the feature flag.
+    if (
+      (defendantId || civilClaimantId) &&
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+    ) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
 
     this.logger.debug(
       `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
@@ -78,6 +88,8 @@ export class LimitedAccessAppealCaseResolver {
       caseId,
       appealCaseId,
       eventType,
+      defendantId,
+      civilClaimantId,
     )
   }
 

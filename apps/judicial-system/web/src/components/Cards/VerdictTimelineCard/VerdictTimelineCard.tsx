@@ -43,7 +43,11 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
@@ -241,28 +245,49 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       items.push(prosecutionAppealItem)
     }
 
-    pushIf(
-      !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage(
-        {
-          id: strings.sendToPrisonAdminDate,
-          defaultMessage: strings.sendToPrisonAdminDate,
-        },
-        {
-          date: formatDate(defendant.sentToPrisonAdminDate),
-        },
-      ),
-    )
+    // Prosecution statement deadlines are case-level (no party ids). Only show
+    // them on cards for defendants who are part of the standing appeal.
+    const defendantIsInAppeal =
+      defendantHasStandingVerdictAppeal(
+        workingCase.verdictAppealCase,
+        defendant.id,
+      ) || Boolean(defendant.verdict?.appealDate)
 
-    pushIf(
-      !!(
-        defendant.isClosedWithoutEnforcement &&
-        defendant.closedWithoutEnforcementDate
-      ),
-      `Máli lokið án fullnustu ${formatDate(
-        defendant.closedWithoutEnforcementDate,
-      )}`,
-    )
+    if (defendantIsInAppeal) {
+      const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+        workingCase.verdictAppealCase,
+        {},
+      )
+
+      if (statementDeadlineItem) {
+        items.push(statementDeadlineItem)
+      }
+    }
+
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      items.push({
+        text: formatMessage(
+          {
+            id: strings.sendToPrisonAdminDate,
+            defaultMessage: strings.sendToPrisonAdminDate,
+          },
+          {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          },
+        ),
+      })
+    }
+
+    if (
+      defendant.isClosedWithoutEnforcement &&
+      defendant.closedWithoutEnforcementDate
+    ) {
+      items.push({
+        text: `Máli lokið án fullnustu ${formatDate(
+          defendant.closedWithoutEnforcementDate,
+        )}`,
+      })
+    }
 
     return items
   }, [

@@ -147,17 +147,17 @@ export const ServiceInterruptionBannerAdmin = () => {
   }
 
   return (
-    <Box background="purple100">
-      <PageHeader title="Viðvörunar borði - Réttarvörslugátt" />
+    <Box background="purple100" paddingY={6}>
+      <PageHeader title="Viðvörunarborði - Réttarvörslugátt" />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
           <div className={stack({ gap: 2 })}>
             <Text variant="h1" as="h1">
-              Viðvörunar borði
+              Viðvörunarborði
             </Text>
             <Text>
               Skrifið skilaboð í viðeigandi reit og vistið til að birta
-              viðvörunar borða.
+              viðvörunarborða.
             </Text>
           </div>
           {loading ? (

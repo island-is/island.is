@@ -10,16 +10,22 @@ import {
 } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 
 import InfoCard from './InfoCard'
+import { shouldShowVerdictAppealOutcome } from './InfoCardClosedIndictment.logic'
 import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
   displaySentToPrisonAdminDate?: boolean
+  // The appeal the Court of Appeals section describes. Left undefined, the
+  // card takes the appeal named in the query string, or the case level appeal
+  // when none is named; null means there is no appeal to describe.
+  appealCase?: AppealCase | null
 }
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
@@ -27,7 +33,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   // The appeal this page is about - the same one the items below read, so the
   // section appears exactly when that appeal has a case number.
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const appealCaseFromQuery = useTargetAppealCaseByAppealCaseId()
+  const targetAppealCase =
+    props.appealCase === undefined ? appealCaseFromQuery : props.appealCase
 
   const {
     defendants,
@@ -49,8 +57,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    appealRulingDecision,
     linkedCaseSections,
-  } = useInfoCardItems()
+  } = useInfoCardItems('h4', targetAppealCase ?? null)
 
   const {
     displayAppealExpirationInfo,
@@ -111,6 +120,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(appealAssistant ? [appealAssistant] : []),
                   ...(hasAllAppealJudges(targetAppealCase)
                     ? [appealJudges]
+                    : []),
+                  ...(shouldShowVerdictAppealOutcome(targetAppealCase, user)
+                    ? [appealRulingDecision]
                     : []),
                 ],
                 columns: 2,

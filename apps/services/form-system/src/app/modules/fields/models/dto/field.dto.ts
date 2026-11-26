@@ -38,7 +38,12 @@ export class FieldDto {
   @ApiProperty({ type: LanguageType })
   @ValidateNested()
   @Type(() => LanguageType)
-  description!: LanguageType
+  informationText!: LanguageType
+
+  @ApiProperty({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  tooltip!: LanguageType
 
   @ApiProperty()
   @IsBoolean()

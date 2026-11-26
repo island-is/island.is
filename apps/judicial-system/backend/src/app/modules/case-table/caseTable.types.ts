@@ -394,6 +394,23 @@ export const presentVerdictAppealAsRowAppeal = (
   cs: Case[],
 ): CaseTableRowCase[] => cs.map((c) => toRow(c, 'verdictAppealCase'))
 
+/**
+ * Presents the verdict appeal as the row's appeal where the case has one, and
+ * the case-level appeal otherwise.
+ *
+ * For a list of concluded indictments, which holds both kinds: a dismissal may
+ * have been appealed as a ruling, a judgment as a verdict. A case can carry
+ * both - a dismissal repealed on appeal goes back to the district court and
+ * may end in a judgment that is appealed in turn - and then the verdict appeal
+ * is the later proceeding and the one the row is about.
+ */
+export const presentLatestCaseAppealAsRowAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] =>
+  cs.map((c) =>
+    toRow(c, c.verdictAppealCase ? 'verdictAppealCase' : 'appealCase'),
+  )
+
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell

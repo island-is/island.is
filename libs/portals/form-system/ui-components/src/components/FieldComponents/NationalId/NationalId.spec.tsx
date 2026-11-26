@@ -37,6 +37,7 @@ jest.mock('@island.is/island-ui/core', () => ({
     readOnly,
     hasError,
     errorMessage,
+    tooltip,
   }: {
     label: string
     name: string
@@ -46,6 +47,7 @@ jest.mock('@island.is/island-ui/core', () => ({
     readOnly: boolean
     hasError: boolean
     errorMessage: string
+    tooltip?: string
   }) => (
     <label>
       {label}
@@ -55,6 +57,7 @@ jest.mock('@island.is/island-ui/core', () => ({
         onChange={onChange}
         onBlur={onBlur}
         readOnly={readOnly}
+        title={tooltip}
       />
       {hasError && errorMessage && <span role="alert">{errorMessage}</span>}
     </label>
@@ -73,6 +76,7 @@ const renderField = (
   showAddress = false,
   mode: 'onBlur' | 'onSubmit' = 'onBlur',
   isPreview = false,
+  tooltip?: FormSystemField['tooltip'],
 ) => {
   const dispatch = jest.fn()
   const onSubmit = jest.fn()
@@ -82,7 +86,7 @@ const renderField = (
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <NationalId
-            item={{ ...item, fieldSettings: { showAddress } }}
+            item={{ ...item, fieldSettings: { showAddress }, tooltip }}
             dispatch={dispatch}
             isPreview={isPreview}
           />
@@ -103,6 +107,31 @@ const renderField = (
   )
   return { dispatch, onSubmit }
 }
+
+it.each([
+  { is: '  National ID help  ', en: 'English help' },
+  { is: ' \n ', en: 'English help' },
+  { is: '', en: 'English help' },
+  undefined,
+])(
+  'shows only the current language tooltip on the national ID input: %j',
+  (tooltip) => {
+    renderField(undefined, true, 'onBlur', false, tooltip)
+
+    expect(
+      screen
+        .getByRole('textbox', { name: 'National ID' })
+        .getAttribute('title'),
+    ).toBe(tooltip?.is?.trim() || null)
+    for (const label of [m.namePerson, m.address, m.postalCode, m.city]) {
+      expect(
+        screen
+          .getByRole('textbox', { name: label.defaultMessage })
+          .getAttribute('title'),
+      ).toBeNull()
+    }
+  },
+)
 
 it.each(
   (['onBlur', 'onSubmit'] as const).flatMap((mode) =>

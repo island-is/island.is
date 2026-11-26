@@ -26,6 +26,8 @@ import {
   CaseState,
   CourtDocumentType,
   EventType,
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   indictmentAdditionalCaseFileCategories,
   isCompletedCase,
   isDistrictCourtUser,
@@ -39,7 +41,7 @@ import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
-import { findAppealCaseOfCaseFile } from '../appeal-case'
+import { findAppealCaseOfCaseFile, isVerdictAppealOver } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -307,6 +309,20 @@ export class FileService {
     }
   }
 
+  // The confirmed copy of the court of appeals' judgment or ruling carries the
+  // date of its conclusion. Without a hash the copy is not trusted, so the
+  // next read stamps the document again with the date now on record.
+  async invalidateVerdictAppealRulingConfirmation(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.caseFileRepositoryService.clearHashesForCaseAndCategory(
+      caseId,
+      CaseFileCategory.VERDICT_APPEAL_RULING,
+      { transaction },
+    )
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
@@ -496,7 +512,86 @@ export class FileService {
       )
     }
 
+    const isVerdictAppealStatementCategory =
+      createFile.category !== undefined &&
+      [
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+      ].includes(createFile.category)
+
+    // Verdict-appeal statements only belong on an open verdict appeal. The
+    // overview CTA already hides once the appeal is over, the party has filed,
+    // or the deadline has passed; enforce the same here so a direct upload
+    // cannot bypass it.
+    if (isVerdictAppealStatementCategory) {
+      const verdictAppealCase = theCase.verdictAppealCase
+
+      if (!verdictAppealCase || isVerdictAppealOver(verdictAppealCase)) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement when the verdict appeal of case ${theCase.id} is missing, completed, or withdrawn`,
+        )
+      }
+
+      const isDefenceStatementCategory =
+        createFile.category ===
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT ||
+        createFile.category ===
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
+
+      const hasDefendantId = Boolean(createFile.defendantId)
+      const hasCivilClaimantId = Boolean(createFile.civilClaimantId)
+
+      // Defence categories are party-scoped; prosecution categories are not.
+      // Without this, an unscoped defence upload matches the prosecution
+      // deadline row and never satisfies a party's APPEAL_STATEMENT_SENT.
+      if (isDefenceStatementCategory) {
+        if (hasDefendantId === hasCivilClaimantId) {
+          throw new BadRequestException(
+            `Verdict appeal defence statement files for case ${theCase.id} require exactly one of defendantId or civilClaimantId`,
+          )
+        }
+      } else if (hasDefendantId || hasCivilClaimantId) {
+        throw new BadRequestException(
+          `Verdict appeal prosecution statement files for case ${theCase.id} must not name a defendant or civil claimant`,
+        )
+      }
+
+      const party = {
+        defendantId: createFile.defendantId,
+        civilClaimantId: createFile.civilClaimantId,
+      }
+
+      if (hasFiledAppealStatement(verdictAppealCase.appealEventLogs, party)) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement after case ${theCase.id} party has already filed`,
+        )
+      }
+
+      const statementDeadline = findAppealStatementDeadline(
+        verdictAppealCase.statementDeadlines,
+        party,
+      )
+
+      // An expired deadline still allows upload — late filing is accepted; only
+      // a missing deadline blocks (the court has not opened the statement window).
+      if (!statementDeadline?.deadline) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement when the statement deadline for case ${theCase.id} is missing`,
+        )
+      }
+    }
+
     if (rulingFileId) {
+      // Verdict-appeal statements are case-level files. A rulingFileId would
+      // bind them to the ruling-order appeal for deletion locks and delivery.
+      if (isVerdictAppealStatementCategory) {
+        throw new BadRequestException(
+          `Verdict appeal file ${createFile.key} cannot reference a ruling order`,
+        )
+      }
+
       const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
       if (!rulingFile) {
         throw new BadRequestException(

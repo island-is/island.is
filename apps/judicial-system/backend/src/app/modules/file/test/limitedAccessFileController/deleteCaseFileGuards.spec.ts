@@ -8,7 +8,7 @@ import { verifyGuards } from '../../../../test'
 import {
   CaseTypeGuard,
   CaseWriteGuard,
-  LimitedAccessCaseExistsGuard,
+  LimitedAccessCaseExistsForUpdateGuard,
 } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { DeleteAppealCaseFileGuard } from '../../guards/deleteAppealCaseFile.guard'
@@ -20,7 +20,7 @@ describe('LimitedAccessFileController - Delete case file guards', () => {
     LimitedAccessFileController,
     'deleteCaseFile',
     [
-      LimitedAccessCaseExistsGuard,
+      LimitedAccessCaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
       CaseFileExistsGuard,

@@ -395,16 +395,43 @@ export class CaseRepositoryService {
   // the archive is built from. The caller writes the archive and clears the
   // encrypted properties in the same transaction, so this read joins the
   // transaction too.
+  //
+  // The case row is locked, and checked again under the lock, before the graph
+  // is read: a lifetime extension or a restore that commits in between would
+  // otherwise be overwritten by an archive decided on what the case was before.
   async findNextCaseToArchive(transaction: Transaction): Promise<Case | null> {
     try {
       this.logger.debug('Finding the next case to archive')
 
-      const result = await this.caseModel.findOne({
-        where: archivableCaseWhere,
-        include: archivableCaseInclude,
-        order: archivableCaseOrder,
-        transaction,
-      })
+      let result: Case | null = null
+
+      for (let attempt = 0; attempt < 3 && !result; attempt++) {
+        const candidate = await this.caseModel.findOne({
+          attributes: ['id'],
+          where: archivableCaseWhere,
+          transaction,
+        })
+
+        if (!candidate) {
+          break
+        }
+
+        const locked = await this.lockByIdForUpdate(candidate.id, transaction, {
+          [Op.and]: [{ id: candidate.id }, archivableCaseWhere],
+        })
+
+        // A candidate that stopped being archivable is not picked again
+        if (!locked) {
+          continue
+        }
+
+        result = await this.caseModel.findOne({
+          where: { id: candidate.id },
+          include: archivableCaseInclude,
+          order: archivableCaseOrder,
+          transaction,
+        })
+      }
 
       this.logger.debug(`Case to archive ${result ? 'found' : 'not found'}`)
 
@@ -417,6 +444,39 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error('Error finding the next case to archive:', { error })
+
+      throw error
+    }
+  }
+
+  // A case with the graph its archive was built from, in the order the archive
+  // was written in, whether or not the case is archived or deleted - the caller
+  // decides what to make of either. The case row is locked first, so neither
+  // the archiving job nor another restore can get in between the read and the
+  // write that follows.
+  async findWithArchiveGraphByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(id, transaction)
+
+    if (!locked) {
+      return null
+    }
+
+    try {
+      this.logger.debug(`Finding case ${id} with its archive graph`)
+
+      return await this.caseModel.findOne({
+        where: { id },
+        include: archivableCaseInclude,
+        order: archivableCaseOrder,
+        transaction,
+      })
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its archive graph:`, {
+        error,
+      })
 
       throw error
     }

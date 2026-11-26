@@ -44,6 +44,13 @@ export const defenceIndictmentsTableGroup: CaseTableGroup = {
       includeCounter: true,
     },
     {
+      type: CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED,
+      route: 'sakamal-i-afryjunarferli',
+      title: 'Sakamál í áfrýjunarferli',
+      description: 'Dómar í sakamálum sem eru í áfrýjunarferli hjá Landsrétti.',
+      includeCounter: true,
+    },
+    {
       type: CaseTableType.DEFENCE_INDICTMENTS_COMPLETED,
       route: 'afgreidd-sakamal',
       title: 'Afgreidd sakamál',

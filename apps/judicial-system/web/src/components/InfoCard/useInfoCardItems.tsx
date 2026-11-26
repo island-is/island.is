@@ -27,6 +27,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
+  AppealCase,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -34,6 +35,7 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getVerdictAppealRulingDecisionLabel } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealSummary/VerdictAppealSummary.logic'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
@@ -55,7 +57,14 @@ type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
 
 // Semantic heading level for the item titles built here. The visual size stays
 // h4 so only the level exposed to assistive technology changes.
-const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
+//
+// `appealCase` names the appeal the Court of Appeals items describe. Left
+// undefined, the appeal is resolved from the query string; null means there is
+// no appeal to describe.
+const useInfoCardItems = (
+  titleAs: HeadingLevel = 'h4',
+  appealCase?: AppealCase | null,
+) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
@@ -63,7 +72,10 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   // and an appeal of each ruling order at once, and the Court of Appeals opens
   // one page per appeal, naming it in the query string. Falls back to the case
   // level appeal, which is what every page without that query string wants.
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  // A page that knows its appeal passes it instead.
+  const appealCaseFromQuery = useTargetAppealCaseByAppealCaseId()
+  const targetAppealCase =
+    appealCase === undefined ? appealCaseFromQuery : appealCase
 
   const defendants = ({
     caseType,
@@ -431,6 +443,12 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ],
   }
 
+  const appealRulingDecision: Item = {
+    id: 'appeal-ruling-decision-item',
+    title: 'Lyktir',
+    values: [getVerdictAppealRulingDecisionLabel(targetAppealCase)],
+  }
+
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
     title: strings.indictmentReviewer,
@@ -617,6 +635,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    appealRulingDecision,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,

@@ -19,4 +19,12 @@ export class CreateAppealEventLogInput {
   @Allow()
   @Field(() => AppealEventType)
   readonly eventType!: AppealEventType
+
+  @Allow()
+  @Field(() => ID, { nullable: true })
+  readonly defendantId?: string
+
+  @Allow()
+  @Field(() => ID, { nullable: true })
+  readonly civilClaimantId?: string
 }

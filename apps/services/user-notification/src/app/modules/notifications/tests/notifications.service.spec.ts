@@ -38,6 +38,7 @@ const mockHnippTemplate: HnippTemplate = {
   clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
   scope: '@island.is/documents',
+  sourceType: 'General',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -53,6 +54,7 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
 
 describe('NotificationsService', () => {
   let service: NotificationsService
+  let cmsService: CmsService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -89,6 +91,7 @@ describe('NotificationsService', () => {
     }).compile()
 
     service = module.get<NotificationsService>(NotificationsService)
+    cmsService = module.get<CmsService>(CmsService)
   })
 
   it('should be defined', () => {
@@ -111,6 +114,46 @@ describe('NotificationsService', () => {
       .mockImplementation(() => Promise.resolve(mockHnippTemplate))
     const template = await service.getTemplate(mockHnippTemplate.templateId)
     expect(template).toBeInstanceOf(Object)
+  })
+
+  describe('template sourceType', () => {
+    const mockCmsTemplates = (sourceTypes: (string | null)[]) =>
+      jest.spyOn(cmsService, 'fetchData').mockResolvedValue({
+        hnippTemplateCollection: {
+          items: sourceTypes.map((sourceType) => ({
+            ...mockHnippTemplate,
+            sourceType,
+          })),
+        },
+      } as never)
+
+    it.each([
+      { sourceType: 'Mail', expected: 'Mail' },
+      { sourceType: 'Event', expected: 'Event' },
+      { sourceType: 'General', expected: 'General' },
+      { sourceType: null, expected: 'General' },
+      { sourceType: 'Unknown', expected: 'General' },
+    ])(
+      'getTemplate returns $expected for a Contentful sourceType of $sourceType',
+      async ({ sourceType, expected }) => {
+        mockCmsTemplates([sourceType])
+
+        const template = await service.getTemplate(mockHnippTemplate.templateId)
+
+        expect(template.sourceType).toBe(expected)
+      },
+    )
+
+    it('getTemplates defaults a missing sourceType to General', async () => {
+      mockCmsTemplates(['Event', null])
+
+      const templates = await service.getTemplates()
+
+      expect(templates.map((template) => template.sourceType)).toEqual([
+        'Event',
+        'General',
+      ])
+    })
   })
 
   it('should validate when all required arguments are provided', () => {
@@ -186,6 +229,7 @@ describe('NotificationsService', () => {
       seen: false,
       wasSent: true,
       priorityType: 'Actionable',
+      sourceType: 'Mail',
       args: [
         { key: 'arg1', value: 'hello' },
         { key: 'arg2', value: 'world' },
@@ -226,6 +270,39 @@ describe('NotificationsService', () => {
         { priorityType: 'Informative' },
       )
       expect(result.priorityType).toBe('Informative')
+    })
+
+    it('returns the stored deadline, or null without one', async () => {
+      const deadline = new Date('2026-12-01T16:00:00Z')
+      const withDeadline = await format({
+        ...baseNotification,
+        deadline,
+      } as Notification)
+      expect(withDeadline.deadline).toEqual(deadline)
+
+      const withoutDeadline = await format(baseNotification)
+      expect(withoutDeadline.deadline).toBeNull()
+    })
+
+    it('returns the stored sourceType', async () => {
+      const result = await format(baseNotification, { sourceType: 'Event' })
+      expect(result.sourceType).toBe('Mail')
+    })
+
+    it('falls back to the template sourceType when none is stored', async () => {
+      const result = await format(
+        { ...baseNotification, sourceType: null } as unknown as Notification,
+        { sourceType: 'Event' },
+      )
+      expect(result.sourceType).toBe('Event')
+    })
+
+    it('falls back to General when neither the notification nor the template has a sourceType', async () => {
+      const result = await format(
+        { ...baseNotification, sourceType: null } as unknown as Notification,
+        { sourceType: undefined },
+      )
+      expect(result.sourceType).toBe('General')
     })
 
     it('returns the localized category label and the category key', async () => {

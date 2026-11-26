@@ -28,8 +28,10 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  findAppealStatementDeadline,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  hasFiledAppealStatement,
   IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
@@ -38,6 +40,8 @@ import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSameAppealBench,
+  isSameAppealStatementParty,
+  isStoredVerdictAppealRulingPdf,
   verdictAppealDeclarationFileCategories,
   VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
@@ -53,6 +57,7 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,
@@ -73,6 +78,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  isVerdictAppealOver,
   resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
@@ -111,8 +117,6 @@ export class AppealCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // Every defence party (defendant / civil claimant) the user currently, and
-  // confirmedly, represents on the case. A defence event is recorded once per
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -882,8 +886,6 @@ export class AppealCaseService {
         request,
         transaction,
       )
-    } else if (actor === 'DEFENDER') {
-      await this.recordAppealingDefender(theCase, defendant, transaction)
     }
 
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
@@ -1027,48 +1029,6 @@ export class AppealCaseService {
     )
   }
 
-  // A defender appealing in the system is the defendant's confirmed defender
-  // of record, so that record names the appeal defender. Unconfirmed, like the
-  // one the office registers: access follows once the court of appeals
-  // confirms them.
-  //
-  // Only while the appeal says nothing about this defendant's counsel. The
-  // court of appeals may already have named a defender or recorded a waiver -
-  // on an appeal the prosecution filed first - and that stance is not
-  // overwritten, nor is a confirmed defender set back to unconfirmed.
-  private async recordAppealingDefender(
-    theCase: Case,
-    defendant: Defendant,
-    transaction: Transaction,
-  ): Promise<void> {
-    const isAppealDefenderSettled =
-      Boolean(
-        defendant.appealDefenderName ||
-          defendant.appealDefenderNationalId ||
-          defendant.appealDefenderEmail ||
-          defendant.appealDefenderPhoneNumber,
-      ) ||
-      (defendant.isAppealDefenderWaived !== null &&
-        defendant.isAppealDefenderWaived !== undefined)
-
-    if (isAppealDefenderSettled) {
-      return
-    }
-
-    await this.defendantRepositoryService.update(
-      theCase.id,
-      defendant.id,
-      {
-        appealDefenderName: defendant.defenderName ?? null,
-        appealDefenderNationalId: defendant.defenderNationalId ?? null,
-        appealDefenderEmail: defendant.defenderEmail ?? null,
-        appealDefenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
-        isAppealDefenderConfirmed: false,
-      },
-      { transaction },
-    )
-  }
-
   // The appeal defender belongs to the appeal concerning that defendant.
   // Cleared once no appeal for them remains on either side — kept while a
   // prosecution appeal against them still stands after a defence withdrawal.
@@ -1120,6 +1080,25 @@ export class AppealCaseService {
       )
     }
 
+    // The date an appeal ended is never cleared: a completed appeal and the
+    // stamp on its ruling document both rest on it.
+    if (update.appealRulingDate === null) {
+      throw new BadRequestException(
+        `The ruling date of appeal case ${appealCase.id} cannot be cleared`,
+      )
+    }
+
+    // A ruling appeal is dated when it is completed; only the court of
+    // appeals' conclusion of a verdict appeal is dated by the court itself.
+    if (
+      update.appealRulingDate !== undefined &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and its ruling date is set when it is completed`,
+      )
+    }
+
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
     const data: UpdateAppealCase = { ...columnUpdate }
@@ -1142,6 +1121,21 @@ export class AppealCaseService {
       await this.appealCaseRepositoryService.update(appealCase.id, data, {
         transaction,
       })
+    }
+
+    // The confirmed copy of a completed verdict appeal's ruling document is
+    // stamped with this date, so a new date has it stamped again.
+    if (
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.COMPLETED &&
+      update.appealRulingDate &&
+      update.appealRulingDate.getTime() !==
+        appealCase.appealRulingDate?.getTime()
+    ) {
+      await this.fileService.invalidateVerdictAppealRulingConfirmation(
+        theCase.id,
+        transaction,
+      )
     }
 
     // The api's list is nullable, so a null bench arrives as well as an
@@ -1232,16 +1226,180 @@ export class AppealCaseService {
     eventType: AppealEventType,
     user: User,
     transaction: Transaction,
+    party?: { defendantId?: string; civilClaimantId?: string },
   ): Promise<AppealCase> {
     this.logger.debug(
       `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
-    await this.writeEventLog(theCase, appealCase, eventType, user, transaction)
+    const requiresScopedParty =
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      eventType === AppealEventType.APPEAL_STATEMENT_SENT
+
+    // Party IDs select the single-party write path only for verdict-appeal
+    // statements. Ruling-appeal statements stay collective (writeEventLog) —
+    // a stray party ID must not shrink that write to one represented party.
+    if (
+      !requiresScopedParty &&
+      (party?.defendantId || party?.civilClaimantId)
+    ) {
+      throw new BadRequestException(
+        'defendantId and civilClaimantId are only allowed for verdict appeal statement events',
+      )
+    }
+
+    // Verdict-appeal statements are per party. Require an explicit party so we
+    // never fall back to writing one row for every party the defence user
+    // represents. File create requires Landsréttur confirmation for these
+    // categories — the event log must match that bar.
+    if (requiresScopedParty) {
+      if (!party?.defendantId && !party?.civilClaimantId) {
+        throw new BadRequestException(
+          'Verdict appeal statement events require defendantId or civilClaimantId',
+        )
+      }
+
+      if (isVerdictAppealOver(appealCase)) {
+        throw new BadRequestException(
+          `Cannot record a statement for completed or withdrawn appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      const partyRow = this.resolveScopedDefenceParty(
+        theCase,
+        user,
+        party ?? {},
+      )
+
+      const statementDeadline = findAppealStatementDeadline(
+        appealCase.statementDeadlines,
+        partyRow,
+      )?.deadline
+
+      if (!statementDeadline) {
+        throw new BadRequestException(
+          `No statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      // An expired deadline still allows filing — the court may accept a late
+      // statement; the deadline is informational for the portal, not a hard gate.
+
+      if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
+        throw new BadRequestException(
+          `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      const hasStatementFile = (theCase.caseFiles ?? []).some(
+        (caseFile) =>
+          caseFile.category ===
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
+          caseFile.state === CaseFileState.STORED_IN_RVG &&
+          caseFile.isKeyAccessible &&
+          (caseFile.rulingFileId ?? null) === null &&
+          isSameAppealStatementParty(
+            {
+              defendantId: caseFile.defendantId,
+              civilClaimantId: caseFile.civilClaimantId,
+            },
+            partyRow,
+          ),
+      )
+
+      if (!hasStatementFile) {
+        throw new BadRequestException(
+          `No verdict appeal statement file for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      await this.writeEventLogRows(
+        theCase,
+        appealCase,
+        eventType,
+        user,
+        [partyRow],
+        transaction,
+      )
+    } else {
+      await this.writeEventLog(
+        theCase,
+        appealCase,
+        eventType,
+        user,
+        transaction,
+      )
+    }
 
     this.dispatchEventNotifications(eventType, theCase, appealCase, user)
 
     return appealCase
+  }
+
+  // Validates that the defence user is Landsréttur-confirmed for the named
+  // party and returns a single party row for writeEventLogRows. Used only for
+  // verdict-appeal statement events.
+  private resolveScopedDefenceParty(
+    theCase: Case,
+    user: User,
+    party: { defendantId?: string; civilClaimantId?: string },
+  ): { defendantId?: string; civilClaimantId?: string } {
+    if (party.defendantId && party.civilClaimantId) {
+      throw new BadRequestException(
+        'Provide either defendantId or civilClaimantId, not both',
+      )
+    }
+
+    if (party.defendantId) {
+      const defendant = theCase.defendants?.find(
+        (d) => d.id === party.defendantId,
+      )
+
+      if (!defendant) {
+        throw new BadRequestException(
+          `Defendant ${party.defendantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      if (
+        !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])
+      ) {
+        throw new ForbiddenException(
+          `Current user is not a confirmed appeal defender of defendant ${party.defendantId}`,
+        )
+      }
+
+      return { defendantId: defendant.id }
+    }
+
+    if (party.civilClaimantId) {
+      const civilClaimant = theCase.civilClaimants?.find(
+        (c) => c.id === party.civilClaimantId,
+      )
+
+      if (!civilClaimant) {
+        throw new BadRequestException(
+          `Civil claimant ${party.civilClaimantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      if (
+        !CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+          user.nationalId,
+          [civilClaimant],
+        )
+      ) {
+        throw new ForbiddenException(
+          `Current user is not a confirmed appeal spokesperson of civil claimant ${party.civilClaimantId}`,
+        )
+      }
+
+      return { civilClaimantId: civilClaimant.id }
+    }
+
+    throw new BadRequestException('Missing defendantId or civilClaimantId')
   }
 
   // Side-effect dispatch keyed on eventType — mirror EventLogService's
@@ -1590,7 +1748,8 @@ export class AppealCaseService {
 
   // The court of appeals concludes a verdict appeal once everything about how
   // it ended is on record: a status of completed, the outcome, whether it is a
-  // judgment or a ruling, the concluding words and the document itself.
+  // judgment or a ruling, the concluding words, the date it ended and the
+  // document itself. That date is the court's own and is kept as entered.
   //
   // Nothing is announced. The outcome stays with the court until it is
   // released, so no message is queued and nothing is delivered - which is why
@@ -1615,12 +1774,8 @@ export class AppealCaseService {
       )
     }
 
-    // The document is stamped when it is opened, which only a PDF can be.
     const hasRulingFile = (theCase.caseFiles ?? []).some(
-      (file) =>
-        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-        file.type === 'application/pdf' &&
-        Boolean(file.key),
+      isStoredVerdictAppealRulingPdf,
     )
 
     if (
@@ -1628,10 +1783,11 @@ export class AppealCaseService {
       !appealCase.appealRulingDecision ||
       !appealCase.appealRulingType ||
       !appealCase.appealConclusion?.trim() ||
+      !appealCase.appealRulingDate ||
       !hasRulingFile
     ) {
       throw new BadRequestException(
-        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion and ruling document, a PDF, are in place`,
+        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion, date of conclusion and ruling document, a PDF, are in place`,
       )
     }
 

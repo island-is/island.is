@@ -45,6 +45,7 @@ import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForC
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import RegisterConclusion from './RegisterConclusion'
 import ScheduleCourtSession from './ScheduleCourtSession'
 import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
@@ -434,6 +435,7 @@ const VerdictAppealStatus = () => {
   }
 
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
 
   return (
     <PageLayout
@@ -446,14 +448,22 @@ const VerdictAppealStatus = () => {
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
-          {/* No "Mál nr." line: the appeal has no case number of its own. */}
           <Box>
-            <PageTitle marginBottom={1}>Staða og lyktir</PageTitle>
-            {headerLines.map((line) => (
-              <Text key={line} as="h5" variant="h5">
-                {line}
-              </Text>
-            ))}
+            <PageTitle marginBottom={caseNumber ? 5 : 1}>
+              Staða og lyktir
+            </PageTitle>
+            <div className={stack({ gap: 1 })}>
+              {caseNumber && (
+                <Text as="h2" variant="h2">
+                  {caseNumber}
+                </Text>
+              )}
+              {headerLines.map((line) => (
+                <Text key={line} as="h5" variant="h5">
+                  {line}
+                </Text>
+              ))}
+            </div>
           </Box>
           <Box component="section">
             <SectionHeading title="Staða" required />

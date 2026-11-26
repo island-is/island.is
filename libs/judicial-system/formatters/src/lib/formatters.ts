@@ -621,6 +621,7 @@ export const formatAppealCaseName = (
   names: (string | undefined | null)[],
   options?: AppealCaseNameOptions,
 ): string => {
+  // Decline nominative names into þágufall so "gegn …" reads correctly.
   const prepared = options?.decline
     ? names.map((name) => (name ? applyCase('þgf', name) : name))
     : names

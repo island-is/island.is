@@ -24,6 +24,7 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
 import VerdictAppealConclusions from './VerdictAppealConclusions'
 import { getVerdictAppealOverviewHeaderLines } from './VerdictAppealOverview.logic'
@@ -64,6 +65,7 @@ const VerdictAppealOverview = () => {
     )
 
   const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
 
   return (
     <PageLayout
@@ -80,12 +82,19 @@ const VerdictAppealOverview = () => {
               case is here the district court is finished with it, and what the
               page is about is the appeal. */}
           <Box>
-            <PageTitle marginBottom={1}>Yfirlit</PageTitle>
-            {headerLines.map((line) => (
-              <Text key={line} as="h5" variant="h5">
-                {line}
-              </Text>
-            ))}
+            <PageTitle marginBottom={caseNumber ? 5 : 1}>Yfirlit</PageTitle>
+            <div className={stack({ gap: 1 })}>
+              {caseNumber && (
+                <Text as="h2" variant="h2">
+                  {caseNumber}
+                </Text>
+              )}
+              {headerLines.map((line) => (
+                <Text key={line} as="h5" variant="h5">
+                  {line}
+                </Text>
+              ))}
+            </div>
           </Box>
           {/* One per defendant: each has their own verdict, their own service
               and their own deadline, so the court reads them side by side.
@@ -98,7 +107,7 @@ const VerdictAppealOverview = () => {
               defendant={defendant}
             />
           ))}
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment appealCase={verdictAppealCase ?? null} />
           {/* Both sets of operative words. This court's own is absent until
               the step that writes one is built. */}
           <VerdictAppealConclusions />

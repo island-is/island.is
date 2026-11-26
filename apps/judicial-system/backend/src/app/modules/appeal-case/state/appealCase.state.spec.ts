@@ -51,23 +51,48 @@ describe('transitionAppealCase', () => {
       expect(appealCaseUpdate.appealState).toBe(AppealCaseState.COMPLETED)
       expect(appealCaseUpdate.appealRulingDate).toBe(now)
     })
+
+    it('stamps a new ruling date when a reopened appeal is completed again', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = {
+        appealType: AppealCaseType.RULING,
+        appealState: AppealCaseState.RECEIVED,
+        appealRulingDate: new Date('2024-01-01T10:00:00Z'),
+      } as AppealCase
+
+      const { appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.COMPLETE_APPEAL,
+        theCase,
+        appealCase,
+      )
+
+      expect(appealCaseUpdate).toEqual({
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDate: now,
+      })
+    })
   })
+
   describe('a verdict appeal', () => {
     const theCase = { type: CaseType.INDICTMENT } as Case
     const verdictAppeal = (appealState: AppealCaseState) =>
       ({ appealType: AppealCaseType.VERDICT, appealState } as AppealCase)
 
-    it('is completed from the state it is filed in', () => {
+    it('is completed from the state it is filed in and keeps the date the court entered', () => {
+      const enteredDate = new Date('2024-01-10T00:00:00Z')
+
       const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
         AppealCaseTransition.COMPLETE_APPEAL,
         theCase,
-        verdictAppeal(AppealCaseState.APPEALED),
+        {
+          ...verdictAppeal(AppealCaseState.APPEALED),
+          appealRulingDate: enteredDate,
+        } as AppealCase,
       )
 
       expect(caseUpdate).toEqual({})
       expect(appealCaseUpdate).toEqual({
         appealState: AppealCaseState.COMPLETED,
-        appealRulingDate: now,
       })
     })
 

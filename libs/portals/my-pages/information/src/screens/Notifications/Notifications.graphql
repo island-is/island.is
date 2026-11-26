@@ -5,6 +5,8 @@ fragment NotificationMetadataFields on NotificationMetadata {
   read
   wasSent
   priorityType
+  sourceType
+  deadline
 }
 
 fragment NotificationSenderFields on NotificationSender {

@@ -320,6 +320,9 @@ describe('VerdictAppealStatus', () => {
     renderPage()
 
     expect(
+      screen.getByRole('heading', { level: 2, name: 'Mál nr. 555/2026' }),
+    ).toBeInTheDocument()
+    expect(
       screen.getByText('Málsnr. héraðsdóms S-123/2026'),
     ).toBeInTheDocument()
     expect(
