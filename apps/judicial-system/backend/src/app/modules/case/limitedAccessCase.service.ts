@@ -7,6 +7,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { caseFileDownloadName } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
@@ -273,7 +274,7 @@ export class LimitedAccessCaseService {
     try {
       await this.tryAddFileToFilesToZip(
         this.fileService.getCaseFileFromS3(theCase, file),
-        file.name,
+        caseFileDownloadName(file.name, file.userGeneratedFilename),
         filesToZip,
       )
     } catch (error) {

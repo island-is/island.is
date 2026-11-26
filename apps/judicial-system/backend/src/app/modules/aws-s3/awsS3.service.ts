@@ -14,6 +14,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
+import { buildInlineContentDisposition } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   isIndictmentCase,
@@ -145,6 +146,7 @@ export class AwsS3Service {
     key: string,
     timeToLive?: number,
     useFreshSession = false,
+    downloadFilename?: string,
   ): Promise<string> {
     const s3 = useFreshSession
       ? new S3Client({ region: this.config.region })
@@ -155,6 +157,12 @@ export class AwsS3Service {
       new GetObjectCommand({
         Bucket: this.config.bucket,
         Key: formatS3Key(type, key),
+        ...(downloadFilename
+          ? {
+              ResponseContentDisposition:
+                buildInlineContentDisposition(downloadFilename),
+            }
+          : {}),
       }),
       { expiresIn: timeToLive ?? this.config.timeToLiveGet },
     )
@@ -167,6 +175,7 @@ export class AwsS3Service {
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
     useFreshSession = false,
+    downloadFilename?: string,
   ): Promise<string> {
     if (!isIndictmentCase(caseType)) {
       throw new Error('Only indictment case objects can be confirmed')
@@ -180,6 +189,7 @@ export class AwsS3Service {
         confirmedKey,
         timeToLive,
         useFreshSession,
+        downloadFilename,
       )
     }
 
@@ -187,7 +197,13 @@ export class AwsS3Service {
     const confirmedContent = await confirmContent(content)
 
     if (!confirmedContent) {
-      return this.getSignedUrl(caseType, key, timeToLive, useFreshSession)
+      return this.getSignedUrl(
+        caseType,
+        key,
+        timeToLive,
+        useFreshSession,
+        downloadFilename,
+      )
     }
 
     await this.putObject(caseType, confirmedKey, confirmedContent)
@@ -197,6 +213,7 @@ export class AwsS3Service {
       confirmedKey,
       timeToLive,
       useFreshSession,
+      downloadFilename,
     )
   }
 

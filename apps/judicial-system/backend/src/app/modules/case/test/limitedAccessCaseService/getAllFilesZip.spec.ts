@@ -428,6 +428,33 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
+    it('should zip renamed case files under the display name', async () => {
+      const renamedFile = makeAccessibleFile({
+        name: 'kkslsls.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const unchangedFile = makeAccessibleFile({
+        name: 'original.pdf',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [renamedFile, unchangedFile],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'Gagn.pdf' },
+          { data: pdfBuffer, name: 'original.pdf' },
+        ]),
+      )
+      expect(zipFilesSpy).not.toHaveBeenCalledWith(
+        expect.arrayContaining([{ data: pdfBuffer, name: 'kkslsls.pdf' }]),
+      )
+    })
+
     it('should include case files from cases merged into this case', async () => {
       const mergedFile = makeAccessibleFile({
         name: 'merged-case-file.pdf',

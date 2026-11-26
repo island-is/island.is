@@ -9,7 +9,9 @@ import {
 import {
   applyDativeCaseToCourtName,
   applyGenitiveCaseToCourtName,
+  buildInlineContentDisposition,
   capitalize,
+  caseFileDownloadName,
   containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
@@ -42,6 +44,29 @@ describe('stripPdfExtension', () => {
   it('leaves names without a pdf extension alone', () => {
     expect(stripPdfExtension('Greinargerð')).toBe('Greinargerð')
     expect(stripPdfExtension('skyrsla.docx')).toBe('skyrsla.docx')
+  })
+})
+
+describe('caseFileDownloadName', () => {
+  it('uses the original name when no display name is set', () => {
+    expect(caseFileDownloadName('kkslsls.pdf')).toBe('kkslsls.pdf')
+    expect(caseFileDownloadName('kkslsls.pdf', '  ')).toBe('kkslsls.pdf')
+  })
+
+  it('prefers the display name and restores a missing extension', () => {
+    expect(caseFileDownloadName('kkslsls.pdf', 'Gagn')).toBe('Gagn.pdf')
+    expect(caseFileDownloadName('kkslsls.pdf', 'Gagn.pdf')).toBe('Gagn.pdf')
+  })
+})
+
+describe('buildInlineContentDisposition', () => {
+  it('includes ASCII fallback and RFC 5987 filename*', () => {
+    expect(buildInlineContentDisposition('Gagn.pdf')).toBe(
+      `inline; filename="Gagn.pdf"; filename*=UTF-8''Gagn.pdf`,
+    )
+    expect(buildInlineContentDisposition('Á.pdf')).toBe(
+      `inline; filename="_.pdf"; filename*=UTF-8''${encodeURIComponent('Á.pdf')}`,
+    )
   })
 })
 

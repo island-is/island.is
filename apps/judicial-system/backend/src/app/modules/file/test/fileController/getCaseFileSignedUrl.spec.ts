@@ -96,8 +96,33 @@ describe('FileController - Get case file signed url', () => {
         key,
         undefined,
         false,
+        undefined,
       )
       expect(then.result).toEqual({ url })
+    })
+
+    it('should ask S3 for the renamed display filename', async () => {
+      const renamedFile = {
+        id: fileId,
+        key,
+        name: 'kkslsls.pdf',
+        userGeneratedFilename: 'Gagn',
+        isKeyAccessible: true,
+      } as CaseFile
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
+      mockGetSignedUrl.mockResolvedValueOnce(url)
+
+      await givenWhenThen(caseId, theCase, fileId, renamedFile)
+
+      expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+        undefined,
+        false,
+        'Gagn.pdf',
+      )
     })
   })
 
@@ -172,6 +197,7 @@ describe('FileController - Get case file signed url', () => {
           expect.any(Function),
           undefined,
           false,
+          undefined,
         )
         expect(mockAwsS3Service.getSignedUrl).not.toHaveBeenCalled()
       })
@@ -231,6 +257,7 @@ describe('FileController - Get case file signed url', () => {
         expect.any(Function),
         undefined,
         false,
+        undefined,
       )
     })
 
@@ -277,6 +304,42 @@ describe('FileController - Get case file signed url', () => {
         expect.any(Function),
         undefined,
         false,
+        undefined,
+      )
+    })
+
+    it('passes the renamed display filename into the confirmed signed url', async () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingDate: new Date('2026-11-20T10:00:00Z'),
+        },
+      } as Case
+      const renamedFile = {
+        ...caseFile,
+        name: 'kkslsls.pdf',
+        userGeneratedFilename: 'Gagn',
+      } as CaseFile
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetConfirmedSignedUrl =
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl as jest.Mock
+      mockGetConfirmedSignedUrl.mockResolvedValueOnce(url)
+
+      await givenWhenThen(caseId, theCase, fileId, renamedFile)
+
+      expect(
+        mockAwsS3Service.getConfirmedIndictmentCaseSignedUrl,
+      ).toHaveBeenCalledWith(
+        CaseType.INDICTMENT,
+        key,
+        true,
+        expect.any(Function),
+        undefined,
+        false,
+        'Gagn.pdf',
       )
     })
   })

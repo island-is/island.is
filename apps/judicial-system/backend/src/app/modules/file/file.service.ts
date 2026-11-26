@@ -16,7 +16,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { stripPdfExtension } from '@island.is/judicial-system/formatters'
+import {
+  caseFileDownloadName,
+  stripPdfExtension,
+} from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
@@ -822,6 +825,11 @@ export class FileService {
     timeToLive?: number,
     useFreshSession = false,
   ): Promise<string> {
+    const downloadFilename = caseFileDownloadName(
+      file.name,
+      file.userGeneratedFilename,
+    )
+
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
@@ -831,6 +839,7 @@ export class FileService {
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
         useFreshSession,
+        downloadFilename,
       )
     }
 
@@ -839,6 +848,7 @@ export class FileService {
       file.key,
       timeToLive,
       useFreshSession,
+      downloadFilename,
     )
   }
 
