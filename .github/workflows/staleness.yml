@@ -20,26 +20,16 @@ jobs:
           PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
         run: |
           node scripts/ci/docker/get-github-token.mjs
-      - name: Clean up `deploy-feature` label usage
+      # One stale pass for both labels: two actions/stale steps in one run share
+      # the same saved state, so the second one could skip PRs the first visited.
+      - name: Clean up `deploy-feature` and `ids-deploy-feature` label usage
         uses: actions/stale@v9
         with:
           repo-token: ${{ steps.get-token.outputs.token }}
           days-before-stale: 7
           days-before-close: -1 # Never auto-close
-          only-pr-labels: deploy-feature
-          labels-to-remove-when-stale: deploy-feature
+          any-of-pr-labels: deploy-feature,ids-deploy-feature
+          labels-to-remove-when-stale: deploy-feature,ids-deploy-feature
           stale-pr-message: |
-            This PR has been inactive for over a week. The `deploy-feature` label has been removed. Re-add the label to re-enable automatic deploy previews.
-          operations-per-run: 100
-
-      - name: Clean up `ids-deploy-feature` label usage
-        uses: actions/stale@v9
-        with:
-          repo-token: ${{ steps.get-token.outputs.token }}
-          days-before-stale: 7
-          days-before-close: -1 # Never auto-close
-          only-pr-labels: ids-deploy-feature
-          labels-to-remove-when-stale: ids-deploy-feature
-          stale-pr-message: |
-            This PR has been inactive for over a week. The `ids-deploy-feature` label has been removed. Re-add the label to re-enable automatic deploy previews with their own identity-server.
+            This PR has been inactive for over a week. The `deploy-feature` / `ids-deploy-feature` label has been removed. Re-add the label to re-enable automatic deploy previews.
           operations-per-run: 100
