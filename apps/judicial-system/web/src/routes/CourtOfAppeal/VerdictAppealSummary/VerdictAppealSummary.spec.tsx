@@ -444,10 +444,26 @@ describe('VerdictAppealSummary', () => {
     expect(screen.queryByLabelText(/Dagsetning lykta/)).not.toBeInTheDocument()
   })
 
-  it('cannot be confirmed while the appeal is not marked finished', () => {
+  // Moving the status away from "Lokið" keeps the outcome, its type, the
+  // concluding words and the document on record. None of it is shown for an
+  // appeal that has not ended.
+  it('hides how the appeal ended while it is not marked finished', () => {
     renderPage(withAppeal({ verdictAppealStatus: Status.UNDER_ADVISEMENT }))
 
-    expect(screen.getByText('Niðurstaða Landsréttar')).toBeInTheDocument()
+    expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
+    expect(screen.queryByText('Staðfesting')).not.toBeInTheDocument()
+    expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'Dómur Landsréttar' }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('domur-landsrettar.pdf')).not.toBeInTheDocument()
+    expect(screen.getByText('Dómsorð héraðsdóms')).toBeInTheDocument()
+    expect(
+      screen.getByText('Ákærði skal sæta fangelsi í 30 daga.'),
+    ).toBeInTheDocument()
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
@@ -677,6 +693,24 @@ describe('VerdictAppealSummary', () => {
     ).not.toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
+  })
+
+  // A finished appeal has ended, so how it ended stays on the page even when
+  // its status was later moved away from "Lokið".
+  it('keeps showing how a finished appeal ended under another status', () => {
+    renderPage(
+      withAppeal({
+        appealState: AppealCaseState.COMPLETED,
+        verdictAppealStatus: Status.UNDER_ADVISEMENT,
+      }),
+    )
+
+    expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
+    expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Dómur Landsréttar' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Lyktir' })).toBeInTheDocument()
   })
 
   // A case can carry a ruling appeal as well. The info card describes the

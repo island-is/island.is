@@ -6,9 +6,11 @@ import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
@@ -56,12 +58,28 @@ const theCase = {
   },
 } as unknown as WorkingCase
 
-const renderOverview = () =>
+// Both courts have written their concluding words.
+const concludedCase = (appeal: Record<string, unknown>) =>
+  ({
+    ...theCase,
+    indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    courtSessions: [
+      { id: 'session', ruling: 'Ákærði skal sæta fangelsi í 30 daga.' },
+    ],
+    verdictAppealCase: {
+      ...theCase.verdictAppealCase,
+      appealState: AppealCaseState.APPEALED,
+      appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      ...appeal,
+    },
+  } as unknown as WorkingCase)
+
+const renderOverview = (c: WorkingCase = theCase) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
         <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_JUDGE}>
-          <FormContextWrapper theCase={theCase}>
+          <FormContextWrapper theCase={c}>
             <VerdictAppealOverview />
           </FormContextWrapper>
         </UserContextWrapper>
@@ -107,6 +125,37 @@ describe('VerdictAppealOverview', () => {
     expect(mockPush).toHaveBeenCalledWith(
       `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
     )
+  })
+
+  // Words recorded under "Lokið" stay on record when the status is moved
+  // away from it, and are not shown for an appeal that has not ended.
+  it('hides the Court of Appeals conclusion while the appeal is not marked finished', () => {
+    renderOverview(
+      concludedCase({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    )
+
+    expect(screen.getByText('Dómsorð héraðsdóms')).toBeInTheDocument()
+    expect(
+      screen.getByText('Ákærði skal sæta fangelsi í 30 daga.'),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the Court of Appeals conclusion once the appeal is marked finished', () => {
+    renderOverview(
+      concludedCase({ verdictAppealStatus: VerdictAppealStatus.COMPLETED }),
+    )
+
+    expect(screen.getByText('Dómsorð héraðsdóms')).toBeInTheDocument()
+    expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
+    expect(
+      screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+    ).toBeInTheDocument()
   })
 
   it('shows the verdict appeal on the info card when the url names no appeal', () => {

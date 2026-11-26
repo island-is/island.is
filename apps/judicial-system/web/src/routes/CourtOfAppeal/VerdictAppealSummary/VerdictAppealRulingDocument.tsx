@@ -11,7 +11,10 @@ import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Mod
 import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 
 import { getAppealRulingTypeWording } from '../VerdictAppealStatus/RegisterConclusion.logic'
-import { getVerdictAppealRulingFiles } from './VerdictAppealSummary.logic'
+import {
+  getVerdictAppealRulingFiles,
+  isVerdictAppealOutcomeShown,
+} from './VerdictAppealSummary.logic'
 
 interface Props {
   workingCase: WorkingCase
@@ -20,7 +23,9 @@ interface Props {
 /**
  * The document the Court of Appeals ended the appeal with, titled for whether
  * it is a verdict or a ruling. Only opened here: it is replaced on the step
- * where it was uploaded. Renders nothing until there is one.
+ * where it was uploaded. Renders nothing until there is one, nor while the
+ * appeal is neither marked "Lokið" nor completed: a document uploaded under
+ * "Lokið" stays on record when the status is moved away from it.
  */
 const VerdictAppealRulingDocument: FC<Props> = ({ workingCase }) => {
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -29,7 +34,10 @@ const VerdictAppealRulingDocument: FC<Props> = ({ workingCase }) => {
 
   const rulingFiles = getVerdictAppealRulingFiles(workingCase)
 
-  if (rulingFiles.length === 0) {
+  if (
+    rulingFiles.length === 0 ||
+    !isVerdictAppealOutcomeShown(workingCase.verdictAppealCase)
+  ) {
     return null
   }
 

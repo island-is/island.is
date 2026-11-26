@@ -13,6 +13,24 @@ import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system
 
 import { appealRulingDecisionOptions } from '../VerdictAppealStatus/RegisterConclusion.logic'
 
+/**
+ * Whether how the appeal ended is shown: the outcome, the Court of Appeals'
+ * concluding words and its document. They are shown once the court has marked
+ * the appeal "Lokið", and for an appeal it has completed. Moving the status
+ * away from "Lokið" leaves what was recorded on record, so it is hidden
+ * rather than shown for an appeal that has not ended. A completed appeal
+ * whose status was later moved away from "Lokið" has still ended, and keeps
+ * showing it.
+ */
+export const isVerdictAppealOutcomeShown = (
+  appeal:
+    | Pick<AppealCase, 'appealState' | 'verdictAppealStatus'>
+    | null
+    | undefined,
+): boolean =>
+  appeal?.appealState === AppealCaseState.COMPLETED ||
+  appeal?.verdictAppealStatus === VerdictAppealStatus.COMPLETED
+
 /** The document the Court of Appeals ended the appeal with. */
 export const getVerdictAppealRulingFiles = (
   theCase: Pick<WorkingCase, 'caseFiles'>,

@@ -14,6 +14,7 @@ import {
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealRulingFiles,
   isSameVerdictAppealRulingDate,
+  isVerdictAppealOutcomeShown,
   isVerdictAppealRulingDateInRange,
 } from './VerdictAppealSummary.logic'
 
@@ -139,6 +140,49 @@ describe('the ruling document', () => {
 
     expect(canCompleteVerdictAppeal(several)).toBe(true)
     expect(getCompletableVerdictAppealRulingFile(several)).toEqual(storedPdf)
+  })
+})
+
+describe('isVerdictAppealOutcomeShown', () => {
+  it('is true for an open appeal marked finished', () => {
+    expect(
+      isVerdictAppealOutcomeShown({
+        appealState: AppealCaseState.APPEALED,
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(true)
+  })
+
+  // A completed appeal has ended whatever its status was later moved to.
+  it('is true for a completed appeal with another status', () => {
+    expect(
+      isVerdictAppealOutcomeShown({
+        appealState: AppealCaseState.COMPLETED,
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    ).toBe(true)
+  })
+
+  it('is false for an open appeal with another status', () => {
+    expect(
+      isVerdictAppealOutcomeShown({
+        appealState: AppealCaseState.APPEALED,
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    ).toBe(false)
+  })
+
+  it('is false for an open appeal with no status', () => {
+    expect(
+      isVerdictAppealOutcomeShown({
+        appealState: AppealCaseState.APPEALED,
+        verdictAppealStatus: null,
+      }),
+    ).toBe(false)
+  })
+
+  it.each([null, undefined])('is false without an appeal (%s)', (appeal) => {
+    expect(isVerdictAppealOutcomeShown(appeal)).toBe(false)
   })
 })
 

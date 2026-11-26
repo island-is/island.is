@@ -42,6 +42,7 @@ import {
   canCompleteVerdictAppeal,
   getCompletableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
+  isVerdictAppealOutcomeShown,
 } from './VerdictAppealSummary.logic'
 
 /**
@@ -180,7 +181,8 @@ const VerdictAppealSummary = () => {
           description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
         />
       ) : (
-        decisionLabel && (
+        decisionLabel &&
+        isVerdictAppealOutcomeShown(verdictAppealCase) && (
           <AlertBanner
             variant="warning"
             title="Niðurstaða Landsréttar"
