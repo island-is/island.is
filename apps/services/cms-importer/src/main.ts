@@ -5,7 +5,9 @@ const job = processJob()
 
 switch (job) {
   case 'energy-fund-import': {
-    import('./app/energy-fund-import/energy-fund-import-worker')
+    import(
+      './app/organizations/energy-fund/jobs/energy-fund/energy-fund.worker'
+    )
       .then((app) => app.energyFundWorker())
       .catch((error) => {
         console.error(
@@ -16,7 +18,9 @@ switch (job) {
     break
   }
   case 'fsre-buildings-import': {
-    import('./app/fsre-buildings-import/fsre-buildings-worker')
+    import(
+      './app/organizations/fsre-buildings/jobs/fsre-buildings/fsre-buildings.worker'
+    )
       .then((app) => app.fsreBuildingsWorker())
       .catch((error) => {
         console.error(
@@ -27,7 +31,7 @@ switch (job) {
     break
   }
   case 'grant-import': {
-    import('./app/grant-import/grant-import-worker')
+    import('./app/grants/jobs/grant-import/grant-import-worker')
       .then((app) => app.worker())
       .catch((error) => {
         console.error(

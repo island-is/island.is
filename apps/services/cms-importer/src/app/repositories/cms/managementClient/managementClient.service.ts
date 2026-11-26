@@ -55,6 +55,16 @@ export class ManagementClientService {
       }))
   }
 
+  createAsset = async (
+    data: Omit<AssetProps, 'sys'>,
+  ): Promise<ContentfulFetchResponse<Asset>> =>
+    this.client
+      .getSpace(SPACE_ID)
+      .then((space) => space.getEnvironment(ENVIRONMENT))
+      .then((env) => env.createAsset(data))
+      .then((asset) => ({ ok: true as const, data: asset }))
+      .catch((e) => ({ ok: false as const, error: e }))
+
   createEntry = async (
     contentTypeId: string,
     data: Omit<EntryProps, 'sys'>,
