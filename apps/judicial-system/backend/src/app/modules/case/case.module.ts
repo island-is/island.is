@@ -22,6 +22,8 @@ import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { CaseCloningService } from './caseCloning.service'
+import { CaseLifetimeController } from './caseLifetime.controller'
+import { CaseLifetimeService } from './caseLifetime.service'
 import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
@@ -50,12 +52,14 @@ import { PdfService } from './pdf.service'
     CaseService,
     CaseCloningService,
     CaseInterceptor,
+    CaseLifetimeService,
     InternalCaseService,
     LimitedAccessCaseService,
     PdfService,
   ],
   controllers: [
     CaseController,
+    CaseLifetimeController,
     InternalCaseController,
     LimitedAccessCaseController,
   ],

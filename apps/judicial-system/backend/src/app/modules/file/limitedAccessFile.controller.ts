@@ -58,11 +58,11 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-// Each route names its own case-exists guard: the three that create a file
-// decide against a case row locked for the request, and the others - the
-// presigned post, the signed url and the delete, none of which runs in a
-// transaction - keep the plain read. The roles rules are bare, so RolesGuard
-// stays at class level ahead of either read.
+// Each route names its own case-exists guard: create and delete decide
+// against a case row locked for the request (delete must see a concurrent
+// APPEAL_STATEMENT_SENT before removing a greinargerð). The others - the
+// presigned post and the signed url - keep the plain read. The roles rules
+// are bare, so RolesGuard stays at class level ahead of either read.
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
 @UseGuards(JwtAuthUserGuard, RolesGuard)
@@ -235,7 +235,7 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    LimitedAccessCaseExistsGuard,
+    LimitedAccessCaseExistsForUpdateGuard,
     new CaseTypeGuard([
       ...restrictionCases,
       ...investigationCases,
@@ -252,7 +252,7 @@ export class LimitedAccessFileController {
     type: DeleteFileResponse,
     description: 'Deletes a case file',
   })
-  deleteCaseFile(
+  async deleteCaseFile(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
@@ -260,6 +260,11 @@ export class LimitedAccessFileController {
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(theCase, caseFile)
+    // The transaction LimitedAccessCaseExistsForUpdateGuard opened - see
+    // createCaseFile. Holds the case row so DeleteAppealCaseFileGuard's SENT
+    // read cannot race a concurrent APPEAL_STATEMENT_SENT commit.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.deleteCaseFile(theCase, caseFile, transaction)
   }
 }

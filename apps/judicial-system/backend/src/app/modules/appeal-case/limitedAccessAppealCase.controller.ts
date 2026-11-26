@@ -182,6 +182,10 @@ export class LimitedAccessAppealCaseController {
       dto.eventType,
       user,
       transaction,
+      {
+        defendantId: dto.defendantId,
+        civilClaimantId: dto.civilClaimantId,
+      },
     )
   }
 

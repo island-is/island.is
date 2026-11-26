@@ -528,6 +528,7 @@ export const Vehicle = ({
                 label={item.name?.[lang] ?? ''}
                 name="vehicleSearch"
                 value={field.value}
+                backgroundColor="blue"
                 onChange={(e) => {
                   const upper = e.target.value.toUpperCase()
                   field.onChange(upper)

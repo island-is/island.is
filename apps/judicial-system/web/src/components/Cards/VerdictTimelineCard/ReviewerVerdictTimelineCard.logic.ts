@@ -7,13 +7,20 @@ import type {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { withAppealDefender } from './VerdictTimelineCard.logic'
 
 interface ReviewerVerdictTimeline {
   defendant: Defendant
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   // The prosecution's own deadline to appeal, which runs from the ruling date
   // and is therefore the same for every defendant of the case.
   indictmentAppealDeadline?: string | null
@@ -70,6 +77,24 @@ export const getReviewerVerdictTimelineItems = ({
         indictmentAppealDeadline,
       )}`,
     })
+  }
+
+  // Prosecution statement deadline once the court of appeals has set one.
+  // No party ids — that is how prosecution deadlines are stored. Only show on
+  // cards for defendants who are part of the standing appeal.
+  const defendantIsInAppeal =
+    defendantHasStandingVerdictAppeal(verdictAppealCase, defendant.id) ||
+    Boolean(defendant.verdict?.appealDate)
+
+  if (defendantIsInAppeal) {
+    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+      verdictAppealCase,
+      {},
+    )
+
+    if (statementDeadlineItem) {
+      items.push(statementDeadlineItem)
+    }
   }
 
   return items

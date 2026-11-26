@@ -28,6 +28,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import {
   application as applicationMessage,
+  error,
   information,
   review,
 } from './messages'
@@ -47,6 +48,10 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
+  isApprovedByAllReviewers,
+  isAllowedReviewerRowsChange,
+  recordApproval,
+  resetApprovals,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -94,6 +99,20 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  answerValidators: {
+    buyerCoOwnerAndOperator: (newAnswer, application) =>
+      application.state === States.REVIEW &&
+      !isAllowedReviewerRowsChange(
+        application.answers,
+        'buyerCoOwnerAndOperator',
+        newAnswer,
+      )
+        ? {
+            path: 'buyerCoOwnerAndOperator',
+            message: error.approvedReviewerChanged,
+          }
+        : undefined,
+  },
   adminDataConfig: {
     answers: [
       {
@@ -182,7 +201,7 @@ const template: ApplicationTemplate<
         ],
       }),
       [States.REVIEW]: {
-        entry: 'assignUsers',
+        entry: ['assignUsers', 'resetApprovals'],
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
@@ -313,13 +332,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: {
-                answers: [
-                  'sellerCoOwner',
-                  'buyer',
-                  'buyerCoOwnerAndOperator',
-                  'insurance',
-                  'rejecter',
-                ],
+                answers: ['rejecter'],
               },
               read: 'all',
               delete: true,
@@ -349,8 +362,6 @@ const template: ApplicationTemplate<
               ],
               write: {
                 answers: [
-                  'sellerCoOwner',
-                  'buyer',
                   'buyerCoOwnerAndOperator',
                   'buyerMainOperator',
                   'insurance',
@@ -383,20 +394,24 @@ const template: ApplicationTemplate<
                 },
               ],
               write: {
-                answers: [
-                  'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                ],
+                answers: ['rejecter'],
               },
               read: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: { target: States.REVIEW },
+          [DefaultEvents.APPROVE]: {
+            target: States.REVIEW,
+            actions: 'recordApproval',
+          },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          // SUBMIT is also used to retry when submitting to SGS failed after the last approval
+          [DefaultEvents.SUBMIT]: {
+            target: States.COMPLETED,
+            cond: (context) =>
+              isApprovedByAllReviewers(context.application.answers),
+          },
         },
       },
       [States.REJECTED]: {
@@ -498,6 +513,25 @@ const template: ApplicationTemplate<
         if (assigneeNationalIds.length > 0) {
           set(application, 'assignees', assigneeNationalIds)
         }
+        return context
+      }),
+      // Only when entering review from payment, not on the APPROVE self-transition
+      resetApprovals: assign((context, event) => {
+        const { application } = context
+        if (event.type === DefaultEvents.SUBMIT) {
+          set(application, 'answers', resetApprovals(application.answers))
+        }
+        return context
+      }),
+      recordApproval: assign((context, event) => {
+        const { application } = context
+        // The application system adds the authenticated user to the event
+        const { nationalId } = event as { nationalId?: string }
+        set(
+          application,
+          'answers',
+          recordApproval(application.answers, nationalId),
+        )
         return context
       }),
     },

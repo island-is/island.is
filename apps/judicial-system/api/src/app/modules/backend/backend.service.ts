@@ -25,6 +25,7 @@ import {
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
+  CaseLifetimeResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -230,6 +231,13 @@ export class BackendService {
 
   updateUser(userId: string, updateUser: unknown): Promise<User> {
     return this.put(`user/${userId}`, updateUser)
+  }
+
+  extendCaseLifetime(
+    caseId: string,
+    days: number,
+  ): Promise<CaseLifetimeResponse> {
+    return this.patch(`case/${caseId}/lifetime`, { days })
   }
 
   getMessageSuspensions(): Promise<MessageSuspension[]> {
@@ -438,9 +446,13 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
       eventType,
+      defendantId,
+      civilClaimantId,
     })
   }
 
@@ -737,7 +749,7 @@ export class BackendService {
 
   createAppealSummons(
     caseId: string,
-    createAppealSummons: { defendants: unknown[] },
+    createAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
   }
@@ -745,7 +757,7 @@ export class BackendService {
   updateAppealSummons(
     caseId: string,
     appealSummonsId: string,
-    updateAppealSummons: { defendants: unknown[] },
+    updateAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}`,
@@ -1078,10 +1090,12 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
-      { eventType },
+      { eventType, defendantId, civilClaimantId },
     )
   }
 

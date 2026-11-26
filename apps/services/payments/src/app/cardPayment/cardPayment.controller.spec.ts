@@ -333,6 +333,91 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('sends the payer to 3-D Secure when the gateway verifies without card information or a correlation id', async () => {
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string' && url.includes('/CardVerification')) {
+            return {
+              json: async () => ({
+                isSuccess: true,
+                responseCode: null,
+                postUrl: 'https://acs.example/3ds',
+                verificationFields: [{ name: 'creq', value: 'abc' }],
+                cardInformation: null,
+                correlationID: null,
+              }),
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          return {
+            json: async () => ({ isSuccess: true }),
+            status: 200,
+            ok: true,
+          } as Response
+        })
+
+      const response = await server.post('/v1/payments/card/verify').send({
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      } as VerifyCardInput)
+
+      expect(response.status).toBe(201)
+      expect(response.body).toMatchObject({
+        isSuccess: true,
+        postUrl: 'https://acs.example/3ds',
+        verificationFields: [{ name: 'creq', value: 'abc' }],
+      })
+      // The verification this attempt started, the one its callback goes by
+      const status = await cacheManager.get<CachePaymentFlowStatus>(
+        paymentFlowId,
+      )
+      expect(response.body.correlationId).toBe(status?.correlationId)
+      expect(response.body.correlationId).toEqual(expect.any(String))
+
+      fetchSpy.mockRestore()
+    })
+
+    it('leaves out card information the gateway sent only part of', async () => {
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string' && url.includes('/CardVerification')) {
+            return {
+              json: async () => ({
+                isSuccess: true,
+                responseCode: '00',
+                postUrl: 'https://acs.example/3ds',
+                verificationFields: [{ name: 'creq', value: 'abc' }],
+                cardInformation: { cardScheme: 'V', cardUsage: null },
+              }),
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          return {
+            json: async () => ({ isSuccess: true }),
+            status: 200,
+            ok: true,
+          } as Response
+        })
+
+      const response = await server.post('/v1/payments/card/verify').send({
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      } as VerifyCardInput)
+
+      expect(response.status).toBe(201)
+      expect(response.body).not.toHaveProperty('cardInformation')
+
+      fetchSpy.mockRestore()
+    })
+
     it('it should generate the correct cache payloads (cache and fetch) when verify is called with a valid card', async () => {
       const verificationUrl = '/CardVerification'
 
@@ -1561,6 +1646,109 @@ describe('CardPaymentController', () => {
         fetchSpy.mockRestore()
       })
 
+      it('refunds a charge the gateway approves without what the payment is stored with', async () => {
+        const walletPaymentCorrelationIds: string[] = []
+        const refundedCorrelationIds: string[] = []
+
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url, init?: RequestInit) => {
+            const body = init?.body ? JSON.parse(init.body as string) : {}
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                walletPaymentCorrelationIds.push(body.correlationId)
+                // Approved, but null where the payment needs a value
+                return {
+                  json: async () => ({
+                    isSuccess: true,
+                    responseCode: '00-I',
+                    acquirerReferenceNumber: null,
+                    authorizationCode: 'auth',
+                    cardInformation: { cardScheme: 'V', cardUsage: 'Debit' },
+                    correlationID: body.correlationId,
+                  }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/RefundWithCorrelationId')) {
+                refundedCorrelationIds.push(body.originalCorrelationId)
+                return {
+                  json: async () => ({
+                    isSuccess: true,
+                    responseCode: '00-I',
+                    refundOperation: 'Refund',
+                  }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const response = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput())
+
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+        expect(walletPaymentCorrelationIds).toHaveLength(1)
+        expect(refundedCorrelationIds).toEqual(walletPaymentCorrelationIds)
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
       it('should throw an error if trying to charge an invalid payment flow', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')
@@ -2446,6 +2634,37 @@ describe('CardPaymentController', () => {
       expect(chargeCalls()).toHaveLength(1)
     })
 
+    it('refunds a saved card charge the gateway approves without what the payment is stored with', async () => {
+      // Approved, but null where the payment needs a value
+      mockFetch({
+        cardPayment: () =>
+          gatewayResponse({
+            ...chargeResponse(),
+            acquirerReferenceNumber: null,
+          }),
+      })
+      const googlePayToken = token()
+
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      const response = await chargeVerified(googlePayToken)
+
+      expect(response.status).toBe(400)
+      expect(response.body.detail).toBe(
+        CardErrorCode.RefundedBecauseOfSystemError,
+      )
+      const [[, chargeInit]] = chargeCalls()
+      const [[, refundInit]] = refundCalls()
+      expect(refundCalls()).toHaveLength(1)
+      expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
+        JSON.parse(chargeInit.body).correlationId,
+      )
+    })
+
     it('does not charge a saved card that has not passed 3-D Secure', async () => {
       mockFetch()
       const googlePayToken = token()
@@ -2577,6 +2796,66 @@ describe('CardPaymentController', () => {
         expect(response.status).toBe(400)
         expect(response.body.detail).toBe(CardErrorCode.VerificationFailed)
         expect(refundCalls().length).toBeGreaterThanOrEqual(1)
+      })
+
+      it('tells the payer the refund failed when the gateway charged a device token the service could not read', async () => {
+        mockFetch({
+          // Approved, but null where the payment needs a value
+          decryption: () =>
+            gatewayResponse({
+              ...chargeResponse(),
+              acquirerReferenceNumber: null,
+            }),
+          refund: () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'INTERNAL_SERVER_ERROR',
+              status: 500,
+              statusText: 'Internal Server Error',
+              ok: false,
+            } as Response),
+        })
+
+        const response = await charge(token())
+
+        // A charge, not an unknown outcome: the payer hears the refund failed
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
+        expect(refundCalls().length).toBeGreaterThanOrEqual(1)
+      })
+
+      it('does not take a saved card decryption the service could not read for a charge', async () => {
+        const { googlePayCardInformation, ...decryption } = decryptionResponse()
+        mockFetch({
+          // Q8 charges nothing, but the card is missing its expiry month
+          decryption: () =>
+            gatewayResponse({
+              ...decryption,
+              googlePayCardInformation: {
+                ...googlePayCardInformation,
+                expirationMonth: null,
+              },
+            }),
+          refund: () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'No transaction found',
+              status: 400,
+              statusText: 'Bad Request',
+              ok: false,
+            } as Response),
+        })
+
+        const response = await charge(token())
+
+        // An unknown outcome: the payer is not told a refund failed
+        expect(response.status).toBe(400)
+        expect(response.body.detail).not.toBe(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
+        expect(cardVerificationCalls()).toHaveLength(0)
       })
     })
 

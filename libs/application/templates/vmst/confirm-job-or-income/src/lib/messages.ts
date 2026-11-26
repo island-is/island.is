@@ -584,6 +584,19 @@ export const errorMessages = defineMessages({
       'Villa við að skila inn umsókn. Reyndu aftur eða hafðu samband við Ísland.is',
     description: 'Error message when submit fails',
   },
+  noChangesErrorTitle: {
+    id: 'vmst.cjoi.application:errorMessages.noChangesErrorTitle',
+    defaultMessage: 'Engar breytingar skráðar',
+    description:
+      'Error title when the report is submitted without any additions, changes or deletions',
+  },
+  noChangesErrorSummary: {
+    id: 'vmst.cjoi.application:errorMessages.noChangesErrorSummary',
+    defaultMessage:
+      'Engin vinna eða tekjur hafa verið skráðar, breyttar eða fjarlægðar. Vinsamlegast skráðu að minnsta kosti eina breytingu áður en þú tilkynnir um vinnu eða tekjur.',
+    description:
+      'Error summary when the report is submitted without any additions, changes or deletions',
+  },
   dateToBeforeDateFrom: {
     id: 'vmst.cjoi.application:errorMessages.dateToBeforeDateFrom',
     defaultMessage: 'Dagsetning til má ekki vera á undan dagsetningu frá',

@@ -66,6 +66,7 @@ import {
   GooglePayUnsettledChargeError,
 } from './googlePay/googlePay.utils'
 import { GooglePayChargeInput } from './googlePay/dtos'
+import { GatewayApprovedUnreadableError } from './approvedUnreadableCharge'
 import {
   ChargeCardInput,
   VerificationCallbackInput,
@@ -181,11 +182,25 @@ export class CardPaymentService {
       errorMessage: `Failed to verify card (${paymentFlowId})`,
     })
 
-    if (!data.cardInformation?.cardScheme || !data.cardInformation?.cardUsage) {
-      throw new BadRequestException(CardErrorCode.VerificationFailed)
+    // Nothing reads the verification's card information: the payment is
+    // stored with the charge's. Passed on only when complete, as the response
+    // types promise its card scheme and usage, and logged when it is not, to
+    // show if the gateway stops sending it.
+    const { cardInformation, ...verification } = data
+    const hasCardInformation =
+      !!cardInformation?.cardScheme && !!cardInformation?.cardUsage
+    if (!hasCardInformation) {
+      this.logger.warn(
+        `[${paymentFlowId}] Payment gateway verified without card information`,
+        { correlationId },
+      )
     }
 
-    return data
+    return {
+      ...verification,
+      ...(hasCardInformation ? { cardInformation } : {}),
+      correlationID: verification.correlationID ?? correlationId,
+    }
   }
 
   getMdPayload(md: string): MdNormalised {
@@ -917,9 +932,14 @@ export class CardPaymentService {
       if (declined) {
         throw e
       }
+      // Approved but unreadable is a charge, unless it is the decryption of a
+      // card saved in the Google account (Q8), which charges nothing; anything
+      // else is an unknown outcome
       throw new GooglePayUnsettledChargeError(
         (e as Error).message,
         paymentTrackingData,
+        undefined,
+        e instanceof GatewayApprovedUnreadableError && e.responseCode !== 'Q8',
       )
     }
 
@@ -1082,17 +1102,31 @@ export class CardPaymentService {
 
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
-    const data = await this.sendGooglePayCharge({
-      paymentFlowId,
-      gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
-      requestOptions: generateGooglePaySavedCardChargeRequestOptions({
-        card,
-        verificationData,
-        paymentApiConfig: this.config.paymentGateway,
-        paymentTrackingData,
-        amount,
-      }),
-    })
+    let data: CardPaymentSuccessResponse
+    try {
+      data = await this.sendGooglePayCharge({
+        paymentFlowId,
+        gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
+        requestOptions: generateGooglePaySavedCardChargeRequestOptions({
+          card,
+          verificationData,
+          paymentApiConfig: this.config.paymentGateway,
+          paymentTrackingData,
+          amount,
+        }),
+      })
+    } catch (e) {
+      // Approved but unreadable: the charge saga refunds it by the correlation id
+      if (e instanceof GatewayApprovedUnreadableError) {
+        throw new GooglePayUnsettledChargeError(
+          e.message,
+          paymentTrackingData,
+          undefined,
+          true,
+        )
+      }
+      throw e
+    }
 
     await this.clearVerification(paymentFlowId, correlationId)
     try {
@@ -1330,7 +1364,7 @@ export class CardPaymentService {
     TOut extends { isSuccess: true },
     TErrOut extends {
       isSuccess: false
-      responseCode: string
+      responseCode?: string
       responseDescription?: string
     },
   >({
@@ -1344,7 +1378,7 @@ export class CardPaymentService {
     response: Response
     // The input is left open for schemas that transform, see CardPaymentSuccessSchema
     schema: z.ZodType<TOut, z.ZodTypeDef, unknown>
-    errorSchema: z.ZodType<TErrOut>
+    errorSchema: z.ZodType<TErrOut, z.ZodTypeDef, unknown>
     errorMessage: string
     paymentFlowId?: string
     /** Called when !isSuccess, before throwing. Used for refund's INVALID_3D_SECURE_DATA cache cleanup. */
@@ -1423,6 +1457,14 @@ export class CardPaymentService {
       timestamp: new Date().toISOString(),
       parseError: successParsed.error,
     })
+
+    // An approved charge has moved money: the charge step refunds it
+    if (raw?.isSuccess === true) {
+      throw new GatewayApprovedUnreadableError(
+        responseFields,
+        typeof responseCode === 'string' ? responseCode : undefined,
+      )
+    }
 
     throw new BadRequestException('Failed to parse payment gateway response')
   }

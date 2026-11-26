@@ -557,7 +557,7 @@ export class PdfService {
     previewDefendants?: AppealSummonsPdfDefendant[],
     // Confirm generates inside a DB transaction and uploads after commit so a
     // rolled-back confirmation cannot leave a PDF in S3. Pass false there.
-    options?: { cacheInS3?: boolean },
+    options?: { cacheInS3?: boolean; caseName?: string | null },
   ): Promise<Buffer> {
     // Same cache shape as subpoena: once confirmed (hash set), prefer the
     // frozen object in S3 so later downloads do not drift with case edits.
@@ -591,6 +591,13 @@ export class PdfService {
 
     // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
     // stamp and issuer must be the recorded confirmer — never the downloader.
+    // Case name: explicit preview/confirm override, else the name frozen on a
+    // confirmed summons (so later appeal_case.caseName edits cannot change
+    // those bytes), else the live appeal-case name.
+    const caseName =
+      options?.caseName ??
+      summons?.caseName ??
+      theCase.verdictAppealCase?.caseName
     let generatedPdf: Buffer
 
     if (summons?.confirmedDate) {
@@ -618,6 +625,7 @@ export class PdfService {
           date: summons.confirmedDate,
         },
         summons.confirmedDate,
+        caseName,
       )
     } else {
       generatedPdf = await createAppealSummons(
@@ -626,6 +634,7 @@ export class PdfService {
         { name: user.name, title: user.title },
         undefined,
         undefined,
+        caseName,
       )
     }
 

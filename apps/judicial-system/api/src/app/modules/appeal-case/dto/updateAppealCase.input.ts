@@ -26,6 +26,11 @@ export class UpdateAppealCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly caseName?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly appealAssistantId?: string
 
@@ -61,6 +66,11 @@ export class UpdateAppealCaseInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly appealRulingModifiedHistory?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDate?: string
 
   @Allow()
   @IsOptional()

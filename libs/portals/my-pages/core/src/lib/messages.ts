@@ -982,13 +982,17 @@ export const m = defineMessages({
     id: 'service.portal:company-settings-navigation',
     defaultMessage: 'Stillingar fyrirtækis',
   },
-  mySettingsInformation: {
-    id: 'service.portal:my-settings-information',
-    defaultMessage: 'Upplýsingar',
+  mySettingsPersonalInformation: {
+    id: 'service.portal:my-settings-personal-information',
+    defaultMessage: 'Persónuupplýsingar',
   },
   mySettingsNotifications: {
     id: 'service.portal:my-settings-notifications',
     defaultMessage: 'Tilkynningar',
+  },
+  mySettingsActorNotifications: {
+    id: 'service.portal:my-settings-actor-notifications',
+    defaultMessage: 'Tilkynningar umboða',
   },
   lists: {
     id: 'service.portal:lists',
@@ -2364,6 +2368,44 @@ export const m = defineMessages({
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',
     defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
+  },
+  equality: {
+    id: 'service.portal:equality',
+    defaultMessage: 'Jafnrétti á vinnumarkaði',
+  },
+  equalityDescription: {
+    id: 'service.portal:equality-description',
+    defaultMessage:
+      'Jafnréttisáætlanir, skýrslugjafir og aðgangslyklar fyrirtækisins',
+  },
+  equalitySubmissions: {
+    id: 'service.portal:equality-submissions',
+    defaultMessage: 'Innsendingar',
+  },
+  equalityPlans: {
+    id: 'service.portal:equality-plans',
+    defaultMessage: 'Jafnréttisáætlanir',
+  },
+  equalityPlan: {
+    id: 'service.portal:equality-plan',
+    defaultMessage: 'Jafnréttisáætlun',
+  },
+  equalityReports: {
+    id: 'service.portal:equality-reports',
+    defaultMessage: 'Skýrslugjafir',
+  },
+  equalityReport: {
+    id: 'service.portal:equality-report',
+    defaultMessage: 'Skýrslugjöf',
+  },
+  equalityTooltip: {
+    id: 'service.portal:equality-tooltip',
+    defaultMessage:
+      'Jafnréttisstofa hefur umsjón með gögnum um jafnréttisáætlanir og skýrslugjafir fyrirtækisins.',
+  },
+  equalityApiKeys: {
+    id: 'service.portal:equality-api-keys',
+    defaultMessage: 'Aðgangslyklar',
   },
 })
 

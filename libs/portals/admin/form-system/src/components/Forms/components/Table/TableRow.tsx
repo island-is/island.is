@@ -363,10 +363,11 @@ export const TableRow = ({
               },
             },
           })
-          setFormsState((prevForms) => {
-            const returnedForm = data.updateFormSystemFormStatus.form
-            return [returnedForm, ...prevForms]
-          })
+          const returnedForm = data?.updateFormSystemFormStatus?.form
+          if (!returnedForm?.id)
+            throw new Error('Missing created form revision')
+          setFormsState((prevForms) => [returnedForm, ...prevForms])
+          toast.warning(formatMessage(m.publishedFormRevisionCreatedWarning))
         } catch (error) {
           toast.error(
             formatMessage({
@@ -379,11 +380,21 @@ export const TableRow = ({
       },
     }
 
+    const showUnknownOutcome = () =>
+      toast.warning(
+        formatMessage({
+          id: 'publishChangedFormOutcomeUnknown',
+          defaultMessage:
+            'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
+        }),
+      )
+
     const publish = {
       title: formatMessage(m.publish),
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        const organizationGeneration = getOrganizationGeneration()
         const { data: formData } = await getForm({
           variables: { input: { id } },
         })
@@ -418,6 +429,17 @@ export const TableRow = ({
           )
         } catch (error) {
           console.error('Error publishing form:', error)
+          if (organizationGeneration !== getOrganizationGeneration()) return
+          try {
+            await refreshForms(organizationGeneration)
+          } catch (refreshError) {
+            if (organizationGeneration !== getOrganizationGeneration()) return
+            console.error(
+              'Error refreshing forms after publishing:',
+              refreshError,
+            )
+            showUnknownOutcome()
+          }
         }
       },
     }
@@ -428,14 +450,6 @@ export const TableRow = ({
       iconType: 'outline' as const,
       onClick: async () => {
         const organizationGeneration = getOrganizationGeneration()
-        const showUnknownOutcome = () =>
-          toast.warning(
-            formatMessage({
-              id: 'publishChangedFormOutcomeUnknown',
-              defaultMessage:
-                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
-            }),
-          )
         let publishAttempted = false
         try {
           const { data: formData, error: loadError } = await getForm({
@@ -630,7 +644,9 @@ export const TableRow = ({
           ariaLabel={`delete-form-${id}`}
           description={
             status === FormStatus.PUBLISHED
-              ? formatMessage(m.unpublishFormWarning, { formName: name })
+              ? formatMessage(m.unpublishFormWithRevisionWarning, {
+                  formName: name,
+                })
               : formatMessage(m.deleteFormWarning, { formName: name })
           }
           disclosureElement={
@@ -671,23 +687,6 @@ export const TableRow = ({
               : formatMessage(m.delete)
           }
           onConfirm={async () => {
-            if (
-              status === FormStatus.PUBLISHED &&
-              forms.some(
-                (form) =>
-                  form.derivedFrom === id &&
-                  form.status === FormStatus.PUBLISHED_BEING_CHANGED,
-              )
-            ) {
-              toast.warning(
-                formatMessage({
-                  id: 'unpublishFormWithRevisionWarning',
-                  defaultMessage:
-                    'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
-                }),
-              )
-              return
-            }
             try {
               const { data } = await updateFormStatus({
                 variables: {
@@ -698,7 +697,15 @@ export const TableRow = ({
                 },
               })
               setFormsState((prevForms) => {
-                const filtered = prevForms.filter((form) => form.id !== id)
+                const filtered = prevForms.filter(
+                  (form) =>
+                    form.id !== id &&
+                    !(
+                      status === FormStatus.PUBLISHED &&
+                      form.derivedFrom === id &&
+                      form.status === FormStatus.PUBLISHED_BEING_CHANGED
+                    ),
+                )
                 const returnedForm = data.updateFormSystemFormStatus.form
                 return returnedForm ? [returnedForm, ...filtered] : filtered
               })

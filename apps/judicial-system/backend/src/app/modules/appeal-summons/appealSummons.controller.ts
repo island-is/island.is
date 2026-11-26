@@ -418,6 +418,7 @@ export class AppealSummonsController {
       user,
       undefined,
       defendants,
+      { caseName: dto.caseName },
     )
 
     res.end(pdf)

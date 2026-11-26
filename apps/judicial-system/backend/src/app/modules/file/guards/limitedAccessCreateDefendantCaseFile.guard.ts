@@ -10,7 +10,7 @@ import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../repository'
 
-const allowedCaseFileCategories = [
+const districtConfirmedCaseFileCategories = [
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
@@ -18,6 +18,13 @@ const allowedCaseFileCategories = [
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
   CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+]
+
+// Verdict-appeal greinargerð (and its attachments) requires Landsréttur's
+// confirmation of the appeal advocate — distinct from the district defender.
+const appealConfirmedCaseFileCategories = [
+  CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
 ]
 
 @Injectable()
@@ -37,13 +44,6 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing defendant')
     }
 
-    // Verify the logged-in user is the confirmed defender for this defendant
-    if (
-      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
-    ) {
-      return false
-    }
-
     const caseFileCategory: CaseFileCategory | undefined =
       request.body?.category
 
@@ -51,7 +51,26 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
       throw new BadRequestException('Missing case file category')
     }
 
-    if (allowedCaseFileCategories.includes(caseFileCategory)) {
+    const isDistrictConfirmed = Defendant.isConfirmedDefenderOfDefendant(
+      user.nationalId,
+      [defendant],
+    )
+    const isAppealConfirmed = Defendant.isConfirmedAppealDefenderOfDefendant(
+      user.nationalId,
+      [defendant],
+    )
+
+    if (
+      appealConfirmedCaseFileCategories.includes(caseFileCategory) &&
+      isAppealConfirmed
+    ) {
+      return true
+    }
+
+    if (
+      districtConfirmedCaseFileCategories.includes(caseFileCategory) &&
+      isDistrictConfirmed
+    ) {
       return true
     }
 

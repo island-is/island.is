@@ -559,6 +559,17 @@ const verdictAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
   },
 }
 
+// For a list whose rows are about whichever case-level appeal came last - see
+// presentLatestCaseAppealAsRowAppeal - so both have to be joined for the row
+// to choose between.
+const latestAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
+  ...caseNumber,
+  includes: {
+    ...caseNumber.includes,
+    verdictAppealCase: { attributes: ['appealCaseNumber'] },
+  },
+}
+
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
@@ -1066,8 +1077,8 @@ const verdictAppealProgressTags: Record<
 }
 
 // How far the appeal has come: the status the court of appeals has recorded,
-// and until it has, what can be read off the appeal. "Lokið" comes from the
-// state of the appeal, never from the recorded status. Empty until the appeal
+// and until it has, what can be read off the appeal. A concluded appeal stays
+// on "Dómtekið" until its outcome is released. Empty until the appeal
 // has been sent to the court of appeals, for a withdrawn appeal, and for a
 // verdict appealed before appeal cases were kept.
 const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {
@@ -1705,6 +1716,7 @@ export const caseTableCellGenerators: Record<
   // a title of their own.
   districtCourtRulingDate: rulingDate,
   verdictAppealCaseNumber,
+  latestAppealCaseNumber,
   verdictAppealAppellant,
   verdictAppealState,
   verdictAppealHead,

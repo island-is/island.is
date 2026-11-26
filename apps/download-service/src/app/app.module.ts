@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import {
+  DirectorateOfEqualityClientConfig,
+  DirectorateOfEqualityClientModule,
+} from '@island.is/clients/directorate-of-equality'
+import {
   DistrictCommissionersLicensesClientConfig,
   DistrictCommissionersLicensesClientModule,
 } from '@island.is/clients/district-commissioners-licenses'
@@ -76,6 +80,7 @@ import {
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
+import { DirectorateOfEqualityController } from './modules/directorate-of-equality/directorate-of-equality.controller'
 import { DocumentController } from './modules/documents/document.controller'
 import { EducationDocumentsConfig } from './modules/education-documents/education-document.config'
 import { EducationController } from './modules/education-documents/education-document.controller'
@@ -105,6 +110,7 @@ import { WorkMachinesController } from './modules/work-machines-documents/work-m
     RentalAgreementsController,
     VmstAttachmentController,
     EstatesDocumentsController,
+    DirectorateOfEqualityController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -126,6 +132,7 @@ import { WorkMachinesController } from './modules/work-machines-documents/work-m
     PrimarySchoolClientModule,
     VmstUnemploymentClientModule,
     EstatesClientModule,
+    DirectorateOfEqualityClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -153,6 +160,7 @@ import { WorkMachinesController } from './modules/work-machines-documents/work-m
         VmstUnemploymentClientConfig,
         EducationDocumentsConfig,
         EstatesClientConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],

@@ -1,7 +1,9 @@
+import { AppealEventType } from './eventLog'
 import {
   CaseFileCategory,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
 } from './file'
 
 describe('isRulingOrderWithoutDocument', () => {
@@ -99,9 +101,9 @@ describe('isAppealFileDeletionLocked', () => {
     ).toBe(true)
   })
 
-  // A verdict appeal statement is filed in support of an appeal that already
-  // stands, so it locks the way a kæra file does: on the case number.
-  it('should lock a verdict appeal statement only once the court of appeals has a case number', () => {
+  // A verdict appeal statement locks on Landsréttur's case number, and earlier
+  // once that party has recorded APPEAL_STATEMENT_SENT (needs the party).
+  it('should lock a verdict appeal statement once the court of appeals has a case number', () => {
     expect(
       isAppealFileDeletionLocked(
         CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
@@ -122,10 +124,102 @@ describe('isAppealFileDeletionLocked', () => {
     ).toBe(true)
   })
 
+  it('should lock a verdict appeal statement after APPEAL_STATEMENT_SENT for that party', () => {
+    const appealCase = {
+      appealCaseNumber: null as string | null,
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'd1',
+        },
+      ],
+    }
+
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        appealCase,
+        { defendantId: 'd1' },
+      ),
+    ).toBe(true)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+        appealCase,
+        { defendantId: 'd1' },
+      ),
+    ).toBe(true)
+  })
+
+  it('should not lock on APPEAL_STATEMENT_SENT without a matching party', () => {
+    const appealCase = {
+      appealCaseNumber: null as string | null,
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'd1',
+        },
+      ],
+    }
+
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        appealCase,
+      ),
+    ).toBe(false)
+    expect(
+      isAppealFileDeletionLocked(
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        appealCase,
+        { defendantId: 'd2' },
+      ),
+    ).toBe(false)
+  })
+
   it('should not lock a file that has nothing to do with an appeal', () => {
     expect(
       isAppealFileDeletionLocked(CaseFileCategory.COURT_RECORD, {
         appealCaseNumber: 'LRE-1/2026',
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('isStoredVerdictAppealRulingPdf', () => {
+  const rulingPdf = {
+    category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    type: 'application/pdf',
+    key: 'uploads/case-id/ruling/domur.pdf',
+  }
+
+  it('should be true for a stored PDF of the ruling', () => {
+    expect(isStoredVerdictAppealRulingPdf(rulingPdf)).toBe(true)
+  })
+
+  it('should be false for a ruling that is not a PDF', () => {
+    expect(
+      isStoredVerdictAppealRulingPdf({
+        ...rulingPdf,
+        type: 'application/msword',
+      }),
+    ).toBe(false)
+  })
+
+  it('should be false for a ruling that has not been stored', () => {
+    expect(isStoredVerdictAppealRulingPdf({ ...rulingPdf, key: null })).toBe(
+      false,
+    )
+    expect(isStoredVerdictAppealRulingPdf({ ...rulingPdf, key: '' })).toBe(
+      false,
+    )
+  })
+
+  it('should be false for a PDF of another category', () => {
+    expect(
+      isStoredVerdictAppealRulingPdf({
+        ...rulingPdf,
+        category: CaseFileCategory.APPEAL_RULING,
       }),
     ).toBe(false)
   })

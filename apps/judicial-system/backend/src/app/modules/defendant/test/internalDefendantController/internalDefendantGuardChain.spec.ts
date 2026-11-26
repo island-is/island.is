@@ -87,14 +87,6 @@ const byNationalId = (requested = defendantNationalId) => ({
 
 const routes: RouteRow[] = [
   [
-    'deliverDefendantToCourt',
-    false,
-    receivedCustodyCase,
-    receivedIndictmentCase,
-    byId,
-    DefendantExistsGuard.name,
-  ],
-  [
     'deliverRequestDefendantToCourt',
     false,
     receivedCustodyCase,
