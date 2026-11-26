@@ -243,7 +243,6 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                     <SectionHeading title="Mál til að ljúka" marginBottom={0} />
                     <Button
                       variant="text"
-                      size="small"
                       icon="arrowForward"
                       disabled={!isPresent || staged.length === 0}
                       onClick={() => setModal('confirm')}
@@ -252,20 +251,18 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                     </Button>
                   </div>
                   <div className={styles.stagingSection}>
-                    {staged.length > 0 ? (
-                      <GenericTable
-                        tableId="bulk-complete-cases-staged"
-                        columns={tableColumns}
-                        rows={staged.map((r) =>
-                          getTableRow(r, true, isPresent),
-                        )}
-                        loadingIndicator={LoadingIndicator}
-                        fadeInNewRows
-                        fixedLayout
-                      />
-                    ) : (
+                    <GenericTable
+                      tableId="bulk-complete-cases-staged"
+                      columns={tableColumns}
+                      rows={staged.map((r) => getTableRow(r, true, isPresent))}
+                      loadingIndicator={LoadingIndicator}
+                      fadeInNewRows
+                      fixedLayout
+                      sortable={staged.length > 0}
+                    />
+                    {staged.length === 0 && (
                       <div className={styles.emptyStaging}>
-                        <Text>
+                        <Text variant="small">
                           Engin mál valin – smelltu á mál til að velja það
                         </Text>
                       </div>

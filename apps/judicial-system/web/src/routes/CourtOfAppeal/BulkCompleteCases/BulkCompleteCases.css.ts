@@ -13,16 +13,18 @@ export const sectionHeader = style({
 // Spacing below the staging section sits inside the expanding block, so it
 // opens and closes with the section instead of jumping at either end.
 export const stagingSection = style({
-  paddingBottom: theme.spacing[6],
+  paddingBottom: theme.spacing[5],
 })
 
+// Stands in for the rows of the staging table while nothing is staged.
 export const emptyStaging = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minHeight: 120,
-  padding: theme.spacing[3],
+  minHeight: 54,
+  marginTop: theme.spacing.p2,
+  padding: `0 ${theme.spacing[3]}px`,
   border: `1px dashed ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,
-  background: theme.color.blue100,
+  background: theme.color.white,
 })

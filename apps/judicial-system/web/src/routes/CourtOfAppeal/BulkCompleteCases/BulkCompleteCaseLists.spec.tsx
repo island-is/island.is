@@ -168,6 +168,40 @@ describe('BulkCompleteCaseLists', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('shows the staging columns without sort buttons while nothing is staged', async () => {
+    const { container } = renderLists()
+    await turnOnSelection()
+
+    const [stagingTable, sourceTable] = Array.from(
+      container.querySelectorAll('table'),
+    )
+    expect(
+      within(stagingTable).getAllByRole('columnheader', { hidden: true }),
+    ).toHaveLength(columns.length + 1)
+    expect(
+      within(stagingTable).getByText('Málsnúmer', { ignore: 'button *' }),
+    ).toBeInTheDocument()
+    expect(
+      within(stagingTable).queryByRole('button', { name: /Raða eftir dálki/ }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(sourceTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
+    ).toHaveLength(columns.length)
+    expect(
+      screen.getByText('Engin mál valin – smelltu á mál til að velja það'),
+    ).toBeInTheDocument()
+
+    await stage('S-1/2026, Jón Jónsson')
+
+    expect(container.querySelector('table')).toBe(stagingTable)
+    expect(
+      within(stagingTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
+    ).toHaveLength(columns.length)
+    expect(
+      screen.queryByText('Engin mál valin – smelltu á mál til að velja það'),
+    ).not.toBeInTheDocument()
+  })
+
   it('moves a row to the staging list and back on click', async () => {
     renderLists()
     await turnOnSelection()

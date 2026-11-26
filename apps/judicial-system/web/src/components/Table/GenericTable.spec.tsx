@@ -286,6 +286,24 @@ describe('GenericTable', () => {
     expect(menuCell).not.toHaveAttribute('class')
   })
 
+  it('shows the column titles as plain text when not sortable', () => {
+    render(
+      <GenericTable
+        tableId="test-table"
+        columns={columns}
+        rows={[]}
+        loadingIndicator={() => <span>loading</span>}
+        sortable={false}
+      />,
+    )
+
+    const header = screen.getByRole('columnheader', { name: 'Málsnúmer' })
+    expect(header).not.toHaveAttribute('aria-sort')
+    expect(
+      screen.queryByRole('button', { name: /Raða eftir dálki/ }),
+    ).not.toBeInTheDocument()
+  })
+
   it('exposes the context menu as a single named trigger', async () => {
     renderTable(jest.fn(), false, [{ title: 'Eyða', onClick: jest.fn() }])
 
