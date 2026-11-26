@@ -67,7 +67,10 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
-interface CreateFile extends CreateFileDto {
+// Party ids are stamped by the defendant / civil-claimant create routes, not
+// by CreateFileDto (the case-level body). Callers and specs that pass a
+// party-scoped create use this shape.
+export interface CreateFile extends CreateFileDto {
   defendantId?: string
   civilClaimantId?: string
 }

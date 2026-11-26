@@ -358,7 +358,11 @@ const useS3Upload = (
         rulingFileId: file.rulingFileId ?? rulingFileId,
       }
 
-      const fileDefendantId = file.defendantId ?? defendantId
+      // A civil-claimant stamp must not fall back to the hook's defendantId
+      // when the selected party changes without a page reset — otherwise the
+      // file uploads on the defendant path under the new defendant.
+      const fileDefendantId =
+        file.defendantId ?? (file.civilClaimantId ? undefined : defendantId)
       if (fileDefendantId) {
         return addDefendantFileToCaseState(baseInput, fileDefendantId)
       }
