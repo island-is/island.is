@@ -1,7 +1,15 @@
+import {
+  AnyEventObject,
+  createMachine,
+  MachineConfig,
+  MachineOptions,
+  StateSchema,
+} from 'xstate'
 import { defineWorkflow } from '../defineWorkflow'
 import {
   ApplicationStateMeta,
   DefaultEvents,
+  ScheduledNotificationConfig,
   StateLifeCycle,
 } from '@island.is/application/types'
 
@@ -11,8 +19,8 @@ const pruneAfterDays = (days: number): StateLifeCycle => ({
   whenToPrune: days * 24 * 3600 * 1000,
 })
 
-describe('defineWorkflow — golden-file parity with XState parental-leave', () => {
-  it('produces structurally identical ApplicationStateMeta for prerequisites phase', () => {
+describe('defineWorkflow', () => {
+  it('compiles a multi-phase workflow into a state machine config', () => {
     const { stateMachineConfig } = defineWorkflow({
       initialPhase: 'prerequisites',
       phases: {
@@ -296,6 +304,7 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
       'setMultipleBirthsIfNo',
     ])
     expect(prereqState.on).toEqual({ SUBMIT: 'draft' })
+    expect(stateMachineConfig.states['draft'].entry).toBe('clearAssignees')
   })
 
   it('compiles transitions with guards to XState cond format', () => {
@@ -454,5 +463,125 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
     expect(stateMachineConfig.states['inReview'].on?.REJECT).toBe('draft')
     expect(stateMachineConfig.states['inReview'].on?.APPROVE).toBe('done')
     expect(stateMachineConfig.states['draft'].on?.SUBMIT).toBe('inReview')
+  })
+
+  it('copies entry and exit actions and scheduled notifications onto the state', () => {
+    const scheduledNotifications: ScheduledNotificationConfig[] = [
+      { template: 'HNIPP.AS.PRUNE.REMINDER', delayInMs: 1000 },
+    ]
+    const { stateMachineConfig } = defineWorkflow({
+      initialPhase: 'draft',
+      phases: {
+        draft: {
+          name: 'Draft',
+          status: 'draft',
+          lifecycle: { shouldBeListed: true, shouldBePruned: false },
+          entry: 'clearAssignees',
+          exit: ['validate', 'save'],
+          scheduledNotifications,
+        },
+      },
+    })
+
+    const draft = stateMachineConfig.states['draft']
+    expect(draft.entry).toBe('clearAssignees')
+    expect(draft.exit).toEqual(['validate', 'save'])
+    expect((draft.meta as ApplicationStateMeta).scheduledNotifications).toEqual(
+      scheduledNotifications,
+    )
+  })
+
+  it('leaves out what a phase does not define', () => {
+    const { stateMachineConfig, stateMachineOptions } = defineWorkflow({
+      initialPhase: 'draft',
+      phases: {
+        draft: {
+          name: 'Draft',
+          status: 'draft',
+          lifecycle: { shouldBeListed: true, shouldBePruned: false },
+        },
+      },
+    })
+
+    const draft = stateMachineConfig.states['draft']
+    expect(Object.keys(draft).sort()).toEqual(['meta'])
+    expect(Object.keys(draft.meta).sort()).toEqual([
+      'lifecycle',
+      'name',
+      'status',
+    ])
+    expect(stateMachineOptions).toEqual({})
+  })
+
+  it('compiles an empty transitions object to an empty `on`', () => {
+    const { stateMachineConfig } = defineWorkflow({
+      initialPhase: 'waiting',
+      phases: {
+        waiting: {
+          name: 'Waiting',
+          status: 'inprogress',
+          lifecycle: { shouldBeListed: true, shouldBePruned: false },
+          transitions: {},
+        },
+      },
+    })
+
+    expect(stateMachineConfig.states['waiting'].on).toEqual({})
+  })
+
+  it('produces a config that XState runs, taking the first transition whose guard passes', () => {
+    const { stateMachineConfig, stateMachineOptions } = defineWorkflow<
+      { type: 'SUBMIT' },
+      unknown
+    >({
+      initialPhase: 'draft',
+      phases: {
+        draft: {
+          name: 'Draft',
+          status: 'draft',
+          lifecycle: pruneAfterDays(30),
+          transitions: {
+            SUBMIT: [
+              { target: 'otherParentApproval', guard: 'needsApproval' },
+              { target: 'inReview' },
+            ],
+          },
+        },
+        otherParentApproval: {
+          name: 'Approval',
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(30),
+        },
+        inReview: {
+          name: 'Review',
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(30),
+        },
+      },
+      guards: {
+        needsApproval: (context) =>
+          (context as unknown as { needsApproval: boolean }).needsApproval,
+      },
+    })
+
+    type Context = { needsApproval: boolean }
+    const machine = createMachine<Context>(
+      stateMachineConfig as unknown as MachineConfig<
+        Context,
+        StateSchema,
+        AnyEventObject
+      >,
+      stateMachineOptions as unknown as Partial<
+        MachineOptions<Context, AnyEventObject>
+      >,
+    )
+    const nextWhen = (needsApproval: boolean) =>
+      machine
+        .withContext({ needsApproval })
+        .transition('draft', { type: 'SUBMIT' }).value
+
+    expect(machine.initialState.value).toBe('draft')
+    expect(nextWhen(true)).toBe('otherParentApproval')
+    expect(nextWhen(false)).toBe('inReview')
   })
 })
