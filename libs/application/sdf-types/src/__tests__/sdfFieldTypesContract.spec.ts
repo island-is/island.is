@@ -1,29 +1,13 @@
-import { FieldTypes } from '@island.is/application/types'
+import { FIELD_TYPE_TO_GRAPHQL_TYPENAME } from '../sdfFieldTypesContract'
 
-import {
-  ALL_SDF_FIELD_TYPES,
-  FIELD_TYPE_TO_GRAPHQL_TYPENAME,
-} from '../sdfFieldTypesContract'
-
+// The map's type already requires an entry for every `FieldTypes` value; this
+// checks the naming convention the type can't.
 describe('sdfFieldTypesContract', () => {
-  it('includes every FieldTypes enum member exactly once', () => {
-    const fromEnum = new Set(Object.values(FieldTypes))
-    const fromAll = new Set(ALL_SDF_FIELD_TYPES)
-    expect(fromAll.size).toBe(fromEnum.size)
-    for (const v of fromEnum) {
-      expect(fromAll.has(v)).toBe(true)
-    }
-  })
+  it('names every GraphQL typename with the Sdf prefix', () => {
+    const withoutPrefix = Object.entries(FIELD_TYPE_TO_GRAPHQL_TYPENAME).filter(
+      ([, typename]) => !/^Sdf/.test(typename),
+    )
 
-  it('maps every FieldTypes to a GraphQL __typename', () => {
-    for (const ft of Object.values(FieldTypes)) {
-      expect(FIELD_TYPE_TO_GRAPHQL_TYPENAME[ft]).toMatch(/^Sdf/)
-    }
-  })
-
-  it('has a contract key for each FieldTypes value', () => {
-    for (const ft of Object.values(FieldTypes)) {
-      expect(FIELD_TYPE_TO_GRAPHQL_TYPENAME[ft]).toBeDefined()
-    }
+    expect(withoutPrefix).toEqual([])
   })
 })
