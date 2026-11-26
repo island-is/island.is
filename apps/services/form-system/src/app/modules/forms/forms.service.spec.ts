@@ -58,29 +58,47 @@ describe('FormsService list permissions', () => {
 })
 
 describe('FormsService form list', () => {
-  it('includes the original form ID for derived revisions', async () => {
+  it('selects and returns only list metadata, including the original form ID for revisions', async () => {
     const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const listItem = {
+      id: 'revision',
+      name: { is: 'Form', en: 'Form' },
+      slug: 'form-i-breytingu',
+      modified: new Date('2026-11-26T09:00:00Z'),
+      status: FormStatus.PUBLISHED_BEING_CHANGED,
+      submissionServiceUrl: 'zendesk',
+      isInaccessible: false,
+      lastModifiedBy: 'Editor',
+      derivedFrom: 'original-form',
+    }
+    const findAll = jest.fn().mockResolvedValue([
+      {
+        ...listItem,
+        sectionInfo: { confirmationText: { is: 'Large confirmation text' } },
+        dependencies: [{ parentProp: 'field' }],
+        delegations: ['delegation'],
+        zendeskBrandId: 'brand',
+      },
+    ])
     const service = Object.assign(Object.create(FormsService.prototype), {
       organizationModel: {
         findOne: jest.fn().mockResolvedValue({ id: 'organization' }),
         findAll: jest.fn().mockResolvedValue([]),
       },
       formModel: {
-        findAll: jest.fn().mockResolvedValue([
-          {
-            id: 'revision',
-            derivedFrom: 'original-form',
-            status: FormStatus.PUBLISHED_BEING_CHANGED,
-          },
-        ]),
+        findAll,
       },
     }) as FormsService
 
     const result = await service.findAll(user, user.nationalId)
 
-    expect(result.forms).toEqual([
-      expect.objectContaining({ id: 'revision', derivedFrom: 'original-form' }),
-    ])
+    expect(result.forms).toEqual([listItem])
+    expect(findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attributes: Object.keys(listItem),
+        order: [['modified', 'DESC']],
+      }),
+    )
   })
 })
 

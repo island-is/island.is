@@ -44,6 +44,15 @@ Selecting "Barn" shows guidance below the dropdown explaining that it contains c
 the applicant's custody according to the National Registry, not children outside
 their custody. This guidance is also visible in read-only mode.
 
+## Forms list
+
+The forms-list query requests only the ID, Icelandic name, slug, modification
+date, status, submission-service URL, accessibility flag, last editor, and source
+form ID. The service selects only those columns, without loading form content,
+settings, or dependencies. Organization options remain available.
+Opening the editor or validating publication still fetches the complete form
+on demand.
+
 ## Publishing
 
 After a publish request fails, the forms list refreshes from persisted state:

@@ -24,6 +24,10 @@ These commands are just shorthands for the setup described below.
 
 ## API
 
+The organization forms-list endpoint selects only table/action metadata and
+returns `FormListItemDto` entries. Full form definitions are fetched separately
+by ID; list requests do not load configuration or content columns.
+
 ### Initial setup
 
 First, make sure you have docker, then run:

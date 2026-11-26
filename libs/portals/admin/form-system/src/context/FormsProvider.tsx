@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
-import { FormSystemForm } from '@island.is/api/schema'
 import {
+  FormListItem,
   FormsLoaderResponse,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
@@ -30,7 +30,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     fieldTypes,
     organizationDelegations,
   } = formsLoader
-  const [forms, updateForms] = useState<FormSystemForm[]>(formsState)
+  const [forms, updateForms] = useState<FormListItem[]>(formsState)
   const formsRevision = useRef(0)
   const setForms = useCallback<IFormsContext['setForms']>((update) => {
     formsRevision.current += 1
@@ -72,8 +72,11 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
         if (error) throw error
         const refreshedForms = data?.formSystemForms?.forms
         if (!refreshedForms) throw new Error('Missing forms list')
-        setForms(refreshedForms)
-        return refreshedForms
+        const forms = refreshedForms.filter(
+          (form): form is FormListItem => form !== null,
+        )
+        setForms(forms)
+        return forms
       }
     },
     [getFormsQuery, organizationNationalId, setForms],
@@ -99,7 +102,11 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       return
     }
     if (data?.formSystemForms?.forms) {
-      setForms(data.formSystemForms.forms)
+      setForms(
+        data.formSystemForms.forms.filter(
+          (form): form is FormListItem => form !== null,
+        ),
+      )
     }
 
     const { data: permissionsData } = await getAdminQuery({

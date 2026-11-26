@@ -1,7 +1,10 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { CREATE_FORM, IMPORT_FORM } from '@island.is/form-system/graphql'
+import {
+  CREATE_FORM,
+  FormListItem,
+  IMPORT_FORM,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -201,7 +204,7 @@ export const Forms = () => {
     }
   }, [])
 
-  const formFilter = (form: FormSystemForm) => {
+  const formFilter = (form: FormListItem) => {
     const matchesStatus =
       filter.formState.length === 0 || filter.formState.includes(form.status)
 
@@ -376,10 +379,8 @@ export const Forms = () => {
                 id={f?.id}
                 name={f?.name?.is ?? ''}
                 isHeader={false}
-                translated={f?.isTranslated ?? false}
                 isInaccessible={f?.isInaccessible ?? false}
                 slug={f?.slug ?? ''}
-                beenPublished={f?.beenPublished ?? false}
                 setFormsState={setForms}
                 status={f?.status}
                 lastModified={f?.modified}
