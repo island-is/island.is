@@ -58,8 +58,13 @@ import {
  * status step, takes it back, and the page then offers to confirm it again.
  */
 const VerdictAppealSummary = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    refreshCase,
+  } = useContext(FormContext)
   // Read directly rather than through the shared resolver, for the reason
   // the overview gives.
   const verdictAppealCase = workingCase.verdictAppealCase
@@ -188,15 +193,20 @@ const VerdictAppealSummary = () => {
 
   // Confirms the appeal and closes the modal, staying in it when that fails.
   // The transition writes the confirmed appeal into the working case, so the
-  // page then shows it as confirmed. It writes only to the appeal it was sent
-  // for, so when the user has moved to another appeal meanwhile, nothing on
-  // the page changes. The lock is held until the request ends, so no other
-  // appeal is confirmed while it runs.
+  // page then shows it as confirmed. The write is let through only while the
+  // visit the confirmation began in is still on the page. When the user has
+  // moved to another appeal meanwhile, nothing on the page changes. When they
+  // have come back to this one, the case was fetched again on the way: that
+  // fetch may have read the appeal before it was confirmed, and the appeal
+  // may have been changed since, so the late response is neither trusted nor
+  // ignored, and the case is fetched once more. The lock is held until the
+  // request ends, so no other appeal is confirmed while it runs.
   const confirmAppeal = async () => {
     if (!verdictAppealCase || isConfirmingAppealRef.current) {
       return
     }
 
+    const started = getVerdictAppealConfirmationTarget(workingCase)
     const isStillOnPage = startRequest()
 
     isConfirmingAppealRef.current = true
@@ -207,10 +217,27 @@ const VerdictAppealSummary = () => {
         workingCase.id,
         verdictAppealCase.id,
         AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
-        setWorkingCase,
+        (update) => {
+          if (isStillOnPage()) {
+            setWorkingCase(update)
+          }
+        },
       )
 
-      if (!confirmed || !isStillOnPage()) {
+      if (!confirmed) {
+        return
+      }
+
+      if (!isStillOnPage()) {
+        if (
+          isSameVerdictAppealConfirmationTarget(
+            started,
+            currentTargetRef.current,
+          )
+        ) {
+          refreshCase()
+        }
+
         return
       }
     } finally {

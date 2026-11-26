@@ -35,6 +35,7 @@ import VerdictAppealSummary from './VerdictAppealSummary'
 
 const mockPush = jest.fn()
 const mockScrollTo = jest.fn()
+const mockRefreshCase = jest.fn()
 const mockTransitionAppealCase = jest.fn()
 const mockUpdateAppealCase = jest.fn()
 const mockGetFileUrl = jest.fn()
@@ -231,7 +232,7 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
         isLoadingWorkingCase: false,
         caseNotFound: false,
         isCaseUpToDate: true,
-        refreshCase: jest.fn(),
+        refreshCase: mockRefreshCase,
         getCase: jest.fn(),
         isCreating: false,
       }}
@@ -343,6 +344,7 @@ const reviewDocument = async () => {
 describe('VerdictAppealSummary', () => {
   beforeEach(() => {
     mockPush.mockReset()
+    mockRefreshCase.mockReset()
     mockPush.mockResolvedValue(true)
     mockTransitionAppealCase.mockReset()
     mockUpdateAppealCase.mockReset()
@@ -959,6 +961,59 @@ describe('VerdictAppealSummary', () => {
       expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
       expect(screen.getByTestId('continueButton')).toBeEnabled()
       expect(mockScrollTo).not.toHaveBeenCalled()
+      expect(mockRefreshCase).not.toHaveBeenCalled()
+    })
+
+    it('fetches the case again when a confirmation answers after leaving the appeal and coming back', async () => {
+      let finishTransition: (completed: boolean) => void = () => undefined
+      mockTransitionAppealCase.mockImplementationOnce(
+        (
+          caseId: string,
+          appealCaseId: string,
+          transition: AppealCaseTransition,
+          setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
+        ) =>
+          new Promise<boolean>((resolve) => {
+            finishTransition = (completed) => {
+              if (completed) {
+                confirmAppeal(caseId, appealCaseId, transition, setWorkingCase)
+              }
+
+              resolve(completed)
+            }
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await openModal()
+      await reviewDocument()
+      await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
+
+      expect(mockTransitionAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+        expect.any(Function),
+      )
+
+      rerender(page(otherCase))
+
+      await screen.findByRole('heading', { level: 2, name: 'Mál nr. 556/2026' })
+
+      rerender(page())
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('heading', { level: 2, name: 'Mál nr. 556/2026' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await act(async () => finishTransition(true))
+
+      expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+      expect(mockScrollTo).not.toHaveBeenCalled()
+      expect(mockRefreshCase).toHaveBeenCalledTimes(1)
     })
   })
 
