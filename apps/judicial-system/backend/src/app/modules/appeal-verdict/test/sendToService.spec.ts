@@ -7,6 +7,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
+  AppealEventType,
   CaseFileCategory,
   InstitutionType,
   ServiceRequirement,
@@ -60,6 +61,14 @@ describe('AppealVerdictController - Send to service', () => {
       id: appealCaseId,
       appealCaseNumber: 'L-1/2026',
       appealState: AppealCaseState.COMPLETED,
+      appealEventLogs: [
+        {
+          defendantId,
+          eventType: AppealEventType.APPEALED,
+          created: new Date('2026-01-01'),
+          userRole: UserRole.DEFENDER,
+        },
+      ],
     },
   } as Case
 
@@ -237,6 +246,22 @@ describe('AppealVerdictController - Send to service', () => {
     await expect(sendToService(theCase, [uuid()])).rejects.toBeInstanceOf(
       BadRequestException,
     )
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('rejects when the defendant is on the case but not a party to the appeal', async () => {
+    const coDefendantId = uuid()
+    const caseWithCoDefendant = {
+      ...theCase,
+      defendants: [
+        ...(theCase.defendants ?? []),
+        { id: coDefendantId, nationalId: '1111111111' },
+      ],
+    } as Case
+
+    await expect(
+      sendToService(caseWithCoDefendant, [coDefendantId]),
+    ).rejects.toBeInstanceOf(BadRequestException)
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 

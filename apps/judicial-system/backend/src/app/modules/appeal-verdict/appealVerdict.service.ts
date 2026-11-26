@@ -26,6 +26,7 @@ import {
 
 import { getCaseFileHash } from '../../formatters'
 import { queueMessagesAfterCommit } from '../../middleware'
+import { standingVerdictAppellants } from '../appeal-case'
 import { FileService } from '../file'
 import { isFileTooLargeForPolice, PoliceService } from '../police'
 import {
@@ -93,10 +94,24 @@ export class AppealVerdictService {
       )
     }
 
+    // Same parties that may appear on an appeal summons: defendants with a
+    // standing verdict appeal, not every defendant on the indictment.
+    const appealDefendantIds = new Set(
+      standingVerdictAppellants(appealCase).map(
+        (appellant) => appellant.defendantId,
+      ),
+    )
+
     const sentToServiceDate = new Date()
     const created: AppealVerdict[] = []
 
     for (const defendantId of defendantIds) {
+      if (!appealDefendantIds.has(defendantId)) {
+        throw new BadRequestException(
+          `Defendant ${defendantId} is not a party to verdict appeal case ${appealCase.id}`,
+        )
+      }
+
       const defendant = theCase.defendants?.find(
         (row) => row.id === defendantId,
       )
