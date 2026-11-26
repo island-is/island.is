@@ -15,6 +15,10 @@ import { PAYMENT_STATUS } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { useApplicationId } from '../../ApplicationContext'
+import {
+  getPaymentRedirectStatus,
+  removeCancelledParam,
+} from '../../../lib/paymentRedirect'
 import type { FieldRendererProps } from '../types'
 
 interface ApplicationPayment {
@@ -22,20 +26,17 @@ interface ApplicationPayment {
   fulfilled: boolean
 }
 
-const isComingFromRedirect = () =>
-  !!window.document.location.href.match(/\?done$/) ||
-  !!window.document.location.href.match(/\?cancelled$/)
-
 const getRedirectStatus = () =>
-  window.document.location.href.match(/\?done$/)
-    ? 'done'
-    : window.document.location.href.match(/\?cancelled$/)
-    ? 'cancelled'
-    : undefined
+  getPaymentRedirectStatus(window.document.location.search)
+
+const isComingFromRedirect = () => getRedirectStatus() !== undefined
 
 const removeCancelledFromHref = () => {
-  const href = window.document.location.href
-  window.history.replaceState({}, '', href.replace('?cancelled', ''))
+  window.history.replaceState(
+    {},
+    '',
+    removeCancelledParam(window.document.location.href),
+  )
 }
 
 /**
