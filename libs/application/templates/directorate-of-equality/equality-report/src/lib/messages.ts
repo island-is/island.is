@@ -492,6 +492,23 @@ export const messages = {
         id: 'doe.er.application:equalityReport.information.editorFileTooLarge',
         defaultMessage: 'Skráin er of stór. Hámarksstærð PDF skjals er 4 MB.',
       },
+      // DMR refused the PDF itself: empty, not really a PDF, or over the cap.
+      editorPdfRejected: {
+        id: 'doe.er.application:equalityReport.information.editorPdfRejected',
+        defaultMessage:
+          'Ekki var hægt að taka við skjalinu. Gakktu úr skugga um að það sé gilt PDF skjal, að hámarki 4 MB.',
+      },
+      // The converted text, not the file on disk, is what has to fit.
+      editorDocumentTooLarge: {
+        id: 'doe.er.application:equalityReport.information.editorDocumentTooLarge',
+        defaultMessage:
+          'Skjalið er of stórt til að hlaða því upp. Styttið skjalið eða hlaðið áætluninni upp sem PDF skjali.',
+      },
+      editorImagesNotIncluded: {
+        id: 'doe.er.application:equalityReport.information.editorImagesNotIncluded',
+        defaultMessage:
+          'Myndir í Word skjölum fylgja ekki með áætluninni. Ef myndir eða gröf skipta máli, hlaðið áætluninni upp sem PDF skjali.',
+      },
       editorUploadError: {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
         defaultMessage:

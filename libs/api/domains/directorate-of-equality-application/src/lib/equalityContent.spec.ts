@@ -114,4 +114,45 @@ describe('buildEqualityContentBody', () => {
       expect(body.equalityReportPdf).not.toBe(mangled)
     })
   })
+
+  describe('presigned PDF key', () => {
+    // Opaque to us: passed back exactly as DMR's presign returned it.
+    const key = 'presigned-plan-key'
+
+    it('sends the key and filename, untouched', () => {
+      expect(
+        buildEqualityContentBody({
+          equalityReportPdfKey: key,
+          equalityReportPdfFilename: 'aaetlun.pdf',
+        }),
+      ).toEqual({
+        equalityReportPdfKey: key,
+        equalityReportPdfFilename: 'aaetlun.pdf',
+      })
+    })
+
+    it('drops inline content beside a key, which DMR would refuse with a 400', () => {
+      const body = buildEqualityContentBody({
+        equalityReportPdfKey: key,
+        equalityReportPdfFilename: 'aaetlun.pdf',
+        equalityReportPdf: REAL_PDF_BYTES.toString('base64'),
+        equalityReportContent: base64('<p>Áætlun</p>'),
+      })
+
+      expect(body).toEqual({
+        equalityReportPdfKey: key,
+        equalityReportPdfFilename: 'aaetlun.pdf',
+      })
+    })
+
+    it('leaves the inline paths unchanged when no key is sent', () => {
+      const body = buildEqualityContentBody({
+        equalityReportPdf: REAL_PDF_BYTES.toString('base64'),
+        equalityReportPdfFilename: 'aaetlun.pdf',
+      })
+
+      expect(body).not.toHaveProperty('equalityReportPdfKey')
+      expect(body.equalityReportPdf).toBe(REAL_PDF_BYTES.toString('base64'))
+    })
+  })
 })
