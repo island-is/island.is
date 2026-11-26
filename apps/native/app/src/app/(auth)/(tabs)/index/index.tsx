@@ -447,14 +447,10 @@ export default function HomeScreen() {
               type: 'custom',
               element: (
                 <Image
-                  source={require('@/assets/logo/home-logo.png')}
-                  // The artwork is navy with colour accents, which all but
-                  // disappears on the dark header. The dark design flattens
-                  // the whole logo to one light colour.
-                  style={
+                  source={
                     theme.isDark
-                      ? { tintColor: theme.tokens.foreground.primary }
-                      : undefined
+                      ? require('@/assets/logo/home-logo-dark.png')
+                      : require('@/assets/logo/home-logo.png')
                   }
                 />
               ),

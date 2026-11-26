@@ -116,13 +116,19 @@ export default function TabLayout() {
             {intl.formatMessage({ id: 'home.screenTitle' })}
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
-            src={{
-              default: homeTabActive
-                ? require('@/assets/icons/home-icon-active.png')
-                : require('@/assets/icons/home-icon-inactive.png'),
-              selected: require('@/assets/icons/home-icon-active.png'),
-            }}
-            renderingMode={homeTabActive ? 'original' : 'template'}
+            src={
+              theme.isDark
+                ? require('@/assets/icons/home-icon-inactive.png')
+                : {
+                    default: homeTabActive
+                      ? require('@/assets/icons/home-icon-active.png')
+                      : require('@/assets/icons/home-icon-inactive.png'),
+                    selected: require('@/assets/icons/home-icon-active.png'),
+                  }
+            }
+            renderingMode={
+              !theme.isDark && homeTabActive ? 'original' : 'template'
+            }
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="health">
