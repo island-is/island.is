@@ -1,8 +1,11 @@
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
+  ScopesGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { Audit } from '@island.is/nest/audit'
@@ -29,8 +32,11 @@ export class NationalRegistryResolver {
   ) {}
 
   @Audit()
+  @UseGuards(ScopesGuard)
+  @Scopes(ApiScope.meDetails)
   @Query(() => [FormSystemPersonByNationalId], {
     name: 'formSystemCustodyChildren',
+    nullable: true,
   })
   async getCustodyChildren(
     @CurrentUser() user: User,
