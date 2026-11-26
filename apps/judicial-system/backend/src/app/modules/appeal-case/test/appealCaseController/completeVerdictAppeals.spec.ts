@@ -390,6 +390,14 @@ describe('AppealCaseController - Complete verdict appeals', () => {
       BadRequestException,
     ],
     [
+      'an appeal whose status is no longer completed',
+      () =>
+        confirmedVerdictAppeal({
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        }),
+      BadRequestException,
+    ],
+    [
       'an appeal without its ruling document',
       () => confirmedVerdictAppeal({}, { caseFiles: [] }),
       BadRequestException,
