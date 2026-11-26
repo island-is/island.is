@@ -859,6 +859,35 @@ describe('VerdictAppealSummary', () => {
       expect(screen.getByTestId('continueButton')).toBeEnabled()
     })
 
+    it('does not open the document fetched on an earlier visit to the appeal', async () => {
+      let resolveUrl: (url: string) => void = () => undefined
+      mockGetFileUrl.mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveUrl = resolve
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      rerender(page(otherCase))
+      await screen.findByRole('heading', { level: 2, name: 'Mál nr. 556/2026' })
+
+      rerender(page())
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('heading', { level: 2, name: 'Mál nr. 556/2026' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await act(async () => resolveUrl('https://files.dummy.dd/domur.pdf'))
+
+      expect(screen.queryByText(modalTitle)).not.toBeInTheDocument()
+      expect(screen.queryByTestId('pdfViewer')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
     it('drops the review of the appeal left behind', async () => {
       const { rerender } = renderPage()
 

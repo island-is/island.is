@@ -36,7 +36,6 @@ import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/Verdic
 import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDate from './VerdictAppealRulingDate'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
-import type { VerdictAppealConfirmationTarget } from './VerdictAppealSummary.logic'
 import {
   canConfirmVerdictAppeal,
   getConfirmableVerdictAppealRulingFile,
@@ -87,6 +86,9 @@ const VerdictAppealSummary = () => {
   const currentTargetRef = useRef(
     getVerdictAppealConfirmationTarget(workingCase),
   )
+  // Counts the visits to an appeal: it goes up each time the page moves to
+  // another case or appeal, also when it comes back to one it showed before.
+  const visitRef = useRef(0)
   const caseId = workingCase.id
   const appealCaseId = verdictAppealCase?.id
 
@@ -95,6 +97,7 @@ const VerdictAppealSummary = () => {
   // even while a confirmation is under way: that request is for the appeal
   // left behind and does not touch the one now on the page.
   useEffect(() => {
+    visitRef.current += 1
     currentTargetRef.current = { caseId, appealCaseId }
     setIsConfirming(false)
     setRulingUrl(undefined)
@@ -104,8 +107,18 @@ const VerdictAppealSummary = () => {
     setIsPdfLoading(true)
   }, [caseId, appealCaseId])
 
-  const isStillOnPage = (started: VerdictAppealConfirmationTarget) =>
-    isSameVerdictAppealConfirmationTarget(started, currentTargetRef.current)
+  // Marks the start of a request and returns a check of whether its response
+  // still answers for the page: the appeal on the page is the one the request
+  // began for, in the same visit. Leaving for another appeal and coming back
+  // is a new visit, so a response from the earlier one does not act on it.
+  const startRequest = () => {
+    const started = getVerdictAppealConfirmationTarget(workingCase)
+    const visit = visitRef.current
+
+    return () =>
+      visit === visitRef.current &&
+      isSameVerdictAppealConfirmationTarget(started, currentTargetRef.current)
+  }
 
   const statusUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
@@ -151,14 +164,14 @@ const VerdictAppealSummary = () => {
       return
     }
 
-    const started = getVerdictAppealConfirmationTarget(workingCase)
+    const isStillOnPage = startRequest()
 
     setIsFetchingRulingUrl(true)
 
     try {
       const url = await getFileUrl(rulingFile.id)
 
-      if (!url || !isStillOnPage(started)) {
+      if (!url || !isStillOnPage()) {
         return
       }
 
@@ -167,7 +180,7 @@ const VerdictAppealSummary = () => {
     } finally {
       // Moving to another appeal has already cleared this, and a fetch begun
       // there since must keep it.
-      if (isStillOnPage(started)) {
+      if (isStillOnPage()) {
         setIsFetchingRulingUrl(false)
       }
     }
@@ -184,7 +197,7 @@ const VerdictAppealSummary = () => {
       return
     }
 
-    const started = getVerdictAppealConfirmationTarget(workingCase)
+    const isStillOnPage = startRequest()
 
     isConfirmingAppealRef.current = true
     setIsConfirmingAppeal(true)
@@ -197,7 +210,7 @@ const VerdictAppealSummary = () => {
         setWorkingCase,
       )
 
-      if (!confirmed || !isStillOnPage(started)) {
+      if (!confirmed || !isStillOnPage()) {
         return
       }
     } finally {
