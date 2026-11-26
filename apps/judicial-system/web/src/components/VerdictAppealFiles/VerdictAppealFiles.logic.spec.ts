@@ -397,7 +397,7 @@ describe('getVerdictAppealFileGroups', () => {
 
     expect(groups.map((g) => g.defendant?.id)).toEqual(['other_client_id'])
     expect(getVerdictAppealFileGroupKey(groups[0])).toBe('other_client_id')
-    expect(getVerdictAppealFileGroupTitle(groups[0])).toBeUndefined()
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Dómfelldi')
     expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
       'Verjandi sendi inn',
     )
@@ -435,7 +435,7 @@ describe('getVerdictAppealFileGroups', () => {
     expect(getVerdictAppealFileGroupKey(groups[0])).toBe('claimant_id')
     expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
     expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
-      'Sendandi (GL) sendi inn',
+      'Lögmaður (GL) sendi inn',
     )
   })
 
@@ -467,7 +467,7 @@ describe('getVerdictAppealFileGroups', () => {
     )
 
     expect(groups).toHaveLength(1)
-    expect(getVerdictAppealFileGroupTitle(groups[0])).toBeUndefined()
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
     expect(getVerdictAppealFileGroupTitle(groups[0])).not.toBe('Ákæruvaldið')
   })
 

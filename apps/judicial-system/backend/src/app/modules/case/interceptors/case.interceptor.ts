@@ -38,6 +38,7 @@ import {
   ServiceRequirement,
   User,
   UserRole,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
@@ -1030,6 +1031,10 @@ const transformCase = (
     : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
+  const defenceVerdictAppealPartyIds =
+    isDefence && user
+      ? getDefenceUserVerdictAppealPartyIds(theCase, user.nationalId)
+      : undefined
 
   return {
     ...theCase.toJSON(),
@@ -1115,10 +1120,30 @@ const transformCase = (
           isDistrictCourtUser(user) ||
           isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
       )
-      .map((file) => ({
-        ...file.toJSON(),
-        ...getRulingOrderAppealInfo(file, theCase),
-      })),
+      .map((file) => {
+        const json = {
+          ...file.toJSON(),
+          ...getRulingOrderAppealInfo(file, theCase),
+        }
+
+        // Co-party / prosecution greinargerð rows are listed for defence users
+        // who can download appeal files. Drop filer identity so the overview
+        // label cannot leak who uploaded another party's statement.
+        if (
+          defenceVerdictAppealPartyIds &&
+          file.category &&
+          verdictAppealStatementFileCategories.includes(file.category) &&
+          !isVerdictAppealPartyRow(file, defenceVerdictAppealPartyIds)
+        ) {
+          return {
+            ...json,
+            submittedBy: undefined,
+            fileRepresentative: undefined,
+          }
+        }
+
+        return json
+      }),
     caseRepresentatives: transformCaseRepresentatives(theCase, user),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),

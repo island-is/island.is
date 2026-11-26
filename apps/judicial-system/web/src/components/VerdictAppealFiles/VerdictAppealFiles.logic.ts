@@ -53,7 +53,7 @@ export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/Appe
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
   workingCase: WorkingCase,
-  categories: readonly CaseFileCategory[] | CaseFileCategory[],
+  categories: readonly CaseFileCategory[],
   file: Pick<
     CaseFile,
     'category' | 'defendantId' | 'civilClaimantId' | 'rulingFileId'
@@ -70,7 +70,13 @@ export const canViewVerdictAppealFile = (
 export interface VerdictAppealFileGroup {
   // Defendant declarations and that defendant's greinargerð share a group.
   // Civil-claimant and prosecution greinargerðir have no defendant row.
-  defendant?: Defendant
+  // Appeal-only advocates may only receive id (+ optional name) for a
+  // co-defendant whose statement they can see but whose defendant row is
+  // withheld from their payload.
+  defendant?: Pick<
+    Defendant,
+    'id' | 'name' | 'appealDefenderName' | 'defenderName'
+  >
   civilClaimant?: CivilClaimant
   files: CaseFile[]
 }
@@ -233,7 +239,7 @@ export const getVerdictAppealFileGroups = (
     ].sort(byCreatedAsc)
 
     if (files.length > 0) {
-      groups.push({ defendant: { id: defendantId } as Defendant, files })
+      groups.push({ defendant: { id: defendantId }, files })
     }
   }
 
@@ -269,11 +275,13 @@ export const getVerdictAppealFileGroupTitle = (
   group: VerdictAppealFileGroup,
 ): string | undefined => {
   if (group.defendant) {
-    return group.defendant.name || undefined
+    // Appeal-only advocates get id-only stubs for co-defendants; still show a
+    // heading so the eyebrow is not empty when several parties have filed.
+    return group.defendant.name?.trim() || 'Dómfelldi'
   }
 
   if (group.civilClaimant) {
-    return group.civilClaimant.name || undefined
+    return group.civilClaimant.name?.trim() || 'Bótakröfuhafi'
   }
 
   return 'Ákæruvaldið'
@@ -301,17 +309,9 @@ export const getVerdictAppealFileSentInBy = (
   }
 
   if (group.civilClaimant) {
-    // Stored filer identity must not pick up a later spokesperson's role.
-    if (storedName) {
-      const initials = getInitials(storedName)
-
-      return initials
-        ? `Sendandi (${initials}) sendi inn`
-        : 'Sendandi sendi inn'
-    }
-
     const initials = getInitials(
-      group.civilClaimant.appealSpokespersonName ??
+      storedName ??
+        group.civilClaimant.appealSpokespersonName ??
         group.civilClaimant.spokespersonName,
     )
     const role =
