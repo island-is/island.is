@@ -1,4 +1,7 @@
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import {
   getApplicationLink,
   getSlugFromType,
@@ -37,6 +40,28 @@ describe('getApplicationLink', () => {
     expect(getApplicationLink(application, 'https://island.is/umsoknir/')).toBe(
       'https://island.is/umsoknir/example-common-actions/some-id',
     )
+  })
+
+  it('should add /sdf after the origin for a server-driven application', () => {
+    expect(
+      getApplicationLink(
+        { id: 'some-id', typeId: ApplicationTypes.EXAMPLE_INPUTS_SDF },
+        'https://island.is/umsoknir',
+      ),
+    ).toBe('https://island.is/umsoknir/sdf/example-inputs-sdf/some-id')
+  })
+
+  it('should add /sdf exactly when useSdf is set, for every configured type', () => {
+    for (const [type, config] of Object.entries(ApplicationConfigurations)) {
+      const sdfSegment = config.useSdf ? '/sdf' : ''
+
+      expect(
+        getApplicationLink(
+          { id: 'id-1', typeId: type as ApplicationTypes },
+          'https://island.is/umsoknir',
+        ),
+      ).toBe(`https://island.is/umsoknir${sdfSegment}/${config.slug}/id-1`)
+    }
   })
 
   it('should throw when the application type has no configured slug', () => {
