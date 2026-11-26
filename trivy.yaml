@@ -1,0 +1,15 @@
+# Trivy settings for CI and local runs (auto-loaded from repo root).
+severity:
+  - HIGH
+  - CRITICAL
+ignorefile: .trivyignore.yaml
+timeout: 10m
+scan:
+  # Keep scan data inside our CI.
+  disable-telemetry: true
+  skip-version-check: true
+vulnerability:
+  # No fix yet = nothing to act on.
+  ignore-unfixed: true
+db:
+  no-progress: true

@@ -192,6 +192,80 @@ jobs:
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
 
+  # Trivy scan of the images just pushed. Runs beside success, not in
+  # its needs: never delays merge or deploy. Report only unless the
+  # repo variable TRIVY_FAIL_ON is set (e.g. CRITICAL).
+  trivy-image:
+    needs:
+      - docker-build
+    if: ${{ !cancelled() && needs.docker-build.result != 'skipped' }}
+    runs-on: arc-mergequeue
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+    env:
+      FAIL_ON: ${{ vars.TRIVY_FAIL_ON }}
+    steps:
+      - name: Get docker-build output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /.github/actions/setup-trivy/
+            /scripts/ci/
+            /trivy.yaml
+            /.trivyignore.yaml
+          sparse-checkout-cone-mode: false
+
+      - uses: ./.github/actions/setup-trivy
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Scan images
+        env:
+          RESULT: ${{ steps.read.outputs.result }}
+        run: |
+          [ -n "$RESULT" ] || RESULT='{}'
+          jq -r --arg r "$DOCKER_REGISTRY" '
+            (.imageTag // {}) as $t
+            | (.imageName // {}) | to_entries[]
+            | select(.value != "" and ($t[.key] // "") != "")
+            | "\($r)/\(.value):\($t[.key])"' <<< "$RESULT" | sort -u > "$RUNNER_TEMP/images.txt"
+          echo "Scanning $(wc -l < "$RUNNER_TEMP/images.txt") images"
+          ./scripts/ci/trivy-images.sh "$RUNNER_TEMP/images.txt" "$RUNNER_TEMP/trivy"
+
+      - name: Summary
+        if: always()
+        run: |
+          shopt -s nullglob
+          ./scripts/ci/trivy-summary.sh Images "$RUNNER_TEMP"/trivy/*.json >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        if: always()
+        with:
+          name: trivy-images
+          path: ${{ runner.temp }}/trivy/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Gate
+        if: ${{ env.FAIL_ON != '' }}
+        run: |
+          shopt -s nullglob
+          for r in "$RUNNER_TEMP"/trivy/*.json; do
+            trivy convert --exit-code 1 --severity "$FAIL_ON" --format table "$r"
+          done
+
   e2e:
     uses: ./.github/workflows/e2e.yml
     needs:

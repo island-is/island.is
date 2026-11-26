@@ -1,0 +1,43 @@
+name: Setup Trivy
+description: >-
+  Pinned Trivy binary plus a daily vulnerability DB cache.
+  Pinned by commit SHA: Trivy action tags were hijacked
+  in March 2026 (GHSA-69fq-xp46-6x23).
+
+inputs:
+  version:
+    description: Trivy release to install
+    default: v0.76.2
+
+runs:
+  using: composite
+  steps:
+    # v0.3.1. install.sh verifies the release checksum.
+    - uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567
+      with:
+        version: ${{ inputs.version }}
+        cache: true
+
+    - name: Trivy cache dir
+      id: env
+      shell: bash
+      env:
+        DIR: ${{ runner.temp }}/trivy-cache
+      run: |
+        echo "TRIVY_CACHE_DIR=$DIR" >> "$GITHUB_ENV"
+        echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+    # One DB download per day, shared by every run.
+    - uses: runs-on/cache@v5
+      with:
+        path: |
+          ${{ runner.temp }}/trivy-cache/db
+          ${{ runner.temp }}/trivy-cache/policy
+        key: trivy-db-${{ steps.env.outputs.date }}
+        restore-keys: trivy-db-
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+
+    - name: Trivy version
+      shell: bash
+      run: trivy --version

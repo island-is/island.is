@@ -1,0 +1,69 @@
+name: Trivy
+
+# Repo scan: lockfiles, Dockerfiles, IaC, secrets. Own workflow, so it
+# never waits on or delays the PR / merge-queue pipelines.
+# Results: Security -> Code scanning. PRs only flag NEW alerts,
+# compared with the latest main analysis (push + nightly below).
+# Image scans run in merge-queue.yml after docker-build.
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '30 4 * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: trivy-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  repo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-trivy
+
+      # One scan, then convert: no second pass over the tree.
+      - id: scan
+        name: Scan repo
+        run: |
+          trivy fs . --scanners vuln,secret,misconfig \
+            --format json -o "$RUNNER_TEMP/trivy.json"
+          trivy convert --format sarif -o "$RUNNER_TEMP/trivy.sarif" "$RUNNER_TEMP/trivy.json"
+
+      - name: Summary
+        if: always()
+        run: ./scripts/ci/trivy-summary.sh Repo "$RUNNER_TEMP/trivy.json" >> "$GITHUB_STEP_SUMMARY"
+
+      # v4.39.5. Fork PRs get no security-events token.
+      - uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
+        if: >-
+          always() && steps.scan.outcome == 'success' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
+        with:
+          sarif_file: ${{ runner.temp }}/trivy.sarif
+          category: trivy-repo
+
+      # Committed secrets and CRITICAL misconfig fail. CVEs: report only.
+      - name: Gate
+        run: |
+          r="$RUNNER_TEMP/trivy.json"
+          jq -e '[.Results[]? | .Secrets[]?] | length == 0' "$r" >/dev/null \
+            || { echo "::error::Trivy found committed secrets"; exit 1; }
+          jq -e '[.Results[]? | .Misconfigurations[]?
+                  | select(.Status == "FAIL" and .Severity == "CRITICAL")] | length == 0' "$r" >/dev/null \
+            || { echo "::error::Trivy found CRITICAL misconfigurations"; exit 1; }

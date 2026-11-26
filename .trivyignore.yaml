@@ -1,0 +1,11 @@
+# Accepted Trivy findings. Every entry needs a statement and expiry.
+# Format: https://trivy.dev/latest/docs/configuration/filtering/#trivyignoreyaml
+vulnerabilities: []
+#  - id: CVE-2026-00000
+#    paths: ["webapp/node_modules/foo/package.json"]
+#    statement: Not reachable, see ticket
+#    expired_at: 2027-01-31
+
+misconfigurations:
+  - id: DS-0026
+    statement: Kubernetes probes own health checks, not the image.
