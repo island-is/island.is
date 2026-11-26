@@ -6,6 +6,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   InstitutionType,
   ServiceRequirement,
@@ -55,7 +56,11 @@ describe('AppealVerdictController - Send to service', () => {
         category: CaseFileCategory.VERDICT_APPEAL_RULING,
       },
     ],
-    verdictAppealCase: { id: appealCaseId, appealCaseNumber: 'L-1/2026' },
+    verdictAppealCase: {
+      id: appealCaseId,
+      appealCaseNumber: 'L-1/2026',
+      appealState: AppealCaseState.COMPLETED,
+    },
   } as Case
 
   let mockAppealVerdictRepositoryService: AppealVerdictRepositoryService
@@ -209,6 +214,40 @@ describe('AppealVerdictController - Send to service', () => {
 
     await expect(
       sendToService(caseWithoutAppeal, [defendantId]),
+    ).rejects.toBeInstanceOf(BadRequestException)
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('rejects when the verdict appeal is not completed', async () => {
+    const caseWithOpenAppeal = {
+      ...theCase,
+      verdictAppealCase: {
+        ...theCase.verdictAppealCase,
+        appealState: AppealCaseState.RECEIVED,
+      },
+    } as Case
+
+    await expect(
+      sendToService(caseWithOpenAppeal, [defendantId]),
+    ).rejects.toBeInstanceOf(BadRequestException)
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('rejects when the defendant is not on the case', async () => {
+    await expect(sendToService(theCase, [uuid()])).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+  })
+
+  it('rejects when the defendant has no national id', async () => {
+    const caseWithoutNationalId = {
+      ...theCase,
+      defendants: [{ id: defendantId, noNationalId: true }],
+    } as Case
+
+    await expect(
+      sendToService(caseWithoutNationalId, [defendantId]),
     ).rejects.toBeInstanceOf(BadRequestException)
     expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })

@@ -2,12 +2,15 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
+  AppealCaseState,
   CaseFileCategory,
+  HashAlgorithm,
   PoliceFileTypeCode,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealVerdictModule } from './createTestingAppealVerdictModule'
 
+import { getCaseFileHash } from '../../../formatters'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police/police.service'
 import {
@@ -71,6 +74,7 @@ describe('InternalAppealVerdictController - Deliver appeal verdict to national c
       id: appealCaseId,
       appealCaseNumber,
       appealRulingDate,
+      appealState: AppealCaseState.COMPLETED,
     },
     prosecutorsOffice: { name: 'Lögreglustjórinn á höfuðborgarsvæðinu' },
   } as Case
@@ -188,20 +192,64 @@ describe('InternalAppealVerdictController - Deliver appeal verdict to national c
       })
     })
 
-    it('should persist the police document id', () => {
+    it('should persist the police document id and hash of the sent buffer', () => {
+      const { hash, hashAlgorithm } = getCaseFileHash(buffer)
+
       expect(mockAppealVerdictRepositoryService.update).toHaveBeenCalledWith(
         appealVerdictId,
         {
           ...createDocumentResponse,
-          hash: 'hash',
-          hashAlgorithm: 'SHA-256',
+          hash,
+          hashAlgorithm,
         },
         { transaction },
       )
+      expect(hashAlgorithm).toBe(HashAlgorithm.SHA256)
     })
 
     it('should commit the transaction', () => {
       expect(transaction.commit).toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal verdict already has a police document id', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      mockAppealVerdictRepositoryService.findByIdForUpdate.mockResolvedValue({
+        ...appealVerdict,
+        externalPoliceDocumentId: uuid(),
+      })
+
+      then = await givenWhenThen()
+    })
+
+    it('skips CreateDocument when the police document id is already set', () => {
+      expect(mockPoliceService.createDocument).not.toHaveBeenCalled()
+      expect(mockAppealVerdictRepositoryService.update).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: true })
+      expect(transaction.commit).toHaveBeenCalled()
+    })
+  })
+
+  describe('verdict appeal is not completed', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        ...theCase,
+        verdictAppealCase: {
+          ...theCase.verdictAppealCase,
+          appealState: AppealCaseState.RECEIVED,
+        },
+      } as Case)
+    })
+
+    it('should reject delivery before calling police', () => {
+      expect(mockPoliceService.createDocument).not.toHaveBeenCalled()
+      expect(transaction.rollback).toHaveBeenCalled()
+      expect(then.error).toBeDefined()
+      expect(then.result).toBeUndefined()
     })
   })
 

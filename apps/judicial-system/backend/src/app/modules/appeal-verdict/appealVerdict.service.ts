@@ -13,6 +13,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
@@ -23,6 +24,7 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
+import { getCaseFileHash } from '../../formatters'
 import { queueMessagesAfterCommit } from '../../middleware'
 import { FileService } from '../file'
 import { isFileTooLargeForPolice, PoliceService } from '../police'
@@ -68,6 +70,15 @@ export class AppealVerdictService {
     if (!appealCase) {
       throw new BadRequestException(
         `Case ${theCase.id} has no verdict appeal case`,
+      )
+    }
+
+    // Completing the appeal stamps VERDICT_APPEAL_RULING. Sending earlier
+    // would hand LOKE the unstamped file, and a row with an external police
+    // id cannot be re-sent to correct it.
+    if (appealCase.appealState !== AppealCaseState.COMPLETED) {
+      throw new BadRequestException(
+        `Verdict appeal case ${appealCase.id} must be completed before the COA verdict can be sent to service`,
       )
     }
 
@@ -176,6 +187,16 @@ export class AppealVerdictService {
       return { delivered: true }
     }
 
+    if (
+      theCase.verdictAppealCase?.appealState !== AppealCaseState.COMPLETED
+    ) {
+      throw new BadRequestException(
+        `Verdict appeal case ${
+          theCase.verdictAppealCase?.id ?? 'unknown'
+        } must be completed before the COA verdict can be delivered to national commissioners office`,
+      )
+    }
+
     const defendant = theCase.defendants?.find(
       (row) => row.id === locked.defendantId,
     )
@@ -208,6 +229,10 @@ export class AppealVerdictService {
         theCase,
         rulingFile,
       )
+      // Stamping writes the hash to the case-file row, not the in-memory
+      // rulingFile. Hash the buffer that is actually sent so the appeal
+      // verdict row matches the document LOKE received.
+      const { hash, hashAlgorithm } = getCaseFileHash(rulingPdf)
 
       const appealCaseNumber =
         theCase.verdictAppealCase?.appealCaseNumber ?? theCase.courtCaseNumber
@@ -287,8 +312,8 @@ export class AppealVerdictService {
         locked.id,
         {
           ...createdDocument,
-          hash: rulingFile.hash,
-          hashAlgorithm: rulingFile.hashAlgorithm,
+          hash,
+          hashAlgorithm,
         },
         { transaction },
       )
