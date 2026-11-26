@@ -16,7 +16,7 @@ on:
   workflow_dispatch: {}
 
 concurrency:
-  group: trivy-${{ github.head_ref || github.run_id }}
+  group: trivy-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:

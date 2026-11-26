@@ -228,14 +228,15 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Always blocks: any secret baked into the image. Also runs
-      # after a failed CVE gate, so both results show.
+      # Always blocks: any secret in image files, ENV or history.
+      # Runs whenever there is an image, whatever the CVE report did.
       - name: Trivy secrets gate
         id: trivy-secrets
-        if: always() && (steps.trivy.outcome == 'success' || (steps.trivy.outcome == 'failure' && vars.TRIVY_FAIL_ON != ''))
+        if: always() && steps.trivy.outcome != 'skipped'
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         env:
           TRIVY_IMAGE_SRC: remote
+          TRIVY_IMAGE_CONFIG_SCANNERS: secret
         with:
           skip-setup-trivy: true
           image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
