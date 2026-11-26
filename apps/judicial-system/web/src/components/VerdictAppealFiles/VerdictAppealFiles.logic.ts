@@ -36,9 +36,7 @@ import { hasStandingVerdictAppeal } from '../AppealAppointmentLetter/AppealAppoi
 const isVerdictAppealDeclarationFile = (
   category?: CaseFileCategory | null,
 ): boolean =>
-  Boolean(
-    category && verdictAppealDeclarationFileCategories.includes(category),
-  )
+  Boolean(category && verdictAppealDeclarationFileCategories.includes(category))
 
 // Re-exported because this is where the section's callers and its spec have
 // always asked for them; the rules themselves are shared with the advocate
