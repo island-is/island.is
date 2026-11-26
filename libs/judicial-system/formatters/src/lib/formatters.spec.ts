@@ -65,7 +65,9 @@ describe('buildInlineContentDisposition', () => {
       `inline; filename="Gagn.pdf"; filename*=UTF-8''Gagn.pdf`,
     )
     expect(buildInlineContentDisposition('Á.pdf')).toBe(
-      `inline; filename="_.pdf"; filename*=UTF-8''${encodeURIComponent('Á.pdf')}`,
+      `inline; filename="_.pdf"; filename*=UTF-8''${encodeURIComponent(
+        'Á.pdf',
+      )}`,
     )
   })
 })
