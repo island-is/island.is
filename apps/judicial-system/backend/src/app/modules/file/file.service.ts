@@ -19,7 +19,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
-  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -34,6 +33,7 @@ import {
   isIndictmentCase,
   isRequestCase,
   isRulingOrderWithoutDocument,
+  isVerdictAppealConfirmed,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -255,8 +255,9 @@ export class FileService {
   }
 
   // The court of appeals' judgment or ruling on a verdict appeal is confirmed
-  // by the court as a whole on the day it concludes the appeal: no judge
+  // by the court as a whole, dated the day it concluded the appeal: no judge
   // confirms it in the system, so the stamp carries the court and that date.
+  // It is stamped once the court has confirmed the appeal.
   private async confirmVerdictAppealRuling(
     theCase: Case,
     file: CaseFile,
@@ -265,8 +266,8 @@ export class FileService {
     const verdictAppealCase = theCase.verdictAppealCase
 
     if (
-      verdictAppealCase?.appealState !== AppealCaseState.COMPLETED ||
-      !verdictAppealCase.appealRulingDate
+      !isVerdictAppealConfirmed(verdictAppealCase) ||
+      !verdictAppealCase?.appealRulingDate
     ) {
       return undefined
     }
@@ -309,6 +310,20 @@ export class FileService {
     }
   }
 
+  // The confirmed copy of the court of appeals' judgment or ruling carries the
+  // date of its conclusion. Without a hash the copy is not trusted, so the
+  // next read stamps the document again with the date now on record.
+  async invalidateVerdictAppealRulingConfirmation(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.caseFileRepositoryService.clearHashesForCaseAndCategory(
+      caseId,
+      CaseFileCategory.VERDICT_APPEAL_RULING,
+      { transaction },
+    )
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
@@ -332,10 +347,10 @@ export class FileService {
     }
 
     // The court of appeals' judgment or ruling on a verdict appeal is
-    // confirmed when the court concludes the appeal
+    // confirmed once the court has confirmed the appeal
     if (
       file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+      isVerdictAppealConfirmed(theCase.verdictAppealCase)
     ) {
       return true
     }

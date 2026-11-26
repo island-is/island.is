@@ -29,6 +29,7 @@ import {
   TransactionContext,
 } from '../../../../middleware'
 import { runInRequestContext } from '../../../../test'
+import { FileService } from '../../../file'
 import {
   AppealCase,
   AppealCaseJudge,
@@ -76,6 +77,7 @@ describe('AppealCaseController - Update', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealCaseJudgeRepositoryService: AppealCaseJudgeRepositoryService
   let mockUserService: UserService
+  let mockFileService: FileService
   let mockSequelize: Sequelize
   let transaction: Transaction
   let transactionContext: TransactionContext | undefined
@@ -89,8 +91,11 @@ describe('AppealCaseController - Update', () => {
       appealCaseRepositoryService,
       appealCaseJudgeRepositoryService,
       userService,
+      fileService,
       sequelize,
     } = await createTestingAppealCaseModule()
+
+    mockFileService = fileService
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealCaseJudgeRepositoryService = appealCaseJudgeRepositoryService
@@ -308,6 +313,132 @@ describe('AppealCaseController - Update', () => {
         { appealConclusion: 'Conclusion' },
         { transaction },
       )
+    })
+  })
+
+  describe('date of conclusion', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const enteredDate = new Date('2024-01-10T00:00:00Z')
+
+    it('should store the date on a verdict appeal and leave its ruling document alone before it is confirmed', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealRulingDate: enteredDate,
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealRulingDate: enteredDate },
+        { transaction },
+      )
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+
+    // The confirmed copy of the ruling document is stamped with this date.
+    it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+      'should have the ruling document stamped again when the date of a %s verdict appeal changes',
+      async (appealState) => {
+        const appealCase = {
+          id: appealCaseId,
+          caseId,
+          appealType: AppealCaseType.VERDICT,
+          appealState,
+          appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+        } as AppealCase
+
+        const then = await givenWhenThen(theCase, appealCase, {
+          appealRulingDate: enteredDate,
+        })
+
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          appealCaseId,
+          { appealRulingDate: enteredDate },
+          { transaction },
+        )
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).toHaveBeenCalledWith(caseId, transaction)
+      },
+    )
+
+    it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+      'should leave the ruling document alone when a %s verdict appeal is sent the date it has',
+      async (appealState) => {
+        const appealCase = {
+          id: appealCaseId,
+          caseId,
+          appealType: AppealCaseType.VERDICT,
+          appealState,
+          appealRulingDate: new Date(enteredDate),
+        } as AppealCase
+
+        const then = await givenWhenThen(theCase, appealCase, {
+          appealRulingDate: enteredDate,
+        })
+
+        expect(then.error).toBeUndefined()
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).not.toHaveBeenCalled()
+      },
+    )
+
+    it.each([
+      ['a verdict appeal', AppealCaseType.VERDICT, AppealCaseState.COMPLETED],
+      ['a ruling appeal', AppealCaseType.RULING, AppealCaseState.COMPLETED],
+    ])(
+      'should refuse to clear the date on %s',
+      async (_, appealType, appealState) => {
+        const appealCase = {
+          id: appealCaseId,
+          caseId,
+          appealType,
+          appealState,
+          appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+        } as AppealCase
+
+        const then = await givenWhenThen(theCase, appealCase, {
+          appealRulingDate: null,
+        } as unknown as UpdateAppealCaseDto)
+
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).not.toHaveBeenCalled()
+      },
+    )
+
+    // A ruling appeal is dated when it is completed.
+    it('should refuse the date on a ruling appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.RULING,
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase
+
+      const then = await givenWhenThen(
+        { id: caseId, type: CaseType.CUSTODY } as Case,
+        appealCase,
+        { appealRulingDate: enteredDate },
+      )
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
     })
   })
 

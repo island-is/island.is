@@ -338,14 +338,25 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
     })
   })
 
-  // Nobody outside the court of appeals can tell that it has concluded the
-  // appeal, so the withdrawal is still on offer to them.
+  // Nobody outside the court of appeals can tell that it has confirmed the
+  // appeal, so the withdrawal is still on offer to them. The refusal is the
+  // same whether the appeal is confirmed or completed.
   describe.each([
-    ['one of two appellants', [defendantId, otherDefendantId]],
-    ['the only appellant', [defendantId]],
+    [
+      'one of two appellants',
+      [defendantId, otherDefendantId],
+      AppealCaseState.READY_TO_COMPLETE,
+    ],
+    ['the only appellant', [defendantId], AppealCaseState.READY_TO_COMPLETE],
+    [
+      'one of two appellants',
+      [defendantId, otherDefendantId],
+      AppealCaseState.COMPLETED,
+    ],
+    ['the only appellant', [defendantId], AppealCaseState.COMPLETED],
   ])(
-    'the office withdraws for %s after the court concluded the appeal',
-    (_, appellants) => {
+    'the office withdraws for %s after the court concluded the appeal (%#)',
+    (_, appellants, appealState) => {
       let then: Then
 
       beforeEach(async () => {
@@ -353,7 +364,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
           mockAppealCaseRepositoryService.findById as jest.Mock
         ).mockResolvedValue({
           ...appealCase,
-          appealState: AppealCaseState.COMPLETED,
+          appealState,
         })
         ;(
           mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock

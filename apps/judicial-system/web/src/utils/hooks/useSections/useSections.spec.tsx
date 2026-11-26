@@ -420,6 +420,45 @@ describe('useSections getSections', () => {
       expect(sections[0].children[2].onClick).toBeUndefined()
     })
 
+    // A confirmed appeal is read on its summary, so the section keeps the
+    // same steps once the court has confirmed the appeal and once it is
+    // completed.
+    it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+      'keeps the same steps once the appeal is %s',
+      (appealState) => {
+        mockAppealCaseId = 'verdict-appeal'
+        mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE
+
+        const finished = {
+          ...caseWithBothAppeals,
+          verdictAppealCase: {
+            ...caseWithBothAppeals.verdictAppealCase,
+            appealState,
+          },
+        } as unknown as WorkingCase
+
+        const { result } = renderHook(() => useSections(), {
+          wrapper: makeWrapper(finished),
+        })
+        const sections = result.current.getSections(finished, coaUser)
+
+        expect(sections.filter((s) => s.isActive).map((s) => s.name)).toEqual([
+          'Dómur Landsréttar',
+        ])
+
+        const steps = sections.find((s) => s.name === 'Dómur Landsréttar')
+        expect(steps?.children.map((c) => c.name)).toEqual([
+          'Yfirlit',
+          'Skráning og úthlutun',
+          'Verjandi',
+          'Greinargerðarfrestir',
+          'Staða og lyktir',
+          'Samantekt',
+        ])
+        expect(steps?.children.findIndex((c) => c.isActive)).toBe(5)
+      },
+    )
+
     it('leaves the ruling appeal sections alone when it names that one', () => {
       mockAppealCaseId = 'ruling-appeal'
 

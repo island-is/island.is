@@ -70,7 +70,7 @@ describe.each([
   const appealCase = {
     id: uuid(),
     appealType: AppealCaseType.VERDICT,
-    appealState: AppealCaseState.COMPLETED,
+    appealState: AppealCaseState.READY_TO_COMPLETE,
     appealCaseNumber: '2/2024',
     ...outcome,
   }

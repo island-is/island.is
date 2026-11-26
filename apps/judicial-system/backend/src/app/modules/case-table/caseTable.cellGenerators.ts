@@ -39,6 +39,7 @@ import {
   isRequestCase,
   isRestrictionCase,
   isSuccessfulServiceStatus,
+  isVerdictAppealConfirmed,
   PunishmentType,
   type User as TUser,
   VerdictInfo,
@@ -817,8 +818,9 @@ const verdictAppealAppellant: CaseTableCellGenerator<StringValue> = {
 
 // A verdict appeal is filed and then waits for the court of appeals to receive
 // it, so unlike a ruling appeal the court sees it before it is theirs - as
-// "Nýtt". Everything past receipt belongs to the court of appeals process,
-// which is not built yet, so nothing else is reachable today.
+// "Nýtt". The column belongs to the court's "Mál í vinnslu" list, which holds
+// only appeals in progress; a confirmed, completed or withdrawn appeal is in
+// "Afgreidd mál" and is described there by its result.
 const verdictAppealState: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: { attributes: ['appealState'] },
@@ -891,11 +893,15 @@ const verdictAppealCompletedDate: CaseTableCellGenerator<StringValue> = {
 }
 
 // The result values are the ones appealed rulings already use (owner,
-// 2026-09-17), plus the withdrawal, which ends the case without a ruling.
+// 2026-09-17), plus the withdrawal, which ends the case without a ruling. The
+// column is the court of appeals' own, so the result shows from the moment the
+// court confirms the appeal.
 const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: {
-      attributes: ['appealState', 'appealRulingDecision'],
+      // The type is what tells a confirmed verdict appeal from a completed
+      // ruling appeal.
+      attributes: ['appealType', 'appealState', 'appealRulingDecision'],
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
@@ -905,7 +911,7 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'Z')
     }
 
-    if (appealCase?.appealState !== AppealCaseState.COMPLETED) {
+    if (!appealCase || !isVerdictAppealConfirmed(appealCase)) {
       return generateCell()
     }
 
@@ -1100,8 +1106,9 @@ const verdictAppealProgressTags: Record<
 }
 
 // How far the appeal has come: the status the court of appeals has recorded,
-// and until it has, what can be read off the appeal. A concluded appeal stays
-// on "Dómtekið" until its outcome is released. Empty until the appeal
+// and until it has, what can be read off the appeal. A confirmed appeal stays
+// on "Dómtekið" until its outcome is released, and is "Lokið" once it is
+// completed. Empty until the appeal
 // has been sent to the court of appeals, for a withdrawn appeal, and for a
 // verdict appealed before appeal cases were kept.
 const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {

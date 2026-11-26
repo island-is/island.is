@@ -26,6 +26,7 @@ const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealRulingType',
+  'appealRulingDate',
   'appealRulingModifiedHistory',
   'appealValidToDate',
   'isAppealCustodyIsolation',
@@ -58,6 +59,7 @@ export const courtOfAppealsJudgeTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
+    AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
     AppealCaseTransition.COMPLETE_APPEAL,
     AppealCaseTransition.REOPEN_APPEAL,
   ],
@@ -68,6 +70,7 @@ export const courtOfAppealsRegistrarTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
+    AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
     AppealCaseTransition.COMPLETE_APPEAL,
     AppealCaseTransition.REOPEN_APPEAL,
   ],
@@ -78,6 +81,7 @@ export const courtOfAppealsAssistantTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
+    AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
     AppealCaseTransition.COMPLETE_APPEAL,
     AppealCaseTransition.REOPEN_APPEAL,
   ],

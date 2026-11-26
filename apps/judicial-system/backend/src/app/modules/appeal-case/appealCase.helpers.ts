@@ -29,13 +29,23 @@ import {
 } from '../repository'
 
 // How the court of appeals concludes a verdict appeal is its own until it is
-// released: every other user is presented with an appeal still in progress,
-// whatever the court has saved on it and whether or not it has completed it.
+// released. The court confirms the outcome (READY_TO_COMPLETE) and the appeal
+// is completed when the outcome is released (COMPLETED). Until then every
+// other user is presented with an appeal still in progress, whatever the court
+// has saved on it and whether or not it has confirmed it: the outcome is
+// withheld, a confirmed appeal reads as APPEALED under advisement whatever
+// status the court records, and before confirmation a recorded status of
+// completed reads as under advisement. Statement deadlines are kept: an appeal
+// under advisement still carries the deadlines that ran out, and dropping them
+// at confirmation would tell everyone the court has concluded. Once completed,
+// nothing is withheld or rewritten. The court's ruling document is not part of this: it stays with
+// the court in every state (canUserAccessCaseFileCategory).
 export const getVerdictAppealOutcomeOverride = (
   verdictAppealCase: AppealCase,
   user: User | undefined,
 ) =>
-  isCourtOfAppealsUser(user)
+  isCourtOfAppealsUser(user) ||
+  verdictAppealCase.appealState === AppealCaseState.COMPLETED
     ? {}
     : {
         appealRulingDecision: undefined,
@@ -43,19 +53,16 @@ export const getVerdictAppealOutcomeOverride = (
         appealConclusion: undefined,
         appealRulingModifiedHistory: undefined,
         appealRulingDate: undefined,
-        ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
-          ? {
-              appealState: AppealCaseState.APPEALED,
-              // Masking COMPLETED as APPEALED would leave "statement deadline
-              // ran out" bullets on timeline cards forever; drop them with the
-              // outcome.
-              statementDeadlines: undefined,
-            }
+        ...(verdictAppealCase.appealState === AppealCaseState.READY_TO_COMPLETE
+          ? { appealState: AppealCaseState.APPEALED }
           : {}),
-        // The status the court records for itself says the same thing, so it
-        // is held where the lists hold it: under advisement.
-        ...(verdictAppealCase.verdictAppealStatus ===
-        VerdictAppealStatus.COMPLETED
+        // A confirmed appeal is under advisement for everyone else, whatever
+        // the court records on it afterwards. Before that, a recorded status of
+        // completed says the same thing as a confirmed appeal, so it is held
+        // where the lists hold it: under advisement.
+        ...(verdictAppealCase.appealState ===
+          AppealCaseState.READY_TO_COMPLETE ||
+        verdictAppealCase.verdictAppealStatus === VerdictAppealStatus.COMPLETED
           ? { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
           : {}),
       }
@@ -201,11 +208,12 @@ export const standingVerdictAppealEvents = (
 //   - POSTPONED: the court has postponed the appeal;
 //   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment.
 //
-// COMPLETED is not shown yet. Nothing about how an appeal ended may change for
-// anyone outside the court of appeals before the court releases the outcome,
-// so neither a recorded status of completed nor the completed appeal itself
-// moves a list: it keeps the appeal under advisement, which is where an appeal
-// stands before it is finished.
+// COMPLETED is shown once the appeal is completed, when its outcome is
+// released to everyone. Before that nothing about how an appeal ended may
+// change for anyone outside the court of appeals, so neither a recorded status
+// of completed nor the court's confirmation (READY_TO_COMPLETE) moves a list:
+// it keeps the appeal under advisement, which is where an appeal stands before
+// it is finished.
 export type VerdictAppealProgress =
   | 'SENT'
   | 'RECEIVED'
@@ -226,8 +234,10 @@ const recordedVerdictAppealProgress: Record<
   [VerdictAppealStatus.COMPLETED]: 'UNDER_ADVISEMENT',
 }
 
-// An appeal the court of appeals has concluded, or that was withdrawn: nothing
-// about its progress or its calendar is current any more.
+// An appeal that is completed, or that was withdrawn: nothing about its
+// progress or its calendar is current any more. An appeal the court has
+// confirmed but not completed is not over: outside the court it still reads as
+// an appeal under advisement.
 export const isVerdictAppealOver = (
   appealCase: Pick<AppealCase, 'appealState'>,
 ): boolean =>
@@ -251,7 +261,9 @@ export const nextAppealCourtSession = (
 // is the next one, or the last one held when none is ahead - the status says
 // the appeal is still on the calendar, which explains a date that has passed.
 // Any other recorded status means no session is current. Until the court has
-// recorded one, only a session still ahead is shown.
+// recorded one, only a session still ahead is shown. An appeal the court has
+// confirmed is under advisement for everyone outside the court, whatever
+// status the court records on it afterwards, so it has no current session.
 export const currentAppealCourtSession = (
   appealCase: Pick<
     AppealCase,
@@ -259,7 +271,10 @@ export const currentAppealCourtSession = (
   >,
   now: Date,
 ): AppealCourtSession | 'POSTPONED' | undefined => {
-  if (isVerdictAppealOver(appealCase)) {
+  if (
+    isVerdictAppealOver(appealCase) ||
+    appealCase.appealState === AppealCaseState.READY_TO_COMPLETE
+  ) {
     return undefined
   }
 
@@ -311,11 +326,16 @@ export const verdictAppealProgress = (
     return undefined
   }
 
-  // A concluded appeal is not shown as concluded yet. This is read by lists
-  // outside the court of appeals, and until the court releases the outcome
+  // A completed appeal has its outcome released, so it is shown as completed.
+  if (appealCase.appealState === AppealCaseState.COMPLETED) {
+    return 'COMPLETED'
+  }
+
+  // An appeal the court has confirmed is not shown as concluded. This is read
+  // by lists outside the court of appeals, and until the outcome is released
   // nothing about the appeal may change for anyone else, so it stays under
   // advisement - where a recorded status of completed leaves it too.
-  if (appealCase.appealState === AppealCaseState.COMPLETED) {
+  if (appealCase.appealState === AppealCaseState.READY_TO_COMPLETE) {
     return 'UNDER_ADVISEMENT'
   }
 

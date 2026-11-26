@@ -41,6 +41,8 @@ import {
   isPublicProsecutionUser,
   isSameAppealBench,
   isSameAppealStatementParty,
+  isStoredVerdictAppealRulingPdf,
+  isVerdictAppealConfirmed,
   verdictAppealDeclarationFileCategories,
   VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
@@ -1079,6 +1081,25 @@ export class AppealCaseService {
       )
     }
 
+    // The date an appeal ended is never cleared: a completed appeal and the
+    // stamp on its ruling document both rest on it.
+    if (update.appealRulingDate === null) {
+      throw new BadRequestException(
+        `The ruling date of appeal case ${appealCase.id} cannot be cleared`,
+      )
+    }
+
+    // A ruling appeal is dated when it is completed; only the court of
+    // appeals' conclusion of a verdict appeal is dated by the court itself.
+    if (
+      update.appealRulingDate !== undefined &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and its ruling date is set when it is completed`,
+      )
+    }
+
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
     const data: UpdateAppealCase = { ...columnUpdate }
@@ -1101,6 +1122,20 @@ export class AppealCaseService {
       await this.appealCaseRepositoryService.update(appealCase.id, data, {
         transaction,
       })
+    }
+
+    // The confirmed copy of a confirmed verdict appeal's ruling document is
+    // stamped with this date, so a new date has it stamped again.
+    if (
+      isVerdictAppealConfirmed(appealCase) &&
+      update.appealRulingDate &&
+      update.appealRulingDate.getTime() !==
+        appealCase.appealRulingDate?.getTime()
+    ) {
+      await this.fileService.invalidateVerdictAppealRulingConfirmation(
+        theCase.id,
+        transaction,
+      )
     }
 
     // The api's list is nullable, so a null bench arrives as well as an
@@ -1405,10 +1440,17 @@ export class AppealCaseService {
     }
 
     if (
+      transition === AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      appealCase.appealType === AppealCaseType.VERDICT
+    ) {
+      return this.confirmVerdictAppeal(theCase, appealCase, transaction)
+    }
+
+    if (
       transition === AppealCaseTransition.COMPLETE_APPEAL &&
       appealCase.appealType === AppealCaseType.VERDICT
     ) {
-      return this.completeVerdictAppeal(theCase, appealCase, transaction)
+      return this.releaseVerdictAppeal(theCase, appealCase, transaction)
     }
 
     // Withdrawing an in-court ruling-order appeal is per party: only the
@@ -1612,10 +1654,11 @@ export class AppealCaseService {
       )
     }
 
-    // An appeal the court of appeals has concluded has nothing left to
-    // withdraw, whoever else still stands as an appellant. The outcome stays
-    // with the court until it is released, so the refusal does not say why.
-    if (lockedAppealCase?.appealState === AppealCaseState.COMPLETED) {
+    // An appeal the court of appeals has confirmed or completed has nothing
+    // left to withdraw, whoever else still stands as an appellant. The outcome
+    // stays with the court until it is released, so the refusal does not say
+    // why, nor tell a confirmed appeal from a completed one.
+    if (isVerdictAppealConfirmed(lockedAppealCase)) {
       throw new ForbiddenException('The verdict appeal cannot be withdrawn')
     }
 
@@ -1711,15 +1754,83 @@ export class AppealCaseService {
     return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
   }
 
-  // The court of appeals concludes a verdict appeal once everything about how
-  // it ended is on record: a status of completed, the outcome, whether it is a
-  // judgment or a ruling, the concluding words and the document itself.
+  // Everything about how a verdict appeal ended has to be on record both when
+  // the court confirms it and when its outcome is released: the appeal has
+  // been sent to the court, the court has given it a status of completed, the
+  // outcome, whether it is a judgment or a ruling, the concluding words, the
+  // date it ended and the document itself, stored as a PDF. The court can
+  // still edit the record after confirming, so the release checks it again
+  // rather than publish an empty or contradictory outcome.
+  private assertVerdictAppealRecordComplete(
+    theCase: Case,
+    appealCase: AppealCase,
+  ): void {
+    // The court of appeals can reach the case through another appeal of it
+    // while the public prosecution is still preparing this one.
+    if (!appealCase.sentAppealSummonses?.length) {
+      throw new ForbiddenException(
+        `Verdict appeal ${appealCase.id} has not been sent to the court of appeals`,
+      )
+    }
+
+    const hasRulingFile = (theCase.caseFiles ?? []).some(
+      isStoredVerdictAppealRulingPdf,
+    )
+
+    if (
+      appealCase.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
+      !appealCase.appealRulingDecision ||
+      !appealCase.appealRulingType ||
+      !appealCase.appealConclusion?.trim() ||
+      !appealCase.appealRulingDate ||
+      !hasRulingFile
+    ) {
+      throw new BadRequestException(
+        `Verdict appeal ${appealCase.id} cannot be confirmed or completed before its status is completed and its outcome, ruling type, conclusion, date of conclusion and ruling document, a PDF, are in place`,
+      )
+    }
+  }
+
+  // The court of appeals confirms how a verdict appeal ended once its record
+  // is complete. The date it ended is the court's own and is kept as entered.
   //
   // Nothing is announced. The outcome stays with the court until it is
   // released, so no message is queued and nothing is delivered - which is why
-  // this does not go through applyTransition, where completing an appeal
-  // notifies the parties and delivers the ruling.
-  private async completeVerdictAppeal(
+  // this does not go through applyTransition.
+  private async confirmVerdictAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      theCase,
+      appealCase,
+    )
+
+    this.assertVerdictAppealRecordComplete(theCase, appealCase)
+
+    this.logger.debug(
+      `Confirming verdict appeal ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    const updatedAppealCase = await this.appealCaseRepositoryService.update(
+      appealCase.id,
+      appealCaseUpdate,
+      { transaction },
+    )
+
+    return { caseUpdate, appealCaseUpdate, appealCase: updatedAppealCase }
+  }
+
+  // A confirmed verdict appeal is completed when its outcome is released to
+  // everyone who can open it. The state machine refuses it unless the court has
+  // confirmed the appeal, the record is checked again since the court may have
+  // edited it after confirming, and the date the court entered is kept. It does
+  // not go through applyTransition, where completing an appeal notifies the
+  // parties and delivers the ruling: the court's ruling document stays with the
+  // court, so nothing is queued or delivered here.
+  private async releaseVerdictAppeal(
     theCase: Case,
     appealCase: AppealCase,
     transaction: Transaction,
@@ -1730,33 +1841,7 @@ export class AppealCaseService {
       appealCase,
     )
 
-    // The court of appeals can reach the case through another appeal of it
-    // while the public prosecution is still preparing this one.
-    if (!appealCase.sentAppealSummonses?.length) {
-      throw new ForbiddenException(
-        `Verdict appeal ${appealCase.id} has not been sent to the court of appeals`,
-      )
-    }
-
-    // The document is stamped when it is opened, which only a PDF can be.
-    const hasRulingFile = (theCase.caseFiles ?? []).some(
-      (file) =>
-        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-        file.type === 'application/pdf' &&
-        Boolean(file.key),
-    )
-
-    if (
-      appealCase.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
-      !appealCase.appealRulingDecision ||
-      !appealCase.appealRulingType ||
-      !appealCase.appealConclusion?.trim() ||
-      !hasRulingFile
-    ) {
-      throw new BadRequestException(
-        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion and ruling document, a PDF, are in place`,
-      )
-    }
+    this.assertVerdictAppealRecordComplete(theCase, appealCase)
 
     this.logger.debug(
       `Completing verdict appeal ${appealCase.id} of case ${theCase.id}`,
