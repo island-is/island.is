@@ -17,7 +17,9 @@ import {
  * authorization code grant) and secrets.
  *
  * `@island.is/app` keeps only the browser login, for the installed app
- * versions that use it, until it is retired.
+ * versions that use it, until it is retired. It keeps its native app settings:
+ * those versions report attestation checks under it, and its leftover native
+ * sessions still need an attestation and an app login to refresh.
  */
 const SOURCE_CLIENT_ID = '@island.is/app'
 const CLIENT_ID = '@island.is/native-app'
@@ -253,8 +255,7 @@ const stripSourceClient = async (queryInterface: QueryInterface) => {
     await queryInterface.sequelize.query(
       `
         update client
-        set native_app = null,
-            allowed_acr = array_remove(allowed_acr, :acr)
+        set allowed_acr = array_remove(allowed_acr, :acr)
         where client_id = :clientId
       `,
       { replacements: { ...replacements, acr: BIOMETRICS_ACR }, transaction },
