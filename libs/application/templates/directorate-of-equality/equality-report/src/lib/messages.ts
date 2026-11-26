@@ -533,14 +533,19 @@ export const messages = {
         id: 'doe.er.application:equalityReport.attachments.title',
         defaultMessage: 'Fylgiskjöl',
       },
-      description: {
-        id: 'doe.er.application:equalityReport.attachments.description',
-        defaultMessage:
-          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Leyfileg snið eru PDF, Word (.docx) og Excel (.xlsx, .xls). Hámark 6 skjöl, hvert að hámarki 4 MB. Aðeins Jafnréttisstofa sér skjölin.',
+      // The plan screen's heading; the overview keeps the plain title.
+      optionalTitle: {
+        id: 'doe.er.application:equalityReport.attachments.optionalTitle',
+        defaultMessage: 'Fylgiskjöl (valkvætt)',
       },
-      uploadButton: {
-        id: 'doe.er.application:equalityReport.attachments.uploadButton',
-        defaultMessage: 'Velja skjöl til að hlaða upp',
+      intro: {
+        id: 'doe.er.application:equalityReport.attachments.intro',
+        defaultMessage:
+          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Samþykktar skráartegundir eru: .pdf, .docx, .xlsx, .xls. Hámark 6 skjöl, hvert að hámarki 4 MB.',
+      },
+      uploadFiles: {
+        id: 'doe.er.application:equalityReport.attachments.uploadFiles',
+        defaultMessage: 'Hlaða upp skjölum',
       },
       loadError: {
         id: 'doe.er.application:equalityReport.attachments.loadError',
