@@ -25,51 +25,22 @@ it('preserves localized checkbox sublabels and removes the obsolete visibility f
   ).not.toHaveProperty('hasDescription')
 })
 
-it.each([
-  { showBiologicalChildren: true, showChildrenInCustody: true },
-  { showBiologicalChildren: true, showChildrenInCustody: false },
-  { showBiologicalChildren: false, showChildrenInCustody: true },
-  { showBiologicalChildren: false, showChildrenInCustody: false },
-])('preserves child source settings: %j', (sources) => {
-  const settings = Object.assign(new FieldSettings(), sources)
-
-  for (const type of [FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD]) {
-    expect(FieldSettingsFactory.getClass(type, settings)).toMatchObject(sources)
-  }
-  expect(validateSync(settings)).toEqual([])
-  expect(
-    FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
-  ).not.toHaveProperty('showBiologicalChildren')
-})
-
-it.each([undefined, null])(
-  'defaults unset child source settings to true: %s',
-  (value) => {
+it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
+  'drops obsolete child-source settings while preserving %s settings',
+  (type) => {
     const settings = Object.assign(new FieldSettings(), {
-      showBiologicalChildren: value,
-      showChildrenInCustody: value,
-    })
-
-    expect(
-      FieldSettingsFactory.getClass(FieldTypesEnum.FAMILY, settings),
-    ).toMatchObject({
+      familyType: 'CHILD',
       showBiologicalChildren: true,
-      showChildrenInCustody: true,
+      showChildrenInCustody: false,
+      zendeskIsCustomField: true,
+      zendeskCustomFieldId: 'custom-field',
     })
-  },
-)
 
-it.each(['showBiologicalChildren', 'showChildrenInCustody'])(
-  'rejects non-boolean %s',
-  (property) => {
-    const settings = Object.assign(new FieldSettings(), { [property]: 'true' })
-
-    expect(validateSync(settings)).toEqual([
-      expect.objectContaining({
-        property,
-        constraints: { isBoolean: expect.any(String) },
-      }),
-    ])
+    expect(FieldSettingsFactory.getClass(type, settings)).toEqual({
+      familyType: 'CHILD',
+      zendeskIsCustomField: true,
+      zendeskCustomFieldId: 'custom-field',
+    })
   },
 )
 

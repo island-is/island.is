@@ -35,13 +35,14 @@ section always requires valid input.
 
 ## Family fields
 
-The FAMILY / CHILD dropdown uses `showBiologicalChildren` and
-`showChildrenInCustody` settings to select National Registry `biologicalChildren`
-(legal parentage) and `childCustody` (custody) results. Both settings default to
-true when unset, preserving existing fields. When both are enabled, children
-present in both lists appear once, matched by national ID. Disabling both
-produces an empty list. The selected list is cached on the field for subsequent
-renders.
+The FAMILY / CHILD dropdown uses the National Registry V3 applications client
+(MidlunUmsoknir), calling `GET /Einstaklingar/{kennitala}/forsjaUndir` for the
+logged-in user through `formSystemCustodyChildren`. The existing client returns
+child national IDs; names are fetched using its MidlunUmsoknir `/lite` lookup.
+It lists children in the user's custody,
+not biological children outside custody, and does not use `logforeldrar`.
+There are no child-source settings. The returned list is cached on the field
+for subsequent renders.
 
 ## Asset fields
 
@@ -58,11 +59,8 @@ admin inline preview and preview modal. To support another field type, add its
 data to this file and consume it in that component's preview path instead of
 requesting live data.
 
-The CHILD mock includes a biological-only child, a custody-only child, and a
-child in both lists. The normal child-source settings filter these fixtures, so
-enabling both shows three unique children and disabling both shows none.
-Preview mock lists ignore cached real children and are not written to the field
-configuration.
+The CHILD mock includes two custody children. Preview mock lists ignore cached
+real children and are not written to the field configuration.
 
 Bank account fields do not request or prefill profile bank information in
 preview, even when it is cached. When `fetchBankAccountFromMyPages` is enabled

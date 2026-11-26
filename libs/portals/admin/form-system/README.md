@@ -38,6 +38,12 @@ Full-field saves are serialized per field, including automatic translations and
 subsequent manual edits, so a delayed translation save cannot overwrite a later
 saved edit. Updates to different fields can proceed independently.
 
+## Family settings
+
+Selecting "Barn" shows guidance below the dropdown explaining that it contains children in
+the applicant's custody according to the National Registry, not children outside
+their custody. This guidance is also visible in read-only mode.
+
 ## Publishing
 
 After a publish request fails, the forms list refreshes from persisted state:
