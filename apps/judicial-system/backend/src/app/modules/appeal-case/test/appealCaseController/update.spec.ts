@@ -457,6 +457,131 @@ describe('AppealCaseController - Update', () => {
     )
   })
 
+  // The court's case number, bench and assistant are frozen with the outcome
+  // once a verdict appeal is completed.
+  describe('the court record of a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const assistantId = uuid()
+    const otherAssistantId = uuid()
+    const judgeIds = [uuid(), uuid(), uuid()]
+    const recorded = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealCaseNumber: '1/2024',
+      appealAssistantId: assistantId,
+      appealJudges: bench(judgeIds),
+    }
+    const changes: [string, UpdateAppealCaseDto][] = [
+      ['a new case number', { appealCaseNumber: '2/2024' }],
+      ['an empty case number', { appealCaseNumber: '' }],
+      [
+        'a null case number',
+        { appealCaseNumber: null } as unknown as UpdateAppealCaseDto,
+      ],
+      ['a new assistant', { appealAssistantId: otherAssistantId }],
+      [
+        'a null assistant',
+        { appealAssistantId: null } as unknown as UpdateAppealCaseDto,
+      ],
+      ['a new judge', { appealJudgeIds: [judgeIds[0], judgeIds[1], uuid()] }],
+      [
+        'a reordered bench',
+        { appealJudgeIds: [judgeIds[1], judgeIds[0], judgeIds[2]] },
+      ],
+      ['an empty bench', { appealJudgeIds: [] }],
+    ]
+
+    beforeEach(() => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockImplementation(async (id: string) => ({
+        id,
+        role:
+          id === assistantId || id === otherAssistantId
+            ? UserRole.COURT_OF_APPEALS_ASSISTANT
+            : UserRole.COURT_OF_APPEALS_JUDGE,
+      }))
+    })
+
+    it.each(changes)(
+      'should store %s once the appeal is confirmed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          {
+            ...recorded,
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+          } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+      },
+    )
+
+    it.each(changes)(
+      'should refuse %s once the appeal is completed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+        ).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
+
+    // A form that saves every field it shows sends the record back as it is,
+    // and a null bench is not sent at all.
+    it.each([
+      ['the case number', { appealCaseNumber: '1/2024' }],
+      ['the assistant', { appealAssistantId: assistantId }],
+      ['the bench', { appealJudgeIds: [...judgeIds] }],
+      [
+        'a null bench',
+        { appealJudgeIds: null } as unknown as UpdateAppealCaseDto,
+      ],
+    ])(
+      'should accept %s re-sent unchanged once the appeal is completed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+        expect(
+          mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+        ).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
+
+    it.each(changes)(
+      'should store %s on a completed ruling appeal',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          { id: caseId, type: CaseType.CUSTODY } as Case,
+          {
+            ...recorded,
+            appealType: AppealCaseType.RULING,
+            appealState: AppealCaseState.COMPLETED,
+          } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+      },
+    )
+  })
+
   describe('date of conclusion', () => {
     const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
     const enteredDate = new Date('2024-01-10T00:00:00Z')

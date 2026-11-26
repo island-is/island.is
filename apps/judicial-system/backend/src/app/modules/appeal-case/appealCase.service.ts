@@ -77,7 +77,7 @@ import {
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
 import {
-  changedVerdictAppealOutcomeFields,
+  changedLockedCompletedVerdictAppealFields,
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
@@ -1102,22 +1102,25 @@ export class AppealCaseService {
       )
     }
 
-    // Once a verdict appeal's outcome has been released it is everyone's, so
-    // it is no longer the court's to edit.
+    // A completed verdict appeal is over: its outcome has been released to
+    // everyone, and nothing more is delivered or notified for it. Its record
+    // is frozen - the outcome, and the court's case number, bench and
+    // assistant under which it was decided - before anything is written or
+    // queued.
     if (
       appealCase.appealType === AppealCaseType.VERDICT &&
       appealCase.appealState === AppealCaseState.COMPLETED
     ) {
-      const changedOutcomeFields = changedVerdictAppealOutcomeFields(
+      const changedLockedFields = changedLockedCompletedVerdictAppealFields(
         appealCase,
         update,
       )
 
-      if (changedOutcomeFields.length > 0) {
+      if (changedLockedFields.length > 0) {
         throw new ForbiddenException(
-          `The outcome of completed verdict appeal ${
+          `Completed verdict appeal ${
             appealCase.id
-          } cannot be changed (${changedOutcomeFields.join(', ')})`,
+          } cannot be changed (${changedLockedFields.join(', ')})`,
         )
       }
     }
