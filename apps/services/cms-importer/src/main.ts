@@ -59,6 +59,17 @@ switch (job) {
       })
     break
   }
+  case 'ad-staff-import': {
+    import('./app/ad-staff-import/ad-staff-import-worker')
+      .then((app) => app.adStaffImportWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the AD staff import worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }
