@@ -58,14 +58,16 @@ type CaseEvent =
   | 'VERDICT_DELIVERED_TO_POLICE'
   | 'VERDICT_SERVICE_STATUS'
 
-// Confirming a verdict appeal is not announced: its outcome stays with the court
-// of appeals until it is released. Releasing it completes an áfrýjun, not a
-// kæra, so it is announced as an event of its own.
+// Confirming a verdict appeal, or taking a confirmation back, is not
+// announced: its outcome stays with the court of appeals until it is released.
+// Releasing it completes an áfrýjun, not a kæra, so it is announced as an
+// event of its own.
+type UnannouncedAppealCaseTransition =
+  | AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE
+  | AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+
 type AppealCaseEvent =
-  | Exclude<
-      AppealCaseTransition,
-      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE
-    >
+  | Exclude<AppealCaseTransition, UnannouncedAppealCaseTransition>
   | 'COMPLETE_VERDICT_APPEAL'
   | 'CREATE_APPEAL'
 

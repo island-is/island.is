@@ -541,11 +541,11 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
 
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
 
     await reviewDocument()
 
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeEnabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeEnabled()
   })
 
   it('marks the appeal ready to complete and shows it confirmed', async () => {
@@ -554,7 +554,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     expect(mockTransitionAppealCase).toHaveBeenCalledWith(
       'case-id',
@@ -628,7 +628,7 @@ describe('VerdictAppealSummary', () => {
     await userEvent.click(screen.getByRole('button', { name: 'PDF villa' }))
 
     expect(reviewedCheckbox()).toBeDisabled()
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
   })
 
   it('stays in the modal when the appeal could not be confirmed', async () => {
@@ -637,7 +637,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     await waitFor(() => expect(mockTransitionAppealCase).toHaveBeenCalled())
     expect(screen.getByText(modalTitle)).toBeInTheDocument()
@@ -657,8 +657,8 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
-    await clickRegardless(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
+    await clickRegardless(screen.getByTestId('confirmVerdictAppealButton'))
 
     expect(mockTransitionAppealCase).toHaveBeenCalledTimes(1)
 
@@ -683,7 +683,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     const cancelButton = screen.getByRole('button', { name: 'Hætta við' })
 
@@ -728,6 +728,25 @@ describe('VerdictAppealSummary', () => {
     ).not.toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
+  })
+
+  // Correcting how a confirmed appeal ended takes it back to APPEALED, and the
+  // page then asks for confirmation again, saying nothing of its own about it.
+  it('offers to confirm again once a confirmed appeal is taken back', () => {
+    const { rerender } = renderPage(
+      withAppeal({ appealState: AppealCaseState.READY_TO_COMPLETE }),
+    )
+
+    expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
+    expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
+
+    rerender(page(withAppeal({ appealState: AppealCaseState.APPEALED })))
+
+    expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+    expect(screen.queryAllByText('Jón Jónsson')).toHaveLength(0)
+    expect(screen.getByText('Niðurstaða Landsréttar')).toBeInTheDocument()
+    expect(screen.getByTestId('continueButton')).toHaveTextContent('Staðfesta')
+    expect(screen.getByTestId('continueButton')).toBeEnabled()
   })
 
   // A confirmed appeal has ended, so how it ended stays on the page even when
@@ -858,7 +877,7 @@ describe('VerdictAppealSummary', () => {
       )
       expect(reviewedCheckbox()).not.toBeChecked()
       expect(reviewedCheckbox()).toBeDisabled()
-      expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+      expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
     })
 
     it('leaves the appeal on the page alone when the one left behind is confirmed', async () => {
@@ -884,7 +903,7 @@ describe('VerdictAppealSummary', () => {
 
       await openModal()
       await reviewDocument()
-      await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+      await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
       expect(mockTransitionAppealCase).toHaveBeenCalledWith(
         'case-id',

@@ -56,8 +56,8 @@ import {
  * confirms its own verdict. It marks the appeal ready to complete and sends
  * nothing: the parties do not see the outcome until it is released, which
  * completes the appeal. Once confirmed, the page shows the appeal as it ended
- * and offers nothing more to do; it can still be corrected on the status
- * step.
+ * and offers nothing more to do. Correcting how it ended, here or on the
+ * status step, takes it back, and the page then offers to confirm it again.
  */
 const VerdictAppealSummary = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -334,7 +334,7 @@ const VerdictAppealSummary = () => {
                   onClick: confirmAppeal,
                   isLoading: isTransitioningAppealCase,
                   isDisabled: !hasReviewed || isPdfLoading || pdfError,
-                  dataTestId: 'confirmCompleteAppealButton',
+                  dataTestId: 'confirmVerdictAppealButton',
                 },
               ]}
               footerCheckbox={{
