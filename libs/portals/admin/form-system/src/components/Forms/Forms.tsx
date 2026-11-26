@@ -32,6 +32,7 @@ import {
   TableHeader,
 } from './components/Table/TableHeader'
 import { TableRow } from './components/Table/TableRow'
+import * as styles from './Forms.css'
 
 const defaultFormState = [
   FormStatus.IN_DEVELOPMENT,
@@ -60,6 +61,7 @@ export const Forms = () => {
   const [sort, setSort] = useState<{
     column: SortColumn | null
     direction: SortDirection
+    statusFirst?: FormListItem['status']
   }>({
     column: null,
     direction: 'asc',
@@ -218,14 +220,36 @@ export const Forms = () => {
   }
 
   const statusSummary = (
-    <Box display="flex" columnGap={2} rowGap={1} flexWrap="wrap">
+    <Box
+      className={styles.statusSummary}
+      display="flex"
+      columnGap={2}
+      rowGap={1}
+      flexWrap="wrap"
+    >
       {[
         FormStatus.PUBLISHED,
         FormStatus.IN_DEVELOPMENT,
         FormStatus.PUBLISHED_BEING_CHANGED,
       ].map((status) => (
-        <Box key={status} display="flex" alignItems="center" columnGap={1}>
-          <StatusTag status={status} />
+        <Box
+          key={status}
+          className={styles.status[status]}
+          display="flex"
+          alignItems="center"
+          columnGap={1}
+        >
+          <StatusTag
+            status={status}
+            active={sort.statusFirst === status}
+            onClick={() =>
+              setSort({
+                column: 'status',
+                direction: 'asc',
+                statusFirst: status,
+              })
+            }
+          />
           <Text fontWeight="semiBold">
             {forms.filter((form) => form.status === status).length}
           </Text>
@@ -392,6 +416,12 @@ export const Forms = () => {
                 )
               }
               if (sort.column === 'status') {
+                if (sort.statusFirst) {
+                  const priority =
+                    Number(b.status === sort.statusFirst) -
+                    Number(a.status === sort.statusFirst)
+                  if (priority !== 0) return priority
+                }
                 return dir * (a.status ?? '').localeCompare(b.status ?? '')
               }
               return 0

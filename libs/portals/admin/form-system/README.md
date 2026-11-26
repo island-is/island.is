@@ -55,6 +55,12 @@ on demand.
 Status totals for the selected organization's forms appear in a horizontal row
 above the "Opna síu" and "Sía eftir leitarorði" controls, using the table's status
 tags. Totals include all loaded forms, regardless of the active filters.
+Clicking a status tag moves matching forms to the top without hiding other
+statuses or changing active filters. Hover and focus use each tag's matching
+color (green, blue, or purple), with a visible keyboard-focus outline. Clicking
+outside removes the highlight without changing the chosen sort order.
+Sorting by name or last-modified date clears the selected priority. The "Staða"
+table heading is not sortable; use the status tags above the filters instead.
 The "Nýtt" and "Flytja inn" buttons remain on the left.
 
 ## Publishing
