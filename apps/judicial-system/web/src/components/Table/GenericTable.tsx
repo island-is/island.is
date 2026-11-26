@@ -1,5 +1,6 @@
-import { type JSX, type MouseEvent, useMemo } from 'react'
+import { type JSX, type MouseEvent, useEffect, useMemo, useRef } from 'react'
 import { useLocalStorage } from 'react-use'
+import cn from 'classnames'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 import { Icon } from '@island.is/island-ui/core'
@@ -18,6 +19,9 @@ interface GenericTableProps<Cell> {
   tableId: string
   columns: {
     title: string
+    // A CSS width for the column, such as '14%'. Used with fixedLayout, where
+    // the columns without one share what is left.
+    width?: string
     compare: (a: Cell, b: Cell) => number
     render: (cell: Cell) => React.ReactNode
   }[]
@@ -36,10 +40,13 @@ interface GenericTableProps<Cell> {
     actionLabel?: string
   }[]
   loadingIndicator: () => JSX.Element
-  // Rows carry their id as a motion layoutId, so a row that leaves this
-  // table and appears in another one under the same LayoutGroup slides
-  // between them, and the rows around it slide into place.
-  animateRowLayout?: boolean
+  // A row added to the table after its first render fades in. The rows it
+  // starts with appear at once, and nothing else moves.
+  fadeInNewRows?: boolean
+  // Columns take their given widths, or share the rest of the table's width,
+  // rather than sizing to their content, so tables with the same columns line
+  // up with each other.
+  fixedLayout?: boolean
 }
 
 const GenericTable = <Cell,>({
@@ -47,9 +54,12 @@ const GenericTable = <Cell,>({
   rows,
   columns,
   loadingIndicator: LoadingIndicator,
-  animateRowLayout = false,
+  fadeInNewRows = false,
+  fixedLayout = false,
 }: GenericTableProps<Cell>) => {
   const reduceMotion = useReducedMotion()
+  // Rows mounted before this is set are the ones the table started with.
+  const hasRenderedRef = useRef(false)
   const [sortConfig, setSortConfig] = useLocalStorage<{
     column: number
     direction: 'ascending' | 'descending'
@@ -81,15 +91,22 @@ const GenericTable = <Cell,>({
     }
   }, [columns, rows, sortConfig])
 
+  useEffect(() => {
+    hasRenderedRef.current = true
+  }, [])
+
   return (
     <div className={styles.tableWrapper}>
-      <table className={styles.table}>
+      <table
+        className={cn(styles.table, { [styles.fixedLayoutTable]: fixedLayout })}
+      >
         <thead className={styles.thead}>
           <tr>
             {columns.map((c, idx) => (
               <th
                 key={idx}
                 className={styles.th}
+                style={fixedLayout && c.width ? { width: c.width } : undefined}
                 aria-sort={
                   sortConfig?.column === idx ? sortConfig.direction : 'none'
                 }
@@ -119,85 +136,106 @@ const GenericTable = <Cell,>({
                 />
               </th>
             ))}
-            {<th className={styles.th} />}
+            {
+              <th
+                className={cn(styles.th, {
+                  [styles.fixedLayoutMenuColumn]: fixedLayout,
+                })}
+              />
+            }
           </tr>
         </thead>
         <tbody>
-          {rows.map((r, idx) => (
-            <motion.tr
-              // A layout animated row is keyed by its id, so the element
-              // follows the row rather than its position in the list.
-              key={animateRowLayout ? r.id : idx}
-              layoutId={animateRowLayout ? r.id : undefined}
-              layout={animateRowLayout ? 'position' : undefined}
-              transition={
-                animateRowLayout
-                  ? {
-                      layout: reduceMotion
-                        ? instantTransition
-                        : enterExitTransition,
-                    }
-                  : undefined
-              }
-              role="button"
-              tabIndex={r.isDisabled ? -1 : 0}
-              aria-label={
-                r.actionLabel ?? (r.label ? `Opna mál ${r.label}` : 'Opna mál')
-              }
-              aria-disabled={r.isDisabled}
-              className={styles.tableRowContainer}
-              onClick={(evt) => !r.isDisabled && r.onClick(evt)}
-              onKeyDown={onEnterOrSpace(() => !r.isDisabled && r.onClick())}
-            >
-              {r.cells.map((cell, idx) => (
-                <td key={idx}>{columns[idx].render(cell)}</td>
-              ))}
-              <td width="4%">
-                <AnimatePresence initial={false} mode="popLayout">
-                  {r.isLoading ? (
-                    <motion.div
-                      className={styles.smallContainer}
-                      key={r.id}
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 1 }}
-                      exit={{
-                        opacity: 0,
-                        y: 5,
-                      }}
-                      transition={{ type: 'spring' }}
-                    >
-                      <LoadingIndicator />
-                    </motion.div>
-                  ) : (
-                    r.contextMenuItems.length > 0 && (
-                      <ContextMenu
-                        items={r.contextMenuItems}
-                        render={
-                          <motion.div
-                            className={styles.contextMenuButton}
-                            aria-label={`Frekari aðgerðir fyrir mál ${
-                              r.label ?? r.id
-                            }`}
-                            key={r.id}
-                            initial={{ opacity: 1 }}
-                            animate={{ opacity: 1, y: 1 }}
-                            exit={{ opacity: 0, y: 5 }}
-                            onClick={(evt) => evt.stopPropagation()}
-                          >
-                            <Icon
-                              icon="ellipsisVertical"
-                              color="blue400"
-                              size="small"
-                            />
-                          </motion.div>
-                        }
-                      />
-                    )
-                  )}
-                </AnimatePresence>
-              </td>
-            </motion.tr>
-          ))}
+          {rows.map((r, idx) => {
+            const rowProps = {
+              role: 'button',
+              tabIndex: r.isDisabled ? -1 : 0,
+              'aria-label':
+                r.actionLabel ?? (r.label ? `Opna mál ${r.label}` : 'Opna mál'),
+              'aria-disabled': r.isDisabled,
+              className: styles.tableRowContainer,
+              onClick: (evt: MouseEvent<HTMLTableRowElement>) =>
+                !r.isDisabled && r.onClick(evt),
+              onKeyDown: onEnterOrSpace(() => !r.isDisabled && r.onClick()),
+            }
+
+            const content = (
+              <>
+                {r.cells.map((cell, idx) => (
+                  <td key={idx}>{columns[idx].render(cell)}</td>
+                ))}
+                <td
+                  width="4%"
+                  className={
+                    fixedLayout ? styles.fixedLayoutMenuColumn : undefined
+                  }
+                >
+                  <AnimatePresence initial={false} mode="popLayout">
+                    {r.isLoading ? (
+                      <motion.div
+                        className={styles.smallContainer}
+                        key={r.id}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 1 }}
+                        exit={{
+                          opacity: 0,
+                          y: 5,
+                        }}
+                        transition={{ type: 'spring' }}
+                      >
+                        <LoadingIndicator />
+                      </motion.div>
+                    ) : (
+                      r.contextMenuItems.length > 0 && (
+                        <ContextMenu
+                          items={r.contextMenuItems}
+                          render={
+                            <motion.div
+                              className={styles.contextMenuButton}
+                              aria-label={`Frekari aðgerðir fyrir mál ${
+                                r.label ?? r.id
+                              }`}
+                              key={r.id}
+                              initial={{ opacity: 1 }}
+                              animate={{ opacity: 1, y: 1 }}
+                              exit={{ opacity: 0, y: 5 }}
+                              onClick={(evt) => evt.stopPropagation()}
+                            >
+                              <Icon
+                                icon="ellipsisVertical"
+                                color="blue400"
+                                size="small"
+                              />
+                            </motion.div>
+                          }
+                        />
+                      )
+                    )}
+                  </AnimatePresence>
+                </td>
+              </>
+            )
+
+            return fadeInNewRows ? (
+              <motion.tr
+                // Keyed by its id, so a row stays mounted while the rows
+                // around it come and go, and only a new row fades in.
+                key={r.id}
+                initial={hasRenderedRef.current ? { opacity: 0 } : false}
+                animate={{ opacity: 1 }}
+                transition={
+                  reduceMotion ? instantTransition : enterExitTransition
+                }
+                {...rowProps}
+              >
+                {content}
+              </motion.tr>
+            ) : (
+              <tr key={idx} {...rowProps}>
+                {content}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

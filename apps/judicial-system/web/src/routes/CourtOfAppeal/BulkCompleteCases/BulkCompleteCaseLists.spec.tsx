@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -7,6 +8,7 @@ import {
 } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 
+import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
 import type { CaseTableRow } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseActionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -55,20 +57,22 @@ const caseRow = (
   caseId: string,
   caseNumber: string,
   defendant: string,
+  appealCaseId = `${caseId}-appeal`,
 ): CaseTableRow => ({
   caseId,
-  appealCaseId: `${caseId}-appeal`,
+  appealCaseId,
   defendantIds: [`${caseId}-defendant`],
   actionOnRowClick: CaseActionType.OPEN_APPEAL_CASE,
   contextMenuActions: [],
   isMyCase: false,
   cells: [
+    // Sort values differ from the text shown, as a padded case number does.
     {
-      sortValue: caseNumber,
+      sortValue: `sort-${caseNumber}`,
       value: { __typename: 'StringValue', str: caseNumber },
     },
     {
-      sortValue: defendant,
+      sortValue: defendant.toLowerCase(),
       value: { __typename: 'StringValue', str: defendant },
     },
   ],
@@ -375,6 +379,204 @@ describe('BulkCompleteCaseLists', () => {
     expect(
       screen.getAllByRole('button', { name: /^Opna mál S-/ }),
     ).toHaveLength(3)
+  })
+
+  it('takes the confirm modal down before the success modal shows', async () => {
+    renderLists()
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+    await user.click(confirmButton())
+
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+
+    expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+    expect(screen.getAllByRole('dialog')).toHaveLength(1)
+    expect(screen.queryByText('Viltu ljúka málunum?')).not.toBeInTheDocument()
+  })
+
+  it('lays out both lists with the same fixed columns', async () => {
+    const { container } = renderLists()
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+
+    const tables = container.querySelectorAll('table')
+    expect(tables).toHaveLength(2)
+    tables.forEach((table) =>
+      expect(table).toHaveClass(tableStyles.fixedLayoutTable),
+    )
+  })
+
+  it('gives both lists the design widths when there are six columns', async () => {
+    const sixColumns = [
+      'Málsnúmer',
+      'Varnaraðili',
+      'Tegund',
+      'Staða',
+      'Dómsuppkvaðning',
+      'Dómari',
+    ].map((title) => ({ title }))
+    const { container } = render(
+      <BulkCompleteCaseLists
+        rows={rows}
+        columns={sixColumns}
+        onComplete={jest.fn(async () => undefined)}
+      />,
+    )
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+
+    const tables = container.querySelectorAll('table')
+    expect(tables).toHaveLength(2)
+    tables.forEach((table) =>
+      expect(
+        Array.from(table.querySelectorAll('th')).map((th) => th.style.width),
+      ).toEqual([
+        '14.14%',
+        '17.11%',
+        '14.88%',
+        '17.11%',
+        '16.37%',
+        '15.63%',
+        '',
+      ]),
+    )
+  })
+
+  it('shows the success modal when the completed cases leave the list', async () => {
+    let resolveComplete: () => void = () => undefined
+    const onComplete = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveComplete = resolve
+        }),
+    )
+    const { rerender } = renderLists(onComplete)
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Gunna Gunnarsdóttir')
+    await stage('S-3/2026, Siggi Sigurðsson')
+    await user.click(confirmButton())
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+
+    await act(async () => resolveComplete())
+    rerender(
+      <BulkCompleteCaseLists
+        rows={[]}
+        columns={columns}
+        onComplete={onComplete}
+      />,
+    )
+
+    expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Áfrýjun er lokið í 3 málum: S-1/2026, S-2/2026 og S-3/2026.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Engin mál fundust')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Loka' }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+    expect(screen.getByText('Engin mál fundust')).toBeInTheDocument()
+
+    rerender(
+      <BulkCompleteCaseLists
+        rows={rows}
+        columns={columns}
+        onComplete={onComplete}
+      />,
+    )
+
+    expect(screen.getByLabelText('Velja mál til að ljúka')).not.toBeChecked()
+    expect(stagingHeading()).not.toBeInTheDocument()
+    expect(
+      screen.getAllByRole('button', { name: /^Opna mál S-/ }),
+    ).toHaveLength(3)
+  })
+
+  it('stages the rows of one case each on their own', async () => {
+    const onComplete = jest.fn(async () => undefined)
+    const sameCaseRows = [
+      caseRow('a', 'S-1/2026', 'Jón Jónsson', 'a-appeal-1'),
+      caseRow('a', 'S-2/2026', 'Jón Jónsson', 'a-appeal-2'),
+    ]
+    renderLists(onComplete, sameCaseRows)
+    await turnOnSelection()
+
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Jón Jónsson')
+    await user.click(
+      screen.getByRole('button', {
+        name: unstageLabel('S-1/2026, Jón Jónsson'),
+      }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: stageLabel('S-1/2026, Jón Jónsson') }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', {
+        name: unstageLabel('S-2/2026, Jón Jónsson'),
+      }),
+    ).toBeInTheDocument()
+
+    await user.click(confirmButton())
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+
+    expect(onComplete).toHaveBeenCalledWith([sameCaseRows[1]])
+  })
+
+  it('moves focus to the row that takes the place of a row moved with the keyboard', async () => {
+    renderLists()
+    await turnOnSelection()
+
+    screen
+      .getByRole('button', { name: stageLabel('S-1/2026, Jón Jónsson') })
+      .focus()
+    await user.keyboard('{Enter}')
+
+    const sourceRows = screen.getAllByRole('button', { name: /^Velja mál/ })
+    expect(sourceRows[0]).toHaveAttribute(
+      'aria-label',
+      stageLabel('S-2/2026, Gunna Gunnarsdóttir'),
+    )
+    expect(sourceRows[0]).toHaveFocus()
+  })
+
+  it('moves focus to the toggle when a keyboard move empties the list', async () => {
+    renderLists()
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+
+    screen
+      .getByRole('button', { name: unstageLabel('S-1/2026, Jón Jónsson') })
+      .focus()
+    await user.keyboard('{Enter}')
+
+    expect(screen.getByLabelText('Velja mál til að ljúka')).toHaveFocus()
+  })
+
+  it('announces each move', async () => {
+    const { container } = renderLists()
+    await turnOnSelection()
+    const liveRegion = container.querySelector('[aria-live="polite"]')
+
+    await stage('S-1/2026, Jón Jónsson')
+    expect(liveRegion).toHaveTextContent(
+      'Mál S-1/2026, Jón Jónsson valið til að ljúka',
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: unstageLabel('S-1/2026, Jón Jónsson'),
+      }),
+    )
+    expect(liveRegion).toHaveTextContent(
+      'Mál S-1/2026, Jón Jónsson tekið af lista',
+    )
   })
 
   it('shows that no cases were found and no toggle when there are no rows', () => {

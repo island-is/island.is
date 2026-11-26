@@ -1,12 +1,13 @@
 import type { FC, MouseEvent, ReactNode } from 'react'
 import { useRef, useState } from 'react'
-import { AnimatePresence, LayoutGroup, useIsPresent } from 'motion/react'
+import { AnimatePresence, useIsPresent } from 'motion/react'
 
 import {
   AlertMessage,
   Button,
   Text,
   ToggleSwitchCheckbox,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import {
   Modal,
@@ -29,7 +30,10 @@ import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
   formatCaseCountDative,
   formatCaseNumberList,
+  getColumnWidth,
+  getMoveAnnouncement,
   getRowActionLabel,
+  getRowId,
   getRowLabel,
   partitionRows,
   stageCase,
@@ -71,13 +75,20 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
   const [modal, setModal] = useState<ModalState>('none')
   const [completedRows, setCompletedRows] = useState<CaseTableRow[]>([])
   const [isCompleting, setIsCompleting] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const toggleContainerRef = useRef<HTMLDivElement>(null)
   // Set synchronously, so a second click on the confirm button before the
   // re-render that disables it still sends nothing.
   const isCompletingRef = useRef(false)
 
   const { staged, source } = partitionRows(rows, stagedIds)
 
-  const tableColumns = columns.map((c) => ({ title: c.title, compare, render }))
+  const tableColumns = columns.map((c, idx) => ({
+    title: c.title,
+    width: getColumnWidth(idx, columns.length),
+    compare,
+    render,
+  }))
 
   const handleToggle = (checked: boolean) => {
     setSelectionMode(checked)
@@ -87,8 +98,29 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     }
   }
 
+  // A row moved with the keyboard leaves its list, taking focus with it, so
+  // focus goes to the row that takes its place, or to the selection toggle
+  // when the list is left empty.
+  const moveFocusFromMovedRow = () => {
+    const movedRow = document.activeElement
+
+    if (!(movedRow instanceof HTMLTableRowElement)) {
+      return
+    }
+
+    const nextRow =
+      movedRow.nextElementSibling ?? movedRow.previousElementSibling
+
+    if (nextRow instanceof HTMLTableRowElement) {
+      nextRow.focus()
+      return
+    }
+
+    toggleContainerRef.current?.querySelector('input')?.focus()
+  }
+
   const moveCase = (
-    caseId: string,
+    row: CaseTableRow,
     isStaged: boolean,
     event?: MouseEvent<HTMLTableRowElement>,
   ) => {
@@ -98,8 +130,17 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
       return
     }
 
+    const rowId = getRowId(row)
+
+    if (!event) {
+      moveFocusFromMovedRow()
+    }
+
+    setAnnouncement(
+      getMoveAnnouncement(isStaged ? 'unstage' : 'stage', getRowLabel(row)),
+    )
     setStagedIds((prev) =>
-      isStaged ? unstageCase(prev, caseId) : stageCase(prev, rows, caseId),
+      isStaged ? unstageCase(prev, rowId) : stageCase(prev, rows, rowId),
     )
   }
 
@@ -110,7 +151,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
   ) => {
     const label = getRowLabel(r)
     const common = {
-      id: r.caseId,
+      id: getRowId(r),
       cells: r.cells,
       contextMenuItems: [openCaseInNewTab(r.caseId, r.appealCaseId)],
       label,
@@ -120,7 +161,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
       return {
         ...common,
         onClick: (event?: MouseEvent<HTMLTableRowElement>) =>
-          moveCase(r.caseId, isStaged, event),
+          moveCase(r, isStaged, event),
         isDisabled: !isInteractive,
         isLoading: false,
         actionLabel: getRowActionLabel(isStaged ? 'unstage' : 'stage', label),
@@ -170,31 +211,33 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     setSelectionMode(false)
   }
 
-  if (rows.length === 0) {
-    return (
-      <div className={stack({ gap: 3 })}>
-        <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
-        <div className={caseTableStyles.infoContainer}>
-          <AlertMessage
-            type="info"
-            title="Engin mál fundust"
-            message="Engin mál fundust í þessum flokki"
-          />
-        </div>
+  const emptyState = (
+    <div className={stack({ gap: 3 })}>
+      <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
+      <div className={caseTableStyles.infoContainer}>
+        <AlertMessage
+          type="info"
+          title="Engin mál fundust"
+          message="Engin mál fundust í þessum flokki"
+        />
       </div>
-    )
-  }
+    </div>
+  )
 
   return (
     <>
-      <LayoutGroup id="bulk-complete-cases">
+      <VisuallyHidden>
+        <span aria-live="polite">{announcement}</span>
+      </VisuallyHidden>
+      {rows.length === 0 ? (
+        emptyState
+      ) : (
         <div>
           <ExpandingSection show={selectionMode}>
             <WithPresence>
               {(isPresent) => (
-                // While the section closes, its rows neither respond nor keep
-                // their layout ids, which now belong to the same cases back
-                // in the list below.
+                // While the section closes, its rows no longer respond: the
+                // same cases are back in the list below.
                 <div className={stack({ gap: 3 })} inert={!isPresent}>
                   <div className={styles.sectionHeader}>
                     <SectionHeading title="Mál til að ljúka" marginBottom={0} />
@@ -217,7 +260,8 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                           getTableRow(r, true, isPresent),
                         )}
                         loadingIndicator={LoadingIndicator}
-                        animateRowLayout={isPresent}
+                        fadeInNewRows
+                        fixedLayout
                       />
                     ) : (
                       <div className={styles.emptyStaging}>
@@ -234,24 +278,27 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
           <div className={stack({ gap: 3 })}>
             <div className={styles.sectionHeader}>
               <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
-              <ToggleSwitchCheckbox
-                name="select-cases-to-complete"
-                label={<Text>Velja mál til að ljúka</Text>}
-                checked={selectionMode}
-                onChange={handleToggle}
-              />
+              <div ref={toggleContainerRef}>
+                <ToggleSwitchCheckbox
+                  name="select-cases-to-complete"
+                  label={<Text>Velja mál til að ljúka</Text>}
+                  checked={selectionMode}
+                  onChange={handleToggle}
+                />
+              </div>
             </div>
             <GenericTable
               tableId="bulk-complete-cases-source"
               columns={tableColumns}
               rows={source.map((r) => getTableRow(r, false))}
               loadingIndicator={LoadingIndicator}
-              animateRowLayout
+              fadeInNewRows
+              fixedLayout
             />
           </div>
         </div>
-      </LayoutGroup>
-      <AnimatePresence>
+      )}
+      <AnimatePresence mode="wait">
         {modal === 'confirm' && (
           <Modal
             key="confirm"

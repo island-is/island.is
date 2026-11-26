@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import { useRouter } from 'next/router'
 
 import { Button } from '@island.is/island-ui/core'
+import { CASE_TABLE_GROUPS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CasesLayout,
   Logo,
@@ -28,7 +29,7 @@ const BulkCompleteCases: FC = () => {
           <Button
             colorScheme="default"
             iconType="filled"
-            onClick={() => router.push('/landsrettur/malalistar')}
+            onClick={() => router.push(CASE_TABLE_GROUPS_ROUTE)}
             preTextIcon="arrowBack"
             preTextIconType="filled"
             type="button"
