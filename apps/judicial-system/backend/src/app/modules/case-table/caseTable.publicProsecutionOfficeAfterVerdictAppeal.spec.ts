@@ -243,9 +243,12 @@ describe('public prosecution office lists after a verdict appeal', () => {
 
     // A defendant still in review while a co-defendant's appeal is before the
     // court: the appeal has a number, and the row must not be labelled with it.
+    // Nor may an appeal the court has confirmed but not yet completed - its
+    // outcome is not out, and the number on the row would give that away.
     it.each([
       AppealCaseState.APPEALED,
       AppealCaseState.RECEIVED,
+      AppealCaseState.READY_TO_COMPLETE,
       AppealCaseState.WITHDRAWN,
       undefined,
     ])(
