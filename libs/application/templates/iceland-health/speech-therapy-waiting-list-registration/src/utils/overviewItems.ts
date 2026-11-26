@@ -30,8 +30,6 @@ export const childItems = (
   const {
     childName,
     childNationalId,
-    childStreetAddress,
-    childLocality,
     waitingListConsent,
     waitingListDeclineReason,
   } = getApplicationAnswers(answers)
@@ -46,16 +44,6 @@ export const childItems = (
       width: 'half',
       keyText: sharedMessages.nationalId,
       valueText: formatKennitala(childNationalId ?? ''),
-    },
-    {
-      width: 'half',
-      keyText: childMessages.address,
-      valueText: childStreetAddress,
-    },
-    {
-      width: 'half',
-      keyText: childMessages.municipality,
-      valueText: childLocality,
     },
     {
       width: 'half',

@@ -43,24 +43,6 @@ export const childSection = buildSection({
             getSelectedChild(application.answers, application.externalData)
               ?.nationalId,
         }),
-        buildTextField({
-          id: 'child.address.streetAddress',
-          title: childMessages.address,
-          width: 'half',
-          disabled: true,
-          defaultValue: (application: Application) =>
-            getSelectedChild(application.answers, application.externalData)
-              ?.address?.streetAddress,
-        }),
-        buildTextField({
-          id: 'child.address.locality',
-          title: childMessages.municipality,
-          width: 'half',
-          disabled: true,
-          defaultValue: (application: Application) =>
-            getSelectedChild(application.answers, application.externalData)
-              ?.address?.locality,
-        }),
         buildRadioField({
           id: 'waitingList.consent',
           width: 'half',

@@ -5,16 +5,13 @@ import {
   buildMultiField,
   buildSection,
   buildSelectField,
-  buildTextField,
   YES,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { otherInformationMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import {
   getLanguageOptions,
   getLocationOptions,
-  getSelectedChild,
   getSpeechPathologistOptions,
 } from '../../utils/speechTherapyWaitingListRegistrationUtils'
 
@@ -73,14 +70,6 @@ export const otherInformationSection = buildSection({
           description: otherInformationMessages.locationDescription,
           titleVariant: 'h4',
           space: 4,
-        }),
-        buildTextField({
-          id: 'otherInformation.municipality',
-          title: otherInformationMessages.municipality,
-          disabled: true,
-          defaultValue: (application: Application) =>
-            getSelectedChild(application.answers, application.externalData)
-              ?.address?.locality,
         }),
         buildFieldsRepeaterField({
           id: 'otherInformation.locations',

@@ -55,11 +55,6 @@ export const otherInformationMessages = defineMessages({
       'Hér getur þú valið staðsetningu þar sem þú villt sækja þjónustu. Þjónusta er alltaf í staðþjónustu nema talmeinafræðingur ákveður annað.',
     description: 'Location description',
   },
-  municipality: {
-    id: 'stwlr.application:otherInformation.municipality',
-    defaultMessage: 'Sveitarfélag barns',
-    description: 'Municipality of the child',
-  },
   locationSelectionTitle: {
     id: 'stwlr.application:otherInformation.locationSelectionTitle',
     defaultMessage: 'Staðsetning {index}',

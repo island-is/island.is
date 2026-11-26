@@ -25,15 +25,15 @@ Only the dev environment is connected to Sjúkratryggingar. Keep the feature fla
 
 Calls go through X-Road to Sjúkratryggingar's `speech` service (`IS-DEV/GOV/10007/SJUKRA-Protected/speech` in dev). Only the `/v1/digital-iceland` endpoints are used:
 
-| Endpoint                                                 | Used for                                                     |
-| -------------------------------------------------------- | ------------------------------------------------------------ |
-| `GET /v1/digital-iceland/entries/{kennitala}/verify`     | Checks whether a child is awaiting the guardian's approval   |
-| `GET /v1/digital-iceland/languages`                      | Language options                                             |
-| `GET /v1/digital-iceland/available-locations`            | Location options                                             |
-| `GET /v1/digital-iceland/speech-pathologists`            | Speech pathologist options                                   |
-| `GET /v1/digital-iceland/rejection-reasons`              | Reasons for declining                                        |
-| `PUT /v1/digital-iceland/entries/{kennitala}`            | Accepts the waiting list entry with the chosen preferences   |
-| `PUT /v1/digital-iceland/entries/{kennitala}/reject`     | Declines the waiting list entry                              |
+| Endpoint                                             | Used for                                                   |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| `GET /v1/digital-iceland/entries/{kennitala}/verify` | Checks whether a child is awaiting the guardian's approval |
+| `GET /v1/digital-iceland/languages`                  | Language options                                           |
+| `GET /v1/digital-iceland/available-locations`        | Location options                                           |
+| `GET /v1/digital-iceland/speech-pathologists`        | Speech pathologist options                                 |
+| `GET /v1/digital-iceland/rejection-reasons`          | Reasons for declining                                      |
+| `PUT /v1/digital-iceland/entries/{kennitala}`        | Accepts the waiting list entry with the chosen preferences |
+| `PUT /v1/digital-iceland/entries/{kennitala}/reject` | Declines the waiting list entry                            |
 
 Every call needs both:
 
@@ -44,7 +44,7 @@ Every call needs both:
 
 ### Þjóðskrá
 
-The applicant's children are fetched from Þjóðskrá (`childrenCustodyInformation`), with each child's address. Only the child's kennitala, name and address are stored in the application.
+The applicant's children are fetched from Þjóðskrá (`childrenCustodyInformation`). Only the child's kennitala and name are stored in the application.
 
 ## States
 
@@ -54,20 +54,22 @@ Fetches the applicant's children from Þjóðskrá and keeps only those that `ve
 
 An applicant with no child awaiting approval is stopped in this step with the error "Ekkert barn bíður samþykkis".
 
+The applicant is also stopped here if Sjúkratryggingar returns no languages or no locations, because the draft requires at least one of each.
+
 ### Draft
 
 The applicant reviews the child's information and chooses whether to keep the child's place on the waiting list.
 
 - If yes, the applicant chooses preferences:
   - languages (at least one is required)
-  - locations
+  - locations (at least one is required)
   - a speech pathologist (optional; choosing one requires confirming that the wait can be longer)
   - remote therapy
 - If no, the applicant chooses a reason for declining from Sjúkratryggingar's rejection reasons.
 
 ### Completed
 
-On entry, the application is sent to Sjúkratryggingar. The waiting list entry is accepted with the chosen preferences, or rejected with the chosen reason.
+On entry, the application is sent to Sjúkratryggingar. The waiting list entry is accepted with the chosen preferences, or rejected with the chosen reason. An acceptance without at least one language and one location is not sent.
 
 Only a child that `verify` approved in the prerequisites step is sent. The kennitala is taken from the verified children in external data, not from the answers.
 

@@ -9,6 +9,7 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { DigitalIcelandApi } from '@island.is/clients/icelandic-health-insurance/speech-therapy'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { StaticText } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -38,28 +39,15 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
         params: undefined,
       })
 
-    const childrenAwaitingApproval = (
-      await Promise.all(
-        children.map(async (child) => {
-          if (!(await this.isAwaitingApproval(child.nationalId, props.auth))) {
-            return null
-          }
+    const awaitingApproval = await Promise.all(
+      children.map((child) =>
+        this.isAwaitingApproval(child.nationalId, props.auth),
+      ),
+    )
 
-          // childrenCustodyInformation does not include the child's address.
-          const individual =
-            await this.nationalRegistryV3Service.getOtherIndividual(
-              child.nationalId,
-              props.auth,
-            )
-
-          return {
-            nationalId: child.nationalId,
-            fullName: child.fullName,
-            address: individual?.address ?? null,
-          }
-        }),
-      )
-    ).filter((child) => child !== null)
+    const childrenAwaitingApproval = children
+      .filter((_, index) => awaitingApproval[index])
+      .map(({ nationalId, fullName }) => ({ nationalId, fullName }))
 
     if (childrenAwaitingApproval.length === 0) {
       throw new TemplateApiError(
@@ -95,14 +83,33 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
     }
   }
 
+  // Choosing a language and a location is required, so an empty list from
+  // Sjúkratryggingar would leave the applicant stuck in the draft.
+  private throwIfEmpty<T>(options: T[], summary: StaticText): T[] {
+    if (options.length === 0) {
+      throw new TemplateApiError(
+        { title: errorMessages.optionsUnavailableTitle, summary },
+        400,
+      )
+    }
+
+    return options
+  }
+
   async getLanguages({ auth }: TemplateApiModuleActionProps) {
-    return this.digitalIcelandApiWithAuth(auth).getV1DigitalIcelandLanguages()
+    return this.throwIfEmpty(
+      await this.digitalIcelandApiWithAuth(auth).getV1DigitalIcelandLanguages(),
+      errorMessages.languagesUnavailableSummary,
+    )
   }
 
   async getAvailableLocations({ auth }: TemplateApiModuleActionProps) {
-    return this.digitalIcelandApiWithAuth(
-      auth,
-    ).getV1DigitalIcelandAvailableLocations()
+    return this.throwIfEmpty(
+      await this.digitalIcelandApiWithAuth(
+        auth,
+      ).getV1DigitalIcelandAvailableLocations(),
+      errorMessages.locationsUnavailableSummary,
+    )
   }
 
   async getSpeechPathologists({ auth }: TemplateApiModuleActionProps) {
@@ -132,10 +139,19 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
     const api = this.digitalIcelandApiWithAuth(auth)
 
     if (waitingListConsent === YES) {
+      const updateWaitingListEntryRequestModel =
+        transformApplicationToUpdateWaitingListEntry(application)
+
+      if (
+        updateWaitingListEntryRequestModel.languages.length === 0 ||
+        updateWaitingListEntryRequestModel.locations.length === 0
+      ) {
+        throw new Error('Missing languages or locations')
+      }
+
       await api.putV1DigitalIcelandEntriesKennitala({
         kennitala: child.nationalId,
-        updateWaitingListEntryRequestModel:
-          transformApplicationToUpdateWaitingListEntry(application),
+        updateWaitingListEntryRequestModel,
       })
     } else {
       await api.putV1DigitalIcelandEntriesKennitalaReject({

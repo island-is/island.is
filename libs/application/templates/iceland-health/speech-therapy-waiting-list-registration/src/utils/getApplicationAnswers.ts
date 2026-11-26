@@ -11,16 +11,6 @@ export const getApplicationAnswers = (answers: FormValue) => {
 
   const childNationalId = getValueViaPath<string>(answers, 'child.nationalId')
 
-  const childStreetAddress = getValueViaPath<string>(
-    answers,
-    'child.address.streetAddress',
-  )
-
-  const childLocality = getValueViaPath<string>(
-    answers,
-    'child.address.locality',
-  )
-
   const waitingListConsent = getValueViaPath<YesOrNo>(
     answers,
     'waitingList.consent',
@@ -61,8 +51,6 @@ export const getApplicationAnswers = (answers: FormValue) => {
     selectedChildNationalId,
     childName,
     childNationalId,
-    childStreetAddress,
-    childLocality,
     waitingListConsent,
     waitingListDeclineReason,
     languages,

@@ -145,7 +145,6 @@ const SpeechTherapyWaitingListRegistrationTemplate: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
-              content: corePendingActionMessages.applicationReceivedDescription,
               displayStatus: 'success',
             },
           },

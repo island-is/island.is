@@ -19,6 +19,12 @@ const otherInformationSchema = z
         params: errorMessages.languageRequired,
         path: [0, 'language'],
       }),
+    locations: z
+      .array(z.object({ location: z.string().nullish() }))
+      .refine((locations) => locations.some(({ location }) => !!location), {
+        params: errorMessages.locationRequired,
+        path: [0, 'location'],
+      }),
     chosenSpeechPathologist: z.string().nullish(),
     speechTherapistConfirmation: z.array(z.string()).nullish(),
   })
