@@ -1,5 +1,4 @@
 import { useContext, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -14,7 +13,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { sortAppealCourtSessionsByDate } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ExpandingSection,
@@ -41,7 +40,6 @@ import {
 import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useAppealCourtSession from '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -95,7 +93,6 @@ const VerdictAppealStatus = () => {
   // appeal when the URL names no appeal, and this page is never about that
   // one.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const {
     createAppealCourtSession,
@@ -445,7 +442,7 @@ const VerdictAppealStatus = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader title={titles.courtOfAppeal.verdictAppeal.status} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
           <Box>

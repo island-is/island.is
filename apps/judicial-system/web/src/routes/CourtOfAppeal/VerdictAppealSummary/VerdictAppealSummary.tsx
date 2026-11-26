@@ -1,5 +1,4 @@
 import { useContext, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -7,6 +6,7 @@ import { useRouter } from 'next/router'
 import { Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   FormContentContainer,
@@ -29,7 +29,6 @@ import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useApp
 import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 import * as styles from '@island.is/judicial-system-web/src/utils/styles/modalPdfPreview.css'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -61,7 +60,6 @@ const VerdictAppealSummary = () => {
   // Read directly rather than through the shared resolver, for the reason
   // the overview gives.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
   const { getFileUrl, fileNotFound, dismissFileNotFound } = useFileList({
@@ -196,7 +194,7 @@ const VerdictAppealSummary = () => {
         notFound={caseNotFound}
         onNavigationTo={navigateTo}
       >
-        <PageHeader title={titleForCase(formatMessage, workingCase)} />
+        <PageHeader title={titles.courtOfAppeal.verdictAppeal.summary} />
         <FormContentContainer>
           <div className={stack({ gap: 5 })}>
             <Box>
