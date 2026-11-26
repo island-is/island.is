@@ -12,8 +12,8 @@ if [ "$#" -eq 0 ]; then
   exit 0
 fi
 
-echo "| Artifact | Target | Type | Critical | High |"
-echo "|---|---|---|---|---|"
+echo "| Artifact | Target | Type | Critical | High | Other |"
+echo "|---|---|---|---|---|---|"
 for report in "$@"; do
   [ -s "$report" ] || continue
   jq -r '
@@ -24,8 +24,9 @@ for report in "$@"; do
        f: ((.Vulnerabilities // []) + (.Secrets // [])
            + [(.Misconfigurations // [])[] | select(.Status == "FAIL")])}
     | select(.f | length > 0)
-    | "| `\($a)` | `\(.t)` | \(.c) | \(.f | n("CRITICAL")) | \(.f | n("HIGH")) |"
+    | (.f | n("CRITICAL")) as $c | (.f | n("HIGH")) as $h
+    | "| `\($a)` | `\(.t)` | \(.c) | \($c) | \($h) | \((.f | length) - $c - $h) |"
   ' "$report"
 done
 echo
-echo "HIGH/CRITICAL with a fix only. Config: trivy.yaml, .trivyignore.yaml."
+echo "CVEs: fixable only. Config: trivy.yaml, .trivyignore.yaml."

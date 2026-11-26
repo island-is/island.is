@@ -1,4 +1,4 @@
-# Accepted Trivy findings. Every entry needs a statement and expiry.
+# Accepted Trivy findings. Every entry needs a statement; CVEs an expiry.
 # Format: https://trivy.dev/latest/docs/configuration/filtering/#trivyignoreyaml
 vulnerabilities: []
 #  - id: CVE-2026-00000
@@ -9,3 +9,22 @@ vulnerabilities: []
 misconfigurations:
   - id: DS-0026
     statement: Kubernetes probes own health checks, not the image.
+
+secrets:
+  - id: jwt-token
+    paths:
+      - apps/download-service/src/app/modules/e2e/document.spec.ts
+      - libs/auth-api-lib/src/lib/passkeys-core/passkeys-core.service.spec.ts
+    statement: Fake JWTs in tests.
+  - id: jwt-token
+    paths:
+      - libs/clients/driving-license-book/src/clientConfig.json
+    statement: OpenAPI example value.
+  - id: grafana-api-token
+    paths:
+      - apps/consultation-portal/components/PowerBI/PowerBI.tsx
+    statement: Public PowerBI embed link, not a Grafana token.
+  - id: twilio-api-key
+    paths:
+      - libs/api/mocks/src/domains/finance/static.ts
+    statement: Mock document id.
