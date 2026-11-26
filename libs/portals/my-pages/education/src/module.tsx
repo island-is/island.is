@@ -6,6 +6,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { primarySchoolKeyInfoMessages as kim } from './lib/messages'
 import { Navigate } from 'react-router-dom'
+import { EducationRootRedirect } from './screens/EducationOverview/EducationRootRedirect'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
 import {
   primarySchoolGateLoader,
@@ -121,12 +122,13 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
-      element: <Navigate to={EducationPaths.EducationOverview} replace />,
+      element: <EducationRootRedirect />,
     },
 
     {
       name: 'Yfirlit',
       path: EducationPaths.EducationOverview,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
       element: <EducationOverview />,
@@ -134,6 +136,7 @@ export const educationModule: PortalModule = {
     {
       name: 'Breyta tengiliðaupplýsingum',
       path: EducationPaths.EducationOverviewContactEdit,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
       element: <EducationOverviewContactEdit />,
