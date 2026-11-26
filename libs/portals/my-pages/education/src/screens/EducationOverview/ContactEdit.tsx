@@ -16,7 +16,6 @@ import {
   m,
   Modal,
 } from '@island.is/portals/my-pages/core'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   educationOverviewMessages as om,
@@ -33,6 +32,7 @@ import {
   suggestOwnContact,
   toE164,
   useOwnContact,
+  useProfileContact,
   type OwnContactField,
   type OwnContactInput,
 } from './useOwnContact'
@@ -194,7 +194,7 @@ export const ContactEdit = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { contact, loading, error, saving, save } = useOwnContact()
-  const { data: profile, loading: profileLoading } = useUserProfile()
+  const { profile, loading: profileLoading } = useProfileContact()
 
   const goBack = () => navigate(EducationPaths.EducationOverview)
 

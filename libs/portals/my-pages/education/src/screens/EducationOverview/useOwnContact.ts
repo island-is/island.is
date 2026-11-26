@@ -3,6 +3,7 @@ import { findProblemInApolloError } from '@island.is/shared/problem'
 import {
   EducationOwnContactDocument,
   useEducationOwnContactQuery,
+  useEducationProfileContactQuery,
   useEducationUpdateOwnContactMutation,
 } from './EducationOverview.generated'
 import { toMmsError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/mmsError'
@@ -57,6 +58,13 @@ export const ownContactFieldErrors =(error: unknown): OwnContactField[] => {
   return fields.filter(
     (field): field is OwnContactField => field === 'email' || field === 'phone',
   )
+}
+
+export const useProfileContact = () => {
+  const { data, loading } = useEducationProfileContactQuery({
+    errorPolicy: 'all',
+  })
+  return { profile: data?.getUserProfile ?? null, loading }
 }
 
 export const useOwnContact = () => {

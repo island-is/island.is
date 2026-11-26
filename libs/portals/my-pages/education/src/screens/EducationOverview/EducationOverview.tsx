@@ -15,7 +15,6 @@ import {
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
 import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
@@ -24,7 +23,12 @@ import { educationOverviewMessages as om } from '../../lib/messages'
 import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
 import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
-import { suggestOwnContact, toE164, useOwnContact } from './useOwnContact'
+import {
+  suggestOwnContact,
+  toE164,
+  useOwnContact,
+  useProfileContact,
+} from './useOwnContact'
 
 export const EducationOverview = () => {
   useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
@@ -32,7 +36,7 @@ export const EducationOverview = () => {
   const navigate = useNavigate()
   const { sm } = useBreakpoint()
   const { contact, hasContact, loading, error } = useOwnContact()
-  const { data: profile, loading: profileLoading } = useUserProfile()
+  const { profile, loading: profileLoading } = useProfileContact()
 
   const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
   const notRegistered = formatMessage(om.notRegistered)
