@@ -82,13 +82,20 @@ export const findScreenIndex = (
 
 /**
  * The index of the screen to resume on: the first shown screen that is not
- * fully answered by `answers`, or the last shown screen when all of them are.
+ * fully answered by `application.answers`, or the last shown screen when all of
+ * them are. Screen ids that depend on the application or the user are resolved
+ * with `application` and `user`.
  */
 export const resumeIndex = (
   screens: FormScreen[],
-  answers: FormValue,
+  application: Application,
+  user?: BffUser | null,
 ): number => {
-  const index = moveToScreen(screens, findCurrentScreen(screens, answers), true)
+  const index = moveToScreen(
+    screens,
+    findCurrentScreen(screens, application, user),
+    true,
+  )
 
   // Moving forward past the end returns the last screen even when it is
   // hidden, so step back to the nearest shown one.

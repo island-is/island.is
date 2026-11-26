@@ -11,6 +11,10 @@ import {
 } from '../screen-position'
 
 const application = { answers: {}, externalData: {} } as unknown as Application
+const withAnswers = (answers: FormValue): Application => ({
+  ...application,
+  answers,
+})
 
 // Three pages in one section; the middle one is only shown when
 // `wantsExtra` is 'yes'.
@@ -86,25 +90,25 @@ describe('resolveClaimedScreen', () => {
 
 describe('resumeIndex', () => {
   it('starts at the first screen when nothing is answered', () => {
-    expect(resumeIndex(buildScreens(), {})).toBe(0)
+    expect(resumeIndex(buildScreens(), withAnswers({}))).toBe(0)
   })
 
   it('stops at the first screen that is not fully answered', () => {
     const answers = { wantsExtra: 'yes', firstField: 'a' }
 
-    expect(resumeIndex(buildScreens(answers), answers)).toBe(1)
+    expect(resumeIndex(buildScreens(answers), withAnswers(answers))).toBe(1)
   })
 
   it('moves past a hidden screen to the next shown one', () => {
     const answers = { firstField: 'a' }
 
-    expect(resumeIndex(buildScreens(answers), answers)).toBe(2)
+    expect(resumeIndex(buildScreens(answers), withAnswers(answers))).toBe(2)
   })
 
   it('lands on the last screen when every shown screen is answered', () => {
     const answers = { firstField: 'a', lastField: 'b' }
 
-    expect(resumeIndex(buildScreens(answers), answers)).toBe(2)
+    expect(resumeIndex(buildScreens(answers), withAnswers(answers))).toBe(2)
   })
 })
 
@@ -137,13 +141,17 @@ describe('resumeIndex with a hidden last screen', () => {
   it('lands on the last shown screen when the screens after it are hidden', () => {
     const answers = { firstField: 'a', secondField: 'b' }
 
-    expect(resumeIndex(buildScreensWithHiddenLast(answers), answers)).toBe(1)
+    expect(
+      resumeIndex(buildScreensWithHiddenLast(answers), withAnswers(answers)),
+    ).toBe(1)
   })
 
   it('lands on the last screen once it is shown', () => {
     const answers = { firstField: 'a', secondField: 'b', showLast: 'yes' }
 
-    expect(resumeIndex(buildScreensWithHiddenLast(answers), answers)).toBe(2)
+    expect(
+      resumeIndex(buildScreensWithHiddenLast(answers), withAnswers(answers)),
+    ).toBe(2)
   })
 })
 

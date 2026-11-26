@@ -247,7 +247,7 @@ export class SdfScreenService {
           ? checkedIndex
           : this.resolveScreenIndex(
               screens,
-              filteredApplication.answers,
+              filteredApplication,
               application,
               bffUser,
               claimedScreenId,
@@ -405,7 +405,7 @@ export class SdfScreenService {
   // is given, the index to resume on. A claim that is not shown is logged.
   private resolveScreenIndex(
     screens: FormScreen[],
-    answers: FormValue,
+    filteredApplication: ApplicationWithAttachments,
     application: ApplicationWithAttachments,
     bffUser: BffUser,
     claimedId?: string,
@@ -425,7 +425,7 @@ export class SdfScreenService {
       })
     }
 
-    return resumeIndex(screens, answers)
+    return resumeIndex(screens, filteredApplication, bffUser)
   }
 
   private buildFooter(

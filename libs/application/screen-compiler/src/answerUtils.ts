@@ -1,9 +1,10 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, resolveFieldId } from '@island.is/application/core'
 import {
+  Application,
   FieldTypes,
   FormItemTypes,
-  FormValue,
 } from '@island.is/application/types'
+import type { BffUser } from '@island.is/shared/types'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 
@@ -38,18 +39,24 @@ export const screenRequiresAnswer = (screen: FormScreen): boolean => {
 
 export const screenHasBeenAnswered = (
   screen: FormScreen,
-  answers: FormValue,
+  application: Application,
   checkIfPartlyAnswered = false,
+  user?: BffUser | null,
 ): boolean => {
   if (!screenRequiresAnswer(screen)) {
     return true
   }
 
-  if (typeof screen.id !== 'string' || !screen.id) {
+  // An id can depend on the application and the user, so it is resolved first.
+  const resolvedId = screen.id
+    ? resolveFieldId({ id: screen.id }, application, user ?? undefined)
+    : undefined
+
+  if (!resolvedId) {
     return false
   }
 
-  const answer = getValueViaPath(answers, screen.id)
+  const answer = getValueViaPath(application.answers, resolvedId)
   const answerHasValue = !answerIsMissing(answer)
 
   if (screen.type === FormItemTypes.REPEATER) {
@@ -60,7 +67,12 @@ export const screenHasBeenAnswered = (
 
     for (const subScreen of screen.children) {
       const requiresAnswer = screenRequiresAnswer(subScreen)
-      const hasBeenAnswered = screenHasBeenAnswered(subScreen, answers)
+      const hasBeenAnswered = screenHasBeenAnswered(
+        subScreen,
+        application,
+        false,
+        user,
+      )
 
       if (requiresAnswer) {
         numberOfRequiredAnswers += 1
@@ -86,7 +98,7 @@ export const screenHasBeenAnswered = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const hasAnyMissingAnswer = (screen as any).childInputIds.some(
       (childInputId: string) => {
-        const childAnswer = getValueViaPath(answers, childInputId)
+        const childAnswer = getValueViaPath(application.answers, childInputId)
         return answerIsMissing(childAnswer)
       },
     )

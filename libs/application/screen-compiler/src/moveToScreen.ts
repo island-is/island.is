@@ -1,11 +1,13 @@
-import { FormValue } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
+import type { BffUser } from '@island.is/shared/types'
 
 import { FormScreen } from './types'
 import { screenRequiresAnswer, screenHasBeenAnswered } from './answerUtils'
 
 export const findCurrentScreen = (
   screens: FormScreen[],
-  answers: FormValue,
+  application: Application,
+  user?: BffUser | null,
 ): number => {
   let lastAnswerIndex = -1
   let index = 0
@@ -18,8 +20,18 @@ export const findCurrentScreen = (
       continue
     }
 
-    const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
-    const hasBeenPartlyAnswered = screenHasBeenAnswered(screen, answers, true)
+    const hasBeenAnswered = screenHasBeenAnswered(
+      screen,
+      application,
+      false,
+      user,
+    )
+    const hasBeenPartlyAnswered = screenHasBeenAnswered(
+      screen,
+      application,
+      true,
+      user,
+    )
 
     if (hasBeenAnswered) {
       lastAnswerIndex = index
