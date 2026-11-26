@@ -24,6 +24,6 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
   ],
   controllers: [AppealCaseController, LimitedAccessAppealCaseController],
   providers: [AppealCaseService, AppealAppointmentLetterService],
-  exports: [AppealCaseService],
+  exports: [AppealCaseService, AppealAppointmentLetterService],
 })
 export class AppealCaseModule {}

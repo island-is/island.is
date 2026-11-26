@@ -18,6 +18,7 @@ import {
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 
+import { AppealAppointmentLetterService } from '../appeal-case/appealAppointmentLetter.service'
 import { isRequestSharedWithDefender } from '../defendant'
 import {
   canLimitedAccessUserViewCaseFile,
@@ -52,6 +53,7 @@ export class LimitedAccessCaseService {
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly appealAppointmentLetterService: AppealAppointmentLetterService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -265,6 +267,29 @@ export class LimitedAccessCaseService {
     }
   }
 
+  private async tryAddAppealAppointmentLetterToFilesToZip(
+    theCase: Case,
+    party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    try {
+      const file = await this.appealAppointmentLetterService.getPdf(
+        theCase,
+        party,
+      )
+
+      if (file) {
+        filesToZip.push(file)
+      }
+    } catch (error) {
+      const partyId = party.defendant?.id ?? party.civilClaimant?.id
+      this.logger.warn(
+        `Could not generate appeal appointment letter for party ${partyId} of case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
   private async tryAddCaseFileFromS3ToFilesToZip(
     theCase: Case,
     file: CaseFile,
@@ -474,6 +499,48 @@ export class LimitedAccessCaseService {
             filesToZip,
           ),
         )
+      }
+
+      // Same parties the limited-access appointment-letter route admits: the
+      // defender of one accused is not party to another's letter.
+      for (const defendant of theCase.defendants ?? []) {
+        if (
+          Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
+            defendant,
+          ]) ||
+          Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+            defendant,
+          ])
+        ) {
+          promises.push(
+            this.tryAddAppealAppointmentLetterToFilesToZip(
+              theCase,
+              { defendant },
+              filesToZip,
+            ),
+          )
+        }
+      }
+
+      for (const civilClaimant of theCase.civilClaimants ?? []) {
+        if (
+          CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+            user.nationalId,
+            [civilClaimant],
+          ) ||
+          CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+            user.nationalId,
+            [civilClaimant],
+          )
+        ) {
+          promises.push(
+            this.tryAddAppealAppointmentLetterToFilesToZip(
+              theCase,
+              { civilClaimant },
+              filesToZip,
+            ),
+          )
+        }
       }
     }
 
