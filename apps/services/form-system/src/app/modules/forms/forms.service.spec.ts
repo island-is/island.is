@@ -57,6 +57,25 @@ describe('FormsService list permissions', () => {
   })
 })
 
+it('provides default FILE settings in the field-type options', async () => {
+  const service = Object.assign(Object.create(FormsService.prototype), {
+    organizationModel: {
+      findByPk: jest.fn().mockResolvedValue(null),
+    },
+  }) as FormsService
+
+  const fieldTypes = await service['getFieldTypes']('organization')
+
+  expect(
+    fieldTypes.find((fieldType) => fieldType.id === FieldTypesEnum.FILE)
+      ?.fieldSettings,
+  ).toMatchObject({
+    maxFiles: 1,
+    fileTypes: '.pdf',
+    fileMaxSize: 10485760,
+  })
+})
+
 describe('FormsService form list', () => {
   it('selects and returns only list metadata, including the original form ID for revisions', async () => {
     const user = { nationalId: 'owner', scope: [] } as unknown as User

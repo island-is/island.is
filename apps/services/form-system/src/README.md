@@ -95,6 +95,12 @@ header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
 
+## File upload defaults
+
+New FILE fields default to one `.pdf` file with a maximum size of 10485760 bytes
+(10 MiB). The field-type options expose the same defaults when selecting FILE
+in the editor. Existing fields retain their saved upload settings.
+
 ## Field content migration
 
 The field-content migration renames `field.description` to

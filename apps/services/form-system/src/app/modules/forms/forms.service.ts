@@ -41,7 +41,6 @@ import {
 } from '../../dataTypes/certificationTypes/certificationType.model'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
   FieldType,
   FieldTypes,
@@ -1333,9 +1332,8 @@ export class FormsService {
     const organizationFieldTypes = commonFieldTypes.concat(uncommonFieldTypes)
 
     organizationFieldTypes.map((fieldType) => {
-      ;(fieldType.fieldSettings = FieldSettingsFactory.getClass(
+      ;(fieldType.fieldSettings = FieldSettingsFactory.getDefaultSettings(
         fieldType.id,
-        new FieldSettings(),
       )),
         (fieldType.values = [
           {
