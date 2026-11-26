@@ -872,9 +872,18 @@ export class UserProfileService {
       ...(emailPreferences
         ? {
             emailNotifications: emailPreferences.emailNotifications,
-            email: emailPreferences.emails?.email,
-            emailVerified:
-              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
+            // Without a linked email, fall back to the user's primary email
+            // (same as getActorProfiles)
+            ...(emailPreferences.emails
+              ? {
+                  email: emailPreferences.emails.email,
+                  emailVerified:
+                    emailPreferences.emails.emailStatus === DataStatus.VERIFIED,
+                }
+              : {
+                  email: userProfile.email,
+                  emailVerified: userProfile.emailVerified,
+                }),
           }
         : {
             emailNotifications:
@@ -940,19 +949,6 @@ export class UserProfileService {
         emailStatus = emailRecord.emailStatus
       }
 
-      // An omitted emailNotifications keeps the stored value, so patching
-      // another field never resets it to the default
-      const existingProfile = isDefined(emailNotifications)
-        ? null
-        : await this.delegationPreference.findOne({
-            where: { toNationalId, fromNationalId },
-            attributes: ['emailNotifications'],
-          })
-      const resolvedEmailNotifications =
-        emailNotifications ??
-        existingProfile?.emailNotifications ??
-        getDefaultActorEmailNotifications(fromNationalId)
-
       // Only persist the field when provided and the feature flag is enabled,
       // so an omitted field never overwrites an existing value
       const isOnlyPrioNotificationsEnabled = isDefined(
@@ -969,13 +965,38 @@ export class UserProfileService {
           ? { onlyActionablePriorityNotifications }
           : {}
 
-      // Create or update the actor profile
-      const [profile] = await this.delegationPreference.upsert({
-        toNationalId,
-        fromNationalId,
-        emailNotifications: resolvedEmailNotifications,
-        emailsId,
-        ...onlyPrioNotificationsUpdate,
+      // Read, default and write in one transaction with a row lock. An omitted
+      // emailNotifications is never written for an existing row, so it keeps
+      // the stored value (also under concurrent updates); the default only
+      // applies when the row is created.
+      const profile = await this.sequelize.transaction(async (transaction) => {
+        const [row, created] = await this.delegationPreference.findOrCreate({
+          where: { toNationalId, fromNationalId },
+          defaults: {
+            toNationalId,
+            fromNationalId,
+            emailNotifications:
+              emailNotifications ??
+              getDefaultActorEmailNotifications(fromNationalId),
+            emailsId,
+            ...onlyPrioNotificationsUpdate,
+          },
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        })
+
+        if (created) {
+          return row
+        }
+
+        return row.update(
+          {
+            ...(isDefined(emailNotifications) && { emailNotifications }),
+            ...(isDefined(emailsId) && { emailsId }),
+            ...onlyPrioNotificationsUpdate,
+          },
+          { transaction },
+        )
       })
 
       if (!profile) {
@@ -987,14 +1008,14 @@ export class UserProfileService {
       if (isDefined(emailNotifications)) {
         this.metrics.increment('notification.setting.changed', 1, {
           setting: 'delegation_email',
-          value: resolvedEmailNotifications ? 'on' : 'off',
+          value: profile.emailNotifications ? 'on' : 'off',
         })
       }
 
       // Return the updated profile details
       return {
         fromNationalId,
-        emailNotifications: resolvedEmailNotifications,
+        emailNotifications: profile.emailNotifications,
         email,
         emailsId: profile.emailsId,
         emailVerified: emailStatus === DataStatus.VERIFIED,
