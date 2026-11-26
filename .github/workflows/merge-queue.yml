@@ -193,50 +193,72 @@ jobs:
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
 
-      # Trivy: scan this leg's image right after push, so the
-      # check runs in parallel across legs. Blocks on secrets, and
-      # on vuln severities in repo variable TRIVY_FAIL_ON.
-      - name: Setup Trivy
-        id: trivy-setup
-        if: env.JSON_imageName != '' && env.JSON_imageTag != ''
-        uses: ./.github/actions/setup-trivy
-
-      # Scan errors only block when TRIVY_FAIL_ON is set.
-      - name: Trivy scan
+      # Trivy: scan this leg's image right after push. Legs run in
+      # parallel, so this adds only the scan to the slowest leg.
+      # v0.36.0 pinned by SHA: tags were hijacked in March 2026.
+      # Report errors only block when TRIVY_FAIL_ON is set.
+      - name: Trivy image report
         id: trivy
-        if: steps.trivy-setup.outcome == 'success'
+        if: env.JSON_imageName != '' && env.JSON_imageTag != ''
         continue-on-error: ${{ vars.TRIVY_FAIL_ON == '' }}
-        run: |
-          echo "$DOCKER_REGISTRY/$JSON_imageName:$JSON_imageTag" > "$RUNNER_TEMP/images.txt"
-          ./scripts/ci/trivy-images.sh "$RUNNER_TEMP/images.txt" "$RUNNER_TEMP/trivy"
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        env:
+          TRIVY_IMAGE_SRC: remote
+        with:
+          version: v0.76.2
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          format: table
+          output: trivy-image.txt
 
       - name: Trivy summary
-        if: always() && steps.trivy-setup.outcome == 'success'
+        if: always() && steps.trivy.outcome != 'skipped'
         run: |
-          shopt -s nullglob
-          ./scripts/ci/trivy-summary.sh "$JSON_imageName" "$RUNNER_TEMP"/trivy/*.json >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### Trivy: $JSON_imageName (HIGH/CRITICAL, fixable)"
+            echo '```'
+            head -c 500000 trivy-image.txt 2>/dev/null || echo "No report"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        if: always() && steps.trivy-setup.outcome == 'success'
-        with:
-          name: trivy-${{ env.JSON_imageName }}
-          path: ${{ runner.temp }}/trivy/
-          retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Trivy gate
-        id: trivy-gate
-        if: steps.trivy.outcome == 'success'
+      # Blocks on vuln severities in repo variable TRIVY_FAIL_ON.
+      - name: Trivy CVE gate
+        id: trivy-cves
+        if: steps.trivy.outcome == 'success' && vars.TRIVY_FAIL_ON != ''
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         env:
-          TRIVY_FAIL_ON: ${{ vars.TRIVY_FAIL_ON }}
-        run: |
-          shopt -s nullglob
-          ./scripts/ci/trivy-gate.sh "$RUNNER_TEMP"/trivy/*.json
+          TRIVY_IMAGE_SRC: remote
+        with:
+          skip-setup-trivy: true
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
+          scanners: vuln
+          severity: ${{ vars.TRIVY_FAIL_ON }}
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          exit-code: 1
+
+      # Always blocks: any secret baked into the image.
+      - name: Trivy secrets gate
+        id: trivy-secrets
+        if: steps.trivy.outcome == 'success'
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        env:
+          TRIVY_IMAGE_SRC: remote
+        with:
+          skip-setup-trivy: true
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
+          scanners: secret
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          exit-code: 1
 
       # Fail fast: stop the run instead of waiting for tests.
       # success runs on always(), so it still reports the failure.
       - name: Cancel run on Trivy findings
-        if: failure() && steps.trivy-gate.outcome == 'failure'
+        if: failure() && (steps.trivy-cves.outcome == 'failure' || steps.trivy-secrets.outcome == 'failure')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

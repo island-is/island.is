@@ -1,10 +1,9 @@
 name: Trivy
 
 # Repo scan: secrets, Dockerfiles, IaC. Lockfile CVEs are Dependabot's.
-# Own workflow, so it
-# never waits on or delays the PR / merge-queue pipelines.
-# Results: Security -> Code scanning. PRs only flag NEW alerts,
-# compared with the latest main analysis (push + nightly below).
+# Own workflow, so it never waits on or delays the PR / merge-queue
+# pipelines. Results: Security -> Code scanning. PRs only flag NEW
+# alerts, compared with the latest main analysis (push + nightly).
 # Image scans run in each merge-queue.yml docker-build leg.
 
 on:
@@ -35,29 +34,43 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-trivy
-
-      # One scan, then convert: no second pass over the tree.
-      # All severities: Trivy rates some real secrets MEDIUM.
-      - id: scan
-        name: Scan repo
-        run: |
-          trivy fs . --scanners secret,misconfig \
-            --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
-            --format json -o "$RUNNER_TEMP/trivy.json"
-          trivy convert --format sarif -o "$RUNNER_TEMP/trivy.sarif" "$RUNNER_TEMP/trivy.json"
-
-      - name: Summary
-        if: always()
-        run: ./scripts/ci/trivy-summary.sh Repo "$RUNNER_TEMP/trivy.json" >> "$GITHUB_STEP_SUMMARY"
+      # v0.36.0. Pinned by SHA: tags were hijacked in March 2026.
+      - name: Scan repo (SARIF)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          version: v0.76.2
+          scan-type: fs
+          scanners: secret,misconfig
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          format: sarif
+          output: trivy.sarif
 
       # v4.39.5
       - uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934
-        if: always() && steps.scan.outcome == 'success'
+        if: always() && hashFiles('trivy.sarif') != ''
         with:
-          sarif_file: ${{ runner.temp }}/trivy.sarif
+          sarif_file: trivy.sarif
           category: trivy-repo
 
-      # Committed secrets and CRITICAL misconfig fail.
-      - name: Gate
-        run: ./scripts/ci/trivy-gate.sh "$RUNNER_TEMP/trivy.json"
+      # Gate: any committed secret, all severities.
+      - name: Secrets gate
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          skip-setup-trivy: true
+          scan-type: fs
+          scanners: secret
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          exit-code: 1
+
+      - name: Misconfig gate
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          skip-setup-trivy: true
+          scan-type: fs
+          scanners: misconfig
+          severity: CRITICAL
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          exit-code: 1

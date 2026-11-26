@@ -1,7 +1,5 @@
 # Trivy settings for CI and local runs (auto-loaded from repo root).
-severity:
-  - HIGH
-  - CRITICAL
+# Severity is set per scan in the workflows.
 ignorefile: .trivyignore.yaml
 timeout: 10m
 scan:
