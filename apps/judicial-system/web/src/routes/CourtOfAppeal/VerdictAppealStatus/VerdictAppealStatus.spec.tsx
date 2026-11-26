@@ -102,6 +102,13 @@ jest.mock('next/router', () => ({
   },
 }))
 
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
+}))
+
 const theCase = {
   ...mockCase(CaseType.INDICTMENT),
   id: 'case-id',
@@ -1188,5 +1195,11 @@ describe('VerdictAppealStatus', () => {
         screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 1'),
       ).toBeInTheDocument()
     })
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Staða og lyktir - Réttarvörslugátt')
   })
 })

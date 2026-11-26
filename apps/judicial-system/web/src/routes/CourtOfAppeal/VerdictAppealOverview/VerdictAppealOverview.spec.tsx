@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from 'react'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -36,6 +37,13 @@ jest.mock('next/router', () => ({
       push: mockPush,
     }
   },
+}))
+
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
 }))
 
 // A case can carry both proceedings at once, which is what makes picking the
@@ -171,5 +179,11 @@ describe('VerdictAppealOverview', () => {
 
     expect(within(appealNumberItem).getByText('555/2026')).toBeInTheDocument()
     expect(screen.queryByText('100/2026')).not.toBeInTheDocument()
+  })
+
+  it('sets its own tab title', () => {
+    renderOverview()
+
+    expect(document.title).toBe('Yfirlit - Réttarvörslugátt')
   })
 })

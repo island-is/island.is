@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from 'react'
 import addDays from 'date-fns/addDays'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -53,6 +54,13 @@ jest.mock('next/router', () => ({
       push: mockPush,
     }
   },
+}))
+
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
 }))
 
 const theCase = {
@@ -400,5 +408,11 @@ describe('VerdictAppealStatementDeadlines', () => {
     expect(mockPush).toHaveBeenCalledWith(
       `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/case-id?appealCaseId=verdict-appeal`,
     )
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Greinargerðarfrestir - Réttarvörslugátt')
   })
 })
