@@ -60,6 +60,27 @@ const WithPresence: FC<{ children: (isPresent: boolean) => ReactNode }> = ({
   return children(isPresent)
 }
 
+// The nearest row in the given direction that is not fading out of its list.
+const findLiveRow = (
+  row: HTMLTableRowElement,
+  direction: 'nextElementSibling' | 'previousElementSibling',
+): HTMLTableRowElement | undefined => {
+  let sibling = row[direction]
+
+  while (sibling) {
+    if (
+      sibling instanceof HTMLTableRowElement &&
+      !sibling.hasAttribute('data-exiting')
+    ) {
+      return sibling
+    }
+
+    sibling = sibling[direction]
+  }
+
+  return undefined
+}
+
 const EmptyList: FC<{ text: string }> = ({ text }) => (
   <div className={styles.emptyList}>
     <Text variant="small">{text}</Text>
@@ -106,7 +127,8 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
 
   // A row moved with the keyboard leaves its list, taking focus with it, so
   // focus goes to the row that takes its place, or to the selection toggle
-  // when the list is left empty.
+  // when the list is left empty. Rows still fading out of the list are
+  // passed over.
   const moveFocusFromMovedRow = () => {
     const movedRow = document.activeElement
 
@@ -115,9 +137,10 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     }
 
     const nextRow =
-      movedRow.nextElementSibling ?? movedRow.previousElementSibling
+      findLiveRow(movedRow, 'nextElementSibling') ??
+      findLiveRow(movedRow, 'previousElementSibling')
 
-    if (nextRow instanceof HTMLTableRowElement) {
+    if (nextRow) {
       nextRow.focus()
       return
     }
@@ -262,7 +285,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                       columns={tableColumns}
                       rows={staged.map((r) => getTableRow(r, true, isPresent))}
                       loadingIndicator={LoadingIndicator}
-                      fadeInNewRows
+                      fadeRows
                       fixedLayout
                       sortable={staged.length > 0}
                     />
@@ -292,7 +315,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                 columns={tableColumns}
                 rows={source.map((r) => getTableRow(r, false))}
                 loadingIndicator={LoadingIndicator}
-                fadeInNewRows
+                fadeRows
                 fixedLayout
                 sortable={source.length > 0}
               />

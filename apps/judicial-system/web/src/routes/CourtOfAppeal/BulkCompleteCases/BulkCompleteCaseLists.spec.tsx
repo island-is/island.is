@@ -259,6 +259,36 @@ describe('BulkCompleteCaseLists', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('leaves one row for a case moved to staging and straight back', async () => {
+    renderLists()
+    await turnOnSelection()
+
+    await stage('S-1/2026, Jón Jónsson')
+    await user.click(
+      screen.getByRole('button', {
+        name: unstageLabel('S-1/2026, Jón Jónsson'),
+      }),
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', {
+          name: unstageLabel('S-1/2026, Jón Jónsson'),
+        }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(
+      screen.getAllByRole('button', {
+        name: stageLabel('S-1/2026, Jón Jónsson'),
+      }),
+    ).toHaveLength(1)
+    await waitFor(() =>
+      expect(
+        document.querySelectorAll('tr[aria-label*="S-1/2026"]'),
+      ).toHaveLength(1),
+    )
+  })
+
   it('moves a row with the Enter key', async () => {
     renderLists()
     await turnOnSelection()
