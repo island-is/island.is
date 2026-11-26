@@ -455,6 +455,31 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
+    it('should disambiguate duplicate display names in the zip', async () => {
+      const first = makeAccessibleFile({
+        name: 'one.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const second = makeAccessibleFile({
+        name: 'two.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [first, second],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'Gagn.pdf' },
+          { data: pdfBuffer, name: 'Gagn (2).pdf' },
+        ]),
+      )
+    })
+
     it('should include case files from cases merged into this case', async () => {
       const mergedFile = makeAccessibleFile({
         name: 'merged-case-file.pdf',

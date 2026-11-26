@@ -70,6 +70,20 @@ describe('buildInlineContentDisposition', () => {
       )}`,
     )
   })
+
+  it('escapes backslashes and quotes in the ASCII fallback', () => {
+    expect(buildInlineContentDisposition('a\\"b.pdf')).toBe(
+      `inline; filename="a\\\\\\"b.pdf"; filename*=UTF-8''${encodeURIComponent(
+        'a\\"b.pdf',
+      )}`,
+    )
+  })
+
+  it('percent-encodes RFC 8187 reserved characters in filename*', () => {
+    expect(buildInlineContentDisposition('Á (1).pdf')).toBe(
+      `inline; filename="_ (1).pdf"; filename*=UTF-8''%C3%81%20%281%29.pdf`,
+    )
+  })
 })
 
 describe('formatDate', () => {

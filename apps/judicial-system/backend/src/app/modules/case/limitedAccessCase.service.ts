@@ -213,6 +213,32 @@ export class LimitedAccessCaseService {
     return this.findById(theCase.id, { transaction, user })
   }
 
+  private withUniqueZipEntryNames(
+    files: { data: Buffer; name: string }[],
+  ): { data: Buffer; name: string }[] {
+    const used = new Set<string>()
+
+    return files.map((file) => {
+      let name = file.name
+
+      if (used.has(name)) {
+        const extensionMatch = /\.[^.]+$/.exec(name)
+        const extension = extensionMatch?.[0] ?? ''
+        const stem = extension ? name.slice(0, -extension.length) : name
+        let suffix = 2
+
+        do {
+          name = `${stem} (${suffix})${extension}`
+          suffix += 1
+        } while (used.has(name))
+      }
+
+      used.add(name)
+
+      return { ...file, name }
+    })
+  }
+
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const sinc: Uint8Array[] = []
@@ -480,6 +506,6 @@ export class LimitedAccessCaseService {
 
     await Promise.all(promises)
 
-    return this.zipFiles(filesToZip)
+    return this.zipFiles(this.withUniqueZipEntryNames(filesToZip))
   }
 }

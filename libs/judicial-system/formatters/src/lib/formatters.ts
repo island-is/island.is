@@ -86,8 +86,16 @@ export const caseFileDownloadName = (
 
 /** S3 ResponseContentDisposition value so Save-as uses the display filename. */
 export const buildInlineContentDisposition = (filename: string): string => {
-  const fallback = filename.replace(/[^\x20-\x7E]/g, '_').replace(/"/g, '\\"')
-  const encoded = encodeURIComponent(filename)
+  // Quoted-string fallback: escape \ then " so \" cannot end the token early.
+  const fallback = filename
+    .replace(/[^\x20-\x7E]/g, '_')
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+  // RFC 8187 attr-char excludes ' ( ) *; encodeURIComponent leaves them.
+  const encoded = encodeURIComponent(filename).replace(
+    /['()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  )
 
   return `inline; filename="${fallback}"; filename*=UTF-8''${encoded}`
 }
