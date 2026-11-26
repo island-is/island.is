@@ -1,6 +1,7 @@
 name: Trivy
 
-# Repo scan: lockfiles, Dockerfiles, IaC, secrets. Own workflow, so it
+# Repo scan: secrets, Dockerfiles, IaC. Lockfile CVEs are Dependabot's.
+# Own workflow, so it
 # never waits on or delays the PR / merge-queue pipelines.
 # Results: Security -> Code scanning. PRs only flag NEW alerts,
 # compared with the latest main analysis (push + nightly below).
@@ -40,7 +41,7 @@ jobs:
       - id: scan
         name: Scan repo
         run: |
-          trivy fs . --scanners vuln,secret,misconfig \
+          trivy fs . --scanners secret,misconfig \
             --format json -o "$RUNNER_TEMP/trivy.json"
           trivy convert --format sarif -o "$RUNNER_TEMP/trivy.sarif" "$RUNNER_TEMP/trivy.json"
 
@@ -58,7 +59,7 @@ jobs:
           sarif_file: ${{ runner.temp }}/trivy.sarif
           category: trivy-repo
 
-      # Committed secrets and CRITICAL misconfig fail. CVEs: report only.
+      # Committed secrets and CRITICAL misconfig fail.
       - name: Gate
         run: |
           r="$RUNNER_TEMP/trivy.json"
