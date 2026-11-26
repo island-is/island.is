@@ -96,16 +96,13 @@ export const Completed = ({ onPreview }: { onPreview: () => void }) => {
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-        columnGap={2}
-      >
+      <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box display="flex" justifyContent="flexStart">
+          <Button variant="ghost" size="small" onClick={onPreview}>
+            {formatMessage(m.preview)}
+          </Button>
+        </Box>
         <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
-        <Button variant="ghost" size="small" onClick={onPreview}>
-          {formatMessage(m.preview)}
-        </Button>
       </Box>
       <Box marginTop={3}>
         <Checkbox

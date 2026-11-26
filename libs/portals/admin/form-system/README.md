@@ -54,12 +54,14 @@ If the refresh also fails, the operator is told to reload before retrying.
 
 The Gagnaöflun settings offer only "Skoða skjá", including in read-only mode,
 without "Skoða með tengingum". The preview opens on the data-collection section.
-This button is right-aligned on the same row as the Gagnaöflun heading;
+This button is left-aligned on its own row above the left-aligned Gagnaöflun heading;
 other screens retain their existing preview toolbar.
-The Staðfesting settings also offer "Skoða skjá" to the right of the heading,
+The Staðfesting settings also offer "Skoða skjá" above the heading,
 opening the confirmation-screen preview without restrictions.
-The Aðilar settings offer the same heading-aligned button to preview applicants
+The Aðilar settings offer the same button above the heading to preview applicants
 without restrictions.
+Settings screen headings are left-aligned, including submission URLs, lifetime,
+and application deadline settings.
 Previews opened from settings keep the settings navigation visible behind the
 modal, including after it closes.
 

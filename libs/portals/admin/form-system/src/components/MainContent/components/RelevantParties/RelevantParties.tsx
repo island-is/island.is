@@ -113,16 +113,13 @@ export const RelevantParties = ({ onPreview }: { onPreview: () => void }) => {
 
   return (
     <Stack space={2}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-        columnGap={2}
-      >
+      <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box display="flex" justifyContent="flexStart">
+          <Button variant="ghost" size="small" onClick={onPreview}>
+            {formatMessage(m.preview)}
+          </Button>
+        </Box>
         <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
-        <Button variant="ghost" size="small" onClick={onPreview}>
-          {formatMessage(m.preview)}
-        </Button>
       </Box>
 
       <PartyType

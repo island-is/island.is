@@ -46,7 +46,7 @@ jest.mock('@island.is/island-ui/core', () => {
   }
 })
 
-it('offers a screen preview alongside the applicants heading in read-only settings', () => {
+it('offers a screen preview before the applicants heading in read-only settings', () => {
   const onPreview = jest.fn()
   render(<RelevantParties onPreview={onPreview} />)
 
@@ -56,6 +56,13 @@ it('offers a screen preview alongside the applicants heading in read-only settin
   if (!headingRow) {
     throw new Error('Missing applicants heading row')
   }
+  expect(
+    within(headingRow)
+      .getByRole('button', { name: 'Skoða skjá' })
+      .compareDocumentPosition(
+        screen.getByText('Veldu þá einstaklinga sem mega opna þessa umsókn'),
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
 
   fireEvent.click(
     within(headingRow).getByRole('button', { name: 'Skoða skjá' }),

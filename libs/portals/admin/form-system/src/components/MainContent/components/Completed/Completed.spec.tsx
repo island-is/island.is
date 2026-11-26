@@ -127,12 +127,18 @@ const renderCompleted = (
   return { controlDispatch, formUpdate, onPreview }
 }
 
-it('offers a screen preview alongside the confirmation heading', () => {
+it('offers a screen preview before the confirmation heading', () => {
   const { onPreview } = renderCompleted([])
   const headingRow = screen.getByText('Staðfesting').parentElement
   if (!headingRow) {
     throw new Error('Missing confirmation heading row')
   }
+  expect(
+    within(headingRow)
+      .getByRole('button', { name: 'Skoða skjá' })
+      .compareDocumentPosition(screen.getByText('Staðfesting')) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
 
   fireEvent.click(
     within(headingRow).getByRole('button', { name: 'Skoða skjá' }),

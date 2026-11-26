@@ -90,6 +90,12 @@ it('only offers the unrestricted data-collection preview in read-only settings',
     throw new Error('Missing data-collection heading row')
   }
   expect(
+    within(headingRow)
+      .getByRole('button', { name: 'Skoða skjá' })
+      .compareDocumentPosition(screen.getByText('Gagnaöflun')) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
+  expect(
     within(headingRow).getByRole('button', { name: 'Skoða skjá' }),
   ).toBeTruthy()
 
