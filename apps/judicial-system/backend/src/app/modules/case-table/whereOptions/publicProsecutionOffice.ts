@@ -7,8 +7,13 @@ import {
   VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
-import { CaseWhereOptions, expandCasesWithDefendants } from '../caseTable.types'
+import {
+  CaseWhereOptions,
+  expandCasesWithDefendants,
+  expandCasesWithDefendantsAfterVerdictAppeal,
+} from '../caseTable.types'
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
+import { buildHasCompletedVerdictAppealCondition } from './conditions'
 
 // Public prosecution office indictments
 
@@ -35,11 +40,25 @@ export const publicProsecutionOfficeIndictmentsNewWhereOptions =
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
         { indictment_reviewer_id: null },
+        // A case that comes back from the court of appeals is not assigned for
+        // review again, so it goes straight to the review list - also when it
+        // was appealed before anyone had been assigned to it.
+        buildHasCompletedVerdictAppealCondition(false),
       ],
     },
     displayCases: expandCasesWithDefendants,
   })
 
+// Two kinds of row are in review. A district court verdict is, for each
+// defendant the assigned reviewer has not yet decided on. And a court of
+// appeals verdict is from the moment the court completes the verdict appeal:
+// it is reviewed by the prosecutor who argued the appeal, so nobody assigns it
+// and it never passes through the list of new cases.
+//
+// A completed verdict appeal brings every defendant of the case back, not only
+// those the appeal concerned. What carries such a row on from here - the
+// decision on the court of appeals verdict, its service, its enforcement - is
+// not recorded yet, so for now it stays.
 export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
@@ -47,18 +66,28 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
         attributes: [],
         required: true,
         where: {
-          indictment_review_decision: null,
-          is_closed_without_enforcement: { [Op.not]: true },
+          [Op.or]: [
+            {
+              indictment_review_decision: null,
+              is_closed_without_enforcement: { [Op.not]: true },
+            },
+            buildHasCompletedVerdictAppealCondition(true),
+          ],
         },
       },
     },
     where: {
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
-        { indictment_reviewer_id: { [Op.not]: null } },
+        {
+          [Op.or]: [
+            { indictment_reviewer_id: { [Op.not]: null } },
+            buildHasCompletedVerdictAppealCondition(true),
+          ],
+        },
       ],
     },
-    displayCases: expandCasesWithDefendants,
+    displayCases: expandCasesWithDefendantsAfterVerdictAppeal,
   })
 
 export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
@@ -266,6 +295,9 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
         { indictment_reviewer_id: { [Op.not]: null } },
+        // Once the court of appeals has completed the appeal the case is no
+        // longer under appeal - it is back in review.
+        buildHasCompletedVerdictAppealCondition(false),
       ],
     },
     displayCases: expandCasesWithDefendants,

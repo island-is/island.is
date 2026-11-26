@@ -45,6 +45,10 @@ const verdictAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 // The number of whichever case-level appeal came last, on a list that holds
 // both appealed rulings and appealed verdicts.
 const latestAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
+// The case number on a list that holds cases come back from the court of
+// appeals beside cases that never went there: the court of appeals' number is
+// shown once it has completed the verdict appeal, and not before.
+const caseNumberAfterVerdictAppeal: CaseTableColumn = { title: 'Málsnúmer' }
 const districtCourtRulingDate: CaseTableColumn = { title: 'Dómur héraðsdóms' }
 const verdictAppealAppellant: CaseTableColumn = { title: 'Áfrýjað af' }
 const verdictAppealState: CaseTableColumn = { title: 'Staða' }
@@ -93,6 +97,7 @@ export const caseTableColumns = {
   prosecutorInitials,
   verdictAppealCaseNumber,
   latestAppealCaseNumber,
+  caseNumberAfterVerdictAppeal,
   districtCourtRulingDate,
   verdictAppealAppellant,
   verdictAppealState,

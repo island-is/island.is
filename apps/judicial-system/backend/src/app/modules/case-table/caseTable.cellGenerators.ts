@@ -570,6 +570,29 @@ const latestAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
   },
 }
 
+// For a list that holds cases come back from the court of appeals beside cases
+// that never went there. The court of appeals' number is what tells them
+// apart, so it is shown for a completed verdict appeal and for nothing else -
+// see expandCasesWithDefendantsAfterVerdictAppeal, which reads the state
+// fetched here to decide whether the row gets the appeal at all.
+const caseNumberAfterVerdictAppeal: CaseTableCellGenerator<StringGroupValue> = {
+  ...caseNumber,
+  includes: {
+    court: { attributes: ['name'] },
+    defendants: { attributes: ['publicProsecutorIsRegisteredInPoliceSystem'] },
+    verdictAppealCase: { attributes: ['appealCaseNumber', 'appealState'] },
+  },
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<StringGroupValue> =>
+    generateCaseNumber(
+      c,
+      user,
+      c.completedVerdictAppeal?.appealCaseNumber ?? '',
+    ),
+}
+
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
@@ -1717,6 +1740,7 @@ export const caseTableCellGenerators: Record<
   districtCourtRulingDate: rulingDate,
   verdictAppealCaseNumber,
   latestAppealCaseNumber,
+  caseNumberAfterVerdictAppeal,
   verdictAppealAppellant,
   verdictAppealState,
   verdictAppealHead,

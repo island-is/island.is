@@ -18,7 +18,7 @@ export const publicProsecutionOfficeIndictmentsNew: CaseTable = {
 
 const publicProsecutionOfficeIndictmentsInReviewColumnKeys: CaseTableColumnKey[] =
   [
-    'caseNumber',
+    'caseNumberAfterVerdictAppeal',
     'defendants',
     'rulingType',
     'subpoenaServiceState',
