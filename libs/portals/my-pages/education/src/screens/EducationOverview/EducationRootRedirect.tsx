@@ -2,8 +2,8 @@ import { Navigate } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { EducationPaths } from '../../lib/paths'
 
-export const EducationRootRedirect = () => {
-  const { value: overviewEnabled, loading } = useFeatureFlag(
+export const EducationRootRedirect = ({ isActor }: { isActor: boolean }) => {
+  const { value: flagEnabled, loading } = useFeatureFlag(
     Features.isServicePortalPrimarySchoolKeyInfoEnabled,
     false,
   )
@@ -13,7 +13,7 @@ export const EducationRootRedirect = () => {
   return (
     <Navigate
       to={
-        overviewEnabled
+        flagEnabled && !isActor
           ? EducationPaths.EducationOverview
           : EducationPaths.EducationPrimarySchool
       }

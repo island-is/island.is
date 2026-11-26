@@ -481,7 +481,7 @@ export const educationOverviewMessages = defineMessages({
   },
   registeredTitle: {
     id: 'sp.education-overview:registered-title',
-    defaultMessage: 'Þú hefur verið skráð/ur sem aðstandandi',
+    defaultMessage: 'Þú ert skráð/ur sem forsjáraðili eða aðstandandi barns',
     description: 'Title of the notice shown when no contact info is recorded',
   },
   registeredMessage: {
@@ -489,6 +489,11 @@ export const educationOverviewMessages = defineMessages({
     defaultMessage:
       'Skráðu símanúmer og netfang svo skólinn geti haft samband við þig ef svo ber undir.',
     description: 'Notice shown when no contact info is recorded',
+  },
+  saveSuccess: {
+    id: 'sp.education-overview:save-success',
+    defaultMessage: 'Breytingin hefur verið vistuð.',
+    description: 'Toast shown after the own contact info is saved',
   },
   phoneInvalid: {
     id: 'sp.education-overview:phone-invalid',

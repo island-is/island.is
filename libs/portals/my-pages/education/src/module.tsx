@@ -122,14 +122,15 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
-      element: <EducationRootRedirect />,
+      element: <EducationRootRedirect isActor={!!userInfo.profile.actor} />,
     },
 
     {
       name: 'Yfirlit',
       path: EducationPaths.EducationOverview,
       key: KEY_INFO_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled:
+        userInfo.scopes.includes(ApiScope.education) && !userInfo.profile.actor,
       requiredScopes: [ApiScope.education],
       element: <EducationOverview />,
     },
@@ -137,7 +138,8 @@ export const educationModule: PortalModule = {
       name: 'Breyta tengiliðaupplýsingum',
       path: EducationPaths.EducationOverviewContactEdit,
       key: KEY_INFO_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled:
+        userInfo.scopes.includes(ApiScope.education) && !userInfo.profile.actor,
       requiredScopes: [ApiScope.education],
       element: <EducationOverviewContactEdit />,
     },

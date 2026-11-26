@@ -74,7 +74,7 @@ const ContactForm = ({ stored, saving, save, onDone }: ContactFormProps) => {
     setFieldErrors([])
     try {
       await save({ phone, email })
-      toast.success(formatMessage(kim.saveSuccess))
+      toast.success(formatMessage(om.saveSuccess))
       onDone()
     } catch (saveError) {
       setConfirmClear(false)
