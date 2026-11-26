@@ -101,8 +101,10 @@ const PRESIGN_EQUALITY_PLAN = gql`
   }
 `
 
-// Cap the presigned PUT so a stalled upload can't leave the screen busy.
-const PLAN_UPLOAD_TIMEOUT_MS = 60_000
+// Cap the presigned PUT so a stalled upload can't leave the screen busy. A
+// 4 MB plan needs about 0.3 Mbit/s to finish in time, which a weak mobile
+// connection still manages; the presigned URL itself lasts an hour.
+const PLAN_UPLOAD_TIMEOUT_MS = 120_000
 
 /** The presigned PUT to S3 failed; DMR never saw the file. */
 export class PlanUploadError extends Error {}

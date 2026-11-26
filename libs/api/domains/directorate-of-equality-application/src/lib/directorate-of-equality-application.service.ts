@@ -218,6 +218,9 @@ export class DirectorateOfEqualityApplicationService {
       'is',
       PLAN_EDITABLE_STATES,
     )
+    // Logged, but not marked as a refused file: DMR's presign never sees the
+    // file, so its 4xx is about the report (no longer DRAFT/IN_REVIEW, not
+    // found), and the form should show its generic error, not "invalid PDF".
     const { url, key } = await this.withPlanUploadErrors(
       input.applicationId,
       () =>
@@ -225,20 +228,23 @@ export class DirectorateOfEqualityApplicationService {
           user,
           input.applicationId,
         ),
+      { fileRejection: false },
     )
     return { url, key }
   }
 
   /**
    * The presigned plan path: presign, and a content push carrying a key.
-   * DMR's 4xx reasons (`details`) are English developer text, so they are
-   * logged here and the UI gets only the EQUALITY_PLAN_REJECTED title to show
-   * its own message under. Inline HTML and base64 PDF pushes don't use this
-   * and fail as before.
+   * DMR's reasons (`details`) are English developer text, so they are logged
+   * here. On the push, where DMR reads the file, a 4xx becomes the
+   * EQUALITY_PLAN_REJECTED title the form shows its "invalid PDF" message
+   * under; `fileRejection: false` leaves other errors as they are. Inline HTML
+   * and base64 PDF pushes don't use this and fail as before.
    */
   private async withPlanUploadErrors<T>(
     applicationId: string,
     action: () => Promise<T>,
+    { fileRejection = true }: { fileRejection?: boolean } = {},
   ): Promise<T> {
     try {
       return await action()
@@ -254,7 +260,7 @@ export class DirectorateOfEqualityApplicationService {
           details: body?.details,
           context: LOGGING_CONTEXT,
         })
-        if (error.status >= 400 && error.status < 500) {
+        if (fileRejection && error.status >= 400 && error.status < 500) {
           throw new HttpException(
             { error: EQUALITY_PLAN_REJECTED, message: '' },
             error.status,
