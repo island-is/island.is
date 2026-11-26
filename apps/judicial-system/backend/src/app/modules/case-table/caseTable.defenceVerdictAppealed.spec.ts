@@ -86,9 +86,12 @@ describe('defence appealed verdicts case list', () => {
 
     // An inner join on the verdict appeal alone: the association scope keeps
     // a ruling appeal on the same case from standing in for it.
+    // A confirmed appeal is still on the list: outside the court of appeals it
+    // reads as under advisement until it is completed.
     expect(sql).toContain(
-      `INNER JOIN "appeal_case" AS "verdictAppealCase" ON "Case"."id" = "verdictAppealCase"."case_id" AND ("verdictAppealCase"."appeal_state" IN ('APPEALED', 'RECEIVED') AND "verdictAppealCase"."appeal_type" = 'VERDICT')`,
+      `INNER JOIN "appeal_case" AS "verdictAppealCase" ON "Case"."id" = "verdictAppealCase"."case_id" AND ("verdictAppealCase"."appeal_state" IN ('APPEALED', 'RECEIVED', 'READY_TO_COMPLETE') AND "verdictAppealCase"."appeal_type" = 'VERDICT')`,
     )
+    expect(sql).not.toContain(`'READY_TO_COMPLETE', 'COMPLETED'`)
   })
 
   // The advocate is found with subqueries, so the defendants column still
