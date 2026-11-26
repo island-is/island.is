@@ -283,6 +283,38 @@ describe('GenericTable', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
+  it('wraps the content of each body cell when rows fade', () => {
+    const { container } = render(
+      customTable([row('1', 'R-123/2021')], { fadeRows: true }),
+    )
+
+    expect(container.querySelector('table')).toHaveClass(styles.fadeRowsTable)
+
+    const cells = Array.from(container.querySelectorAll('tbody td'))
+    expect(cells).toHaveLength(2)
+    cells.forEach((cell) => {
+      const content = cell.firstElementChild?.firstElementChild
+      expect(content).toHaveClass(styles.fadingCellContent)
+    })
+    expect(
+      container.querySelector(`.${styles.fadingCellContent} > span`),
+    ).toHaveTextContent('R-123/2021')
+  })
+
+  it('leaves the cell markup as it is when rows do not fade', () => {
+    const { container } = renderTable()
+
+    expect(container.querySelector('table')).not.toHaveClass(
+      styles.fadeRowsTable,
+    )
+    expect(
+      container.querySelector(`.${styles.fadingCellContent}`),
+    ).not.toBeInTheDocument()
+
+    const firstCell = container.querySelector('tbody td')
+    expect(firstCell?.innerHTML).toBe('<span>R-123/2021</span>')
+  })
+
   it('starts the rows of the first render fully shown when new rows fade in', () => {
     render(customTable([row('1', 'R-123/2021')], { fadeRows: true }))
 

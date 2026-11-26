@@ -81,10 +81,16 @@ const findLiveRow = (
   return undefined
 }
 
-const EmptyList: FC<{ text: string }> = ({ text }) => (
-  <div className={styles.emptyList}>
-    <Text variant="small">{text}</Text>
-  </div>
+// Opens and closes on the same timing as the rows of the list above it, so
+// the last row leaving and the box arriving move together.
+const EmptyList: FC<{ show: boolean; text: string }> = ({ show, text }) => (
+  <ExpandingSection show={show}>
+    <div className={styles.emptyListSpacing}>
+      <div className={styles.emptyList}>
+        <Text variant="small">{text}</Text>
+      </div>
+    </div>
+  </ExpandingSection>
 )
 
 const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
@@ -289,9 +295,10 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                       fixedLayout
                       sortable={staged.length > 0}
                     />
-                    {staged.length === 0 && (
-                      <EmptyList text="Engin mál valin – smelltu á mál til að velja það" />
-                    )}
+                    <EmptyList
+                      show={staged.length === 0}
+                      text="Engin mál valin – smelltu á mál til að velja það"
+                    />
                   </div>
                 </div>
               )}
@@ -319,7 +326,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
                 fixedLayout
                 sortable={source.length > 0}
               />
-              {source.length === 0 && <EmptyList text="Öll mál valin" />}
+              <EmptyList show={source.length === 0} text="Öll mál valin" />
             </div>
           </div>
         </div>

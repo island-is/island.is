@@ -16,13 +16,18 @@ export const stagingSection = style({
   paddingBottom: theme.spacing[5],
 })
 
+// The gap above the empty box sits inside its expanding block, so it closes
+// with the box.
+export const emptyListSpacing = style({
+  paddingTop: theme.spacing.p2,
+})
+
 // Stands in for the rows of a list that has none.
 export const emptyList = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: 54,
-  marginTop: theme.spacing.p2,
   padding: `0 ${theme.spacing[3]}px`,
   border: `1px dashed ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,

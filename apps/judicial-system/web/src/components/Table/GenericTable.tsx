@@ -3,7 +3,10 @@ import {
   type JSX,
   type MouseEvent,
   type PropsWithChildren,
+  type ReactNode,
+  useEffect,
   useMemo,
+  useRef,
 } from 'react'
 import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
@@ -17,10 +20,10 @@ import {
 import { Icon, Text } from '@island.is/island-ui/core'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import { ContextMenu } from '@island.is/judicial-system-web/src/components'
+import { ExpandingBlock } from '@island.is/judicial-system-web/src/components/Motion/ExpandingSection'
 import {
   enterExitTransition,
   instantTransition,
-  swapTransition,
 } from '@island.is/judicial-system-web/src/components/Motion/transitions'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -108,16 +111,27 @@ const FadingRow: FC<PropsWithChildren<FadingRowProps>> = ({
       style={isPresent ? undefined : { pointerEvents: 'none' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{
-        opacity: 0,
-        transition: reduceMotion ? instantTransition : swapTransition,
-      }}
+      exit={{ opacity: 0 }}
       transition={reduceMotion ? instantTransition : enterExitTransition}
     >
       {children}
     </motion.tr>
   )
 }
+
+/**
+ * The content of a cell in a fading row. It opens from no height and closes
+ * back to none with the row, on the same timing as the row's fade, and holds
+ * the cell's vertical padding so that collapses too.
+ */
+const FadingCell: FC<PropsWithChildren<{ animatesIn: boolean }>> = ({
+  animatesIn,
+  children,
+}) => (
+  <ExpandingBlock animatesIn={animatesIn}>
+    <div className={styles.fadingCellContent}>{children}</div>
+  </ExpandingBlock>
+)
 
 const GenericTable = <Cell,>({
   tableId,
@@ -129,6 +143,8 @@ const GenericTable = <Cell,>({
   sortable = true,
 }: GenericTableProps<Cell>) => {
   const reduceMotion = useReducedMotion() ?? false
+  // Rows of the first render appear as they are; later rows open in.
+  const isFirstRenderRef = useRef(true)
   const [sortConfig, setSortConfig] = useLocalStorage<{
     column: number
     direction: 'ascending' | 'descending'
@@ -160,63 +176,82 @@ const GenericTable = <Cell,>({
     }
   }, [columns, rows, sortConfig])
 
-  const renderCells = (r: GenericTableRow<Cell>) => (
+  useEffect(() => {
+    isFirstRenderRef.current = false
+  }, [])
+
+  const renderCells = (
+    r: GenericTableRow<Cell>,
+    wrap: (content: ReactNode) => ReactNode = (content) => content,
+  ) => (
     <>
       {r.cells.map((cell, idx) => (
-        <td key={idx}>{columns[idx].render(cell)}</td>
+        <td key={idx}>{wrap(columns[idx].render(cell))}</td>
       ))}
       <td
         width="4%"
         className={fixedLayout ? styles.fixedLayoutMenuColumn : undefined}
       >
-        <AnimatePresence initial={false} mode="popLayout">
-          {r.isLoading ? (
-            <motion.div
-              className={styles.smallContainer}
-              key={r.id}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 1 }}
-              exit={{
-                opacity: 0,
-                y: 5,
-              }}
-              transition={{ type: 'spring' }}
-            >
-              <LoadingIndicator />
-            </motion.div>
-          ) : (
-            r.contextMenuItems.length > 0 && (
-              <ContextMenu
-                items={r.contextMenuItems}
-                render={
-                  <motion.div
-                    className={styles.contextMenuButton}
-                    aria-label={`Frekari aðgerðir fyrir mál ${r.label ?? r.id}`}
-                    key={r.id}
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 1, y: 1 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    onClick={(evt) => evt.stopPropagation()}
-                  >
-                    <Icon
-                      icon="ellipsisVertical"
-                      color="blue400"
-                      size="small"
-                    />
-                  </motion.div>
-                }
-              />
-            )
-          )}
-        </AnimatePresence>
+        {wrap(
+          <AnimatePresence initial={false} mode="popLayout">
+            {r.isLoading ? (
+              <motion.div
+                className={styles.smallContainer}
+                key={r.id}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 1 }}
+                exit={{
+                  opacity: 0,
+                  y: 5,
+                }}
+                transition={{ type: 'spring' }}
+              >
+                <LoadingIndicator />
+              </motion.div>
+            ) : (
+              r.contextMenuItems.length > 0 && (
+                <ContextMenu
+                  items={r.contextMenuItems}
+                  render={
+                    <motion.div
+                      className={styles.contextMenuButton}
+                      aria-label={`Frekari aðgerðir fyrir mál ${
+                        r.label ?? r.id
+                      }`}
+                      key={r.id}
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: 1, y: 1 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      onClick={(evt) => evt.stopPropagation()}
+                    >
+                      <Icon
+                        icon="ellipsisVertical"
+                        color="blue400"
+                        size="small"
+                      />
+                    </motion.div>
+                  }
+                />
+              )
+            )}
+          </AnimatePresence>,
+        )}
       </td>
     </>
+  )
+
+  const animatesIn = !isFirstRenderRef.current
+  const wrapInFadingCell = (content: ReactNode) => (
+    <FadingCell animatesIn={animatesIn}>{content}</FadingCell>
   )
 
   return (
     <div className={styles.tableWrapper}>
       <table
-        className={cn(styles.table, { [styles.fixedLayoutTable]: fixedLayout })}
+        className={cn(styles.table, {
+          [styles.fixedLayoutTable]: fixedLayout,
+          [styles.fadeRowsTable]: fadeRows,
+        })}
       >
         <thead className={styles.thead}>
           <tr>
@@ -285,7 +320,7 @@ const GenericTable = <Cell,>({
                   rowProps={getRowProps(r)}
                   reduceMotion={reduceMotion}
                 >
-                  {renderCells(r)}
+                  {renderCells(r, wrapInFadingCell)}
                 </FadingRow>
               ))}
             </AnimatePresence>
