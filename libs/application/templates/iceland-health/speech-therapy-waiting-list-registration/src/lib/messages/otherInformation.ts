@@ -7,9 +7,9 @@ export const otherInformationMessages = defineMessages({
     description: 'Other Information',
   },
   description: {
-    id: 'stwlr.application:otherInformation.description',
+    id: 'stwlr.application:otherInformation.description#markdown',
     defaultMessage:
-      'Hér getur þú valið það sem á við um barnið. [....] getur haft áhrif á hvaða þjónusta stendur til boða og hvenær barnið kemst að.',
+      'Til að tryggja sem besta þjónustu biðjum við þig um að fylla út nokkrar viðbótarupplýsingar.\n\nVal á tungumáli og sveitarfélagi er skylda. Val á talmeinafræðingi og fjarþjálfun er valkvætt. Hægt er að velja einn eða fleiri valkosti fyrir þjálfun, þar á meðal sveitarfélag, talmeinafræðing og/eða fjarþjálfun.',
     description: 'Description',
   },
   language: {
@@ -20,7 +20,7 @@ export const otherInformationMessages = defineMessages({
   languageDescription: {
     id: 'stwlr.application:otherInformation.languageDescription',
     defaultMessage:
-      'Veldu þau tungumál sem barnið talar. Þú getur valið fleiri en eitt. Ef barnið getur talað íslensku, þótt það tali líka annað mál eða önnur mál heima fyrir, er mikilvægt að íslenska sé einnig valin. Upplýsingarnar nýtast til að tryggja að barnið fái viðeigandi talþjálfun.',
+      'Veldu þau tungumál sem barnið talar. Þú getur valið fleiri en eitt. Ef barnið getur talað íslensku, þótt það tali líka önnur tungumál, er mikilvægt að íslenska sé einnig valin. Upplýsingarnar nýtast til að tryggja að barnið fái viðeigandi talþjálfun.',
     description: 'Language description',
   },
   languageSelectionTitle: {
@@ -52,7 +52,7 @@ export const otherInformationMessages = defineMessages({
   locationDescription: {
     id: 'stwlr.application:otherInformation.locationDescription',
     defaultMessage:
-      'Hér getur þú valið staðsetningu þar sem þú villt sækja þjónustu. Þjónusta er alltaf í staðþjónustu nema talmeinafræðingur ákveður annað.',
+      'Hér getur þú valið eitt eða fleiri sveitarfélög þar sem talþjálfun er í boði og þú óskar eftir að sækja þjónustu. Þjónusta er alltaf í staðþjónustu nema talmeinafræðingur ákveður annað.',
     description: 'Location description',
   },
   locationSelectionTitle: {
@@ -78,13 +78,13 @@ export const otherInformationMessages = defineMessages({
 
   speechTherapist: {
     id: 'stwlr.application:otherInformation.speechTherapist',
-    defaultMessage: 'Talmeinafræðingur (Val um tiltekin talmeinafræðing)',
+    defaultMessage: 'Val um talmeinafræðing (valkvætt)',
     description: 'Speech therapist',
   },
   speechTherapistDescription: {
     id: 'stwlr.application:otherInformation.speechTherapistDescription',
     defaultMessage:
-      'Hér getur þú valið um tiltekin talmeinafræðing, bent er á að ef valið er ákveðin talmeinafræðingur þá getur það valdið lengri bið á biðlista.',
+      'Hér getur þú valið talmeinafræðing, bent er á að ef valinn er ákveðinn talmeinafræðingur þá getur það valdið lengri bið á biðlista.',
     description: 'Speech therapist description',
   },
   speechTherapistSelectionTitle: {
@@ -110,13 +110,12 @@ export const otherInformationMessages = defineMessages({
   },
   remoteTherapyDescription: {
     id: 'stwlr.application:otherInformation.remoteTherapyDescription',
-    defaultMessage: 'Hér er texti sem útskýrir fjarþjálfun',
+    defaultMessage: 'Fjarþjálfun fer fram í gegnum fjarfundarbúnað í tölvu.',
     description: 'Description of remote therapy',
   },
   remoteTherapyConfirmation: {
     id: 'stwlr.application:otherInformation.remoteTherapyConfirmation',
-    defaultMessage:
-      'Ég óska eftir fjarþjálfun ef hún býðst / Ég hef áhuga á fjarþjálfun',
+    defaultMessage: 'Ég óska eftir fjarþjálfun ef hún býðst',
     description: 'I would like remote therapy if it is offered',
   },
 })

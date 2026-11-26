@@ -20,9 +20,9 @@ export const prerequisitesMessages = {
     nationalRegistryInformationSubTitle: {
       id: 'stwlr.application:prerequisites.externalData.nationalRegistryInformationSubTitle',
       defaultMessage:
-        'Nafn, kennitala og lögheimili barnsins, ásamt staðfestingu á forsjá.',
+        'Nafn og kennitala barnsins, ásamt staðfestingu á forsjá.',
       description:
-        "Your child's name, national ID number and domicile, along with custody confirmation.",
+        "Your child's name and national ID number, along with custody confirmation.",
     },
     icelandHealthInformationTitle: {
       id: 'stwlr.application:prerequisites.externalData.icelandHealthInformationTitle',
@@ -49,11 +49,6 @@ export const prerequisitesMessages = {
       id: 'stwlr.application:prerequisites.children.sectionTitle',
       defaultMessage: 'Börn',
       description: 'Children',
-    },
-    description: {
-      id: 'stwlr.application:prerequisites.children.description#markdown',
-      defaultMessage: '<Texti>',
-      description: 'Description for the children subsection',
     },
     radioTitle: {
       id: 'stwlr.application:prerequisites.children.radioTitle',

@@ -8,8 +8,10 @@ export const conclusionMessages = defineMessages({
   },
   consentAlertTitle: {
     id: 'stwlr.application:conclusion.consentAlertTitle',
-    defaultMessage: 'Samþykki þitt hefur nú verið sent til Sjúkratrygginga',
-    description: 'Your consent has now been sent to Icelandic Health Insurance',
+    defaultMessage:
+      'Barnið þitt hefur nú verið skráð á miðlægan biðlista talþjálfunar',
+    description:
+      'Your child has now been registered on the central speech therapy waiting list',
   },
   declineAlertTitle: {
     id: 'stwlr.application:conclusion.declineAlertTitle',
@@ -19,7 +21,7 @@ export const conclusionMessages = defineMessages({
   consentDescription: {
     id: 'stwlr.application:conclusion.consentDescription#markdown',
     defaultMessage:
-      'Með samþykkinu tekur skráning barnsins á miðlægan biðlista talmeinaþjónustu gildi.\n\nSjúkratryggingar staðfesta skráninguna og barnið raðast á biðlistann miðað við dagsetningu skráningar hjá Reykjavíkurborg.\n\nÞegar talmeinafræðingur getur tekið barnið í þjónustu er haft samband við forsjáraðila. Þú getur fylgst með stöðu skráningarinnar á Mínum síðum.\n\nStaðfesting á samþykkinu berst í rafrænt pósthólf þitt á Ísland.is.',
+      'Með samþykkinu tekur skráning barnsins á miðlægan biðlista talþjálfunar gildi.\n\nÞegar talmeinafræðingur getur tekið barnið í þjónustu er haft samband við forsjáraðila.\n\nStaðfesting á samþykkinu berst í rafrænt pósthólf þitt á Ísland.is.',
     description: 'Description when consent is given',
   },
   declineDescription: {

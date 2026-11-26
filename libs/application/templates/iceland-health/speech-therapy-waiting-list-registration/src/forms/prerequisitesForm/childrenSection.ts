@@ -16,7 +16,6 @@ export const childrenSection = buildSection({
     buildMultiField({
       id: 'childrenMultiField',
       title: prerequisitesMessages.children.sectionTitle,
-      description: prerequisitesMessages.children.description,
       children: [
         buildRadioField({
           id: 'childNationalId',
