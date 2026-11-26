@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { createClient } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
 import { ManagementClientConfig } from './managementClient/managementClient.config'
-import { CmsRepository } from './cms.repository'
+import { CmsRepository } from '../../platform/cms.repository'
 
 @Module({
   providers: [
