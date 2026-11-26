@@ -102,6 +102,77 @@ describe('GenericTable', () => {
     expect(onClick).not.toHaveBeenCalled()
   })
 
+  const renderCustomTable = (
+    onClick: jest.Mock,
+    {
+      actionLabel,
+      animateRowLayout,
+    }: { actionLabel?: string; animateRowLayout?: boolean },
+  ) =>
+    render(
+      <GenericTable
+        tableId="test-table"
+        columns={columns}
+        rows={[
+          {
+            id: '1',
+            cells: ['R-123/2021'],
+            contextMenuItems: [],
+            onClick,
+            isDisabled: false,
+            isLoading: false,
+            label: 'R-123/2021',
+            actionLabel,
+          },
+        ]}
+        loadingIndicator={() => <span>loading</span>}
+        animateRowLayout={animateRowLayout}
+      />,
+    )
+
+  it('names the row with its action label when one is given', async () => {
+    renderCustomTable(jest.fn(), {
+      actionLabel: 'Velja mál R-123/2021 til að ljúka',
+    })
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'Velja mál R-123/2021 til að ljúka',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Opna mál R-123/2021' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('passes the mouse event to the row click, and nothing from the keyboard', async () => {
+    const onClick = jest.fn()
+    renderTable(onClick)
+
+    const row = await screen.findByRole('button', {
+      name: 'Opna mál R-123/2021',
+    })
+
+    await user.click(row)
+    expect(onClick).toHaveBeenLastCalledWith(
+      expect.objectContaining({ detail: 1 }),
+    )
+
+    row.focus()
+    await user.keyboard('{Enter}')
+    expect(onClick).toHaveBeenLastCalledWith()
+  })
+
+  it('keeps layout animated rows clickable', async () => {
+    const onClick = jest.fn()
+    renderCustomTable(onClick, { animateRowLayout: true })
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Opna mál R-123/2021' }),
+    )
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
   it('exposes the context menu as a single named trigger', async () => {
     renderTable(jest.fn(), false, [{ title: 'Eyða', onClick: jest.fn() }])
 

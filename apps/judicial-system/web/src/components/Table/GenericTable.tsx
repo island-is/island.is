@@ -1,10 +1,14 @@
-import { type JSX, useMemo } from 'react'
+import { type JSX, type MouseEvent, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 import { Icon } from '@island.is/island-ui/core'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import { ContextMenu } from '@island.is/judicial-system-web/src/components'
+import {
+  enterExitTransition,
+  instantTransition,
+} from '@island.is/judicial-system-web/src/components/Motion/transitions'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import SortButton from './SortButton/SortButton'
@@ -21,12 +25,21 @@ interface GenericTableProps<Cell> {
     id: string
     cells: Cell[]
     contextMenuItems: ContextMenuItem[]
-    onClick: () => void
+    // Given the mouse event when the row is clicked, and nothing when it is
+    // activated with the keyboard.
+    onClick: (event?: MouseEvent<HTMLTableRowElement>) => void
     isDisabled: boolean
     isLoading: boolean
     label?: string
+    // The row's accessible name, in place of the default "Opna mál <label>",
+    // for rows whose click does something other than open the case.
+    actionLabel?: string
   }[]
   loadingIndicator: () => JSX.Element
+  // Rows carry their id as a motion layoutId, so a row that leaves this
+  // table and appears in another one under the same LayoutGroup slides
+  // between them, and the rows around it slide into place.
+  animateRowLayout?: boolean
 }
 
 const GenericTable = <Cell,>({
@@ -34,7 +47,9 @@ const GenericTable = <Cell,>({
   rows,
   columns,
   loadingIndicator: LoadingIndicator,
+  animateRowLayout = false,
 }: GenericTableProps<Cell>) => {
+  const reduceMotion = useReducedMotion()
   const [sortConfig, setSortConfig] = useLocalStorage<{
     column: number
     direction: 'ascending' | 'descending'
@@ -109,14 +124,29 @@ const GenericTable = <Cell,>({
         </thead>
         <tbody>
           {rows.map((r, idx) => (
-            <tr
-              key={idx}
+            <motion.tr
+              // A layout animated row is keyed by its id, so the element
+              // follows the row rather than its position in the list.
+              key={animateRowLayout ? r.id : idx}
+              layoutId={animateRowLayout ? r.id : undefined}
+              layout={animateRowLayout ? 'position' : undefined}
+              transition={
+                animateRowLayout
+                  ? {
+                      layout: reduceMotion
+                        ? instantTransition
+                        : enterExitTransition,
+                    }
+                  : undefined
+              }
               role="button"
               tabIndex={r.isDisabled ? -1 : 0}
-              aria-label={r.label ? `Opna mál ${r.label}` : 'Opna mál'}
+              aria-label={
+                r.actionLabel ?? (r.label ? `Opna mál ${r.label}` : 'Opna mál')
+              }
               aria-disabled={r.isDisabled}
               className={styles.tableRowContainer}
-              onClick={() => !r.isDisabled && r.onClick()}
+              onClick={(evt) => !r.isDisabled && r.onClick(evt)}
               onKeyDown={onEnterOrSpace(() => !r.isDisabled && r.onClick())}
             >
               {r.cells.map((cell, idx) => (
@@ -166,7 +196,7 @@ const GenericTable = <Cell,>({
                   )}
                 </AnimatePresence>
               </td>
-            </tr>
+            </motion.tr>
           ))}
         </tbody>
       </table>
