@@ -1,8 +1,10 @@
 import {
+  type AppealStatementEvent,
   CaseFileCategory,
   CaseState,
   CaseType,
   DefendantEventType,
+  findFiledAppealStatementEvent,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -11,6 +13,7 @@ import {
   isPrisonStaffUser,
   isRequestCase,
   User,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -206,6 +209,58 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
+// Incomplete greinargerð uploads stay private to the party's own confirmed
+// defender/advocate until APPEAL_STATEMENT_SENT. Co-parties and prosecution
+// drafts must not leak through limited-access listing or download, and files
+// uploaded after that party's SENT are treated as orphans (same cutoff as the
+// overview).
+const canDefenceUserViewVerdictAppealStatementFile = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants: Defendant[] | undefined,
+  civilClaimants: CivilClaimant[] | undefined,
+  defendantId: string | undefined,
+  civilClaimantId: string | null | undefined,
+  fileCreated: Date | undefined,
+  appealEventLogs: AppealStatementEvent[] | null | undefined,
+): boolean => {
+  if (!verdictAppealStatementFileCategories.includes(caseFileCategory)) {
+    return true
+  }
+
+  const party = { defendantId, civilClaimantId }
+  const defendant = defendants?.find((d) => d.id === defendantId)
+  const civilClaimant = civilClaimants?.find((c) => c.id === civilClaimantId)
+
+  const isOwnParty = Boolean(
+    (defendant &&
+      (Defendant.isConfirmedDefenderOfDefendant(nationalId, [defendant]) ||
+        Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, [
+          defendant,
+        ]))) ||
+      (civilClaimant &&
+        (CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(nationalId, [
+          civilClaimant,
+        ]) ||
+          CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+            nationalId,
+            [civilClaimant],
+          ))),
+  )
+
+  if (isOwnParty) {
+    return true
+  }
+
+  const filedEvent = findFiledAppealStatementEvent(appealEventLogs, party)
+
+  if (!filedEvent?.created || !fileCreated) {
+    return false
+  }
+
+  return fileCreated.getTime() <= new Date(filedEvent.created).getTime()
+}
+
 const canDefenceUserViewCaseFile = ({
   nationalId,
   userName,
@@ -220,6 +275,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   nationalId: string
   userName: string
@@ -234,6 +290,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -246,7 +303,27 @@ const canDefenceUserViewCaseFile = ({
       civilClaimants,
     )
 
-    if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
+    // District dismissal cutoff must not hide verdict-appeal greinargerðir
+    // for a confirmed appeal advocate (including co-defendant filings they
+    // may open). A district-only defender of a dismissed client keeps the
+    // cutoff — they must not see later co-defendant statements through this
+    // exemption alone.
+    const isVerdictAppealStatementFile =
+      verdictAppealStatementFileCategories.includes(caseFileCategory)
+
+    const hasConfirmedAppealAppointment =
+      Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+        nationalId,
+        civilClaimants,
+      )
+
+    if (
+      cutoffDate &&
+      fileCreated &&
+      fileCreated > cutoffDate &&
+      !(isVerdictAppealStatementFile && hasConfirmedAppealAppointment)
+    ) {
       return false
     }
 
@@ -300,6 +377,21 @@ const canDefenceUserViewCaseFile = ({
       return false
     }
 
+    if (
+      !canDefenceUserViewVerdictAppealStatementFile(
+        nationalId,
+        caseFileCategory,
+        defendants,
+        civilClaimants,
+        defendantId,
+        civilClaimantId,
+        fileCreated,
+        appealEventLogs,
+      )
+    ) {
+      return false
+    }
+
     return canDefenceUserViewCivilClaimCaseFile(nationalId, {
       category: caseFileCategory,
       civilClaimantId,
@@ -344,6 +436,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   user: User
   caseType: CaseType
@@ -357,6 +450,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (!caseFileCategory) {
     return false
@@ -377,6 +471,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       civilClaimantId,
       fileCreated,
       isRulingOrderInConfirmedCourtSession,
+      appealEventLogs,
     })
   }
 

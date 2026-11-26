@@ -360,7 +360,7 @@ const routes: Route[] = [
   },
   {
     method: 'deleteCaseFile',
-    locksCase: false,
+    locksCase: true,
     accessGuard: CaseWriteGuard.name,
     params: { fileId: appealFileId },
     body: {},

@@ -3,7 +3,7 @@ import { isCompany } from 'kennitala'
 import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 
-import { METRICS_PREFIX } from './utils'
+import { METRICS_PREFIX, toDeadlineIso } from './utils'
 import {
   Body,
   Controller,
@@ -176,6 +176,7 @@ export class NotificationsController {
     const sanitizedBody = {
       ...body,
       args: validArgs,
+      ...(body.deadline && { deadline: toDeadlineIso(body.deadline) }),
     }
 
     const id = await this.queue.add(sanitizedBody)

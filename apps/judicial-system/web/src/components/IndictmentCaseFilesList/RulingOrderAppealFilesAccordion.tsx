@@ -126,7 +126,11 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       file,
       user,
       appealCase.rulingFileId,
-    ) && !isAppealFileDeletionLocked(file.category, appealCase)
+    ) &&
+    !isAppealFileDeletionLocked(file.category, appealCase, {
+      defendantId: file.defendantId,
+      civilClaimantId: file.civilClaimantId,
+    })
 
   const rulingFileName =
     rulingFile.userGeneratedFilename ?? rulingFile.name ?? 'Úrskurður'

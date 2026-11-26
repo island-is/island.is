@@ -5,6 +5,7 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
+import { findFiledAppealStatementEvent } from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
@@ -12,6 +13,7 @@ import type {
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isVerdictAppealOpen } from '@island.is/judicial-system-web/src/routes/Defender/IndictmentCase/verdictAppealActions.logic'
 
 import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
@@ -133,14 +135,32 @@ export const getDefenderVerdictTimelineItems = ({
     items.push(prosecutionAppealItem)
   }
 
-  // Statement deadline for this defendant while the verdict appeal is open.
-  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
-    verdictAppealCase,
-    { defendantId },
-  )
+  // Greinargerð: once the party has filed, the sent date replaces the deadline
+  // line. Completed / withdrawn appeals leave this off the card for now.
+  if (isVerdictAppealOpen(verdictAppealCase)) {
+    const statementEvent = findFiledAppealStatementEvent(
+      verdictAppealCase?.appealEventLogs,
+      { defendantId },
+    )
 
-  if (statementDeadlineItem) {
-    items.push(statementDeadlineItem)
+    if (statementEvent) {
+      // Filed status does not require a portal deadline — Landsréttur can
+      // record a statement received outside the system.
+      const sentDate = formatDate(statementEvent.created)
+
+      items.push({
+        text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
+      })
+    } else {
+      const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+        verdictAppealCase,
+        { defendantId },
+      )
+
+      if (statementDeadlineItem) {
+        items.push(statementDeadlineItem)
+      }
+    }
   }
 
   return items

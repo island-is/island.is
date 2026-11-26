@@ -33,6 +33,7 @@ import {
   defenceIndictmentsAppealedWhereOptions,
   defenceIndictmentsCompletedWhereOptions,
   defenceIndictmentsInProgressWhereOptions,
+  defenceIndictmentsVerdictAppealedWhereOptions,
   defenceRequestCasesAppealedWhereOptions,
   defenceRequestCasesCompletedWhereOptions,
   defenceRequestCasesInProgressWhereOptions,
@@ -229,6 +230,8 @@ export const caseTableWhereOptions: Record<
     defenceIndictmentsInProgressWhereOptions,
   [CaseTableType.DEFENCE_INDICTMENTS_APPEALED]:
     defenceIndictmentsAppealedWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED]:
+    defenceIndictmentsVerdictAppealedWhereOptions,
   [CaseTableType.DEFENCE_INDICTMENTS_COMPLETED]:
     defenceIndictmentsCompletedWhereOptions,
 }
