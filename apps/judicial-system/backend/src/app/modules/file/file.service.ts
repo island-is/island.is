@@ -309,6 +309,20 @@ export class FileService {
     }
   }
 
+  // The confirmed copy of the court of appeals' judgment or ruling carries the
+  // date of its conclusion. Without a hash the copy is not trusted, so the
+  // next read stamps the document again with the date now on record.
+  async invalidateVerdictAppealRulingConfirmation(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.caseFileRepositoryService.clearHashesForCaseAndCategory(
+      caseId,
+      CaseFileCategory.VERDICT_APPEAL_RULING,
+      { transaction },
+    )
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {

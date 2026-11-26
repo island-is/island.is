@@ -350,6 +350,37 @@ export class CaseFileRepositoryService {
     }
   }
 
+  // A stored hash marks the confirmed copy of a file as current, so clearing
+  // it makes the next read stamp the document again and replace that copy.
+  async clearHashesForCaseAndCategory(
+    caseId: string,
+    category: CaseFileCategory,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Clearing the hashes of the ${category} case files of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        { hash: null, hashAlgorithm: null },
+        {
+          where: { caseId, category, hash: { [Op.ne]: null } },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error clearing the hashes of the ${category} case files of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   // The files of a case in the given categories. Which categories is the
   // caller's decision - the copy of a case takes only the prosecution's.
   // Deleted files are soft-deleted and stay in the table, so they are excluded

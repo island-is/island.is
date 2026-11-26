@@ -2,6 +2,8 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+// The frame a confirm modal previews a document in, and its padding while
+// the document is still loading.
 export const ruling = style({
   display: 'flex',
   justifyContent: 'center',
