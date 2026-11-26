@@ -91,10 +91,10 @@ const toVariables = (
 })
 
 const PRESIGN_EQUALITY_PLAN = gql`
-  mutation DirectorateOfEqualityPresignEqualityPlan(
+  mutation PresignDirectorateOfEqualityEqualityPlan(
     $input: DirectorateOfEqualityPresignEqualityPlanInput!
   ) {
-    directorateOfEqualityPresignEqualityPlan(input: $input) {
+    presignDirectorateOfEqualityEqualityPlan(input: $input) {
       url
       key
     }
@@ -111,7 +111,7 @@ export const useEqualityContentPush = () => {
   const [updateDraftContent] = useMutation(UPDATE_EQUALITY_DRAFT_CONTENT)
   const [editContent] = useMutation(EDIT_EQUALITY_CONTENT)
   const [presignPlan] = useMutation<{
-    directorateOfEqualityPresignEqualityPlan: { url: string; key: string }
+    presignDirectorateOfEqualityEqualityPlan: { url: string; key: string }
   }>(PRESIGN_EQUALITY_PLAN)
 
   /**
@@ -124,7 +124,7 @@ export const useEqualityContentPush = () => {
       const { data } = await presignPlan({
         variables: { input: { applicationId } },
       })
-      const presign = data?.directorateOfEqualityPresignEqualityPlan
+      const presign = data?.presignDirectorateOfEqualityEqualityPlan
       if (!presign?.url || !presign.key) {
         throw new PlanUploadError('No presigned URL for the plan')
       }

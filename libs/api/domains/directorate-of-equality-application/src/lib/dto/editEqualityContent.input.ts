@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { MaxLength } from 'class-validator'
+import { IsOptional, MaxLength } from 'class-validator'
 
 /**
  * A revision to an already-submitted plan, during a case-worker-requested
@@ -32,11 +32,14 @@ export class EditEqualityContentInput {
   equalityReportPdfFilename?: string
 
   /**
-   * Key from `directorateOfEqualityPresignEqualityPlan` for a PDF the browser
+   * Key from `presignDirectorateOfEqualityEqualityPlan` for a PDF the browser
    * already PUT to S3; the bytes never pass through here. Single use: DMR
    * consumes the upload on success and refuses the key after that.
    */
   @Field(() => String, { nullable: true })
+  // Without it MaxLength rejects an absent key, failing every HTML and inline
+  // PDF push.
+  @IsOptional()
   @MaxLength(256)
   equalityReportPdfKey?: string
 }

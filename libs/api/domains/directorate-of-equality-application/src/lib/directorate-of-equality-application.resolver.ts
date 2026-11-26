@@ -129,7 +129,7 @@ export class DirectorateOfEqualityApplicationResolver {
   // The plan PDF goes from the browser straight to the presigned URL; the key
   // then comes back on the content mutations above.
   @Mutation(() => PresignedUploadModel, {
-    name: 'directorateOfEqualityPresignEqualityPlan',
+    name: 'presignDirectorateOfEqualityEqualityPlan',
   })
   @Scopes(ApiScope.directorateOfEquality)
   @Audit()
