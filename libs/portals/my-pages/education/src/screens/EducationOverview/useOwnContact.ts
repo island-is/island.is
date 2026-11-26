@@ -28,7 +28,27 @@ export const clearedOwnContactFields = (
     (field) => stored[field].trim() !== '' && next[field].trim() === '',
   )
 
-export const ownContactFieldErrors = (error: unknown): OwnContactField[] => {
+export const suggestOwnContact = (
+  stored: OwnContactInput,
+  profile: { email?: string | null; mobilePhoneNumber?: string | null } | null,
+): { values: OwnContactInput; suggested: OwnContactField[] } => {
+  const fromProfile: OwnContactInput = {
+    email: profile?.email?.trim() ?? '',
+    phone: toE164(profile?.mobilePhoneNumber ?? '') ?? '',
+  }
+  const suggested = (['phone', 'email'] as const).filter(
+    (field) => stored[field].trim() === '' && fromProfile[field] !== '',
+  )
+  return {
+    values: {
+      phone: suggested.includes('phone') ? fromProfile.phone : stored.phone,
+      email: suggested.includes('email') ? fromProfile.email : stored.email,
+    },
+    suggested,
+  }
+}
+
+export const ownContactFieldErrors =(error: unknown): OwnContactField[] => {
   if (!(error instanceof ApolloError)) return []
   const problem = findProblemInApolloError(error) as
     | { mmsFields?: unknown }

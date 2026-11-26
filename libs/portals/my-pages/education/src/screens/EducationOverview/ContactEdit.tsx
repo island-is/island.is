@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
+  AlertMessage,
   Box,
   Button,
   Input,
@@ -15,6 +16,7 @@ import {
   m,
   Modal,
 } from '@island.is/portals/my-pages/core'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   educationOverviewMessages as om,
@@ -28,6 +30,7 @@ import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/Sec
 import {
   clearedOwnContactFields,
   ownContactFieldErrors,
+  suggestOwnContact,
   toE164,
   useOwnContact,
   type OwnContactField,
@@ -41,15 +44,24 @@ const FIELD_INPUT: Record<OwnContactField, string> = {
 
 interface ContactFormProps {
   stored: OwnContactInput
+  initial: OwnContactInput
+  suggested: OwnContactField[]
   saving: boolean
   save: (input: OwnContactInput) => Promise<void>
   onDone: () => void
 }
 
-const ContactForm = ({ stored, saving, save, onDone }: ContactFormProps) => {
+const ContactForm = ({
+  stored,
+  initial,
+  suggested,
+  saving,
+  save,
+  onDone,
+}: ContactFormProps) => {
   const { formatMessage, lang } = useLocale()
-  const [phone, setPhone] = useState(stored.phone)
-  const [email, setEmail] = useState(stored.email)
+  const [phone, setPhone] = useState(initial.phone)
+  const [email, setEmail] = useState(initial.email)
   const [fieldErrors, setFieldErrors] = useState<OwnContactField[]>([])
   const [confirmClear, setConfirmClear] = useState(false)
   const saveButton = useRef<HTMLButtonElement>(null)
@@ -94,6 +106,15 @@ const ContactForm = ({ stored, saving, save, onDone }: ContactFormProps) => {
   return (
     <Box className={styles.formContainer}>
       <Stack space={3}>
+        {suggested.length > 0 && (
+          <AlertMessage
+            type="info"
+            title={formatMessage(om.suggestedTitle)}
+            message={formatMessage(om.suggestedMessage, {
+              fields: suggested.length > 1 ? 'both' : suggested[0],
+            })}
+          />
+        )}
         <PhoneInput
           backgroundColor="blue"
           name={FIELD_INPUT.phone}
@@ -173,11 +194,12 @@ export const ContactEdit = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { contact, loading, error, saving, save } = useOwnContact()
+  const { data: profile, loading: profileLoading } = useUserProfile()
 
   const goBack = () => navigate(EducationPaths.EducationOverview)
 
   const renderContent = () => {
-    if (loading) return <CardLoader />
+    if (loading || profileLoading) return <CardLoader />
     if (error) return <SectionError error={error} />
     if (!contact) {
       return (
@@ -189,12 +211,17 @@ export const ContactEdit = () => {
       )
     }
 
+    const stored = {
+      phone: toE164(contact.phone ?? '') ?? '',
+      email: contact.email ?? '',
+    }
+    const { values, suggested } = suggestOwnContact(stored, profile)
+
     return (
       <ContactForm
-        stored={{
-          phone: toE164(contact.phone ?? '') ?? '',
-          email: contact.email ?? '',
-        }}
+        stored={stored}
+        initial={values}
+        suggested={suggested}
         saving={saving}
         save={save}
         onDone={goBack}

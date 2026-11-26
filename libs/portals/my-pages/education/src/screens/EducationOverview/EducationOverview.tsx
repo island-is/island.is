@@ -15,6 +15,7 @@ import {
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
 import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
@@ -23,7 +24,7 @@ import { educationOverviewMessages as om } from '../../lib/messages'
 import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
 import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
-import { toE164, useOwnContact } from './useOwnContact'
+import { suggestOwnContact, toE164, useOwnContact } from './useOwnContact'
 
 export const EducationOverview = () => {
   useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
@@ -31,12 +32,13 @@ export const EducationOverview = () => {
   const navigate = useNavigate()
   const { sm } = useBreakpoint()
   const { contact, hasContact, loading, error } = useOwnContact()
+  const { data: profile, loading: profileLoading } = useUserProfile()
 
   const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
   const notRegistered = formatMessage(om.notRegistered)
 
   const renderContent = () => {
-    if (loading) return <CardLoader />
+    if (loading || profileLoading) return <CardLoader />
     if (error) return <SectionError error={error} />
     if (!contact) {
       return (
@@ -52,7 +54,10 @@ export const EducationOverview = () => {
       )
     }
 
-    const phone = toE164(contact.phone ?? '')
+    const { values, suggested } = suggestOwnContact(
+      { phone: toE164(contact.phone ?? '') ?? '', email: contact.email ?? '' },
+      profile,
+    )
 
     return (
       <KeyInfoSection
@@ -71,7 +76,23 @@ export const EducationOverview = () => {
         }
       >
         <Text paddingBottom={2}>{formatMessage(om.contactDescription)}</Text>
-        {!hasContact && (
+        {suggested.length > 0 && (
+          <Box paddingY={2}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(om.suggestedTitle)}
+              message={formatMessage(om.suggestedOverviewMessage, {
+                fields: suggested.length > 1 ? 'both' : suggested[0],
+              })}
+              action={
+                <Button size="small" nowrap onClick={goToEdit}>
+                  {formatMessage(om.registerButton)}
+                </Button>
+              }
+            />
+          </Box>
+        )}
+        {!hasContact && suggested.length === 0 && (
           <Box paddingY={2}>
             <AlertMessage
               type="info"
@@ -88,14 +109,16 @@ export const EducationOverview = () => {
         <InfoLine
           label={m.telNumber}
           content={
-            phone ? formatPhoneNumberWithIcelandicCountryCode(phone) : notRegistered
+            values.phone
+              ? formatPhoneNumberWithIcelandicCountryCode(values.phone)
+              : notRegistered
           }
           paddingY={3}
         />
         <Divider />
         <InfoLine
           label={m.email}
-          content={contact.email || notRegistered}
+          content={values.email || notRegistered}
           paddingY={3}
         />
         <Divider />
