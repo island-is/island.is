@@ -604,7 +604,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       })
       const letterPdf = {
         data: Buffer.from('skipunarbréf'),
-        name: 'Skipunarbréf Þórður Már Jónsson.pdf',
+        name: 'Skipunarbréf Þórður Már Jónsson - Defendant.pdf',
       }
       ;(
         mockAppealAppointmentLetterService.getPdf as jest.Mock
@@ -618,6 +618,24 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
       expect(zipFilesSpy).toHaveBeenCalledWith(
         expect.arrayContaining([letterPdf]),
+      )
+    })
+
+    it('should still request the letter for a district defender without case-file access', async () => {
+      const representedDefendant = makeDefendant({
+        id: 'defendant-1',
+        caseFilesSharedWithDefender: false,
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [representedDefendant],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).not.toHaveBeenCalled()
+      expect(mockAppealAppointmentLetterService.getPdf).toHaveBeenCalledWith(
+        theCase,
+        { defendant: representedDefendant },
       )
     })
 

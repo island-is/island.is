@@ -500,9 +500,13 @@ export class LimitedAccessCaseService {
           ),
         )
       }
+    }
 
-      // Same parties the limited-access appointment-letter route admits: the
-      // defender of one accused is not party to another's letter.
+    // Outside the indictment case-file gate: a district defender without
+    // shared case files can still download their appointment letter alone,
+    // so the zip should include it too. Same party predicates as the
+    // limited-access appointment-letter route.
+    if (isIndictmentCase(theCase.type)) {
       for (const defendant of theCase.defendants ?? []) {
         if (
           Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [

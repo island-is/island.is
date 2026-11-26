@@ -84,9 +84,16 @@ export class AppealAppointmentLetterService {
       return undefined
     }
 
+    // Include the party name when present so two letters for the same
+    // advocate (different defendants) do not collide in a zip.
+    const partyName = letter.clientName ?? party.civilClaimant?.name
+    const fileName = partyName
+      ? `Skipunarbréf ${letter.advocateName} - ${partyName}.pdf`
+      : `Skipunarbréf ${letter.advocateName}.pdf`
+
     return {
       data: await createAppealAppointmentLetter(letter),
-      name: `Skipunarbréf ${letter.advocateName}.pdf`,
+      name: fileName,
     }
   }
 
