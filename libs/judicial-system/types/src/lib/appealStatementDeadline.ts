@@ -23,9 +23,10 @@ export const findAppealStatementDeadline = <T extends AppealStatementParty>(
 ): T | undefined =>
   deadlines?.find((deadline) => isSameAppealStatementParty(deadline, party))
 
-interface AppealStatementEvent extends AppealStatementParty {
+export interface AppealStatementEvent extends AppealStatementParty {
   eventType?: string | null
   userRole?: string | null
+  created?: string | Date | null
 }
 
 // The events backfilled from the appeal case's legacy statement dates name
@@ -35,6 +36,20 @@ const isLegacyDefenderEvent = (eventLog: AppealStatementEvent): boolean =>
   !eventLog.civilClaimantId &&
   eventLog.userRole === UserRole.DEFENDER
 
+// The APPEAL_STATEMENT_SENT row for this party, if any. Used as the filed
+// gate and as the cutoff so a later orphan upload is not treated as part of
+// that filing.
+export const findFiledAppealStatementEvent = (
+  eventLogs: AppealStatementEvent[] | null | undefined,
+  party: AppealStatementParty,
+): AppealStatementEvent | undefined =>
+  eventLogs?.find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+      isSameAppealStatementParty(eventLog, party) &&
+      !isLegacyDefenderEvent(eventLog),
+  )
+
 // Whether the party has filed its statement in the appeal, read from the
 // event the statement upload writes. A row naming no party is the
 // prosecution's, unless it is a legacy defender's; a court user uploading on
@@ -42,12 +57,4 @@ const isLegacyDefenderEvent = (eventLog: AppealStatementEvent): boolean =>
 export const hasFiledAppealStatement = (
   eventLogs: AppealStatementEvent[] | null | undefined,
   party: AppealStatementParty,
-): boolean =>
-  Boolean(
-    eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
-        isSameAppealStatementParty(eventLog, party) &&
-        !isLegacyDefenderEvent(eventLog),
-    ),
-  )
+): boolean => Boolean(findFiledAppealStatementEvent(eventLogs, party))

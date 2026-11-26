@@ -60,7 +60,9 @@ export const getApproveAnswers = (
     })
   }
 
-  // If reviewer is buyers coowner or operator
+  // If reviewer is buyers coowner or operator. Only the buyer can write
+  // buyerCoOwnerAndOperator in review, and sending it otherwise could fail its
+  // answer validator if the buyer changed the list after it was fetched
   const buyerCoOwnersAndOperators = getValueViaPath(
     answers,
     'buyerCoOwnerAndOperator',
@@ -73,6 +75,7 @@ export const getApproveAnswers = (
         coOwnerOrOperator.nationalId === reviewerNationalId,
     )
   if (
+    buyerNationalId === reviewerNationalId &&
     buyerCoOwnerAndOperator &&
     (buyerCoOwnerAndOperator.approved === undefined ||
       buyerCoOwnerAndOperator.approved === false)
