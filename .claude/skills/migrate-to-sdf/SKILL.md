@@ -34,9 +34,10 @@ Read it in two modes:
   Only a **fixed (but growing) set** of field components exist; option/`value`/
   visibility functions run **server-side**; the client gets JSON. A FormBuilder
   field type that has no renderer yet sits in `ComponentSwitch`'s
-  `unsupportedFieldTypes` and **renders nothing** until someone implements it
-  across four layers (see DO 6) — this migration had to do that for the overview
-  and payment-pending fields.
+  `unsupportedFieldTypes` and renders a **placeholder box** (`[SdfXField] label`)
+  instead of the field until someone implements it across four layers (see
+  DO 6) — this migration had to do that for the overview and payment-pending
+  fields.
 
 ### Reference implementations (read these first)
 
@@ -66,7 +67,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
 - **Template-api layer** — actions reach the legacy service via `namespace`, and
   externalData/visibility/display-value behavior follows the **SDF rules** below.
 - **Renderer/field-set layer** — the client renders only a fixed set of fields; a
-  FormBuilder type with no renderer renders **nothing** (DO 6). Answer
+  FormBuilder type with no renderer shows a **placeholder box** (DO 6). Answer
   persistence, page-cursor navigation and header/logo also live server-side here
   and have legacy-parity rules (**SDF rules** below).
 
@@ -148,14 +149,16 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
 
 6. **Replace React custom field components with template-api actions + SDF
    fields.** SDF cannot run arbitrary React field components: the renderer's
-   `ComponentSwitch` supports a **fixed set**, and unknown/unsupported types
-   render nothing. So **never import a legacy React field** (e.g. a `PropertySearch`
+   `ComponentSwitch` supports a **fixed set**, and unsupported types render a
+   placeholder box (an unknown type renders nothing). So **never import a legacy React field** (e.g. a `PropertySearch`
    from another template) and **never author a new React custom field** — compose
    from existing SDF fields + template-api actions instead. Patterns (mirror
    fire-compensation-appraisal-sdf):
 
    - Address/entity search → `addSearchField({ searchAction, options, ... })`
      backed by a `searchX` template API that returns `{ options, ...data }`.
+     The search answer is exactly `{ value, label, query }` (`SdfSearchAnswer`);
+     anything the search fetches or derives goes to `externalData` (SDF rules).
    - "On select, load details" → a select/search with
      `onSelectRefetch: [SomeApi.action]` + `refetchTargets: [...]`, backed by a
      template API that fetches into **externalData**.
@@ -174,7 +177,17 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
      (`sdf/dto/screen.dto.ts`), the **client query** selection set
      (`application-system-next/lib/graphql.ts`), and the **renderer** field
      component (moved out of `unsupportedFieldTypes` in `ComponentSwitch.tsx`).
+     The field-type contract in `libs/application/sdf-types` keeps these layers
+     in sync and is checked by specs; adding a new `FieldTypes` value follows its
+     README.
      Budget real time for this — it is the most-underestimated part of a migration.
+   - **Check the template's field types before you start.** List the field types
+     the legacy template uses and compare them with `unsupportedFieldTypes` in
+     `ComponentSwitch.tsx`. Every type in that set needs the four-layer
+     implementation above, so find out early what the migration will cost. A
+     supported type can still drop legacy options (for example `useDividerLine`
+     on a divider, or `tag` on accordion items), so check the props you rely on
+     too.
 
 7. **PAYMENT — only if your app charges a fee. Most apps don't; skip this whole
    step otherwise.** If it does:
@@ -192,6 +205,12 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
      `PaymentPending`). The charge-overview field (`buildPaymentChargeOverviewField`
      / `SdfPaymentChargeOverviewField`) already exists. **Verify the full
      payment → done transition end-to-end early; it is the biggest unknown.**
+   - **Declare `SUBMIT` and `ABORT` on every payment role.** The payment-pending
+     field sends both, and SUBMIT is rejected (403) for an event the role
+     doesn't declare. `buildPaymentState`'s default role has them; if you pass
+     your own `roles`, add
+     `actions: [{ event: DefaultEvents.SUBMIT, … }, { event: DefaultEvents.ABORT, … }]`
+     to each. In SDF they also show as footer buttons on the payment screen.
    - **Watch the Sequelize-snapshot trap** (see Troubleshooting): the
      `CreateChargeApi` `onEntry` action crashes with _"No template exists with id
      undefined"_ unless the application is snapshotted before `changeState`.
@@ -251,6 +270,16 @@ one of them; each maps to a symptom in **Troubleshooting**.
   template API whose result lands in **externalData** (under its `externalDataId`).
   Update any util/branch that read `answers.<x>` to read `externalData.<action>.data`.
 
+  - **Search answers are exactly `{ value, label, query }`** (the shared
+    `SdfSearchAnswer` type from `@island.is/application/types`). The search
+    field rebuilds that object on every select, keystroke and clear, so
+    anything else under the search key is dropped. Put fetched or derived data
+    (e.g. the selected entity's code or details) in `externalData`, or under a
+    **separate** field id. Don't give a search field an object `defaultValue`
+    with extra keys, and never nest another field id under a search field's
+    id (`anyonesProperty.addressCode` is overwritten as soon as the user types
+    in `anyonesProperty`).
+
 - **Display fields do not persist.** Their computed value never lands in answers
   (`expr.get('displayField')` reads `answers.displayField` → `undefined`). Any
   backend logic that read those answers (DTO mapping, amount-to-pay) must
@@ -279,9 +308,10 @@ one of them; each maps to a symptom in **Troubleshooting**.
      data (a "bare rebuild").
 
 - **Answer persistence has legacy-parity rules (handled centrally, but know them).**
-  SDF inputs are controlled and the server stores answers with a spread-merge that
-  never deletes keys, so behaviour diverges from legacy in two ways the shared
-  pipeline now corrects at the persistence boundary:
+  SDF inputs are controlled, and the server applies each incoming answer key
+  with `lodash.set` (`apply-flat-answers.ts`). Behaviour diverges from legacy in
+  two ways the shared pipeline corrects at the persistence boundary, and in one
+  way every field component must respect:
 
   - **Empty strings are stripped on write** (`strip-empty-answers.ts`) so an
     optional field left blank reads as _absent_ (like legacy), not `''`. Don't
@@ -292,6 +322,21 @@ one of them; each maps to a symptom in **Troubleshooting**.
     **except** non-value-bearing types (`DISPLAY`, layout/copy/action fields),
     which must never persist (their `NON_VALUE_BEARING_FIELD_TYPES` set is the
     source of truth). If you add a new non-value-bearing field type, add it there.
+  - **A field owns its whole value.** A dotted key (`applicant.phoneNumber`)
+    is placed at its path and keeps its siblings, but an **object or array
+    value replaces whatever is stored under its key**. It isn't deep-merged
+    like legacy's `mergeAnswers`. A field component that writes an object or
+    array (search, data table, file upload) must therefore send the
+    **complete** value, built from the current stored value, never a partial
+    patch. This only works if the component actually received the stored
+    value. A field placed directly in a section, alone on its screen, doesn't
+    receive it yet, so a file upload there loses its earlier files. Keys are
+    applied in order, so a later key overwrites anything an earlier key wrote
+    at or below the same path. `null` is stored as `null` (as in legacy); there
+    is no delete, and the empty-answer strip only removes `''`, so a stored
+    `null` stays. A field that sends `null` when cleared (e.g. a single select)
+    therefore needs a schema that accepts it: `.nullable()` (usually with
+    `.optional()`), not just `.optional()`, and its readers must handle `null`.
 
 - **The page position lives in the browser, not the server.** The server stores
   no page. The client sends the id of the screen it is on with every action,
@@ -309,6 +354,33 @@ one of them; each maps to a symptom in **Troubleshooting**.
   only. If a legacy form gates a screen on data its custom field fetches, stop
   and report it instead of porting it.
 
+- **`triggerEvent` moves with the event.** If you change which event a
+  transition uses, move every `triggerEvent` (on `onExit`/`onEntry` and
+  data-provider APIs) that referred to the old event. Otherwise those actions
+  stop running, with no error. On SDF's `NEXT_PAGE`, data providers run with
+  the event `SUBMIT`, so a provider whose API has a different `triggerEvent`
+  doesn't run there at all.
+
+- **A role's `actions` are its permitted events.** SUBMIT with an event not in
+  the current role's `actions` gets 403. Declare every event the role sends:
+  footer buttons, the payment-pending field, anything an institution sends
+  through the API. SDF renders each action as a footer button on the last
+  screen, so expect a button for every declared event.
+
+- **Build date limits as local days.** For a date field's `minDate` and
+  `maxDate`, return a `yyyy-MM-dd` string (passed through unchanged) or a Date
+  at local midnight (`parseISO('yyyy-MM-dd')`, `startOfDay(...)`,
+  `new Date(y, m, d)`). Never `new Date('yyyy-MM-dd')`: that's UTC midnight,
+  which lands on the previous day west of UTC.
+
+- **Answers that depend on the user aren't supported yet.** If the legacy
+  template computes field or screen ids from the application or the user
+  (`id: (application, user) => …`), or several users fill in the same state at
+  the same time and each keeps their own answers, stop and report it instead
+  of porting it. `FormBuilder` takes string ids only, and keeping per-user
+  answers in a shared array lets users overwrite each other. This needs a
+  design decision first.
+
 ---
 
 ## Troubleshooting (match the symptom)
@@ -322,9 +394,10 @@ one of them; each maps to a symptom in **Troubleshooting**.
 | Backend reads **`undefined`** for a display field                                          | display fields don't persist into answers                                                                                                                      | recompute from `answers` + `externalData` in the SDF submit-mapper (DO 5)                                                                                                                                                   |
 | A ported util reads stale/missing custom-component data                                    | SDF puts fetched data in `externalData`, not answers                                                                                                           | read `externalData.<action>.data`                                                                                                                                                                                           |
 | An imported legacy React field, or a new custom field, **renders nothing**                 | `ComponentSwitch` supports only the fixed field set                                                                                                            | compose from existing SDF fields + template-api actions (DO 6)                                                                                                                                                              |
-| A **FormBuilder field type** (e.g. overview) renders nothing                               | the type has no renderer yet — it's in `unsupportedFieldTypes`                                                                                                 | implement it across the four layers (DO 6); don't author a one-off React field                                                                                                                                              |
+| A **FormBuilder field type** (e.g. overview) shows a placeholder box                       | the type has no renderer yet — it's in `unsupportedFieldTypes`                                                                                                 | implement it across the four layers (DO 6); don't author a one-off React field                                                                                                                                              |
 | Payment state crashes with **"No template exists with id undefined"**                      | `changeState` spread `{ ...application }` dropped the Sequelize prototype getters, so `typeId` is `undefined` and `CreateChargeApi`'s translation lookup fails | snapshot the application to a plain object (`toApplicationSnapshot`) before `changeState`/action-perform (`sdf-screen.service.ts`)                                                                                          |
-| An **empty optional field leaks `''`** into the submit DTO / overview / notification       | SDF's controlled inputs + spread-merge persist `''` forever; legacy never wrote it                                                                             | rely on the central empty-string strip on write (`strip-empty-answers.ts`); don't read a possibly-cleared raw answer downstream (SDF rules → answer persistence)                                                            |
+| An **empty optional field leaks `''`** into the submit DTO / overview / notification       | SDF's controlled inputs send `''` on clear and `applyFlatAnswers` stores each key as sent, so `''` persists without the strip; legacy never wrote it           | rely on the central empty-string strip on write (`strip-empty-answers.ts`); don't read a possibly-cleared raw answer downstream (SDF rules → answer persistence)                                                            |
+| A stored sub-property or **uploaded file disappears** after editing an object/array field  | the field sent a partial object/array, which replaces the stored value, or never received the stored value (e.g. it is alone on its screen)                    | build the value from the stored one and send it complete (SDF rules → answer persistence)                                                                                                                                   |
 | A field's **`defaultValue` never reaches answers** (or a display default wrongly persists) | default persistence only seeds value-bearing fields                                                                                                            | value-bearing defaults persist via `field-default-persistence.ts`; if it's a new non-value-bearing type, add it to `NON_VALUE_BEARING_FIELD_TYPES`                                                                          |
 | Overview **"Breyta"/edit jumps to the wrong page**, or lands on an unexpected screen       | `backId` does not match a page id that is shown (hidden, renamed or mistyped)                                                                                  | set the overview `backId` to the id of a page that is shown; otherwise the server falls back to the first screen that is not fully answered (SDF rules → page position)                                                     |
 | Header **app/institution name is blank** or logo missing                                   | read from `form.title` (empty on NOT_STARTED) instead of the template                                                                                          | take `applicationName`/`institutionName` from the template (`getApplicationNameTranslationString`) and send `form.logo.name` for the client to resolve                                                                      |
