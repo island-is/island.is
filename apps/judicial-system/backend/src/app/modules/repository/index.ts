@@ -61,7 +61,10 @@ export {
   UpdateAppealSummonsServiceRecipient,
 } from './services/appealSummonsRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
-export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
+export {
+  CaseArchiveRepositoryService,
+  DecryptedCaseArchive,
+} from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 export {
   CaseStringRepositoryService,
@@ -150,6 +153,7 @@ export {
 
 export {
   CreateAppealCase,
+  getRegularArchiveDate,
   UpdateAppealCase,
   UpdateCase,
   UpdateDefendant,

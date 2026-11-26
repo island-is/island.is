@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -77,14 +77,44 @@ describe('CaseRepositoryService - internal case reads', () => {
       result = await caseRepositoryService.findNextCaseToArchive(transaction)
     })
 
-    it('should read one archivable case in the callers transaction', () => {
+    it('should pick an archivable case in the callers transaction', () => {
       expect(findOneOptions()).toEqual({
+        attributes: ['id'],
         where: archivableCaseWhere,
+        transaction,
+      })
+    })
+
+    it('should lock the case and check that it is still archivable before reading it', () => {
+      expect(mockCaseModel.findOne.mock.calls[1][0]).toEqual({
+        attributes: ['id'],
+        where: { [Op.and]: [{ id: theCase.id }, archivableCaseWhere] },
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+      expect(mockCaseModel.findOne.mock.calls[2][0]).toEqual({
+        where: { id: theCase.id },
         include: archivableCaseInclude,
         order: archivableCaseOrder,
         transaction,
       })
       expect(result).toBe(theCase)
+    })
+
+    it('should pick another case when the first stopped being archivable', async () => {
+      const otherCase = { id: uuid() } as Case
+      mockCaseModel.findOne.mockReset()
+      mockCaseModel.findOne
+        .mockResolvedValueOnce(theCase)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(otherCase)
+        .mockResolvedValueOnce(otherCase)
+        .mockResolvedValueOnce(otherCase)
+
+      result = await caseRepositoryService.findNextCaseToArchive(transaction)
+
+      expect(mockCaseModel.findOne).toHaveBeenCalledTimes(5)
+      expect(result).toBe(otherCase)
     })
 
     it('should only consider cases that are not archived yet', () => {
@@ -133,6 +163,49 @@ describe('CaseRepositoryService - internal case reads', () => {
         expect(result).toBeNull()
         expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
       })
+    })
+  })
+
+  describe('findWithArchiveGraphByIdForUpdate', () => {
+    const transaction = {} as never
+    const caseId = uuid()
+
+    it('should lock the case row and then read the archive graph in archive order', async () => {
+      const result =
+        await caseRepositoryService.findWithArchiveGraphByIdForUpdate(
+          caseId,
+          transaction,
+        )
+
+      expect(mockCaseModel.findOne).toHaveBeenCalledTimes(2)
+      expect(mockCaseModel.findOne.mock.calls[0][0]).toEqual({
+        attributes: ['id'],
+        where: { id: caseId },
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+      // Archived and deleted cases are read too - the caller decides
+      expect(mockCaseModel.findOne.mock.calls[1][0]).toEqual({
+        where: { id: caseId },
+        include: archivableCaseInclude,
+        order: archivableCaseOrder,
+        transaction,
+      })
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve nothing for a case that does not exist', async () => {
+      mockCaseModel.findOne.mockReset()
+      mockCaseModel.findOne.mockResolvedValue(null)
+
+      const result =
+        await caseRepositoryService.findWithArchiveGraphByIdForUpdate(
+          caseId,
+          transaction,
+        )
+
+      expect(mockCaseModel.findOne).toHaveBeenCalledTimes(1)
+      expect(result).toBeNull()
     })
   })
 
