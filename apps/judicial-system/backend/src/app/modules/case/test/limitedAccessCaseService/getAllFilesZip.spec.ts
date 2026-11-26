@@ -606,9 +606,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         data: Buffer.from('skipunarbréf'),
         name: 'Skipunarbréf Þórður Már Jónsson.pdf',
       }
-      ;(mockAppealAppointmentLetterService.getPdf as jest.Mock).mockResolvedValue(
-        letterPdf,
-      )
+      ;(
+        mockAppealAppointmentLetterService.getPdf as jest.Mock
+      ).mockResolvedValue(letterPdf)
 
       await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
 
@@ -644,10 +644,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         theCase,
         { defendant: representedDefendant },
       )
-      expect(mockAppealAppointmentLetterService.getPdf).not.toHaveBeenCalledWith(
-        theCase,
-        { defendant: otherDefendant },
-      )
+      expect(
+        mockAppealAppointmentLetterService.getPdf,
+      ).not.toHaveBeenCalledWith(theCase, { defendant: otherDefendant })
     })
   })
 })
