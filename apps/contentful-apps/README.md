@@ -25,6 +25,6 @@ It is responsible of translations for namespaces for your application. It works 
 
 ## Application type app
 
-The `applicationType` field of the `applicationTypeSettings` content type uses the app located here: `/apps/contentful-apps/pages/fields/application-type-field.tsx`.
+The `applicationType` field of the `applicationSettingsType` content type uses the app located here: `/apps/contentful-apps/pages/fields/application-type-field.tsx`.
 
-It lists every application type from `ApplicationConfigurations` in `@island.is/application/types` (plus `*` for all application types), so the options stay in sync with the application system. See the [application system README](/apps/application-system/README.md#alert-banners-and-blocking-an-application-type).
+It lists every application type from `ApplicationConfigurations` in `@island.is/application/types` (plus `*` for all application types), so the options stay in sync with the application system. See the [application system README](/apps/application-system/README.md#alert-banners).

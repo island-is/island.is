@@ -4,7 +4,6 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { CmsModule } from '@island.is/cms'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
@@ -29,7 +28,6 @@ import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { ApplicationActionService } from './application-action.service'
-import { ApplicationTypeSettingsService } from './tools/applicationTypeSettings.service'
 import { IdentityClientModule } from '@island.is/clients/identity'
 
 @Module({
@@ -45,7 +43,6 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     FileStorageModule,
     SigningModule,
     CmsTranslationsModule,
-    CmsModule,
     FeatureFlagModule,
     HistoryModule,
     LoggingModule,
@@ -59,7 +56,6 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     ApplicationValidationService,
     TemplateApiActionRunner,
     ApplicationActionService,
-    ApplicationTypeSettingsService,
   ],
 })
 export class ApplicationModule {}

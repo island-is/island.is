@@ -28,7 +28,6 @@ import {
   SetBeforeSubmitCallbackOptions,
 } from '@island.is/application/types'
 import {
-  AlertMessage,
   Box,
   GridColumn,
   Text,
@@ -59,10 +58,6 @@ import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import {
-  LeavingPrerequisitesBlock,
-  PREREQUISITES_STATE,
-} from '../hooks/useApplicationTypeSettings'
 import { uuid } from 'uuidv4'
 
 type ScreenProps = {
@@ -85,7 +80,6 @@ type ScreenProps = {
   goToScreen: (id: string) => void
   setUpdateForbidden: (value: boolean) => void
   canGoBack: boolean
-  leavingPrerequisitesBlock?: LeavingPrerequisitesBlock | null
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -118,7 +112,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   screen,
   sections,
   canGoBack,
-  leavingPrerequisitesBlock,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const user = useUserInfo()
@@ -136,9 +129,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(
     null,
   )
-  // Set when the server rejects leaving prerequisites, e.g. if the type was blocked after the page loaded
-  const [serverLeavingPrerequisitesBlock, setServerLeavingPrerequisitesBlock] =
-    useState<LeavingPrerequisitesBlock | null>(null)
   const getServerErrorMessage = (
     error: ApolloError,
     formatLongErrorMessage?: (message: string) => string,
@@ -184,17 +174,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     SUBMIT_APPLICATION,
     {
       onError: (e) => {
-        const blockedProblem = findProblemInApolloError(e, [
-          ProblemType.APPLICATION_TYPE_BLOCKED,
-        ])
-        if (blockedProblem?.type === ProblemType.APPLICATION_TYPE_BLOCKED) {
-          setServerLeavingPrerequisitesBlock({
-            blockedTitle: blockedProblem.blockedTitle ?? null,
-            blockedMessage: blockedProblem.blockedMessage ?? null,
-          })
-          return
-        }
-
         if (submitField?.formatLongErrorMessage) {
           setServerErrorMessage(
             getServerErrorMessage(e, submitField?.formatLongErrorMessage),
@@ -230,12 +209,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       .filter(Boolean)
     return submitFieldCondition.length > 0 ? submitFieldCondition[0] : undefined
   }, [formValue, externalData, screen, user])
-
-  // Only screens with a submit field send an event that can leave the prerequisites state
-  const activeLeavingPrerequisitesBlock =
-    application.state === PREREQUISITES_STATE && submitField !== undefined
-      ? serverLeavingPrerequisitesBlock ?? leavingPrerequisitesBlock ?? null
-      : null
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
@@ -296,10 +269,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
-    if (activeLeavingPrerequisitesBlock) {
-      return
-    }
-
     let response
 
     setIsSubmitting(true)
@@ -497,22 +466,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
               formatMessage,
             )}
           </Text>
-          {activeLeavingPrerequisitesBlock && (
-            <Box marginTop={2} marginBottom={4}>
-              <AlertMessage
-                type="error"
-                testid="application-type-blocked"
-                title={
-                  activeLeavingPrerequisitesBlock.blockedTitle ??
-                  formatMessage(coreMessages.applicationTypeBlockedTitle)
-                }
-                message={
-                  activeLeavingPrerequisitesBlock.blockedMessage ??
-                  formatMessage(coreMessages.applicationTypeBlockedMessage)
-                }
-              />
-            </Box>
-          )}
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
@@ -595,9 +548,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           </Box>
         ) : null}
         <ScreenFooter
-          submitButtonDisabled={
-            submitButtonDisabled || !!activeLeavingPrerequisitesBlock
-          }
+          submitButtonDisabled={submitButtonDisabled}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}

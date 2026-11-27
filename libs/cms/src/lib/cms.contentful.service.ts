@@ -1097,14 +1097,14 @@ export class CmsContentfulService {
     lang,
   }: GetApplicationTypeSettingsInput): Promise<ApplicationTypeSettings[]> {
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IApplicationTypeSettingsFields>(
+      .getLocalizedEntries<types.IApplicationSettingsTypeFields>(
         lang,
         getApplicationTypeSettingsQueryParams(applicationType),
       )
       .catch(errorHandler('getApplicationTypeSettings'))
 
     return sortApplicationTypeSettings(
-      (result.items as types.IApplicationTypeSettings[]).map(
+      (result.items as types.IApplicationSettingsType[]).map(
         mapApplicationTypeSettings,
       ),
     )

@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { IApplicationTypeSettings } from '../generated/contentfulTypes'
+import { IApplicationSettingsType } from '../generated/contentfulTypes'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
-export const APPLICATION_TYPE_SETTINGS_CONTENT_TYPE = 'applicationTypeSettings'
+export const APPLICATION_TYPE_SETTINGS_CONTENT_TYPE = 'applicationSettingsType'
 export const APPLICATION_TYPE_SETTINGS_GLOBAL_TYPE = '*'
 
 export const getApplicationTypeSettingsQueryParams = (
@@ -36,25 +36,13 @@ export class ApplicationTypeSettings {
 
   @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner | null
-
-  @Field()
-  disableLeavingPrerequisites!: boolean
-
-  @Field(() => String, { nullable: true })
-  blockedTitle?: string | null
-
-  @Field(() => String, { nullable: true })
-  blockedMessage?: string | null
 }
 
 export const mapApplicationTypeSettings = ({
   fields,
   sys,
-}: IApplicationTypeSettings): ApplicationTypeSettings => ({
+}: IApplicationSettingsType): ApplicationTypeSettings => ({
   id: sys.id,
   applicationType: fields.applicationType ?? '',
   alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
-  disableLeavingPrerequisites: fields.disableLeavingPrerequisites ?? false,
-  blockedTitle: fields.blockedTitle || null,
-  blockedMessage: fields.blockedMessage || null,
 })

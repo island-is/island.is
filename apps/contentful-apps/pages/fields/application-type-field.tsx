@@ -13,6 +13,8 @@ import { useSDK } from '@contentful/react-apps-toolkit'
 import { ApplicationConfigurations } from '@island.is/application/types'
 
 const GLOBAL_APPLICATION_TYPE = '*'
+// Room for the selected value, the input and the 300px option list
+const OPEN_MENU_HEIGHT = 450
 
 interface ApplicationTypeOption {
   typeId: string
@@ -39,8 +41,22 @@ const ApplicationTypeField = () => {
 
   useEffect(() => {
     sdk.window.startAutoResizer()
-    return sdk.field.onValueChanged((newValue) => setValue(newValue))
+    const detach = sdk.field.onValueChanged((newValue) => setValue(newValue))
+    return () => {
+      detach()
+      sdk.window.stopAutoResizer()
+    }
   }, [sdk.field, sdk.window])
+
+  // The option list is rendered inside the iframe, so make the iframe tall enough while it is open
+  const onMenuOpen = () => {
+    sdk.window.stopAutoResizer()
+    sdk.window.updateHeight(OPEN_MENU_HEIGHT)
+  }
+
+  const onMenuClose = () => {
+    sdk.window.startAutoResizer()
+  }
 
   const filteredOptions = useMemo(() => {
     const search = filter.trim().toLowerCase()
@@ -75,6 +91,8 @@ const ApplicationTypeField = () => {
       <Autocomplete<ApplicationTypeOption>
         items={filteredOptions}
         onInputValueChange={setFilter}
+        onOpen={onMenuOpen}
+        onClose={onMenuClose}
         onSelectItem={(option) => sdk.field.setValue(option.typeId)}
         itemToString={(option) => option.label}
         renderItem={(option) => option.label}

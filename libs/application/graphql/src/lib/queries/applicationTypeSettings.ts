@@ -5,9 +5,6 @@ export const GET_APPLICATION_TYPE_SETTINGS = gql`
     getApplicationTypeSettings(input: $input) {
       id
       applicationType
-      disableLeavingPrerequisites
-      blockedTitle
-      blockedMessage
       alertBanner {
         id
         showAlertBanner

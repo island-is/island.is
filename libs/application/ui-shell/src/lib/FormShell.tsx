@@ -44,9 +44,7 @@ export const FormShell: FC<
     null,
   )
   const user = useUserInfo()
-  const { banners, leavingPrerequisitesBlock } = useApplicationTypeSettings(
-    application.typeId,
-  )
+  const { banners } = useApplicationTypeSettings(application.typeId)
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -174,7 +172,6 @@ export const FormShell: FC<
                       totalDraftScreens={getDraftSectionTotalScreens()}
                       screen={currentScreen}
                       mode={mode}
-                      leavingPrerequisitesBlock={leavingPrerequisitesBlock}
                     />
                   </Box>
                 </GridColumn>

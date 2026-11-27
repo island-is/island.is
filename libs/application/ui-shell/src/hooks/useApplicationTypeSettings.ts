@@ -4,7 +4,6 @@ import { GET_APPLICATION_TYPE_SETTINGS } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { stringHash } from '@island.is/shared/utils'
 
-export const PREREQUISITES_STATE = 'prerequisites'
 const GLOBAL_APPLICATION_TYPE = '*'
 
 // TODO: generate these interfaces with graphql codegen
@@ -23,9 +22,6 @@ export interface ApplicationTypeAlertBanner {
 export interface ApplicationTypeSettings {
   id: string
   applicationType: string
-  disableLeavingPrerequisites: boolean
-  blockedTitle?: string | null
-  blockedMessage?: string | null
   alertBanner?: ApplicationTypeAlertBanner | null
 }
 
@@ -33,14 +29,8 @@ export interface ApplicationTypeBanner extends ApplicationTypeAlertBanner {
   bannerId: string
 }
 
-export interface LeavingPrerequisitesBlock {
-  blockedTitle: string | null
-  blockedMessage: string | null
-}
-
 export interface ResolvedApplicationTypeSettings {
   banners: ApplicationTypeBanner[]
-  leavingPrerequisitesBlock: LeavingPrerequisitesBlock | null
 }
 
 interface GetApplicationTypeSettingsResponse {
@@ -74,23 +64,11 @@ export const resolveApplicationTypeSettings = (
       bannerId: getApplicationTypeBannerId(banner),
     }))
 
-  const blocking = sorted.filter((s) => s.disableLeavingPrerequisites).reverse()
-
-  const leavingPrerequisitesBlock =
-    blocking.length > 0
-      ? {
-          blockedTitle:
-            blocking.find((s) => s.blockedTitle)?.blockedTitle ?? null,
-          blockedMessage:
-            blocking.find((s) => s.blockedMessage)?.blockedMessage ?? null,
-        }
-      : null
-
-  return { banners, leavingPrerequisitesBlock }
+  return { banners }
 }
 
 /**
- * Fetches the CMS settings (alert banners and blocks) for an application type.
+ * Fetches the CMS settings (alert banners) for an application type.
  * Fails open: if the settings can not be fetched nothing is shown or blocked.
  */
 export const useApplicationTypeSettings = (

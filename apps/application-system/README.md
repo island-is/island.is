@@ -138,28 +138,16 @@ It is as simple as:
 yarn nx test application-system-form
 ```
 
-## Alert banners and blocking an application type
+## Alert banners
 
-Each application type can be configured from Contentful with an
-`applicationTypeSettings` entry (field: `applicationType`, the `ApplicationTypes`
-value, or `*` for all application types). An entry can:
+Each application type can show an alert banner, configured in Contentful with an
+`applicationSettingsType` entry (fields: `internalTitle`, `applicationType` and
+a reference to an `alertBanner` entry). `applicationType` is the
+`ApplicationTypes` value, or `*` for all application types.
 
-- **Show an alert banner** by referencing an `alertBanner` entry. The banner is
-  shown on `/umsoknir/{slug}` and inside the application in every state.
-  `showAlertBanner`, `bannerVariant`, `isDismissable` and `dismissedForDays`
-  are respected.
-- **Stop users from leaving the `prerequisites` state** with
-  `disableLeavingPrerequisites`, e.g. during an outage or a severe bug.
-  Applications can still be created, and applications that are past
-  prerequisites are not affected. The optional `blockedTitle` and
-  `blockedMessage` are shown on the prerequisites screen and fall back to a
-  default message. Only templates whose initial state is named
-  `prerequisites` are affected.
-
-The block is enforced by the application system API when an event is
-submitted (`PUT applications/:id/submit`). The API caches the settings for
-about a minute and fails open: if Contentful can not be reached nothing is
-blocked.
+The banner is shown on `/umsoknir/{slug}` and inside the application in every
+state. `showAlertBanner`, `bannerVariant`, `isDismissable` and
+`dismissedForDays` are read from the referenced `alertBanner` entry.
 
 Dev reads Contentful drafts while staging and prod only read published
 entries, so test with an unpublished entry on dev. Publishing an entry makes

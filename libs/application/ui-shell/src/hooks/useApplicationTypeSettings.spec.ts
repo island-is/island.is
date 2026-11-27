@@ -27,9 +27,6 @@ const settings = (
 ): ApplicationTypeSettings => ({
   id: `settings-${applicationType}`,
   applicationType,
-  disableLeavingPrerequisites: false,
-  blockedTitle: null,
-  blockedMessage: null,
   alertBanner: null,
   ...overrides,
 })
@@ -38,7 +35,6 @@ describe('resolveApplicationTypeSettings', () => {
   it('returns nothing when there are no settings', () => {
     expect(resolveApplicationTypeSettings([])).toEqual({
       banners: [],
-      leavingPrerequisitesBlock: null,
     })
   })
 
@@ -56,43 +52,5 @@ describe('resolveApplicationTypeSettings', () => {
 
     expect(banners.map((b) => b.title)).toEqual(['global', 'type'])
     expect(banners[0].bannerId).toBe(getApplicationTypeBannerId(globalBanner))
-  })
-
-  it('is not blocked when no settings disable leaving prerequisites', () => {
-    const { leavingPrerequisitesBlock } = resolveApplicationTypeSettings([
-      settings('ParentalLeave', { blockedMessage: 'not used' }),
-    ])
-
-    expect(leavingPrerequisitesBlock).toBeNull()
-  })
-
-  it('is blocked by the global settings', () => {
-    const { leavingPrerequisitesBlock } = resolveApplicationTypeSettings([
-      settings('*', { disableLeavingPrerequisites: true }),
-    ])
-
-    expect(leavingPrerequisitesBlock).toEqual({
-      blockedTitle: null,
-      blockedMessage: null,
-    })
-  })
-
-  it('prefers type specific blocked texts over global ones', () => {
-    const { leavingPrerequisitesBlock } = resolveApplicationTypeSettings([
-      settings('*', {
-        disableLeavingPrerequisites: true,
-        blockedTitle: 'Global title',
-        blockedMessage: 'Global message',
-      }),
-      settings('ParentalLeave', {
-        disableLeavingPrerequisites: true,
-        blockedMessage: 'Type message',
-      }),
-    ])
-
-    expect(leavingPrerequisitesBlock).toEqual({
-      blockedTitle: 'Global title',
-      blockedMessage: 'Type message',
-    })
   })
 })
