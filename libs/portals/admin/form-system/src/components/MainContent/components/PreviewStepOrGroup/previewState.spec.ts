@@ -8,6 +8,71 @@ import {
   updatePreviewFields,
   updateRestrictedPreview,
 } from './previewState'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
+
+jest.mock('@island.is/form-system/ui', () => ({
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../../../form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
+}))
+
+it('scopes restricted preview dependencies by row and updates external dependents after row removal', () => {
+  const state = createPreviewState({
+    ...form,
+    screens: [{ id: 'first', sectionId: 'input', isMulti: true }],
+    fields: [
+      {
+        id: 'parent',
+        screenId: 'first',
+        name: { is: 'Parent' },
+        isRequired: false,
+        fieldType: FieldTypesEnum.CHECKBOX,
+        isPartOfMultiset: true,
+        values: [
+          { json: { checkboxValue: false } },
+          { json: { checkboxValue: true } },
+        ],
+      },
+      {
+        id: 'local',
+        screenId: 'first',
+        name: { is: 'Local' },
+        isRequired: true,
+        fieldType: FieldTypesEnum.TEXTBOX,
+        isPartOfMultiset: true,
+      },
+      {
+        id: 'external',
+        screenId: 'first',
+        name: { is: 'External' },
+        isRequired: false,
+        fieldType: FieldTypesEnum.TEXTBOX,
+        isPartOfMultiset: false,
+      },
+    ],
+    dependencies: [{ parentProp: 'parent', childProps: ['local', 'external'] }],
+  })
+  const selected = updateRestrictedPreview(state, { type: 'INITIALIZE' })
+  const screen = getPreviewSections(selected, true)[1].screens?.[0] ?? {}
+  expect(
+    getHiddenMultisetFieldIds(screen, selected.dependencies, 0).has('local'),
+  ).toBe(true)
+  expect(
+    getHiddenMultisetFieldIds(screen, selected.dependencies, 1).has('local'),
+  ).toBe(false)
+  expect(
+    selected.fields.find((field) => field.id === 'external')?.isHidden,
+  ).toBe(false)
+
+  const removed = updateRestrictedPreview(selected, {
+    type: 'REMOVE_MULTISET_ITEM',
+    payload: { id: 'parent', valueIndex: 1 },
+  })
+  expect(removed.dependencies[0].isSelected).toBe(false)
+  expect(
+    removed.fields.find((field) => field.id === 'external')?.isHidden,
+  ).toBe(true)
+})
 
 it.each([
   {

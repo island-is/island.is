@@ -1,4 +1,4 @@
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemDependency, FormSystemField } from '@island.is/api/schema'
 import { FamilyTypes } from '@island.is/form-system/enums'
 import {
   Checkbox,
@@ -43,6 +43,7 @@ jest.mock('@island.is/form-system/ui', () => ({
     largeTextArea: { id: 'largeTextArea', defaultMessage: 'Large text area' },
     largeCheckbox: { id: 'largeCheckbox', defaultMessage: 'Large checkbox' },
     isPartOfMulti: { id: 'isPartOfMulti', defaultMessage: 'Part of multiset' },
+    connect: { id: 'connect', defaultMessage: 'Connect' },
   },
 }))
 
@@ -52,8 +53,6 @@ jest.mock('@island.is/localization', () => ({
       message.defaultMessage,
   }),
 }))
-
-jest.mock('./ToggleConnection', () => ({ ToggleConnection: () => null }))
 
 jest.mock('@island.is/island-ui/core', () => ({
   GridColumn: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -128,6 +127,7 @@ const renderSettings = (
     tooltip: { is: 'Help text', en: '' },
   },
   fieldOverrides: Partial<FormSystemField> = {},
+  dependencies: FormSystemDependency[] = [],
 ) => {
   const controlDispatch = jest.fn()
   const updateActiveItem = jest.fn()
@@ -157,6 +157,7 @@ const renderSettings = (
       form: {
         ...defaults.control.form,
         fields: [field, otherField],
+        dependencies,
         screens: field.screenId
           ? [{ id: field.screenId, sectionId: 'section', isMulti: true }]
           : [],
@@ -225,6 +226,66 @@ const renderSettings = (
       changeOriginalInformation(text),
   }
 }
+
+it.each(['CHECKBOX', 'RADIO_BUTTONS', 'DROPDOWN_LIST'])(
+  'allows a %s dependency parent to join a multiset',
+  (fieldType) => {
+    const { updateActiveItem } = renderSettings(
+      fieldType,
+      false,
+      undefined,
+      false,
+      {},
+      {
+        screenId: 'screen',
+        isPartOfMultiset: false,
+        list: [{ id: 'option', label: { is: 'Option' } }],
+      },
+      [
+        {
+          parentProp: fieldType === 'CHECKBOX' ? 'field' : 'option',
+          childProps: ['child'],
+        },
+      ],
+    )
+    const checkbox = screen.getByRole<HTMLInputElement>('checkbox', {
+      name: 'Part of multiset',
+    })
+    expect(checkbox.hasAttribute('disabled')).toBe(false)
+    fireEvent.click(checkbox)
+    expect(checkbox.checked).toBe(true)
+    expect(updateActiveItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ isPartOfMultiset: true }),
+      }),
+    )
+  },
+)
+
+it.each([false, true])(
+  'allows multiset checkbox connections unless read-only=%s',
+  (isReadOnly) => {
+    renderSettings(
+      'CHECKBOX',
+      isReadOnly,
+      undefined,
+      false,
+      {},
+      {
+        screenId: 'screen',
+        isPartOfMultiset: true,
+      },
+    )
+    expect(
+      screen.getByRole('switch', { name: 'Connect' }).hasAttribute('disabled'),
+    ).toBe(isReadOnly)
+    expect(
+      screen
+        .getByRole('checkbox', { name: 'Part of multiset' })
+        .hasAttribute('disabled'),
+    ).toBe(isReadOnly)
+  },
+)
 
 it.each([
   [FamilyTypes.CHILD, false],

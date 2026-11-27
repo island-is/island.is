@@ -8,6 +8,9 @@ import {
 jest.mock('../components/Form/Form', () => ({ Form: jest.fn(() => null) }))
 jest.mock('@island.is/localization', () => ({ useNamespaces: jest.fn() }))
 jest.mock('@island.is/form-system/ui', () => ({
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../libs/portals/form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
 }))
 

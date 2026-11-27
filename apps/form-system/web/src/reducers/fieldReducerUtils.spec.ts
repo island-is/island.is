@@ -5,6 +5,9 @@ import { setFieldValue } from './fieldReducerUtils'
 import { fieldReducer } from './fieldReducer'
 
 jest.mock('@island.is/form-system/ui', () => ({
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../libs/portals/form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
   FieldTypesEnum: {
     CHECKBOX: 'CHECKBOX',
     DROPDOWN_LIST: 'DROPDOWN_LIST',
@@ -93,6 +96,40 @@ const createState = (
 
 const choiceField = (state: ApplicationState) =>
   state.sections[1].screens?.[0]?.fields?.[0]
+
+it('keeps external dependents visible until the last selected repeated parent is cleared', () => {
+  const state = createState(FieldTypesEnum.TEXTBOX, 'choice')
+  const screen = state.currentScreen?.data
+  const parent = screen?.fields?.[0]
+  if (!screen || !parent) throw new Error('Missing controller fixture')
+  screen.isMulti = true
+  parent.isPartOfMultiset = true
+
+  const firstOff = setFieldValue(state, 'checkboxValue', 'controller', false, 0)
+  expect(firstOff.application.dependencies?.[0]?.isSelected).toBe(true)
+  expect(choiceField(firstOff)?.isHidden).toBe(false)
+
+  const allOff = setFieldValue(
+    firstOff,
+    'checkboxValue',
+    'controller',
+    false,
+    1,
+  )
+  expect(allOff.application.dependencies?.[0]?.isSelected).toBe(false)
+  expect(choiceField(allOff)?.isHidden).toBe(true)
+
+  const restored = setFieldValue(allOff, 'checkboxValue', 'controller', true, 0)
+  const unchanged = setFieldValue(
+    restored,
+    'checkboxValue',
+    'controller',
+    true,
+    0,
+  )
+  expect(unchanged.application.dependencies?.[0]?.isSelected).toBe(true)
+  expect(choiceField(unchanged)?.isHidden).toBe(false)
+})
 
 it.each([
   {

@@ -47,7 +47,7 @@ export const CheckboxSettings = () => {
           englishLabel={formatMessage(m.subLabelEnglish)}
         />
       )}
-      <ToggleConnection isPartOfMultiset={currentItem.isPartOfMultiset} />
+      <ToggleConnection />
     </Stack>
   )
 }

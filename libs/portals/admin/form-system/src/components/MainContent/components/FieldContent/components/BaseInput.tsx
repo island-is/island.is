@@ -88,29 +88,6 @@ export const BaseInput = () => {
         a.label.localeCompare(b.label, 'is', { sensitivity: 'base' }),
       ) ?? []
 
-  const listItemIds =
-    currentItem.list
-      ?.map((item) => item?.id)
-      .filter((id): id is string => Boolean(id)) ?? []
-
-  const isDependencyParent = (form.dependencies ?? []).some((dep) => {
-    const parent = dep?.parentProp
-    if (!parent) return false
-
-    if (currentItem.fieldType === FieldTypesEnum.CHECKBOX) {
-      return parent === currentItem.id
-    }
-
-    if (
-      currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-      currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST
-    ) {
-      return listItemIds.includes(parent)
-    }
-
-    return false
-  })
-
   return (
     <Stack space={2}>
       <Row>
@@ -230,12 +207,7 @@ export const BaseInput = () => {
               <Checkbox
                 label={formatMessage(m.isPartOfMulti)}
                 checked={currentItem.isPartOfMultiset ?? false}
-                disabled={isReadOnly || isDependencyParent}
-                tooltip={
-                  isDependencyParent
-                    ? 'Þetta stýrir tengingum og getur því ekki verið hluti af fjölmengi'
-                    : undefined
-                }
+                disabled={isReadOnly}
                 onChange={() =>
                   controlDispatch({
                     type: 'CHANGE_IS_PART_OF_MULTI',
