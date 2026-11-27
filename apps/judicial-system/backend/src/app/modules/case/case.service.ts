@@ -1445,8 +1445,13 @@ export class CaseService {
     return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
   }
 
-  getCandidateMergeCases(theCase: Case): Promise<Case[]> {
-    return this.caseRepositoryService.findCandidateMergeCases(theCase)
+  getCandidateMergeCases(
+    theCase: Case,
+    transaction?: Transaction,
+  ): Promise<Case[]> {
+    return this.caseRepositoryService.findCandidateMergeCases(theCase, {
+      transaction,
+    })
   }
 
   async create(

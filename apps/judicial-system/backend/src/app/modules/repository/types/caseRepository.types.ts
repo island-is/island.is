@@ -90,6 +90,17 @@ export const appealJudgesInclude: Includeable = {
   ],
 }
 
+// The case a case is merged into is read for its court case number, for
+// telling whether it can still take the merged case in, and for the parties
+// read beside it - nothing else of it belongs to the case that points at it.
+export const mergeCaseAttributes: (keyof Case)[] = [
+  'id',
+  'type',
+  'state',
+  'courtCaseNumber',
+  'withCourtSessions',
+]
+
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -437,6 +448,7 @@ export const caseInclude: Includeable[] = [
   {
     model: Case,
     as: 'mergeCase',
+    attributes: mergeCaseAttributes,
     include: [
       {
         model: Defendant,
@@ -465,13 +477,6 @@ export const caseInclude: Includeable[] = [
           'appealSpokespersonNationalId',
           'isAppealSpokespersonConfirmed',
         ],
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-      {
-        model: CourtSession,
-        as: 'courtSessions',
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -1553,17 +1558,10 @@ export const getLimitedAccessCaseInclude = (
     {
       model: Case,
       as: 'mergeCase',
-      attributes: limitedAccessCaseAttributes,
+      attributes: mergeCaseAttributes,
       include: [
         getLinkedCaseDefendantsInclude(defenderNationalId),
         getLinkedCaseCivilClaimantsInclude(defenderNationalId),
-        {
-          model: CourtSession,
-          as: 'courtSessions',
-          required: false,
-          order: [['created', 'ASC']],
-          separate: true,
-        },
       ],
     },
     {

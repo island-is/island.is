@@ -165,6 +165,26 @@ export class CaseController {
     }
   }
 
+  // A case may only be merged into one of its candidate merge cases: the
+  // received indictment cases at the same court whose defendants cover its own
+  private async validateMergeCase(
+    mergeCaseId: string,
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    const candidateMergeCases = isIndictmentCase(theCase.type)
+      ? await this.caseService.getCandidateMergeCases(theCase, transaction)
+      : []
+
+    if (
+      !candidateMergeCases.some((candidate) => candidate.id === mergeCaseId)
+    ) {
+      throw new BadRequestException(
+        `Case ${theCase.id} cannot be merged into case ${mergeCaseId}`,
+      )
+    }
+  }
+
   private async validateIndictmentApprover(
     approverId: string,
     theCase: Case,
@@ -401,15 +421,16 @@ export class CaseController {
     }
 
     // A case being corrected sends its existing parent back unchanged, so
-    // only a change of parent is refused outside the received state.
-    if (
-      update.mergeCaseId &&
-      update.mergeCaseId !== theCase.mergeCaseId &&
-      theCase.state !== CaseState.RECEIVED
-    ) {
-      throw new BadRequestException(
-        'Cannot merge case that is not in a received state',
-      )
+    // only a change of parent is checked: it is refused outside the received
+    // state, and the new parent has to be a candidate merge case.
+    if (update.mergeCaseId && update.mergeCaseId !== theCase.mergeCaseId) {
+      if (theCase.state !== CaseState.RECEIVED) {
+        throw new BadRequestException(
+          'Cannot merge case that is not in a received state',
+        )
+      }
+
+      await this.validateMergeCase(update.mergeCaseId, theCase, transaction)
     }
 
     if (update.reopenReason !== undefined) {
@@ -616,7 +637,12 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

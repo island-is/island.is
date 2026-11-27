@@ -14,6 +14,7 @@ import {
   caseInclude,
   getLimitedAccessCaseInclude,
   limitedAccessCaseAttributes,
+  mergeCaseAttributes,
 } from '../types/caseRepository.types'
 
 // The node of an include graph that reads a given association
@@ -436,7 +437,7 @@ describe('CaseRepositoryService - case reads', () => {
 
         expect(attributesOf('parentCase')).toEqual(limitedAccessCaseAttributes)
         expect(attributesOf('childCase')).toEqual(limitedAccessCaseAttributes)
-        expect(attributesOf('mergeCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('mergeCase')).toEqual(mergeCaseAttributes)
         expect(attributesOf('mergedCases')).toEqual(limitedAccessCaseAttributes)
         expect(attributesOf('splitCase')).toEqual(limitedAccessCaseAttributes)
         expect(attributesOf('splitCases')).toEqual(limitedAccessCaseAttributes)
@@ -697,6 +698,22 @@ describe('CaseRepositoryService - case reads', () => {
 
     it('should leave the police case numbers unresolved', () => {
       expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+    })
+
+    describe('in a transaction', () => {
+      const transaction = {} as never
+
+      beforeEach(async () => {
+        mockCaseModel.findAll.mockClear()
+
+        await caseRepositoryService.findCandidateMergeCases(defendantCase, {
+          transaction,
+        })
+      })
+
+      it('should read in the callers transaction', () => {
+        expect(findAllOptions().transaction).toBe(transaction)
+      })
     })
 
     describe('no defendants to match', () => {

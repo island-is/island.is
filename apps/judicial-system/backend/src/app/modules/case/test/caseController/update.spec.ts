@@ -1629,20 +1629,95 @@ describe('CaseController - Update', () => {
       type: CaseType.INDICTMENT,
       state: CaseState.RECEIVED,
     } as Case
-    const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+    const parentCaseId = uuid()
+    const caseToUpdate = { mergeCaseId: parentCaseId } as UpdateCaseDto
+    let mockFindCandidateMergeCases: jest.Mock
+    let then: Then
+
+    beforeEach(() => {
+      mockFindCandidateMergeCases =
+        mockCaseRepositoryService.findCandidateMergeCases as jest.Mock
+    })
+
+    describe('that is one of its candidate merge cases', () => {
+      beforeEach(async () => {
+        mockFindCandidateMergeCases.mockResolvedValueOnce([
+          { id: uuid() },
+          { id: parentCaseId },
+        ])
+
+        then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+      })
+
+      it('should look the candidates up in the request transaction', () => {
+        expect(mockFindCandidateMergeCases).toHaveBeenCalledWith(receivedCase, {
+          transaction,
+        })
+      })
+
+      it('should update the case', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          caseToUpdate,
+          { transaction },
+        )
+      })
+    })
+
+    describe('that is not one of its candidate merge cases', () => {
+      beforeEach(async () => {
+        mockFindCandidateMergeCases.mockResolvedValueOnce([{ id: uuid() }])
+
+        then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when it has no candidate merge cases', () => {
+      beforeEach(async () => {
+        mockFindCandidateMergeCases.mockResolvedValueOnce([])
+
+        then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  // Only indictment cases are merged, so a request case has no candidates to
+  // look up
+  describe('merge parent chosen for a received request case', () => {
+    const parentCaseId = uuid()
+    const receivedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+    } as Case
+    const caseToUpdate = { mergeCaseId: parentCaseId } as UpdateCaseDto
     let then: Then
 
     beforeEach(async () => {
+      const mockFindCandidateMergeCases =
+        mockCaseRepositoryService.findCandidateMergeCases as jest.Mock
+      mockFindCandidateMergeCases.mockResolvedValueOnce([{ id: parentCaseId }])
+
       then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
     })
 
-    it('should update the case', () => {
-      expect(then.error).toBeUndefined()
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        caseToUpdate,
-        { transaction },
-      )
+    it('should refuse the merge', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(
+        mockCaseRepositoryService.findCandidateMergeCases,
+      ).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
@@ -1674,6 +1749,14 @@ describe('CaseController - Update', () => {
           { transaction },
         )
       })
+
+      // The parent is no longer received by then, so it would not be found
+      // among the candidates
+      it('should not look the candidates up', () => {
+        expect(
+          mockCaseRepositoryService.findCandidateMergeCases,
+        ).not.toHaveBeenCalled()
+      })
     })
 
     describe('that is a different parent', () => {
@@ -1686,6 +1769,9 @@ describe('CaseController - Update', () => {
 
       it('should refuse the merge', () => {
         expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(
+          mockCaseRepositoryService.findCandidateMergeCases,
+        ).not.toHaveBeenCalled()
         expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
       })
     })

@@ -72,7 +72,7 @@ describe('CaseController - Get candidate merge cases guards', () => {
   verifyGuards(
     CaseController,
     'getCandidateMergeCases',
-    [RolesGuard, CaseExistsGuard, CaseTypeGuard],
+    [RolesGuard, CaseExistsGuard, CaseTypeGuard, CaseReadGuard],
     [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
   )
 })
