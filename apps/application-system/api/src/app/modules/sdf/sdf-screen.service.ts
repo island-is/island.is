@@ -1,6 +1,7 @@
 import {
   Injectable,
   Inject,
+  BadRequestException,
   ForbiddenException,
   ConflictException,
 } from '@nestjs/common'
@@ -55,8 +56,16 @@ import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
+import pick from 'lodash/pick'
 import { applyResolvedFieldDefaults } from './field-default-persistence'
 import { applyFlatAnswers } from './apply-flat-answers'
+import {
+  changedAnswerKeys,
+  keysOutsideFields,
+  keysWithIssues,
+  owningId,
+  zodIssuesForFields,
+} from './answer-validation'
 import { stripEmptyFormValue } from './strip-empty-answers'
 import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
 import { buildStepper } from './stepper-builder'
@@ -753,20 +762,19 @@ export class SdfScreenService {
 
       if (template.dataSchema && fieldIds.length > 0) {
         try {
-          const result = template.dataSchema.safeParse(mergedAnswers)
-          if (!result.success) {
-            for (const issue of result.error.issues) {
-              const path = issue.path.join('.')
-              if (fieldIds.includes(path)) {
-                errors.push({
-                  componentId: path,
-                  message: this.resolveZodIssueMessage(issue, formatResolver),
-                })
-              }
-            }
+          for (const issue of zodIssuesForFields(
+            template.dataSchema,
+            mergedAnswers,
+            fieldIds,
+          )) {
+            this.addError(
+              errors,
+              owningId(issue.path.join('.'), fieldIds),
+              this.resolveZodIssueMessage(issue, formatResolver),
+            )
           }
         } catch (e) {
-          this.logger.error('Validation error', e)
+          this.logger.warn('Validation error', e)
         }
       }
 
@@ -777,9 +785,7 @@ export class SdfScreenService {
         )
         if (validatorErrors) {
           for (const [path, message] of Object.entries(validatorErrors)) {
-            if (fieldIds.includes(path)) {
-              errors.push({ componentId: path, message })
-            }
+            this.addError(errors, owningId(path, fieldIds), message)
           }
         }
       }
@@ -946,13 +952,27 @@ export class SdfScreenService {
       // Validation, the error screen and routing use the writable answers as
       // sent, so a cleared field reaches the schema as `''` and the template's
       // own messages apply. Empty strings are stripped only when saving.
+      const formatResolver = await this.createResolverFor(
+        application,
+        roleInState,
+        locale,
+      )
+      await this.assertChangedAnswersAreValid(
+        applicationId,
+        currentScreen,
+        template,
+        application,
+        mergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
       const validationErrors = await this.validateScreenAnswers(
         currentScreen,
         template,
         application,
         mergedAnswers,
         writableAnswers,
-        await this.createResolverFor(application, roleInState, locale),
+        formatResolver,
       )
       if (validationErrors.length > 0) {
         const screen = await this.getScreen(
@@ -1241,15 +1261,7 @@ export class SdfScreenService {
     const errors: ValidationErrorDto[] = []
     if (!currentScreen) return errors
 
-    const isExternalDataProvider =
-      'type' in currentScreen &&
-      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
-
-    const fieldIds = isExternalDataProvider
-      ? currentScreen.id
-        ? [currentScreen.id]
-        : []
-      : getFormNodeFieldIds(currentScreen as any)
+    const fieldIds = this.screenFieldIds(currentScreen)
 
     if (fieldIds.length === 0) return errors
 
@@ -1260,20 +1272,19 @@ export class SdfScreenService {
 
     if (template.dataSchema) {
       try {
-        const result = template.dataSchema.safeParse(mergedAnswers)
-        if (!result.success) {
-          for (const issue of result.error.issues) {
-            const path = issue.path.join('.')
-            if (fieldIds.includes(path)) {
-              errors.push({
-                componentId: path,
-                message: this.resolveZodIssueMessage(issue, formatResolver),
-              })
-            }
-          }
+        for (const issue of zodIssuesForFields(
+          template.dataSchema,
+          mergedAnswers,
+          fieldIds,
+        )) {
+          this.addError(
+            errors,
+            owningId(issue.path.join('.'), fieldIds),
+            this.resolveZodIssueMessage(issue, formatResolver),
+          )
         }
       } catch (e) {
-        this.logger.error('Zod validation error during screen validation', e)
+        this.logger.warn('Zod validation error during screen validation', e)
       }
     }
 
@@ -1283,13 +1294,112 @@ export class SdfScreenService {
     )
     if (validatorErrors) {
       for (const [path, message] of Object.entries(validatorErrors)) {
-        if (fieldIds.includes(path)) {
-          errors.push({ componentId: path, message })
-        }
+        this.addError(errors, owningId(path, fieldIds), message)
       }
     }
 
     return errors
+  }
+
+  // The ids of the fields whose answers belong to the screen.
+  private screenFieldIds(currentScreen: FormScreen): string[] {
+    const isExternalDataProvider =
+      'type' in currentScreen &&
+      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
+    // An id that is a function is not a key the answers can be looked up by.
+    return isExternalDataProvider
+      ? typeof currentScreen.id === 'string' && currentScreen.id
+        ? [currentScreen.id]
+        : []
+      : getFormNodeFieldIds(currentScreen as any)
+  }
+
+  // Adds an error to a field once, however many issues inside it say the same.
+  private addError(
+    errors: ValidationErrorDto[],
+    componentId: string | undefined,
+    message: string,
+  ): void {
+    if (
+      componentId !== undefined &&
+      !errors.some(
+        (error) =>
+          error.componentId === componentId && error.message === message,
+      )
+    ) {
+      errors.push({ componentId, message })
+    }
+  }
+
+  /**
+   * The request is refused when it changes an answer that is not on the
+   * screen and the schema or an answer validator does not accept it. The
+   * client sends every answer it holds, so only the ones that differ from
+   * the stored answers count: a stale or cleared value from an earlier screen
+   * must not stop the user.
+   */
+  private async assertChangedAnswersAreValid(
+    applicationId: string,
+    currentScreen: FormScreen,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    writableAnswers: Record<string, unknown>,
+    formatResolver: FormTextResolver,
+  ): Promise<void> {
+    const offScreenKeys = keysOutsideFields(
+      changedAnswerKeys(application.answers ?? {}, writableAnswers),
+      this.screenFieldIds(currentScreen),
+    )
+    if (offScreenKeys.length === 0) {
+      return
+    }
+
+    const issuePaths: string[] = []
+    if (template.dataSchema) {
+      try {
+        const result = template.dataSchema.safeParse(mergedAnswers)
+        if (!result.success) {
+          issuePaths.push(
+            ...result.error.issues.map((issue) => issue.path.join('.')),
+          )
+        }
+      } catch (e) {
+        // Most likely an answer of a shape the schema does not expect. Which
+        // answer is not known, so all the changed ones are refused.
+        this.logger.warn('Zod validation error during answer validation', e)
+        issuePaths.push(...offScreenKeys)
+      }
+    }
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const validatorErrors = await helper.applyAnswerValidators(
+      applyFlatAnswers({}, pick(writableAnswers, offScreenKeys)),
+      (descriptor) => formatResolver.resolve(descriptor as any),
+    )
+    issuePaths.push(...Object.keys(validatorErrors ?? {}))
+
+    const invalidKeys = keysWithIssues(issuePaths, offScreenKeys)
+    if (invalidKeys.length > 0) {
+      this.logger.warn('SDF refused changed answers that are not valid', {
+        keys: invalidKeys,
+      })
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/invalid-answers',
+          title: 'Invalid answers',
+          status: 400,
+          detail: `The request changes answers that are not on the screen and are not valid: ${invalidKeys.join(
+            ', ',
+          )}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
   }
 
   async handleSubmit(
@@ -1380,13 +1490,27 @@ export class SdfScreenService {
         claimedScreenId,
         workingScreens[claim.index],
       )
+      const formatResolver = await this.createResolverFor(
+        application,
+        roleInState,
+        locale,
+      )
+      await this.assertChangedAnswersAreValid(
+        applicationId,
+        currentScreen,
+        template,
+        application,
+        submitMergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
       const validationErrors = await this.validateScreenAnswers(
         currentScreen,
         template,
         application,
         submitMergedAnswers,
         writableAnswers,
-        await this.createResolverFor(application, roleInState, locale),
+        formatResolver,
       )
       if (validationErrors.length > 0) {
         const screen = await this.getScreen(
@@ -1412,7 +1536,7 @@ export class SdfScreenService {
         application,
         submitMergedAnswers,
         writableAnswers,
-        await this.createResolverFor(application, roleInState, locale),
+        formatResolver,
         bffUser,
       )
       if (invalidScreen) {
