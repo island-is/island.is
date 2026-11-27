@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,7 +6,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -21,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
@@ -53,7 +51,6 @@ const VerdictAppealOverview = () => {
   // When the URL does name the verdict appeal the resolver returns this very
   // object, so nothing is lost by reading it directly.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const handleNavigationTo = (destination: string) =>
@@ -74,7 +71,7 @@ const VerdictAppealOverview = () => {
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader title={titles.courtOfAppeal.verdictAppeal.overview} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
           {/* The court's own heading for the proceeding, rather than the case

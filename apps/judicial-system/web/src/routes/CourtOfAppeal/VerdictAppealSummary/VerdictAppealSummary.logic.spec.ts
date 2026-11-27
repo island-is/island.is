@@ -2,20 +2,25 @@ import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealRulingType,
   CaseFileCategory,
   VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  canCompleteVerdictAppeal,
-  getCompletableVerdictAppealRulingFile,
+  canConfirmVerdictAppeal,
+  getConfirmableVerdictAppealRulingFile,
+  getVerdictAppealConfirmationTarget,
   getVerdictAppealRulingDateMinDate,
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealRulingFiles,
+  getVerdictAppealSummaryStage,
+  isSameVerdictAppealConfirmationTarget,
   isSameVerdictAppealRulingDate,
   isVerdictAppealOutcomeShown,
   isVerdictAppealRulingDateInRange,
+  isVerdictAppealSentToCourtOfAppeals,
 } from './VerdictAppealSummary.logic'
 
 const rulingFile = {
@@ -25,19 +30,27 @@ const rulingFile = {
   key: 'uploads/case-id/ruling-file/domur.pdf',
 }
 
+const sentSummons = {
+  id: 'sent-summons',
+  sentToCourtOfAppealsDate: '2024-01-02T10:00:00.000Z',
+}
+
 const readyCase = {
+  id: 'case-id',
   caseFiles: [
     { id: 'other-file', category: CaseFileCategory.APPEAL_RULING },
     rulingFile,
   ],
   verdictAppealCase: {
     id: 'verdict-appeal',
+    appealType: AppealCaseType.VERDICT,
     appealState: AppealCaseState.APPEALED,
     verdictAppealStatus: VerdictAppealStatus.COMPLETED,
     appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
     appealRulingType: AppealRulingType.VERDICT,
     appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
     appealRulingDate: '2024-01-10T00:00:00.000Z',
+    sentAppealSummonses: [sentSummons],
   },
 } as unknown as WorkingCase
 
@@ -50,14 +63,36 @@ const withAppeal = (update: Record<string, unknown>) =>
 const withRulingFiles = (caseFiles: Record<string, unknown>[]) =>
   ({ ...readyCase, caseFiles } as unknown as WorkingCase)
 
-describe('canCompleteVerdictAppeal', () => {
+describe('getVerdictAppealSummaryStage', () => {
+  it.each([
+    [AppealCaseState.APPEALED, 'IN_PROGRESS'],
+    [AppealCaseState.RECEIVED, 'IN_PROGRESS'],
+    [AppealCaseState.WITHDRAWN, 'IN_PROGRESS'],
+    [AppealCaseState.READY_TO_COMPLETE, 'CONFIRMED'],
+    [AppealCaseState.COMPLETED, 'COMPLETED'],
+  ])('is %s -> %s', (appealState, stage) => {
+    expect(
+      getVerdictAppealSummaryStage({
+        appealType: AppealCaseType.VERDICT,
+        appealState,
+      }),
+    ).toBe(stage)
+  })
+
+  it('is in progress without an appeal', () => {
+    expect(getVerdictAppealSummaryStage(null)).toBe('IN_PROGRESS')
+    expect(getVerdictAppealSummaryStage(undefined)).toBe('IN_PROGRESS')
+  })
+})
+
+describe('canConfirmVerdictAppeal', () => {
   it('is true for an open appeal marked finished with everything recorded', () => {
-    expect(canCompleteVerdictAppeal(readyCase)).toBe(true)
+    expect(canConfirmVerdictAppeal(readyCase)).toBe(true)
   })
 
   it('is false without a verdict appeal', () => {
     expect(
-      canCompleteVerdictAppeal({
+      canConfirmVerdictAppeal({
         ...readyCase,
         verdictAppealCase: null,
       } as unknown as WorkingCase),
@@ -65,23 +100,24 @@ describe('canCompleteVerdictAppeal', () => {
   })
 
   it.each([
+    AppealCaseState.READY_TO_COMPLETE,
     AppealCaseState.COMPLETED,
     AppealCaseState.RECEIVED,
     AppealCaseState.WITHDRAWN,
   ])('is false for an appeal in state %s', (appealState) => {
-    expect(canCompleteVerdictAppeal(withAppeal({ appealState }))).toBe(false)
+    expect(canConfirmVerdictAppeal(withAppeal({ appealState }))).toBe(false)
   })
 
   it('is false until the court marks the appeal finished', () => {
     expect(
-      canCompleteVerdictAppeal(
+      canConfirmVerdictAppeal(
         withAppeal({
           verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
         }),
       ),
     ).toBe(false)
     expect(
-      canCompleteVerdictAppeal(withAppeal({ verdictAppealStatus: null })),
+      canConfirmVerdictAppeal(withAppeal({ verdictAppealStatus: null })),
     ).toBe(false)
   })
 
@@ -92,12 +128,43 @@ describe('canCompleteVerdictAppeal', () => {
     ['concluding words, only whitespace', { appealConclusion: '   \n ' }],
     ['date the appeal ended', { appealRulingDate: null }],
   ])('is false without the %s', (_name, update) => {
-    expect(canCompleteVerdictAppeal(withAppeal(update))).toBe(false)
+    expect(canConfirmVerdictAppeal(withAppeal(update))).toBe(false)
+  })
+
+  // The server refuses to confirm an appeal the public prosecution has not
+  // sent to the Court of Appeals.
+  it.each([
+    ['an empty list', { sentAppealSummonses: [] }],
+    ['no list', { sentAppealSummonses: null }],
+    ['a missing list', { sentAppealSummonses: undefined }],
+    [
+      'only a summons that was not sent',
+      {
+        sentAppealSummonses: [
+          { id: 'unsent-summons', sentToCourtOfAppealsDate: null },
+        ],
+      },
+    ],
+  ])('is false with %s of sent summonses', (_name, update) => {
+    expect(canConfirmVerdictAppeal(withAppeal(update))).toBe(false)
+  })
+
+  it('is true with one sent summons among unsent ones', () => {
+    expect(
+      canConfirmVerdictAppeal(
+        withAppeal({
+          sentAppealSummonses: [
+            { id: 'unsent-summons', sentToCourtOfAppealsDate: null },
+            sentSummons,
+          ],
+        }),
+      ),
+    ).toBe(true)
   })
 
   it('is false without the document', () => {
     expect(
-      canCompleteVerdictAppeal({
+      canConfirmVerdictAppeal({
         ...readyCase,
         caseFiles: [
           { id: 'other-file', category: CaseFileCategory.APPEAL_RULING },
@@ -105,7 +172,7 @@ describe('canCompleteVerdictAppeal', () => {
       } as unknown as WorkingCase),
     ).toBe(false)
     expect(
-      canCompleteVerdictAppeal({
+      canConfirmVerdictAppeal({
         ...readyCase,
         caseFiles: undefined,
       } as unknown as WorkingCase),
@@ -117,8 +184,8 @@ describe('the ruling document', () => {
   it('is not enough without a stored key', () => {
     const withoutKey = withRulingFiles([{ ...rulingFile, key: null }])
 
-    expect(canCompleteVerdictAppeal(withoutKey)).toBe(false)
-    expect(getCompletableVerdictAppealRulingFile(withoutKey)).toBeUndefined()
+    expect(canConfirmVerdictAppeal(withoutKey)).toBe(false)
+    expect(getConfirmableVerdictAppealRulingFile(withoutKey)).toBeUndefined()
   })
 
   it('is not enough when it is not a PDF', () => {
@@ -126,8 +193,8 @@ describe('the ruling document', () => {
       { ...rulingFile, type: 'application/msword' },
     ])
 
-    expect(canCompleteVerdictAppeal(notPdf)).toBe(false)
-    expect(getCompletableVerdictAppealRulingFile(notPdf)).toBeUndefined()
+    expect(canConfirmVerdictAppeal(notPdf)).toBe(false)
+    expect(getConfirmableVerdictAppealRulingFile(notPdf)).toBeUndefined()
   })
 
   it('is the stored PDF among several ruling files', () => {
@@ -138,8 +205,8 @@ describe('the ruling document', () => {
       storedPdf,
     ])
 
-    expect(canCompleteVerdictAppeal(several)).toBe(true)
-    expect(getCompletableVerdictAppealRulingFile(several)).toEqual(storedPdf)
+    expect(canConfirmVerdictAppeal(several)).toBe(true)
+    expect(getConfirmableVerdictAppealRulingFile(several)).toEqual(storedPdf)
   })
 })
 
@@ -153,15 +220,19 @@ describe('isVerdictAppealOutcomeShown', () => {
     ).toBe(true)
   })
 
-  // A completed appeal has ended whatever its status was later moved to.
-  it('is true for a completed appeal with another status', () => {
-    expect(
-      isVerdictAppealOutcomeShown({
-        appealState: AppealCaseState.COMPLETED,
-        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
-      }),
-    ).toBe(true)
-  })
+  // A confirmed appeal has ended whatever its status was later moved to.
+  it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+    'is true for a %s verdict appeal with another status',
+    (appealState) => {
+      expect(
+        isVerdictAppealOutcomeShown({
+          appealType: AppealCaseType.VERDICT,
+          appealState,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        }),
+      ).toBe(true)
+    },
+  )
 
   it('is false for an open appeal with another status', () => {
     expect(
@@ -285,5 +356,55 @@ describe('isVerdictAppealRulingDateInRange', () => {
     expect(isVerdictAppealRulingDateInRange(startOfToday, undefined, now)).toBe(
       false,
     )
+  })
+})
+
+describe('isVerdictAppealSentToCourtOfAppeals', () => {
+  it('is true with a sent summons', () => {
+    expect(
+      isVerdictAppealSentToCourtOfAppeals({
+        sentAppealSummonses: [sentSummons],
+      }),
+    ).toBe(true)
+  })
+
+  it.each([null, undefined])('is false without an appeal (%s)', (appeal) => {
+    expect(isVerdictAppealSentToCourtOfAppeals(appeal)).toBe(false)
+  })
+})
+
+describe('isSameVerdictAppealConfirmationTarget', () => {
+  const started = getVerdictAppealConfirmationTarget(readyCase)
+
+  it('names the case and the verdict appeal', () => {
+    expect(started).toEqual({
+      caseId: 'case-id',
+      appealCaseId: 'verdict-appeal',
+    })
+  })
+
+  it('is true while the same appeal is on the page', () => {
+    expect(
+      isSameVerdictAppealConfirmationTarget(started, {
+        caseId: 'case-id',
+        appealCaseId: 'verdict-appeal',
+      }),
+    ).toBe(true)
+  })
+
+  it.each([
+    ['another case', { caseId: 'other-case', appealCaseId: 'verdict-appeal' }],
+    ['another appeal', { caseId: 'case-id', appealCaseId: 'other-appeal' }],
+    ['no appeal', { caseId: 'case-id', appealCaseId: undefined }],
+  ])('is false once %s is on the page', (_name, current) => {
+    expect(isSameVerdictAppealConfirmationTarget(started, current)).toBe(false)
+  })
+
+  it('is false for a request begun without an appeal', () => {
+    const withoutAppeal = { caseId: 'case-id', appealCaseId: undefined }
+
+    expect(
+      isSameVerdictAppealConfirmationTarget(withoutAppeal, withoutAppeal),
+    ).toBe(false)
   })
 })

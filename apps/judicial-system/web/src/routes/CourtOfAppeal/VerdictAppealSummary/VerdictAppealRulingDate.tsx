@@ -13,6 +13,7 @@ import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useApp
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase/useCase.logic'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { withReturnedAppealState } from '../VerdictAppealStatus/VerdictAppealStatus.logic'
 import {
   getVerdictAppealRulingDateMinDate,
   isSameVerdictAppealRulingDate,
@@ -23,8 +24,10 @@ import {
  * The date the appeal ended, which the Court of Appeals enters itself. It is
  * the date the stamp on the court's document carries and the one the deadlines
  * that follow are counted from, so it stays editable after the appeal is
- * confirmed. Only the court sees it: everyone else is shown an appeal still
- * in progress.
+ * confirmed; a new date takes the appeal back, and the court confirms it
+ * again. Only the court sees it until the appeal is completed and its
+ * outcome released: until then everyone else is shown an appeal still in
+ * progress.
  *
  * The working case takes a date only once the server has stored it, so the
  * page never offers to confirm with a date that is not on record.
@@ -82,8 +85,26 @@ const VerdictAppealRulingDate: FC = () => {
     })
     pendingSavesRef.current -= 1
 
-    // A later pick has been sent since. Its response decides what the working
-    // case holds and whether the picker is put back.
+    // A stored date takes a confirmed appeal back to be confirmed again, and
+    // the state is written from every save the server stored, not only the
+    // latest: a later save can fail after an earlier one has already taken
+    // the appeal back. A save only ever moves the state that one way, and
+    // every later response carries the same state, so the order the
+    // responses arrive in does not matter. The component outlives a case
+    // change, so a response for a case the court has left changes nothing.
+    if (updated) {
+      setWorkingCase((previous) =>
+        withReturnedAppealState(
+          previous,
+          caseId,
+          appealCaseId,
+          updated.appealState,
+        ),
+      )
+    }
+
+    // A later pick has been sent since. Its response decides which date the
+    // working case holds and whether the picker is put back.
     if (save !== latestSaveRef.current) {
       return
     }
@@ -94,8 +115,6 @@ const VerdictAppealRulingDate: FC = () => {
       return
     }
 
-    // The component outlives a case change, so a save that lands after the
-    // court has moved on must not touch the other case.
     setWorkingCase((previous) =>
       previous.id === caseId
         ? applyAppealCaseUpdate(previous, appealCaseId, {

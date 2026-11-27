@@ -205,6 +205,7 @@ export class ApplicationMapper {
     jsonDto.id = applicationDto.id ?? ''
     jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
     jsonDto.slug = applicationDto.slug ?? ''
+    jsonDto.formName = applicationDto.formName
     jsonDto.isTest = applicationDto.isTest ?? false
     jsonDto.status = applicationDto.status ?? ''
     jsonDto.submittedAt = applicationDto.submittedAt ?? null

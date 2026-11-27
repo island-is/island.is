@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from 'react'
 import {
   fireEvent,
   render,
@@ -93,6 +94,13 @@ jest.mock('next/router', () => ({
       push: mockPush,
     }
   },
+}))
+
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
 }))
 
 const judge = (id: string, name: string) => ({ id, name })
@@ -335,5 +343,11 @@ describe('VerdictAppealRegistration', () => {
 
     expect(await screen.findByText('Björn Dómarason')).toBeInTheDocument()
     expect(screen.getAllByText('Anna Dómaradóttir')).toHaveLength(1)
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Skráning og úthlutun - Réttarvörslugátt')
   })
 })

@@ -6,7 +6,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { getAppealFileDeletionLockReason } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  CaseFileCategory,
+  getAppealFileDeletionLockReason,
+} from '@island.is/judicial-system/types'
 
 import { findAppealCaseOfCaseFile } from '../../appeal-case'
 import { Case, CaseFile } from '../../repository'
@@ -16,8 +20,8 @@ import { canUserAccessCaseFileCategory } from './caseFileCategory'
 // as soon as it registers its case number, so from that point on they can no
 // longer be deleted. A verdict-appeal greinargerð also locks once that party
 // has recorded APPEAL_STATEMENT_SENT. The court of appeals' own documents are
-// not affected, but its judgment or ruling on a verdict appeal is its own to
-// delete.
+// not affected, and its judgment or ruling on a verdict appeal is its own to
+// delete until the appeal is completed.
 @Injectable()
 export class DeleteAppealCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
@@ -43,6 +47,17 @@ export class DeleteAppealCaseFileGuard implements CanActivate {
     ) {
       throw new ForbiddenException(
         'Only court of appeals users can delete this file',
+      )
+    }
+
+    // Once the outcome of a verdict appeal has been released, the court's
+    // judgment or ruling is part of it and stays.
+    if (
+      caseFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+    ) {
+      throw new ForbiddenException(
+        'Forbidden when the verdict appeal has been completed',
       )
     }
 

@@ -27,6 +27,7 @@ jest.mock('@island.is/island-ui/core', () => ({
   GridRow: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <p>{children}</p>,
+  Icon: () => null,
   Tooltip: ({ text }: { text: string }) => <span title={text}>Help</span>,
   PhoneInput: ({
     label,
@@ -65,12 +66,14 @@ jest.mock('@island.is/island-ui/core', () => ({
     label,
     subLabel,
     tooltip,
+    rightContent,
     checked,
     onChange,
   }: {
     label: ReactNode
     subLabel?: string
     tooltip?: string
+    rightContent?: ReactNode
     checked?: boolean
     onChange: InputHTMLAttributes<HTMLInputElement>['onChange']
   }) => (
@@ -83,6 +86,7 @@ jest.mock('@island.is/island-ui/core', () => ({
         title={tooltip}
       />
       {subLabel && <span>{subLabel}</span>}
+      {rightContent}
     </label>
   ),
 }))
@@ -118,7 +122,7 @@ const renderField = (
   const Form = () => {
     const methods = useForm()
     return (
-      <IntlProvider locale="is" messages={{}}>
+      <IntlProvider locale="is" defaultLocale="is" messages={{}}>
         <FormProvider {...methods}>
           <FieldInformation item={item} />
           {Component ? (

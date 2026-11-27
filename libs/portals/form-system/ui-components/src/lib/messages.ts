@@ -1,6 +1,27 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  atLeastOneChildRequired: {
+    id: 'form.system:at-least-one-child-required',
+    defaultMessage: 'Veldu að minnsta kosti eitt barn.',
+    description:
+      'Validation message when a required child field has no selection',
+  },
+  noChildrenSelected: {
+    id: 'form.system:no-children-selected',
+    defaultMessage: 'Engin börn valin.',
+    description: 'Empty state when no children were selected',
+  },
+  custodyChildren: {
+    id: 'form.system:custody-children',
+    defaultMessage: 'Börn í forsjá',
+    description: 'Custody children table label',
+  },
+  noCustodyChildren: {
+    id: 'form.system:no-custody-children',
+    defaultMessage: 'Engin börn í forsjá fundust.',
+    description: 'Empty state for the custody children table',
+  },
   previewWithRestrictions: {
     id: 'form.system:preview-with-restrictions',
     defaultMessage: 'Skoða með tengingum',
@@ -685,6 +706,11 @@ export const m = defineMessages({
     id: 'form.system:preview',
     defaultMessage: 'Skoða skjá',
     description: 'Preview',
+  },
+  mobilePreview: {
+    id: 'form.system:mobile-preview',
+    defaultMessage: 'Farsímasýn',
+    description: 'Toggle the form preview between desktop and mobile viewports',
   },
   lastModified: {
     id: 'form.system:last-modified',

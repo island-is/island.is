@@ -38,8 +38,6 @@ export const FieldSettingsFragment = gql`
     applicantType
     assetType
     familyType
-    showBiologicalChildren
-    showChildrenInCustody
     subLabel {
       ...LanguageFields
     }

@@ -76,6 +76,31 @@ it('rejects navigation reservations while uploading and upload starts while navi
   ).toBe(1)
 })
 
+it('blocks forward navigation until every field finishes loading without blocking back', () => {
+  let state = createState()
+  const setLoading = (id: string, loading: boolean) => {
+    state = applicationReducer(state, {
+      type: 'SET_FIELD_LOADING',
+      payload: { id, loading },
+    })
+  }
+  setLoading('children-1', true)
+  setLoading('children-1', true)
+  setLoading('children-2', true)
+  expect(applicationReducer(state, { type: 'INCREMENT' })).toBe(state)
+  expect(
+    applicationReducer(state, { type: 'DECREMENT' }).currentScreen?.index,
+  ).toBe(0)
+
+  setLoading('children-1', false)
+  expect(applicationReducer(state, { type: 'INCREMENT' })).toBe(state)
+
+  setLoading('children-2', false)
+  expect(
+    applicationReducer(state, { type: 'INCREMENT' }).currentScreen?.index,
+  ).toBe(2)
+})
+
 it('keeps uploads blocked after successful submission even when navigation finishes', () => {
   let state = uploadNavigationReducer(createState(), {
     type: 'START_NAVIGATION',

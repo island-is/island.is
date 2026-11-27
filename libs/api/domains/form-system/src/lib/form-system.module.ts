@@ -1,5 +1,6 @@
 import { FormSystemClientModule } from '@island.is/clients/form-system'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { CmsModule } from '@island.is/cms'
 import { LoggingModule } from '@island.is/logging'
@@ -78,6 +79,7 @@ import { FormDelegationsService } from './formDelegations/formDelegations.servic
     LoggingModule,
     CmsModule,
     NationalRegistryV3ClientModule,
+    NationalRegistryV3ApplicationsClientModule,
     CompanyRegistryClientModule,
   ],
 })

@@ -1,37 +1,43 @@
-import { Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Query, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Audit } from '@island.is/nest/audit'
-import { DeprivationsService } from '../services/deprivations.service'
+
+import { DrivingLicenseDeprivation } from '../models/penalty/drivingLicenseDeprivation.model'
 import { DrivingLicenseDeprivations } from '../models/penalty/drivingLicenseDeprivations.model'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { DeprivationsService } from '../services/deprivations.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.isDriversDeprivationsEnabled)
-@Resolver(() => DrivingLicenseDeprivations)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Resolver(() => DrivingLicenseDeprivation)
 export class DeprivationsResolver {
   constructor(private readonly deprivationsService: DeprivationsService) {}
 
   @Scopes(ApiScope.internal)
   @Audit()
-  @Query(() => DrivingLicenseDeprivations)
+  @Query(() => DrivingLicenseDeprivation, { nullable: true })
+  drivingLicenseDeprivation(
+    @CurrentUser() user: User,
+  ): Promise<DrivingLicenseDeprivation | null> {
+    return this.deprivationsService.getDeprivation(user)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Audit()
+  @Query(() => DrivingLicenseDeprivations, { nullable: true })
   drivingLicenseDeprivations(
     @CurrentUser() user: User,
-  ): Promise<DrivingLicenseDeprivations> {
+  ): Promise<DrivingLicenseDeprivations | null> {
     return this.deprivationsService.getDeprivations(user)
   }
 }
