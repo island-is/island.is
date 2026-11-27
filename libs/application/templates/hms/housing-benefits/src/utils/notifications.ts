@@ -1,8 +1,9 @@
 import addDays from 'date-fns/addDays'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import addMinutes from 'date-fns/addMinutes'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import format from 'date-fns/format'
-import { getValueViaPath, toUTCDateOnly } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -11,7 +12,7 @@ import {
   PruningNotification,
   ScheduledNotificationConfig,
 } from '@island.is/application/types'
-import { dateFormat } from '@island.is/shared/constants'
+import { dateFormatWithTime } from '@island.is/shared/constants'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
 import { getHousingBenefitsPruneDate } from './pruneUtils'
@@ -94,12 +95,13 @@ const buildNotificationArgs = (
   application: NotificationApplication,
   daysRemaining?: number,
 ): Array<{ key: string; value: string }> => {
+  const pruneDate = getHousingBenefitsPruneDate(application)
   const args: Array<{ key: string; value: string }> = [
     {
       key: 'expiryDate',
       value: format(
-        toUTCDateOnly(getHousingBenefitsPruneDate(application)),
-        dateFormat.is,
+        addMinutes(pruneDate, pruneDate.getTimezoneOffset()),
+        dateFormatWithTime.is,
       ),
     },
   ]
