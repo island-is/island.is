@@ -13,6 +13,7 @@ import {
   AppealCaseState,
   appealCourtSessionTypeNames,
   AppealEventType,
+  AppealRulingType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -907,6 +908,50 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   },
 }
 
+// The court of appeals' list of confirmed appeals still to be completed.
+
+// The date the court recorded for the appeal's conclusion, without a time,
+// whatever time the stored value carries. The sort value is the full ISO
+// date-time: it sorts chronologically, and the page parses it to tell whether
+// the ruling date has come.
+const verdictAppealRulingDate: CaseTableCellGenerator<StringValue> = {
+  includes: { verdictAppealCase: { attributes: ['appealRulingDate'] } },
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    const rulingDate = c.appeal?.appealRulingDate
+
+    if (!rulingDate) {
+      return generateCell()
+    }
+
+    const date = new Date(rulingDate)
+    const dateValue = formatDate(date, 'd.M.yyyy')
+
+    if (!dateValue) {
+      return generateCell()
+    }
+
+    return generateCell({ str: dateValue }, date.toISOString())
+  },
+}
+
+// Whether the confirmed appeal concludes with a judgment or a ruling.
+const verdictAppealRulingType: CaseTableCellGenerator<TagValue> = {
+  includes: { verdictAppealCase: { attributes: ['appealRulingType'] } },
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    switch (c.appeal?.appealRulingType) {
+      case AppealRulingType.VERDICT:
+        return generateCell({ color: 'mint', text: 'Dómur staðfestur' }, 'A')
+      case AppealRulingType.RULING:
+        return generateCell(
+          { color: 'blueberry', text: 'Úrskurður staðfestur' },
+          'B',
+        )
+      default:
+        return generateCell()
+    }
+  },
+}
+
 // The public prosecution's list of appealed verdicts. One row per case, so the
 // appeals regarding each defendant are folded into one answer to "who appealed,
 // and when".
@@ -1729,6 +1774,8 @@ export const caseTableCellGenerators: Record<
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  verdictAppealRulingDate,
+  verdictAppealRulingType,
   appealProsecutor,
   verdictAppealAppellantTag,
   verdictAppealDate,

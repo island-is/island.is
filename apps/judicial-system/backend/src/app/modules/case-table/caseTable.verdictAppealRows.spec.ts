@@ -26,6 +26,7 @@ describe('court of appeals verdict appeal rows', () => {
 
   const verdictAppealTables = [
     CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+    CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
     CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
   ]
 

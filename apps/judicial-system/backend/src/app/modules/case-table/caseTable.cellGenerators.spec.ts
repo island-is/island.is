@@ -4,6 +4,7 @@ import {
   AppealCaseType,
   AppealCourtSessionType,
   AppealEventType,
+  AppealRulingType,
   CaseIndictmentRulingDecision,
   CaseState,
   DefendantEventType,
@@ -977,6 +978,120 @@ describe('public prosecution appealed verdict cell generators', () => {
       )
 
       expect(cell.value).toBeUndefined()
+    })
+  })
+})
+
+describe('verdict appeals ready to complete cell generators', () => {
+  const user = { role: UserRole.COURT_OF_APPEALS_JUDGE } as User
+
+  const rowWithAppeal = (appeal: unknown): CaseTableRowCase =>
+    ({ appeal } as CaseTableRowCase)
+
+  describe('ruling date', () => {
+    // Built in local time, which is what the cell formats in.
+    it('shows the date of a ruling recorded at midnight', () => {
+      const rulingDate = new Date(2026, 10, 3)
+
+      const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
+        rowWithAppeal({ appealRulingDate: rulingDate }),
+        user,
+      )
+
+      expect(cell.value).toEqual({ str: '3.11.2026' })
+      expect(cell.sortValue).toBe(rulingDate.toISOString())
+    })
+
+    it('shows the date only when the stored value carries a time', () => {
+      const rulingDate = new Date(2026, 10, 3, 14, 5)
+
+      const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
+        rowWithAppeal({ appealRulingDate: rulingDate }),
+        user,
+      )
+
+      expect(cell.value).toEqual({ str: '3.11.2026' })
+      expect(cell.sortValue).toBe(rulingDate.toISOString())
+    })
+
+    // The page reads the sort value back as a date to warn about a ruling
+    // date that has not come, so it must be one it can parse.
+    it('sorts by a date-time that parses back to the ruling date', () => {
+      const rulingDate = new Date(2026, 10, 3, 9, 30)
+
+      const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
+        rowWithAppeal({ appealRulingDate: rulingDate }),
+        user,
+      )
+
+      expect(new Date(cell.sortValue ?? '').getTime()).toBe(
+        rulingDate.getTime(),
+      )
+    })
+
+    it('sorts later dates after earlier ones', () => {
+      const sortValue = (rulingDate: Date) =>
+        caseTableCellGenerators.verdictAppealRulingDate.generate(
+          rowWithAppeal({ appealRulingDate: rulingDate }),
+          user,
+        ).sortValue ?? ''
+
+      expect(
+        sortValue(new Date(2026, 8, 30)) < sortValue(new Date(2026, 9, 1)),
+      ).toBe(true)
+    })
+
+    it('leaves the cell empty without a ruling date', () => {
+      const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
+        rowWithAppeal({}),
+        user,
+      )
+
+      expect(cell).toEqual({ value: undefined, sortValue: undefined })
+    })
+
+    it('reads the ruling date of the verdict appeal', () => {
+      expect(caseTableCellGenerators.verdictAppealRulingDate.includes).toEqual({
+        verdictAppealCase: { attributes: ['appealRulingDate'] },
+      })
+    })
+  })
+
+  describe('ruling type', () => {
+    it('tags a judgment as a confirmed verdict', () => {
+      const cell = caseTableCellGenerators.verdictAppealRulingType.generate(
+        rowWithAppeal({ appealRulingType: AppealRulingType.VERDICT }),
+        user,
+      )
+
+      expect(cell.value).toEqual({ color: 'mint', text: 'Dómur staðfestur' })
+    })
+
+    it('tags a ruling as a confirmed ruling', () => {
+      const cell = caseTableCellGenerators.verdictAppealRulingType.generate(
+        rowWithAppeal({ appealRulingType: AppealRulingType.RULING }),
+        user,
+      )
+
+      expect(cell.value).toEqual({
+        color: 'blueberry',
+        text: 'Úrskurður staðfestur',
+      })
+    })
+
+    it('leaves the cell empty without a ruling type', () => {
+      const cell = caseTableCellGenerators.verdictAppealRulingType.generate(
+        rowWithAppeal({}),
+        user,
+      )
+
+      expect(cell.value).toBeUndefined()
+    })
+
+    it('reads the ruling type of the verdict appeal', () => {
+      expect(caseTableCellGenerators.verdictAppealRulingType.includes).toEqual({
+        verdictAppealCase: { attributes: ['appealRulingType'] },
+      })
     })
   })
 })

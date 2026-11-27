@@ -24,6 +24,11 @@ describe('getVisibleCaseTableGroups', () => {
         title: 'Mál í vinnslu',
       },
       {
+        type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
+        route: 'afryjud-mal-i-domsuppkvadningu',
+        title: 'Mál í dómsuppkvaðningu',
+      },
+      {
         type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
         route: 'afryjud-afgreidd-mal',
         title: 'Afgreidd mál',
@@ -50,8 +55,34 @@ describe('getVisibleCaseTableGroups', () => {
     ])
     expect(visible[1].tables.map((t) => t.route)).toEqual([
       'afryjud-mal-i-vinnslu',
+      'afryjud-mal-i-domsuppkvadningu',
       'afryjud-afgreidd-mal',
     ])
+  })
+
+  // Among ungated tables, so only the gate can be what takes it out.
+  it('hides the verdict appeals to complete until the feature is on', () => {
+    const mixed: CaseTableGroup = {
+      title: 'Blandað',
+      tables: [
+        ...rulingAppeals.tables,
+        {
+          type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
+          route: 'afryjud-mal-i-domsuppkvadningu',
+          title: 'Mál í dómsuppkvaðningu',
+        },
+      ],
+    } as CaseTableGroup
+
+    expect(
+      getVisibleCaseTableGroups([mixed], [])[0].tables.map((t) => t.route),
+    ).toEqual(['mal-i-vinnslu'])
+    expect(
+      getVisibleCaseTableGroups(
+        [mixed],
+        [Feature.INDICTMENT_APPEAL],
+      )[0].tables.map((t) => t.route),
+    ).toEqual(['mal-i-vinnslu', 'afryjud-mal-i-domsuppkvadningu'])
   })
 
   // A gated table among ungated ones: the group stays and only the table goes.
