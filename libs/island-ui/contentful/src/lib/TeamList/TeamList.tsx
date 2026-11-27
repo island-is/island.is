@@ -138,6 +138,79 @@ export const TeamMemberCardList = ({
   )
 }
 
+type TeamMember = TeamListProps['teamMembers'][number]
+
+/** The expanded content of a team member (image, contact info, tags and intro) */
+const TeamMemberDetails = ({
+  member,
+  prefixes,
+}: {
+  member: TeamMember
+  prefixes?: TeamListProps['prefixes']
+}) => {
+  return (
+    <GridRow rowGap={1}>
+      {member.image?.url && (
+        <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
+          <TeamMemberImageUrlProvider
+            member={member}
+            consumer={(imageUrl) => (
+              <img src={imageUrl} className={styles.teamMemberImage} alt="" />
+            )}
+          />
+        </GridColumn>
+      )}
+      <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
+        <Stack space={1}>
+          {member.email && (
+            <Inline space={1} alignY="center">
+              <Text fontWeight="semiBold">{prefixes?.email ?? 'Netfang:'}</Text>
+              <Text>
+                <span className={styles.email}>{member.email}</span>
+              </Text>
+            </Inline>
+          )}
+          {member.phone && (
+            <Inline space={1} alignY="center">
+              <Text fontWeight="semiBold">{prefixes?.phone ?? 'Sími:'}</Text>
+              <Text>{member.phone}</Text>
+            </Inline>
+          )}
+          {member.tagGroups?.map((tagGroup) => (
+            <Inline key={tagGroup.groupLabel} space={1} alignY="center">
+              <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
+              <Inline space={1}>
+                <Text>{tagGroup.tagLabels.join(', ')}</Text>
+              </Inline>
+            </Inline>
+          ))}
+
+          <Text as="div">{richText(member.intro ?? [])}</Text>
+        </Stack>
+      </GridColumn>
+    </GridRow>
+  )
+}
+
+/** A single team member displayed with the same look as an expanded accordion item, but not collapsible */
+export const TeamMemberProfile = ({
+  member,
+  prefixes,
+}: {
+  member: TeamMember
+  prefixes?: TeamListProps['prefixes']
+}) => {
+  return (
+    <Stack space={2}>
+      <Stack space={0}>
+        <Text variant="h4">{member.name}</Text>
+        <Text>{member.title}</Text>
+      </Stack>
+      <TeamMemberDetails member={member} prefixes={prefixes} />
+    </Stack>
+  )
+}
+
 const TeamMemberAccordionList = ({
   teamMembers,
   prefixes,
@@ -158,54 +231,7 @@ const TeamMemberAccordionList = ({
             }
             labelUse="div"
           >
-            <GridRow rowGap={1}>
-              {member.image?.url && (
-                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
-                  <TeamMemberImageUrlProvider
-                    member={member}
-                    consumer={(imageUrl) => (
-                      <img
-                        src={imageUrl}
-                        className={styles.teamMemberImage}
-                        alt=""
-                      />
-                    )}
-                  />
-                </GridColumn>
-              )}
-              <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
-                <Stack space={1}>
-                  {member.email && (
-                    <Inline space={1} alignY="center">
-                      <Text fontWeight="semiBold">
-                        {prefixes?.email ?? 'Netfang:'}
-                      </Text>
-                      <Text>
-                        <span className={styles.email}>{member.email}</span>
-                      </Text>
-                    </Inline>
-                  )}
-                  {member.phone && (
-                    <Inline space={1} alignY="center">
-                      <Text fontWeight="semiBold">
-                        {prefixes?.phone ?? 'Sími:'}
-                      </Text>
-                      <Text>{member.phone}</Text>
-                    </Inline>
-                  )}
-                  {member.tagGroups?.map((tagGroup) => (
-                    <Inline key={tagGroup.groupLabel} space={1} alignY="center">
-                      <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
-                      <Inline space={1}>
-                        <Text>{tagGroup.tagLabels.join(', ')}</Text>
-                      </Inline>
-                    </Inline>
-                  ))}
-
-                  <Text as="div">{richText(member.intro ?? [])}</Text>
-                </Stack>
-              </GridColumn>
-            </GridRow>
+            <TeamMemberDetails member={member} prefixes={prefixes} />
           </AccordionItem>
         )
       })}

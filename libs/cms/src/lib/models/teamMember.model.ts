@@ -4,6 +4,7 @@ import { ITeamMember } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class TeamMemberTagGroup {
@@ -53,7 +54,10 @@ export class TeamMember {
   createdAt?: string
 }
 
-export const mapTeamMember = ({ fields, sys }: ITeamMember): TeamMember => {
+export const mapTeamMember = ({
+  fields,
+  sys,
+}: ITeamMember): SystemMetadata<TeamMember> => {
   const tagGroups: TeamMemberTagGroup[] = []
 
   const filterTags = fields.filterTags
@@ -86,6 +90,7 @@ export const mapTeamMember = ({ fields, sys }: ITeamMember): TeamMember => {
   }
 
   return {
+    typename: 'TeamMember',
     id: sys.id,
     name: fields.name ?? '',
     title: fields.title ?? '',

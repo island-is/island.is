@@ -59,6 +59,7 @@ import {
   StraddlingStockCalculator,
   TableSlice,
   TeamListSlice,
+  TeamMemberSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
   VerAnnouncementCalculator,
@@ -93,6 +94,7 @@ import {
   SliceDropdown as SliceDropdownSchema,
   TableSlice as TableSliceSchema,
   TeamList,
+  TeamMember,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -511,6 +513,18 @@ const defaultRenderComponent = {
       variant={slice.variant as 'accordion' | 'card'}
       showSearchInput={slice.showSearchInput ?? true}
       orderBy={slice.teamMemberOrder ?? GetTeamMembersInputOrderBy.Name}
+    />
+  ),
+  TeamMember: (
+    slice: TeamMember & { teamMemberIntro?: TeamMember['intro'] },
+  ) => (
+    <TeamMemberSlice
+      teamMember={
+        {
+          ...slice,
+          intro: slice.teamMemberIntro,
+        } as TeamListProps['teamMembers'][number]
+      }
     />
   ),
   Image: (slice: ImageProps) => {
