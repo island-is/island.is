@@ -4,13 +4,7 @@ import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
 
 import { useUpdateUserProfile } from '../../../hooks/use-update-user-profile'
-import {
-  Button,
-  CancelButton,
-  NavigationBarSheet,
-  TextField,
-  Typography,
-} from '@/ui'
+import { Button, CancelButton, TextField, Typography } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../components/stack-screen'
 
@@ -63,14 +57,8 @@ export default function EditConfirmScreen() {
           title: intl.formatMessage({ id: 'edit.confirm.screenTitle' }),
         }}
       />
-      {/* <NavigationBarSheet
-        componentId="edit-confirm"
-        title={intl.formatMessage({ id: 'edit.confirm.screenTitle' })}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-      /> */}
       <View style={{ paddingHorizontal: 16 }}>
-        <View style={{ marginBottom: 32, marginTop: 8 }}>
+        <View style={{ marginBottom: 32 }}>
           <Typography>
             {intl.formatMessage({ id: 'edit.confirm.description' }, { type })}
           </Typography>

@@ -2,6 +2,8 @@ import { Agent } from 'https'
 import fetch from 'node-fetch'
 import { v4 as uuid } from 'uuid'
 
+import { PayloadTooLargeException } from '@nestjs/common'
+
 import { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
@@ -183,7 +185,7 @@ describe('PoliceController - Update Police Case', () => {
       mockFetch.mockReset()
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 413,
+        status: 500,
         text: jest.fn().mockResolvedValueOnce(''),
       })
 
@@ -213,10 +215,161 @@ describe('PoliceController - Update Police Case', () => {
         `Failed to update police case ${caseId}`,
         expect.objectContaining({
           caseId,
-          statusCode: '413',
-          errorSummary: expect.stringContaining('413'),
+          statusCode: '500',
+          errorSummary: expect.stringContaining('500'),
         }),
       )
+    })
+  })
+
+  describe('update police case fails because a file is too large', () => {
+    const prosecutor = {
+      name: 'Prosecutor One',
+      email: 'prosecutor@omnitrix.is',
+    }
+    const caseIdForNotification = uuid()
+    let mockEmailService: { sendEmail: jest.Mock }
+    let mockEventService: { postErrorEvent: jest.Mock }
+    let mockFindByIdWithProsecutor: jest.Mock
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce('Payload Too Large'),
+      })
+
+      const {
+        policeService,
+        emailService,
+        eventService,
+        caseRepositoryService,
+      } = await createTestingPoliceModule()
+      mockEmailService = emailService as unknown as { sendEmail: jest.Mock }
+      mockEventService = eventService as unknown as {
+        postErrorEvent: jest.Mock
+      }
+
+      mockFindByIdWithProsecutor =
+        caseRepositoryService.findByIdWithProsecutor as jest.Mock
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({
+        prosecutor,
+        policeCaseNumbers: [policeCaseNumber],
+      })
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          [
+            {
+              type: PoliceDocumentType.RVVS,
+              courtDocument: 'large file',
+            },
+          ],
+          caseIdForNotification,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should notify the prosecutor', () => {
+      expect(mockFindByIdWithProsecutor).toHaveBeenCalledWith(
+        caseIdForNotification,
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`,
+          text: 'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.',
+        }),
+      )
+    })
+
+    it('should throw a payload too large exception', () => {
+      expect(then.result).toBeUndefined()
+      expect(then.error).toBeInstanceOf(PayloadTooLargeException)
+    })
+
+    it('should not post a Slack error for an expected size limit', () => {
+      expect(mockEventService.postErrorEvent).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('update police case fails because a file is too large and prosecutor notification fails', () => {
+    const caseIdForNotification = uuid()
+    let mockEventService: { postErrorEvent: jest.Mock }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce('Payload Too Large'),
+      })
+
+      const {
+        policeService,
+        emailService,
+        eventService,
+        caseRepositoryService,
+      } = await createTestingPoliceModule()
+      mockEventService = eventService as unknown as {
+        postErrorEvent: jest.Mock
+      }
+
+      const mockSendEmail = emailService.sendEmail as jest.Mock
+      mockSendEmail.mockRejectedValueOnce(new Error('SMTP unavailable'))
+
+      const mockFindByIdWithProsecutor =
+        caseRepositoryService.findByIdWithProsecutor as jest.Mock
+      mockFindByIdWithProsecutor.mockResolvedValueOnce({
+        prosecutor: {
+          name: 'Prosecutor One',
+          email: 'prosecutor@omnitrix.is',
+        },
+        policeCaseNumbers: [policeCaseNumber],
+      })
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          [
+            {
+              type: PoliceDocumentType.RVVS,
+              courtDocument: 'large file',
+            },
+          ],
+          caseIdForNotification,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should not treat the size limit as terminal without a successful notification', () => {
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(false)
+      expect(mockEventService.postErrorEvent).toHaveBeenCalled()
     })
   })
 

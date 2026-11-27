@@ -88,17 +88,20 @@ const stripFieldListsFromSections = (
 interface Props {
   externalDataAgreement: boolean
   isValidateEligibilityError: boolean
+  onConfirmPremises?: () => Promise<boolean>
 }
 
 export const Footer = ({
   externalDataAgreement,
   isValidateEligibilityError,
+  onConfirmPremises,
 }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
   const { currentSection } = state
   const currentSectionType = currentSection?.data?.sectionType
+  const isUploading = (state.pendingUploads ?? 0) > 0
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
@@ -225,19 +228,20 @@ export const Footer = ({
     }
   }
 
-  const handleIncrement = async () => {
-    if (isPaymentLoading) return
+  const continueApplication = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
     const allowProceed = Boolean(state.application.allowProceedOnValidationFail)
     const isParties = currentSectionType === SectionTypes.PARTIES
-
     if (!isValid && (isParties || !allowProceed)) return
     if ((state.errors?.length ?? 0) > 0) return
 
-    if (isCompletedSection) {
-      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+    if (
+      currentSectionType === SectionTypes.PREMISES &&
+      onConfirmPremises &&
+      !(await onConfirmPremises())
+    ) {
       return
     }
 
@@ -419,11 +423,7 @@ export const Footer = ({
         return
       }
 
-      const completedSaved = await saveCurrentScreen(true)
-      if (!completedSaved) return
-
       increment()
-
       dispatch({
         type: 'SUBMITTED',
         payload: {
@@ -431,6 +431,8 @@ export const Footer = ({
           screenError: emptyScreenError,
         },
       })
+
+      await saveCurrentScreen(true)
     } catch (error) {
       console.error('Error submitting application', error)
       dispatch({
@@ -440,15 +442,37 @@ export const Footer = ({
     }
   }
 
+  const handleIncrement = async () => {
+    if (isPaymentLoading || isUploading) return
+    if (isCompletedSection) {
+      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+      return
+    }
+    if (dispatch({ type: 'START_NAVIGATION' }) === false) return
+
+    try {
+      await continueApplication()
+    } finally {
+      dispatch({ type: 'FINISH_NAVIGATION' })
+    }
+  }
+
   const handleDecrement = async () => {
-    const saved = await saveCurrentScreen(false)
-    if (!saved) return
+    if (isUploading) return
+    if (dispatch({ type: 'START_NAVIGATION' }) === false) return
 
-    dispatch({
-      type: 'DECREMENT',
-    })
+    try {
+      const saved = await saveCurrentScreen(false)
+      if (!saved) return
 
-    await updateCurrentDependencies()
+      dispatch({
+        type: 'DECREMENT',
+      })
+
+      await updateCurrentDependencies()
+    } finally {
+      dispatch({ type: 'FINISH_NAVIGATION' })
+    }
   }
 
   return (
@@ -469,6 +493,8 @@ export const Footer = ({
               icon="arrowForward"
               onClick={handleIncrement}
               disabled={
+                isUploading ||
+                state.isNavigating ||
                 !enableContinueButton ||
                 isValidateEligibilityError ||
                 isPaymentLoading ||
@@ -489,6 +515,8 @@ export const Footer = ({
                 variant="ghost"
                 onClick={handleDecrement}
                 disabled={
+                  isUploading ||
+                  state.isNavigating ||
                   submitLoading ||
                   notifyLoading ||
                   isPaymentLoading ||

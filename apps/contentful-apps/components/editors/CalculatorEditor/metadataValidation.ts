@@ -12,6 +12,11 @@ export const hasMetadataValidationError = (
   const inputValueFields = (config.inputSections ?? []).flatMap((section) =>
     section.fields.filter(isInputValueField),
   )
+
+  if (inputValueFields.some((field) => field.key && !field.label?.is?.trim())) {
+    return true
+  }
+
   const placedInputKeys = new Set(
     inputValueFields.map((field) => field.key).filter(Boolean),
   )
@@ -53,7 +58,12 @@ export const hasMetadataValidationError = (
       if (!metadata) return true
       const itemFields = field.itemFields ?? []
       if (itemFields.length === 0) return false
-      if (metadata.type !== TaxCalculatorOutputFieldType.Array) return true
+      if (
+        metadata.type !== TaxCalculatorOutputFieldType.Array &&
+        metadata.type !== TaxCalculatorOutputFieldType.Object
+      ) {
+        return true
+      }
       const allowedKeys = new Set(
         (metadata.itemFields ?? []).map((item) => item.key),
       )

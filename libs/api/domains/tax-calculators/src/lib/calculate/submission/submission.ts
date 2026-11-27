@@ -1,13 +1,9 @@
-import type {
-  CalculatorField,
-  CalculatorFieldSemantic,
-} from '@island.is/clients/rsk/calculators'
+import type { CalculatorField } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorCalculationErrorCode } from '../../models/enums'
 import type { CalculationError } from '../../models/calculationError.model'
+import { TaxCalculatorCalculationErrorCode } from '../../models/enums'
 import type { InputFieldValue } from '../../models/inputFieldValue.model'
 import type { InputValue } from '../../models/inputValue.model'
-import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
 export type SubmittedValue = string | number | boolean | Date
 export type SubmittedValues = Record<string, SubmittedValue>
@@ -20,13 +16,6 @@ export interface CalculationInputValidation {
 
 /* Validation uses the source contract, which retains semantic and option data
  * without narrowing a GraphQL union. The contract is already publishable. */
-
-const INTEGER_SEMANTICS: readonly CalculatorFieldSemantic[] = [
-  'currency',
-  'year',
-  'month',
-  'count',
-]
 
 /* Only the empty string is absent; other strings are validated. */
 const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
@@ -68,38 +57,7 @@ const describeProblem = (
         return `expects a number, received ${describeKind(value)}`
       }
 
-      if (!Number.isFinite(value)) {
-        return 'expects a finite number'
-      }
-
-      /* Currency, year, month, and count values are integers. */
-      if (
-        field.semantic &&
-        INTEGER_SEMANTICS.includes(field.semantic) &&
-        !Number.isInteger(value)
-      ) {
-        return `expects a whole number, since it carries the ${field.semantic} semantic`
-      }
-
-      const range = field.semantic && NUMERIC_SEMANTIC_RANGE[field.semantic]
-
-      if (range) {
-        const { min, max } = range
-
-        if (
-          min !== undefined &&
-          max !== undefined &&
-          (value < min || value > max)
-        ) {
-          return `expects a ${field.semantic} between ${min} and ${max}`
-        }
-
-        if (max === undefined && min !== undefined && value < min) {
-          return `expects a ${field.semantic} of ${min} or more`
-        }
-      }
-
-      return undefined
+      return Number.isFinite(value) ? undefined : 'expects a finite number'
     }
     case 'boolean':
       return typeof value === 'boolean'
@@ -219,4 +177,37 @@ export const validateCalculationInput = (
   }
 
   return { values, errors }
+}
+
+const describeAccepted = (field: CalculatorField | undefined): string => {
+  if (field?.type !== 'number') {
+    return 'is not accepted by the calculator'
+  }
+
+  const { integer, minimum, maximum } = field
+  const kind = integer ? 'a whole number' : 'a number'
+
+  if (minimum !== undefined && maximum !== undefined) {
+    return `expects ${kind} between ${minimum} and ${maximum}`
+  }
+  if (minimum !== undefined) {
+    return `expects ${kind} of ${minimum} or more`
+  }
+  if (maximum !== undefined) {
+    return `expects ${kind} of ${maximum} or less`
+  }
+  return integer ? `expects ${kind}` : 'is not accepted by the calculator'
+}
+
+export const toInvalidValueErrors = (
+  inputFields: readonly CalculatorField[],
+  keys: readonly string[],
+): CalculationError[] => {
+  const fieldsByName = new Map(inputFields.map((field) => [field.name, field]))
+
+  return keys.map((key) => ({
+    code: TaxCalculatorCalculationErrorCode.INVALID_VALUE,
+    key,
+    message: `Field "${key}" ${describeAccepted(fieldsByName.get(key))}.`,
+  }))
 }

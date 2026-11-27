@@ -496,9 +496,7 @@ const Indictment = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.indictment)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.indictment} />
       <FormContentContainer>
         <PageTitle>{strings.heading}</PageTitle>
         <Box display="flex" flexDirection="column" rowGap={5}>
@@ -621,7 +619,7 @@ const Indictment = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

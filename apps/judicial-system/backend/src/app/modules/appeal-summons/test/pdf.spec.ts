@@ -152,6 +152,7 @@ describe('AppealSummonsController - PDF', () => {
     } as Case
 
     const dto: PreviewAppealSummonsDto = {
+      caseName: 'Ákæruvaldið gegn Jóni Jónssyni',
       defendants: [
         {
           defendantId,
@@ -179,6 +180,7 @@ describe('AppealSummonsController - PDF', () => {
           claims: 'Kröfur',
         },
       ],
+      { caseName: dto.caseName },
     )
     expect(res.end).toHaveBeenCalledWith(pdf)
   })
@@ -219,6 +221,7 @@ describe('AppealSummonsController - PDF', () => {
     ).mockResolvedValueOnce(existingSummons)
 
     const dto: PreviewAppealSummonsDto = {
+      caseName: 'Ákæruvaldið gegn Jóni Jónssyni',
       appealSummonsId: summonsId,
       defendants: [
         {
@@ -247,6 +250,7 @@ describe('AppealSummonsController - PDF', () => {
           claims: 'Kept claims',
         },
       ],
+      { caseName: dto.caseName },
     )
   })
 })

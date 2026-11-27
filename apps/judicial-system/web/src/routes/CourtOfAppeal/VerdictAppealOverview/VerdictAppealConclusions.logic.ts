@@ -1,5 +1,8 @@
+import { getAppealJudges } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getAppealRulingTypeWording } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealStatus/RegisterConclusion.logic'
+import { isVerdictAppealOutcomeShown } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealSummary/VerdictAppealSummary.logic'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 export interface VerdictAppealConclusion {
@@ -40,10 +43,11 @@ export const getDistrictCourtConclusion = (
 }
 
 /**
- * What this court decided, once it has decided it. Nothing writes an appeal
- * conclusion for a verdict appeal yet, so in practice this is absent until the
- * step that does is built - which is why it is left out rather than shown
- * empty.
+ * What this court decided, once it has decided it, titled for whether it ended
+ * the appeal with a verdict or a ruling. Left out rather than shown empty
+ * until the court has written it, and left out while the appeal is neither
+ * marked "Lokið" nor completed, since words recorded under "Lokið" stay on
+ * record when the status is moved away from it.
  *
  * The panel is named in the same order the info cards name it, so the court
  * reads the same three names in the same sequence wherever they appear.
@@ -54,20 +58,18 @@ export const getCourtOfAppealsConclusion = (
   const appeal = theCase.verdictAppealCase
   const text = appeal?.appealConclusion
 
-  if (!text) {
+  if (!text || !isVerdictAppealOutcomeShown(appeal)) {
     return undefined
   }
 
   return {
     id: 'court-of-appeals-conclusion',
-    title: 'Dómsorð Landsréttar',
+    title: getAppealRulingTypeWording(appeal.appealRulingType).courtConclusion,
     text,
     signedBy: sortByIcelandicAlphabet(
-      [
-        appeal?.appealJudge1?.name,
-        appeal?.appealJudge2?.name,
-        appeal?.appealJudge3?.name,
-      ].filter((name): name is string => Boolean(name)),
+      getAppealJudges(appeal)
+        .map((judge) => judge.name)
+        .filter((name): name is string => Boolean(name)),
     ),
   }
 }

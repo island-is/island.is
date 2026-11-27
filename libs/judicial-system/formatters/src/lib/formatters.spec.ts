@@ -13,6 +13,8 @@ import {
   containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
+  formatAppealCaseName,
+  formatAppealDefendantNames,
   formatDate,
   formatDOB,
   formatGender,
@@ -20,12 +22,15 @@ import {
   formatPhoneNumber,
   formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
+  isNonBlank,
   normalizeAndFormatNationalId,
   normalizePersonAddress,
   readableIndictmentSubtypes,
+  resolveAppealCaseName,
   sanitize,
   splitStringByComma,
   stripPdfExtension,
+  trimOrUndefined,
 } from './formatters'
 
 describe('stripPdfExtension', () => {
@@ -495,6 +500,64 @@ describe('containsHtml', () => {
   })
 })
 
+describe('formatAppealDefendantNames', () => {
+  test('joins one, two and many names', () => {
+    expect(formatAppealDefendantNames(['Jón'])).toBe('Jón')
+    expect(formatAppealDefendantNames(['Jón', 'Guðrún'])).toBe('Jón og Guðrún')
+    expect(formatAppealDefendantNames(['A', 'B', 'C'])).toBe('A, B og C')
+  })
+
+  test('skips empty names', () => {
+    expect(formatAppealDefendantNames([null, 'Jón', '', undefined])).toBe('Jón')
+  })
+})
+
+describe('formatAppealCaseName', () => {
+  test('names the prosecution against the defendants', () => {
+    expect(formatAppealCaseName(['Jóni Jónssyni'])).toBe(
+      'Ákæruvaldið gegn Jóni Jónssyni',
+    )
+  })
+
+  test('returns an empty string when no names are given', () => {
+    expect(formatAppealCaseName([])).toBe('')
+  })
+
+  test('declines nominative names into þágufall when asked', () => {
+    expect(
+      formatAppealCaseName(['Jón Sigurður Jónsson'], { decline: true }),
+    ).toBe('Ákæruvaldið gegn Jóni Sigurði Jónssyni')
+  })
+})
+
+describe('resolveAppealCaseName', () => {
+  test('prefers a stored case name', () => {
+    expect(resolveAppealCaseName('Ákæruvaldið gegn Páli', ['Jón'])).toBe(
+      'Ákæruvaldið gegn Páli',
+    )
+  })
+
+  test('keeps an explicitly stored Ákæruvaldið name', () => {
+    expect(resolveAppealCaseName('Ákæruvaldið', ['Jón'])).toBe('Ákæruvaldið')
+  })
+
+  test('builds the style-of-cause when the stored name is missing', () => {
+    expect(resolveAppealCaseName(null, ['Jón Jónsson'])).toBe(
+      'Ákæruvaldið gegn Jón Jónsson',
+    )
+  })
+
+  test('returns an empty string when there is neither a stored name nor defendants', () => {
+    expect(resolveAppealCaseName(null, [])).toBe('')
+  })
+
+  test('declines fallback names into þágufall when asked', () => {
+    expect(
+      resolveAppealCaseName(null, ['Jón Sigurður Jónsson'], { decline: true }),
+    ).toBe('Ákæruvaldið gegn Jóni Sigurði Jónssyni')
+  })
+})
+
 describe('applyDativeCaseToCourtName', () => {
   test('should return dative case if court name contains "dómur"', () => {
     // Arrange
@@ -550,5 +613,31 @@ describe('formatRulingOrderPronouncedOrallyName', () => {
         new Date('2026-11-12T10:00:00Z'),
       ),
     ).toBe('Úrskurður 12.11.2026')
+  })
+})
+
+describe('isNonBlank', () => {
+  test('rejects nullish and whitespace-only values', () => {
+    expect(isNonBlank(undefined)).toBe(false)
+    expect(isNonBlank(null)).toBe(false)
+    expect(isNonBlank('')).toBe(false)
+    expect(isNonBlank('   ')).toBe(false)
+  })
+
+  test('accepts strings with non-whitespace content', () => {
+    expect(isNonBlank('a')).toBe(true)
+    expect(isNonBlank('  a  ')).toBe(true)
+  })
+})
+
+describe('trimOrUndefined', () => {
+  test('omits nullish values', () => {
+    expect(trimOrUndefined(undefined)).toBeUndefined()
+    expect(trimOrUndefined(null)).toBeUndefined()
+  })
+
+  test('trims provided strings, including to empty', () => {
+    expect(trimOrUndefined('  hello  ')).toBe('hello')
+    expect(trimOrUndefined('   ')).toBe('')
   })
 })

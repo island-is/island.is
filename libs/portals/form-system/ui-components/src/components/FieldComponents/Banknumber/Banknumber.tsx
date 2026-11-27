@@ -9,18 +9,21 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
-import { Dispatch, useEffect, useRef } from 'react'
+import { ClipboardEvent, Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action, ApplicationState } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   valueIndex?: number
-  state?: ApplicationState
+  state?: Partial<ApplicationState>
+  isPreview?: boolean
 }
 
 export const Banknumber = ({
@@ -28,6 +31,7 @@ export const Banknumber = ({
   dispatch,
   valueIndex = 0,
   state,
+  isPreview = false,
 }: Props) => {
   const { lang } = useLocale()
   const inputRefs = [
@@ -45,8 +49,10 @@ export const Banknumber = ({
   const accountField = `${item.id}.${valueIndex}_account`
   const savedBankAccount = getValue(item, 'bankAccount', valueIndex) ?? ''
   const bankAccountValue = savedBankAccount === '--' ? '' : savedBankAccount
+  const fetchBankAccountFromMyPages =
+    item.fieldSettings?.fetchBankAccountFromMyPages ?? true
   const hasDelegationApplicant =
-    state?.screens.some((screen) =>
+    state?.screens?.some((screen) =>
       screen.fields?.some((field) =>
         Object.values(ApplicantTypesEnum).some(
           (type) =>
@@ -59,7 +65,11 @@ export const Banknumber = ({
     USER_PROFILE,
     {
       fetchPolicy: 'cache-first',
-      skip: hasDelegationApplicant || !!bankAccountValue,
+      skip:
+        isPreview ||
+        !fetchBankAccountFromMyPages ||
+        hasDelegationApplicant ||
+        !!bankAccountValue,
     },
   )
 
@@ -91,7 +101,7 @@ export const Banknumber = ({
   }, [bank, ledger, account, dispatch, item.id, valueIndex])
 
   useEffect(() => {
-    if (hasDelegationApplicant) return
+    if (!fetchBankAccountFromMyPages || hasDelegationApplicant) return
     if (didHydrateFromProfile.current) return
 
     const fields = [bankField, ledgerField, accountField]
@@ -100,14 +110,20 @@ export const Banknumber = ({
       return !!getValues(name) || isDirty || isTouched
     })
 
-    if (bankAccountValue || hasExistingInput || userProfileError) {
+    if (
+      bankAccountValue ||
+      hasExistingInput ||
+      (!isPreview && userProfileError)
+    ) {
       didHydrateFromProfile.current = true
       return
     }
-    if (!userProfileData) return
+    if (!isPreview && !userProfileData) return
 
     didHydrateFromProfile.current = true
-    const bankInfo = userProfileData.getUserProfile?.bankInfo
+    const bankInfo = isPreview
+      ? previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount
+      : userProfileData?.getUserProfile?.bankInfo
     if (!bankInfo || !/^\d{1,4}-\d{1,2}-\d{1,6}$/.test(bankInfo)) return
 
     const parts = bankInfo.split('-')
@@ -126,6 +142,8 @@ export const Banknumber = ({
     ledgerField,
     accountField,
     bankAccountValue,
+    isPreview,
+    fetchBankAccountFromMyPages,
     hasDelegationApplicant,
     userProfileData,
     userProfileError,
@@ -133,6 +151,22 @@ export const Banknumber = ({
     getFieldState,
     setValue,
   ])
+
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    const bankAccount = event.clipboardData.getData('text/plain').trim()
+    if (!/^\d{4}-\d{2}-\d{6}$/.test(bankAccount)) return
+
+    event.preventDefault()
+    const fields = [bankField, ledgerField, accountField]
+    const parts = bankAccount.split('-')
+    fields.forEach((name, index) => {
+      setValue(name, parts[index], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      })
+    })
+  }
 
   // Helper for leading zeros
   const addLeadingZeros = (originalNumber: string, max: number) => {
@@ -155,7 +189,7 @@ export const Banknumber = ({
         <Text variant="h4">{item.name?.[lang]}</Text>
       </Row>
       <Row marginTop={1}>
-        <Column span="4/12">
+        <Column span={['6/12', '6/12', '4/12']}>
           <Controller
             key={`${item.id}-${valueIndex}-bank`}
             name={bankField}
@@ -179,6 +213,7 @@ export const Banknumber = ({
                 type="text"
                 inputMode="numeric"
                 maxLength={4}
+                onPaste={handlePaste}
                 value={field.value ?? undefined}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -199,7 +234,7 @@ export const Banknumber = ({
             )}
           />
         </Column>
-        <Column span="3/12">
+        <Column span={['6/12', '6/12', '3/12']}>
           <Controller
             key={`${item.id}-${valueIndex}-ledger`}
             name={ledgerField}
@@ -223,6 +258,7 @@ export const Banknumber = ({
                 type="text"
                 inputMode="numeric"
                 maxLength={2}
+                onPaste={handlePaste}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -243,7 +279,7 @@ export const Banknumber = ({
             )}
           />
         </Column>
-        <Column span="4/12">
+        <Column span={['7/12', '7/12', '4/12']} paddingTop={[2, 2, 0]}>
           <Controller
             key={`${item.id}-${valueIndex}-account`}
             name={accountField}
@@ -267,6 +303,7 @@ export const Banknumber = ({
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
+                onPaste={handlePaste}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')

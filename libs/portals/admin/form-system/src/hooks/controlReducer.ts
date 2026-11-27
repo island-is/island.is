@@ -53,7 +53,14 @@ type FieldActions =
       type: 'ADD_FIELD'
       payload: { field: FormSystemField; skipActiveItem?: boolean }
     }
-  | { type: 'REMOVE_FIELD'; payload: { id: string; skipActiveItem?: boolean } }
+  | {
+      type: 'REMOVE_FIELD'
+      payload: {
+        id: string
+        skipActiveItem?: boolean
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -70,8 +77,13 @@ type FieldActions =
       }
     }
   | {
-      type: 'CHANGE_DESCRIPTION'
-      payload: { lang: 'en' | 'is'; newValue: string }
+      type: 'CHANGE_FIELD_TEXT'
+      payload: {
+        property: 'informationText' | 'tooltip' | 'subLabel'
+        fieldId?: string
+        lang: 'en' | 'is'
+        newValue: string
+      }
     }
   | {
       type: 'CHANGE_IS_REQUIRED'
@@ -280,7 +292,7 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge' | 'hasDescription'
+        property: 'isLarge' | 'fetchBankAccountFromMyPages'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -428,6 +440,29 @@ export interface ControlState {
   isReadOnly: boolean
 }
 
+const removeCurrencyFieldFromSums = (
+  fields: FormSystemForm['fields'],
+  fieldId: string,
+): NonNullable<FormSystemForm['fields']> | undefined =>
+  fields?.map((field) => {
+    if (
+      field?.fieldType !== FieldTypesEnum.ISK_SUMBOX ||
+      !field.fieldSettings?.fieldsToSum?.includes(fieldId)
+    ) {
+      return field
+    }
+
+    return {
+      ...field,
+      fieldSettings: {
+        ...field.fieldSettings,
+        fieldsToSum: field.fieldSettings.fieldsToSum.filter(
+          (id) => id !== fieldId,
+        ),
+      },
+    }
+  })
+
 export const controlReducer = (
   state: ControlState,
   action: ControlAction,
@@ -448,11 +483,18 @@ export const controlReducer = (
     }
     // Sections
     case 'ADD_SECTION': {
+      const updatedSections = [...(sections ?? [])]
+      const summaryIndex = updatedSections.findIndex(
+        (section) => section?.sectionType === SectionTypes.SUMMARY,
+      )
+      const insertionIndex =
+        summaryIndex === -1 ? updatedSections.length : summaryIndex
       const newSection = {
         ...action.payload.section,
-        displayOrder: sections?.length ?? 0,
+        displayOrder: insertionIndex,
         sectionType: SectionTypes.INPUT,
       }
+      updatedSections.splice(insertionIndex, 0, newSection)
       return {
         ...state,
         activeItem: {
@@ -461,7 +503,9 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          sections: [...(sections || []), newSection],
+          sections: updatedSections.map((section, displayOrder) =>
+            section ? { ...section, displayOrder } : section,
+          ),
         },
       }
     }
@@ -577,6 +621,15 @@ export const controlReducer = (
       const removedField = state.form.fields?.find(
         (field) => field?.id === action.payload.id,
       )
+      if (removedField?.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+        const fieldsBeforeCleanup = newFields
+        newFields = removeCurrencyFieldFromSums(newFields, removedField.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            action.payload.update?.({ type: 'Field', data: field })
+          }
+        })
+      }
       if (removedField?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
         newFields = newFields?.map((field) => {
           if (
@@ -595,8 +648,15 @@ export const controlReducer = (
         })
       }
       if (action.payload.skipActiveItem) {
+        const updatedActiveField =
+          activeItem.type === 'Field'
+            ? newFields?.find((field) => field?.id === activeItem.data?.id)
+            : undefined
         return {
           ...state,
+          activeItem: updatedActiveField
+            ? { ...activeItem, data: updatedActiveField }
+            : activeItem,
           form: {
             ...form,
             fields: newFields,
@@ -636,6 +696,7 @@ export const controlReducer = (
         data: {
           ...currentData,
           fieldType: newValue,
+          isPartOfMultiset: false,
           fieldSettings: removeTypename(fieldSettings),
           list: isListType ? currentData.list : [],
         },
@@ -645,7 +706,7 @@ export const controlReducer = (
       )
 
       if (currentData.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
-        newFields = form.fields?.map((field) => {
+        newFields = newFields?.map((field) => {
           if (
             field?.fieldType === FieldTypesEnum.PAYMENT &&
             field.fieldSettings?.paymentQuantityId === currentData.id
@@ -659,6 +720,19 @@ export const controlReducer = (
             }
           }
           return field
+        })
+      }
+
+      if (
+        currentData.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+        newValue !== FieldTypesEnum.ISK_NUMBERBOX
+      ) {
+        const fieldsBeforeCleanup = newFields
+        newFields = removeCurrencyFieldFromSums(newFields, currentData.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            update({ type: 'Field', data: field })
+          }
         })
       }
 
@@ -678,22 +752,37 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DESCRIPTION': {
-      const { lang, newValue } = action.payload
-      const currentData = activeItem.data as FormSystemField
+    case 'CHANGE_FIELD_TEXT': {
+      const { property, lang, newValue, fieldId } = action.payload
+      const currentData = fieldId
+        ? fields?.find((field) => field?.id === fieldId)
+        : (activeItem.data as FormSystemField)
+      if (!currentData) {
+        throw new Error(`Cannot update text for missing field '${fieldId}'`)
+      }
+      const text =
+        property === 'subLabel'
+          ? currentData.fieldSettings?.subLabel
+          : currentData[property]
+      const updatedText = { ...text, [lang]: newValue }
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          description: {
-            ...currentData?.description,
-            [lang]: newValue,
-          },
+          ...(property === 'subLabel'
+            ? {
+                fieldSettings: {
+                  ...currentData.fieldSettings,
+                  subLabel: updatedText,
+                },
+              }
+            : { [property]: updatedText }),
         },
       }
       return {
         ...state,
-        activeItem: newActive,
+        activeItem:
+          fieldId && activeItem.data?.id !== fieldId ? activeItem : newActive,
         form: {
           ...form,
           fields: fields?.map((i) =>

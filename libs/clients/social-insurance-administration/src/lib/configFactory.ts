@@ -6,6 +6,7 @@ import {
 } from '@island.is/nest/config'
 import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
 import { Scope } from './socialInsuranceAdministrationClient.type'
+import { applicationGuidMiddleware } from './utils/withApplicationGuid'
 
 export const ConfigFactory = (
   xroadConfig: ConfigType<typeof XRoadConfig>,
@@ -32,4 +33,5 @@ export const ConfigFactory = (
   headers: {
     'X-Road-Client': xroadConfig.xRoadClient,
   },
+  middleware: [applicationGuidMiddleware],
 })

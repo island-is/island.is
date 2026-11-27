@@ -16,14 +16,14 @@ describe('UserController - Create rules', () => {
     expect(rules).toContain(localAdminManageUserRule)
   })
 
-  it('should not let local admins change the message suspension flag', () => {
+  it('should not let local admins change capability flags', () => {
     if (typeof localAdminManageUserRule === 'string') {
       throw new Error('Expected a rule object')
     }
 
-    // Local admins may manage users as long as they leave the flag untouched ...
+    // Local admins may manage users as long as they leave the flags untouched ...
     expect(localAdminManageUserRule.canActivate?.({ body: {} })).toBe(true)
-    // ... but may not set it - to any value
+    // ... but may not set them - to any value
     expect(
       localAdminManageUserRule.canActivate?.({
         body: { canManageMessageSuspension: true },
@@ -32,6 +32,16 @@ describe('UserController - Create rules', () => {
     expect(
       localAdminManageUserRule.canActivate?.({
         body: { canManageMessageSuspension: false },
+      }),
+    ).toBe(false)
+    expect(
+      localAdminManageUserRule.canActivate?.({
+        body: { canManageServiceInterruptionBanner: true },
+      }),
+    ).toBe(false)
+    expect(
+      localAdminManageUserRule.canActivate?.({
+        body: { canManageServiceInterruptionBanner: false },
       }),
     ).toBe(false)
   })

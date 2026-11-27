@@ -13,6 +13,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealRulingType,
   CaseAppealDecision,
   CaseDecision,
   CaseFileCategory,
@@ -33,12 +34,14 @@ import {
   SessionArrangements,
   SubpoenaType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
   isAdminUserFormValid,
+  isAdvocateContactValid,
   isConclusionStepValid,
   isCourtHearingArrangemenstStepValidRC,
   isCourtHearingArrangementsStepValidIC,
@@ -70,6 +73,8 @@ import {
   isRulingValidIC,
   isRulingValidRC,
   isSubpoenaStepValid,
+  isVerdictAppealConclusionFieldsValid,
+  isVerdictAppealStatusStepValid,
   validate,
 } from './validate'
 
@@ -90,7 +95,19 @@ describe('isIndictmentCountComplete', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns true for a non-traffic count without legal arguments', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: undefined,
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
@@ -102,7 +119,6 @@ describe('isIndictmentCountComplete', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
@@ -117,7 +133,6 @@ describe('isIndictmentCountComplete', () => {
       vehicleRegistrationNumber: 'ABC123',
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -132,7 +147,6 @@ describe('isIndictmentCountComplete', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -147,7 +161,6 @@ describe('getIndictmentCountWarningMessage', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
@@ -155,7 +168,7 @@ describe('getIndictmentCountWarningMessage', () => {
     )
   })
 
-  test('returns legal arguments when incident description is filled', () => {
+  test('returns undefined when only legal arguments are missing', () => {
     const workingCase = createWorkingCase({
       [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
     })
@@ -164,9 +177,9 @@ describe('getIndictmentCountWarningMessage', () => {
       incidentDescription: 'Incident description',
     } as IndictmentCount
 
-    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
-      'Vantar heimfærslu',
-    )
+    expect(
+      getIndictmentCountWarningMessage(indictmentCount, workingCase),
+    ).toBeUndefined()
   })
 
   test('returns first missing field for traffic count', () => {
@@ -177,7 +190,6 @@ describe('getIndictmentCountWarningMessage', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -193,7 +205,6 @@ describe('getIndictmentCountWarningMessage', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(
@@ -1670,13 +1681,25 @@ describe('isIndictmentStepValid', () => {
     },
   )
 
-  test('is false when any indictment count is incomplete', () => {
+  test('is true when indictment counts omit legal arguments', () => {
     expect(
       isIndictmentStepValid({
         ...validCase,
         indictmentCounts: [
           completeCount,
           { ...completeCount, legalArguments: undefined },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('is false when any indictment count is incomplete', () => {
+    expect(
+      isIndictmentStepValid({
+        ...validCase,
+        indictmentCounts: [
+          completeCount,
+          { ...completeCount, incidentDescription: undefined },
         ],
       } as WorkingCase),
     ).toBe(false)
@@ -2276,6 +2299,29 @@ describe('isDefenderStepValid', () => {
   })
 })
 
+describe('isAdvocateContactValid', () => {
+  test.each([
+    [undefined, undefined],
+    [null, null],
+    ['', ''],
+    ['verjandi@dummy.dd', undefined],
+    [undefined, '555-5555'],
+    ['verjandi@dummy.dd', '5555555'],
+  ])('is true for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(true)
+  })
+
+  test.each([
+    ['verjandi', undefined],
+    ['verjandi@dummy.dd ', undefined],
+    [undefined, '123'],
+    ['verjandi@dummy.dd', '123'],
+    ['verjandi', '555-5555'],
+  ])('is false for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(false)
+  })
+})
+
 describe('isCourtSessionValid', () => {
   const workingCase = { defendants: [{ id: 'd1' }] } as WorkingCase
 
@@ -2736,9 +2782,11 @@ describe('isCourtOfAppealCaseStepValid', () => {
   const validAppealCase = {
     appealState: AppealCaseState.RECEIVED,
     appealCaseNumber: '1/2024',
-    appealJudge1: { id: 'j1' },
-    appealJudge2: { id: 'j2' },
-    appealJudge3: { id: 'j3' },
+    appealJudges: [
+      { displayOrder: 0, userId: 'j1', user: { id: 'j1' } },
+      { displayOrder: 1, userId: 'j2', user: { id: 'j2' } },
+      { displayOrder: 2, userId: 'j3', user: { id: 'j3' } },
+    ],
     appealAssistant: { id: 'a1' },
   } as AppealCase
 
@@ -2746,18 +2794,40 @@ describe('isCourtOfAppealCaseStepValid', () => {
     expect(isCourtOfAppealCaseStepValid(validAppealCase)).toBe(true)
   })
 
-  test.each([
-    'appealJudge1',
-    'appealJudge2',
-    'appealJudge3',
-    'appealAssistant',
-  ] as const)('is false when %s is missing', (field) => {
+  test('is false when the assistant is missing', () => {
     expect(
       isCourtOfAppealCaseStepValid({
         ...validAppealCase,
-        [field]: undefined,
+        appealAssistant: undefined,
       } as AppealCase),
     ).toBe(false)
+  })
+
+  test('is false when the bench has fewer than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: validAppealCase.appealJudges?.slice(0, 2),
+      } as AppealCase),
+    ).toBe(false)
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [],
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  test('is true for a bench of more than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [
+          ...(validAppealCase.appealJudges ?? []),
+          { displayOrder: 3, userId: 'j4', user: { id: 'j4' } },
+        ],
+      } as AppealCase),
+    ).toBe(true)
   })
 
   test('does not require judges or an assistant when the appeal is withdrawn', () => {
@@ -2821,6 +2891,44 @@ describe('isCourtOfAppealRulingStepFieldsValid', () => {
   })
 })
 
+describe('isVerdictAppealConclusionFieldsValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('is true with an outcome, a type and concluding words', () => {
+    expect(isVerdictAppealConclusionFieldsValid(recorded)).toBe(true)
+  })
+
+  test('is false without an appeal', () => {
+    expect(isVerdictAppealConclusionFieldsValid(undefined)).toBe(false)
+    expect(isVerdictAppealConclusionFieldsValid(null)).toBe(false)
+  })
+
+  test.each([
+    ['an outcome', { ...recorded, appealRulingDecision: null }],
+    ['a type', { ...recorded, appealRulingType: null }],
+    ['concluding words', { ...recorded, appealConclusion: null }],
+    ['anything but spaces for words', { ...recorded, appealConclusion: '  ' }],
+  ])('is false without %s', (_, appealCase) => {
+    expect(isVerdictAppealConclusionFieldsValid(appealCase)).toBe(false)
+  })
+
+  // A ruling appeal that was discontinued has no conclusion; a verdict appeal
+  // is given one whatever the outcome.
+  test('requires concluding words when the appeal was discontinued', () => {
+    expect(
+      isVerdictAppealConclusionFieldsValid({
+        ...recorded,
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+        appealConclusion: null,
+      }),
+    ).toBe(false)
+  })
+})
+
 describe('isCourtOfAppealWithdrawnCaseStepValid', () => {
   test('is true with a well formed appeal case number', () => {
     expect(
@@ -2850,5 +2958,47 @@ describe('isNullOrUndefined', () => {
 
   test.each([0, '', false, [], {}])('is false for %j', (value) => {
     expect(isNullOrUndefined(value)).toBe(false)
+  })
+})
+
+describe('isVerdictAppealStatusStepValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('holds nobody without an appeal or before a status is saved', () => {
+    expect(isVerdictAppealStatusStepValid(undefined)).toBe(true)
+    expect(isVerdictAppealStatusStepValid({})).toBe(true)
+  })
+
+  test('holds nobody on a status other than finished', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    ).toBe(true)
+  })
+
+  test('holds a finished appeal until how it ended is on record', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        appealConclusion: ' ',
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(true)
   })
 })

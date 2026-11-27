@@ -15,7 +15,6 @@ import { FileService } from '../file/file.service'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationEvents } from '@island.is/form-system/shared'
-import { buildApplicationPdf } from '../../../utils/applicationPdf'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
@@ -145,7 +144,9 @@ export class ApplicationsXRoadService {
       form,
       application,
     )
-    const pdf = await buildApplicationPdf(applicationDto)
+    const pdf = await this.applicationsService.createApplicationPdf(
+      applicationDto,
+    )
 
     this.logger.info('form system application PDF fetched via xroad', {
       applicationId: id,
@@ -254,6 +255,9 @@ export class ApplicationsXRoadService {
     return {
       memberCode,
       canAccess:
+        (process.env.name === 'dev' &&
+          xRoadClient.trim().startsWith('IS-DEV/') &&
+          /^[0-9]{5}$/.test(memberCode)) ||
         memberCode === formOwner ||
         (memberCode === '5512201410' && formOwner === '6509142520') || // Special access rule for Sýslumenn
         (memberCode === '5309672079' && formOwner === '5306972079'), // Special access rule for Lögreglan

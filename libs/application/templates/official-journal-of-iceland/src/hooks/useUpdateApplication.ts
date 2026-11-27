@@ -14,7 +14,6 @@ import {
 } from '../lib/constants'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Application } from '@island.is/api/schema'
-import { POST_APPLICATION_MUTATION } from '../graphql/queries'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import debounce from 'lodash/debounce'
@@ -60,15 +59,6 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
   ] = useMutation(SUBMIT_APPLICATION)
 
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
-
-  const [
-    postApplicationMutation,
-    {
-      data: postApplicationData,
-      error: postApplicationError,
-      loading: postApplicationLoading,
-    },
-  ] = useMutation(POST_APPLICATION_MUTATION)
 
   const updateApplication = async (
     input: Partial<partialSchema>,
@@ -176,22 +166,6 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     })
   }
 
-  const postApplication = async (id: string, onComplete?: () => void) => {
-    await postApplicationMutation({
-      variables: {
-        input: {
-          id: id,
-        },
-      },
-      onError: (error) => {
-        console.error(error)
-      },
-      onCompleted: (data) => {
-        onComplete && onComplete()
-      },
-    })
-  }
-
   const getAnswer = (path: string) => {
     return getValueViaPath(application?.applicationApplication, path)
   }
@@ -220,10 +194,6 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     updateLoading,
     updateError,
     isLoading: applicationLoading || updateLoading,
-    postApplication,
-    postApplicationData,
-    postApplicationError,
-    postApplicationLoading,
     debouncedOnUpdateApplicationHandler,
     updateApplication,
     updateApplicationV2,

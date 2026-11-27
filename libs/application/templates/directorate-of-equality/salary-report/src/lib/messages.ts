@@ -21,6 +21,10 @@ export const messages = {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
     },
+    startDateAfterToday: {
+      id: 'doe.sr.application:errors.startDateAfterToday',
+      defaultMessage: 'Upphafsdagur starfs má ekki vera síðar en í dag',
+    },
     draftSyncFailed: {
       id: 'doe.sr.application:errors.draftSyncFailed',
       defaultMessage:
@@ -1435,10 +1439,6 @@ export const messages = {
         defaultMessage:
           'Meðaltal viðbótarlauna og aukagreiðslna á mánuði, eftir kyni. Krónur á mánuði — ekki tímakaup, og ekki deilt með greiddum stundum.',
       },
-      genderHeader: {
-        id: 'doe.sr.application:salaryAnalysis.components.genderHeader',
-        defaultMessage: 'Kyn',
-      },
       additionalHeader: {
         id: 'doe.sr.application:salaryAnalysis.components.additionalHeader',
         defaultMessage: 'Viðbótarlaun',
@@ -1461,7 +1461,7 @@ export const messages = {
       },
       overall: {
         id: 'doe.sr.application:salaryAnalysis.components.overall',
-        defaultMessage: 'Allir',
+        defaultMessage: 'Öll',
       },
       gapRow: {
         id: 'doe.sr.application:salaryAnalysis.components.gapRow',

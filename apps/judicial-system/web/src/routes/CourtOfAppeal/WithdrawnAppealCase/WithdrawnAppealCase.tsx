@@ -58,12 +58,12 @@ const WithdrawnAppealCase = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
+      <PageHeader title={titles.shared.withdrawAppeal} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
-          <CaseNumberInput />
+          <SectionHeading title={core.appealCaseNumberHeading} />
+          <CaseNumberInput appealCase={targetAppealCase} />
         </Box>
         <Box component="section">
           <SectionHeading
@@ -85,9 +85,15 @@ const WithdrawnAppealCase = () => {
             )}
             accept={'application/pdf'}
             title={strings.uploadBoxTitle}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
             buttonLabel={strings.uploadBoxButtonLabel}
             onChange={(files) =>
               handleUpload(

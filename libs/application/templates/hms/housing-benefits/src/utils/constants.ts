@@ -37,6 +37,11 @@ export enum Roles {
   REJECTED_ASSIGNEE = 'rejectedAssignee',
 }
 
+export enum LegalDomicileOption {
+  NATIONAL_REGISTRY = 'nationalRegistry',
+  EXEMPTION = 'exemption',
+}
+
 export const UPLOAD_ACCEPT = '.pdf,.doc,.docx,.rtf,.jpg,.jpeg,.png,.heic'
 
 export const MAX_TEXT_LENGTH = 500

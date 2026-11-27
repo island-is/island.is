@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   NotFoundException,
@@ -13,13 +14,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  canDefendantAppealVerdict,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CourtSessionRulingType,
   DefendantEventType,
   IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
@@ -28,7 +32,11 @@ import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   Case,
   CaseRepositoryService,
@@ -42,6 +50,7 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { getLatestVerdict } from './getLatestVerdict'
+import { validateVerdictAppealUpdate } from './verdict.helpers'
 
 type UpdateVerdict = {
   serviceDate?: Date | null
@@ -302,6 +311,76 @@ export class VerdictService {
     return updatedVerdict
   }
 
+  // The defender reports that the defendant accepts the verdict. It stands on
+  // the same footing as the defender's appeal, deadline included: once the
+  // appeal deadline has run out the position is no longer the defender's to
+  // register.
+  async acceptVerdictAsDefender(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    if (
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+    ) {
+      throw new ForbiddenException(
+        `Current user is not the confirmed defender of defendant ${defendant.id}`,
+      )
+    }
+
+    if (
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+    ) {
+      throw new ForbiddenException(
+        'Only a verdict of a case that ended in a ruling can be accepted',
+      )
+    }
+
+    // The same footing as an appeal: no position is taken on an
+    // útivistardómur, nor on a verdict the defendant has not been served.
+    if (!canDefendantAppealVerdict(verdict)) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} cannot be accepted`,
+      )
+    }
+
+    if (verdict.appealDate) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} has been appealed`,
+      )
+    }
+
+    validateVerdictAppealUpdate({
+      caseId: theCase.id,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+      verdict,
+    })
+
+    if (verdict.appealDecision === VerdictAppealDecision.ACCEPT) {
+      return verdict
+    }
+
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      { appealDecision: VerdictAppealDecision.ACCEPT },
+      transaction,
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      },
+    })
+
+    return updatedVerdict
+  }
+
   async resetVerdictDataForReopen(
     verdict: Verdict,
     transaction: Transaction,
@@ -469,7 +548,9 @@ export class VerdictService {
       orderByDate.setMonth(orderByDate.getMonth() + 2)
 
       const originalAncestorCaseId =
-        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+        await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+          transaction,
+        })
 
       // deliver the verdict by creating the document at the police
       const createdDocument = await this.policeService.createDocument({
@@ -526,6 +607,11 @@ export class VerdictService {
 
       return { delivered: true }
     } catch (error) {
+      // Do not retry an upload LÖKE will never accept
+      if (isFileTooLargeForPolice(error)) {
+        return { delivered: true }
+      }
+
       this.logger.error(
         'Error delivering verdict to the national commissioners office',
         error,
@@ -644,8 +730,28 @@ export class VerdictService {
         user,
       )
 
-      if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.updateVerdict(verdict, verdictInfo, transaction)
+      // PoliceDocumentInfo uses defenderNationalId; the verdict row stores
+      // deliveredToDefenderNationalId — map both ways at this boundary.
+      if (
+        isVerdictInfoChanged(verdictInfo, {
+          serviceStatus: verdict.serviceStatus ?? undefined,
+          serviceDate: verdict.serviceDate ?? undefined,
+          servedBy: verdict.servedBy ?? undefined,
+          comment: verdict.comment ?? undefined,
+          defenderNationalId:
+            verdict.deliveredToDefenderNationalId ?? undefined,
+        })
+      ) {
+        return this.updateVerdict(
+          verdict,
+          {
+            serviceStatus: verdictInfo.serviceStatus,
+            serviceDate: verdictInfo.serviceDate,
+            servedBy: verdictInfo.servedBy,
+            deliveredToDefenderNationalId: verdictInfo.defenderNationalId,
+          },
+          transaction,
+        )
       }
     }
 
@@ -689,6 +795,11 @@ export class VerdictService {
                 // appealed case lists and the read access that goes with them
                 // for the appeal date, "Áfrýjunarleyfi" for the leave request,
                 // and "Sýknudómar" for the acquittal.
+                //
+                // The defendant's stance, appealDecision, is deliberately not
+                // one of them. It was taken on the copy that was served, and
+                // the new copy is served afresh with a deadline of its own, so
+                // the stance is taken again.
                 appealDate: verdict.appealDate,
                 defendantHasRequestedAppeal:
                   verdict.defendantHasRequestedAppeal,

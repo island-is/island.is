@@ -10,6 +10,7 @@ import {
   ExtensionPublishedVerdictApi,
   ExtensionPublishedBookingApi,
   ExtensionLawyerApi,
+  ExtensionPublishedCaseApi,
   ExternalIntegrationAPISecurityApi,
 } from '../../gen/fetch/gopro'
 import {
@@ -41,6 +42,25 @@ const isFullGoproSlugSelection = (
   if (set.size !== fullSet.length) return false
   return fullSet.every((slug) => set.has(slug))
 }
+const COURT_OF_APPEAL_APPEALS_PER_PAGE = 100
+
+// Case numbers look like "892/2026", sort by year and then number
+const parseCaseNumber = (caseNumber: string) => {
+  const [number, year] = caseNumber.split('/').map((part) => parseInt(part, 10))
+  return {
+    number: Number.isNaN(number) ? 0 : number,
+    year: Number.isNaN(year) ? 0 : year,
+  }
+}
+
+const compareCaseNumbersDescending = (a: string, b: string) => {
+  const caseA = parseCaseNumber(a)
+  const caseB = parseCaseNumber(b)
+  if (caseA.year !== caseB.year) return caseB.year - caseA.year
+  if (caseA.number !== caseB.number) return caseB.number - caseA.number
+  return b.localeCompare(a)
+}
+
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
@@ -140,6 +160,7 @@ export class VerdictsClientService {
     private readonly supremeCourtApi: DefaultApi,
     private readonly goproCourtAgendasApi: ExtensionPublishedBookingApi,
     private readonly goproLawyersApi: ExtensionLawyerApi,
+    private readonly goproCaseApi: ExtensionPublishedCaseApi,
     private readonly goproAuthenticationApi: ExternalIntegrationAPISecurityApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -164,6 +185,7 @@ export class VerdictsClientService {
       goproCourtAgendasApi:
         this.goproCourtAgendasApi.withMiddleware(middleware),
       goproLawyersApi: this.goproLawyersApi.withMiddleware(middleware),
+      goproCaseApi: this.goproCaseApi.withMiddleware(middleware),
     }
   }
 
@@ -485,22 +507,49 @@ export class VerdictsClientService {
       this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
     ])
 
-    const keywordSet = new Set<string>()
+    const keywordMap = new Map<
+      string,
+      { belongsToSupremeCourt: boolean; belongsToOtherCourts: boolean }
+    >()
+
+    const addKeyword = (label: string, isSupremeCourt: boolean) => {
+      const entry = keywordMap.get(label) ?? {
+        belongsToSupremeCourt: false,
+        belongsToOtherCourts: false,
+      }
+      if (isSupremeCourt) entry.belongsToSupremeCourt = true
+      else entry.belongsToOtherCourts = true
+      keywordMap.set(label, entry)
+    }
 
     if (goproResponse.status === 'fulfilled') {
       for (const keyword of goproResponse.value.items ?? []) {
-        if (keyword.label) keywordSet.add(keyword.label)
+        if (keyword.label) addKeyword(keyword.label, false)
       }
     }
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const keyword of supremeCourtResponse.value.items ?? []) {
-        if (keyword.label) keywordSet.add(keyword.label)
+        if (keyword.label) addKeyword(keyword.label, true)
       }
     }
 
-    const keywords = Array.from(keywordSet).map((keyword) => ({
-      label: keyword,
-    }))
+    // If a source request failed we can't know which keywords belong to it,
+    // so treat membership as unknown (true) rather than hiding keywords
+    const supremeCourtFailed =
+      supremeCourtResponse.status === 'rejected' ||
+      supremeCourtResponse.value.succeeded === false
+    const otherCourtsFailed =
+      goproResponse.status === 'rejected' ||
+      goproResponse.value.succeeded === false
+
+    const keywords = Array.from(keywordMap.entries()).map(
+      ([label, sources]) => ({
+        label,
+        belongsToSupremeCourt:
+          sources.belongsToSupremeCourt || supremeCourtFailed,
+        belongsToOtherCourts: sources.belongsToOtherCourts || otherCourtsFailed,
+      }),
+    )
     keywords.sort(sortAlpha('label'))
 
     return {
@@ -560,7 +609,7 @@ export class VerdictsClientService {
     const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
 
     const pageNumber = input.page ?? 1
-    const itemsPerPage = 10
+    const itemsPerPage = 20
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
@@ -847,6 +896,51 @@ export class VerdictsClientService {
           registrationDate: item.registrationDate,
           verdictDate: item.verdictDate,
         })),
+      input,
+    }
+  }
+
+  async getCourtOfAppealAppeals(input: { page: number }) {
+    const { goproCaseApi } = await this.getAuthenticatedGoproApis()
+    // GoPro can't order appeal cases by case number yet, so we use its default
+    // order (publish date) and sort each page by case number ourselves
+    const response = await goproCaseApi.getPublishedAppealCasesV2({
+      pageNumber: Math.max(1, input.page ?? 1),
+      itemsPerPage: COURT_OF_APPEAL_APPEALS_PER_PAGE,
+    })
+
+    if (response.succeeded === false) {
+      throw new Error(
+        response.message ||
+          'Failed to fetch published appeal cases from Court of Appeal',
+      )
+    }
+
+    const seenCaseNumbers = new Set<string>()
+
+    return {
+      total: response.total ?? 0,
+      items: (response.items ?? [])
+        .filter((item) => {
+          const caseNumber = item.caseNumber?.trim()
+          if (!item.recordId || !caseNumber || seenCaseNumbers.has(caseNumber))
+            return false
+          seenCaseNumbers.add(caseNumber)
+          return true
+        })
+        .map((item) => ({
+          id: item.recordId as string,
+          title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
+          caseNumber: (item.caseNumber as string).trim(),
+          status: item.status || null,
+          appealDate:
+            item.appealDate && isValidDate(item.appealDate)
+              ? item.appealDate.toISOString()
+              : null,
+        }))
+        .sort((a, b) =>
+          compareCaseNumbersDescending(a.caseNumber, b.caseNumber),
+        ),
       input,
     }
   }

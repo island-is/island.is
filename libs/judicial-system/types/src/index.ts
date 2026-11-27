@@ -29,6 +29,7 @@ export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
   DocumentDeliveryMethod,
   getServiceDateFromSupplements,
@@ -88,17 +89,20 @@ export {
   AppealCaseRulingDecision,
   AppealCaseTransition,
   AppealCaseType,
+  AppealRulingType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
+  VerdictAppealStatus,
   APPEAL_JUDGE_COUNT,
+  MAX_APPEAL_JUDGE_COUNT,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,
-  getAppealJudgeInSeat,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  isSameAppealBench,
 } from './lib/appealCase'
 export type {
   AppealCorrectionLock,
@@ -108,13 +112,18 @@ export type {
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
+  sortAppealCourtSessionsByDate,
 } from './lib/appealCourtSession'
 export {
   findAppealStatementDeadline,
+  findFiledAppealStatementEvent,
   hasFiledAppealStatement,
   isSameAppealStatementParty,
 } from './lib/appealStatementDeadline'
-export type { AppealStatementParty } from './lib/appealStatementDeadline'
+export type {
+  AppealStatementEvent,
+  AppealStatementParty,
+} from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -127,13 +136,17 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  indictmentAdditionalCaseFileCategories,
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
   verdictAppealFileCategories,
+  getAppealFileDeletionLockReason,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
   PoliceFileTypeCode,
 } from './lib/file'
+export type { AppealFileDeletionLockReason } from './lib/file'
 
 export { sortCaseFiles } from './lib/sortCaseFiles'
 export type { CaseFileOrderFields } from './lib/sortCaseFiles'

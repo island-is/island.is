@@ -5,7 +5,10 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 import {
   AppealCase,
   AppealCaseJudge,
+  AppealCourtSession,
   AppealEventLog,
+  AppealStatementDeadline,
+  AppealSummons,
   Case,
   CaseFile,
   CivilClaimant,
@@ -90,6 +93,7 @@ export const modelMap: {
   indictmentReviewer: ModelDef<typeof User>
   judge: ModelDef<typeof User>
   prosecutor: ModelDef<typeof User>
+  appealProsecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
   appealCase: ModelDef<typeof AppealCase>
   verdictAppealCase: ModelDef<typeof AppealCase>
@@ -107,6 +111,7 @@ export const modelMap: {
   indictmentReviewer: { model: User, separate: false },
   judge: { model: User, separate: false },
   prosecutor: { model: User, separate: false },
+  appealProsecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
   appealCase: { model: AppealCase, separate: false },
   verdictAppealCase: { model: AppealCase, separate: false },
@@ -117,6 +122,9 @@ export const modelMap: {
 export const subModelMap: {
   appealJudges: ModelDef<typeof AppealCaseJudge>
   appealEventLogs: ModelDef<typeof AppealEventLog>
+  sentAppealSummonses: ModelDef<typeof AppealSummons>
+  courtSessions: ModelDef<typeof AppealCourtSession>
+  statementDeadlines: ModelDef<typeof AppealStatementDeadline>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
@@ -128,6 +136,9 @@ export const subModelMap: {
     order: [['displayOrder', 'ASC']],
   },
   appealEventLogs: { model: AppealEventLog, separate: true },
+  sentAppealSummonses: { model: AppealSummons, separate: true },
+  courtSessions: { model: AppealCourtSession, separate: true },
+  statementDeadlines: { model: AppealStatementDeadline, separate: true },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
@@ -174,12 +185,22 @@ export type CaseTableRowCase = Omit<
   'appealCase' | 'rulingOrderAppealCases' | 'verdictAppealCase'
 > & {
   appeal?: AppealCase | null
+  // Which association `appeal` was taken from. The appeal itself cannot be
+  // asked: its type is only on the row if some column happened to fetch it, and
+  // what depends on this - whether the list may offer to withdraw the appeal -
+  // must not hinge on a column. Every row built here carries it; it is optional
+  // only so that a bare case can still stand in for a row where nothing reads
+  // the appeal.
+  appealSource?: RowAppealSource
 }
 
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
   displayCases?: (cases: Case[]) => CaseTableRowCase[]
+  // What "my cases" means on this list, where the general rule - the user's
+  // role on the case as it went through the district court - is not it.
+  isMyCase?: (theCase: CaseTableRowCase) => boolean
 }
 
 // Which association the row's appeal comes from, named as fields of Case so a
@@ -204,7 +225,11 @@ const toRow = (
     ...rest
   } = json
 
-  return { ...rest, appeal: json[appealFrom] } as CaseTableRowCase
+  return {
+    ...rest,
+    appeal: json[appealFrom],
+    appealSource: appealFrom,
+  } as CaseTableRowCase
 }
 
 /**
@@ -369,6 +394,23 @@ export const presentVerdictAppealAsRowAppeal = (
   cs: Case[],
 ): CaseTableRowCase[] => cs.map((c) => toRow(c, 'verdictAppealCase'))
 
+/**
+ * Presents the verdict appeal as the row's appeal where the case has one, and
+ * the case-level appeal otherwise.
+ *
+ * For a list of concluded indictments, which holds both kinds: a dismissal may
+ * have been appealed as a ruling, a judgment as a verdict. A case can carry
+ * both - a dismissal repealed on appeal goes back to the district court and
+ * may end in a judgment that is appealed in turn - and then the verdict appeal
+ * is the later proceeding and the one the row is about.
+ */
+export const presentLatestCaseAppealAsRowAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] =>
+  cs.map((c) =>
+    toRow(c, c.verdictAppealCase ? 'verdictAppealCase' : 'appealCase'),
+  )
+
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell
@@ -383,6 +425,8 @@ export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
       (rulingOrderAppeal: AppealCase) => ({
         ...row,
         appeal: rulingOrderAppeal,
+        // Neither of the case's single appeals, so the row names no source.
+        appealSource: undefined,
       }),
     )
 

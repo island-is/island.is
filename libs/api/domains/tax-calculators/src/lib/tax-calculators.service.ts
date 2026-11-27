@@ -1,20 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common'
 
+import type { CalculateResult } from '@island.is/clients/rsk/calculators'
 import { CalculatorsClientService } from '@island.is/clients/rsk/calculators'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TaxCalculatorType } from '@island.is/tax-calculators'
 
+import { toOutputValues } from './calculate/outputFieldValue/outputFieldValue'
+import {
+  toInvalidValueErrors,
+  validateCalculationInput,
+} from './calculate/submission/submission'
 import type { ReachableCalculatorKey } from './contract/calculatorKey'
 import { toCalculatorKey } from './contract/calculatorKey'
 import { assertPublishableContract } from './contract/validation/validation'
-import { toChildBenefitInput } from './calculate/clientInput/childBenefit/childBenefit'
-import { toVehicleBenefitInput } from './calculate/clientInput/vehicleBenefit/vehicleBenefit'
-import { toVehicleTaxInput } from './calculate/clientInput/vehicleTax/vehicleTax'
-import { toWithholdingTaxInput } from './calculate/clientInput/withholdingTax/withholdingTax'
-import { toOutputValues } from './calculate/outputFieldValue/outputFieldValue'
-import type { SubmittedValues } from './calculate/submission/submission'
-import { validateCalculationInput } from './calculate/submission/submission'
 import { toInputField } from './fields/inputField/inputField'
 import { toOutputField } from './fields/outputField/outputField'
 import type { CalculateInput } from './models/calculateInput.model'
@@ -60,9 +59,9 @@ export class TaxCalculatorsService {
       return { calculation: undefined, errors: validation.errors }
     }
 
-    let result
+    let result: CalculateResult<ReachableCalculatorKey>
     try {
-      result = await this.runCalculation(
+      result = await this.calculatorsClientService.calculate(
         toCalculatorKey(type),
         validation.values,
       )
@@ -80,7 +79,14 @@ export class TaxCalculatorsService {
       )
     }
 
-    if (!result) {
+    if (result.rejected) {
+      return {
+        calculation: undefined,
+        errors: toInvalidValueErrors(contract.inputFields, result.rejected),
+      }
+    }
+
+    if (!result.output) {
       return failed(
         TaxCalculatorCalculationErrorCode.EMPTY_RESULT,
         'The calculation returned no result.',
@@ -90,7 +96,7 @@ export class TaxCalculatorsService {
     return {
       calculation: {
         type,
-        values: toOutputValues(contract.outputFields, result),
+        values: toOutputValues(contract.outputFields, result.output),
       },
       errors: [],
     }
@@ -103,32 +109,5 @@ export class TaxCalculatorsService {
     assertPublishableContract(calculatorKey, contract)
 
     return contract
-  }
-
-  /* Dispatches after the single calculator-type-to-key mapping. `never` makes
-   * new reachable calculator keys a compile-time failure. */
-  private runCalculation(key: ReachableCalculatorKey, values: SubmittedValues) {
-    switch (key) {
-      case 'childBenefit':
-        return this.calculatorsClientService.getChildBenefit(
-          toChildBenefitInput(values),
-        )
-      case 'vehicleTax':
-        return this.calculatorsClientService.getVehicleTax(
-          toVehicleTaxInput(values),
-        )
-      case 'vehicleBenefit':
-        return this.calculatorsClientService.getVehicleBenefit(
-          toVehicleBenefitInput(values),
-        )
-      case 'withholdingTax':
-        return this.calculatorsClientService.getWithholdingTax(
-          toWithholdingTaxInput(values),
-        )
-      default: {
-        const unhandled: never = key
-        return unhandled
-      }
-    }
   }
 }

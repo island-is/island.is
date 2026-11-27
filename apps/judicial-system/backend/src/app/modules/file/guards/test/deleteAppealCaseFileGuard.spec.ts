@@ -7,8 +7,12 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealEventType,
   CaseFileCategory,
+  courtOfAppealsRoles,
+  InstitutionType,
   partyAppealFileCategories,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { DeleteAppealCaseFileGuard } from '../deleteAppealCaseFile.guard'
@@ -85,7 +89,9 @@ describe('Delete Appeal Case File Guard', () => {
 
   describe.each(
     Object.values(CaseFileCategory).filter(
-      (category) => !partyAppealFileCategories.includes(category),
+      (category) =>
+        !partyAppealFileCategories.includes(category) &&
+        category !== CaseFileCategory.VERDICT_APPEAL_RULING,
     ),
   )('other case file category %s', (category) => {
     let then: Then
@@ -101,6 +107,52 @@ describe('Delete Appeal Case File Guard', () => {
 
     it('should activate', () => {
       expect(then.result).toBe(true)
+    })
+  })
+
+  describe('verdict appeal ruling', () => {
+    const request = (role: UserRole, type: InstitutionType) => ({
+      user: { currentUser: { role, institution: { type } } },
+      case: { verdictAppealCase: { id: uuid(), appealCaseNumber: '1/2025' } },
+      caseFile: { category: CaseFileCategory.VERDICT_APPEAL_RULING },
+    })
+
+    describe.each(courtOfAppealsRoles)('role %s', (role) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() =>
+          request(role, InstitutionType.COURT_OF_APPEALS),
+        )
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe.each([
+      [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+      [UserRole.PROSECUTOR, InstitutionType.PUBLIC_PROSECUTORS_OFFICE],
+      [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
+      [UserRole.DISTRICT_COURT_REGISTRAR, InstitutionType.DISTRICT_COURT],
+    ])('role %s at %s', (role, type) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => request(role, type))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(
+          'Only court of appeals users can delete this file',
+        )
+      })
     })
   })
 
@@ -152,6 +204,65 @@ describe('Delete Appeal Case File Guard', () => {
 
       it('should throw ForbiddenException', () => {
         expect(then.error).toBeInstanceOf(ForbiddenException)
+      })
+    })
+  })
+
+  describe('verdict appeal statement after APPEAL_STATEMENT_SENT', () => {
+    const defendantId = uuid()
+
+    describe('party has filed and Landsréttur has no case number', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: {
+            verdictAppealCase: {
+              id: uuid(),
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                  defendantId,
+                },
+              ],
+            },
+          },
+          caseFile: {
+            category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            defendantId,
+          },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(
+          'Forbidden when the appeal statement has already been filed',
+        )
+      })
+    })
+
+    describe('party has not filed yet', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: {
+            verdictAppealCase: { id: uuid(), appealEventLogs: [] },
+          },
+          caseFile: {
+            category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            defendantId,
+          },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
       })
     })
   })

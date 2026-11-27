@@ -93,7 +93,8 @@ export class FieldsService {
       'screenId',
       'name',
       'displayOrder',
-      'description',
+      'informationText',
+      'tooltip',
       'isPartOfMultiset',
       'isRequired',
       'fieldType',
@@ -234,7 +235,7 @@ export class FieldsService {
   async delete(user: User, id: string): Promise<void> {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
-    const field = await this.findById(id)
+    const field = await this.fieldModel.findByPk(id, { include: [ListItem] })
 
     if (!field) {
       throw new NotFoundException(`Field with id '${id}' not found`)
@@ -276,7 +277,7 @@ export class FieldsService {
     }
 
     const { dependencies } = form
-    const idsToRemove = listItemIds.length > 0 ? listItemIds : id
+    const idsToRemove = [id, ...listItemIds]
     const newDependencies = filterDependency(dependencies, idsToRemove)
     form.dependencies = newDependencies
     await form.save()

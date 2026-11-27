@@ -11,8 +11,11 @@ export const FieldSettingsFragment = gql`
     maxLength
     minDate
     maxDate
+    minDateDaysFromToday
+    maxDateDaysFromToday
     minAmount
     maxAmount
+    fieldsToSum
     year
     hasLink
     url
@@ -35,11 +38,14 @@ export const FieldSettingsFragment = gql`
     applicantType
     assetType
     familyType
-    hasDescription
+    subLabel {
+      ...LanguageFields
+    }
     isAddressRequired
     isPhoneRequired
     isEmailRequired
     fetchEmailFromMyPages
+    fetchBankAccountFromMyPages
     chargeItemCode
     chargeItemName
     chargeType

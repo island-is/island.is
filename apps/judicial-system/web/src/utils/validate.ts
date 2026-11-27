@@ -1,5 +1,6 @@
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
@@ -27,6 +28,7 @@ import {
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
@@ -405,10 +407,6 @@ const indictmentCountFieldChecks = (
       warningMessage: 'Vantar atvikalýsingu',
     },
     {
-      isMissing: (count) => !count.legalArguments,
-      warningMessage: 'Vantar heimfærslu',
-    },
-    {
       isMissing: (count) =>
         isTrafficViolation(count) &&
         isSpeedingIndictmentCount(count) &&
@@ -671,6 +669,16 @@ export const isSubpoenaStepValid = (
   return isArraignmentDateValid && Boolean(validateDefendants(defendants))
 }
 
+// Both are optional, so an empty value is valid.
+export const isAdvocateContactValid = (
+  email?: string | null,
+  phoneNumber?: string | null,
+): boolean =>
+  validate([
+    [email, ['email-format']],
+    [phoneNumber, ['phonenumber']],
+  ]).isValid
+
 export const isDefenderStepValid = (workingCase: WorkingCase): boolean => {
   const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>
@@ -888,15 +896,21 @@ export const isCourtOfAppealCaseStepValid = (
 ): boolean => {
   return Boolean(
     (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (appealCase?.appealJudge1 &&
-        appealCase?.appealJudge2 &&
-        appealCase?.appealJudge3 &&
-        appealCase?.appealAssistant)) &&
+      (hasAllAppealJudges(appealCase) && appealCase?.appealAssistant)) &&
       validate([
         [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
   )
 }
+
+// The registration step of a verdict appeal only asks for the court's case
+// number; the bench is optional there.
+export const isVerdictAppealRegistrationStepValid = (
+  appealCase: Pick<AppealCase, 'appealCaseNumber'> | undefined | null,
+): boolean =>
+  validate([
+    [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
 
 export const isCourtOfAppealRulingStepFieldsValid = (
   appealCase: AppealCase | undefined | null,
@@ -926,6 +940,43 @@ export const isCourtOfAppealRulingStepValid = (
         )),
   )
 }
+
+// What the court records about how a verdict appeal ended. Unlike a ruling
+// appeal's, every outcome takes concluding words, and the court also says
+// whether it ends with a verdict or a ruling.
+export const isVerdictAppealConclusionFieldsValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        'appealRulingDecision' | 'appealRulingType' | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  Boolean(
+    appealCase?.appealRulingDecision &&
+      appealCase.appealRulingType &&
+      validate([[appealCase.appealConclusion, ['empty']]]).isValid,
+  )
+
+// Where the appeal stands holds the court only once it says the appeal is
+// finished: then how it ended has to be on record. The document is not asked
+// about here - whether it has finished uploading is known to the page alone,
+// which holds the court itself until it has.
+export const isVerdictAppealStatusStepValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        | 'verdictAppealStatus'
+        | 'appealRulingDecision'
+        | 'appealRulingType'
+        | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  appealCase?.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
+  isVerdictAppealConclusionFieldsValid(appealCase)
 
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: WorkingCase,

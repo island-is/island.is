@@ -76,6 +76,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
@@ -565,5 +570,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    nationalId: InstitutionNationalIds.FJARSKIPTASTOFA,
+    slug: InstitutionTypes.FJARSKIPTASTOFA,
+    contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
 }

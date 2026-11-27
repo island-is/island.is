@@ -30,6 +30,7 @@ import {
   splitArticleTitle,
   updateAppendixWording,
 } from './formatAmendingUtils'
+import { describeWordChange } from './describeWordChange'
 import { getDeletionOrAddition, getLiPoint } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
@@ -241,7 +242,28 @@ type NewParagraphs = {
   /** The new paragraphs, and any list inserted with them */
   blocks: string[]
   count: number
+  /**
+   * The table or list of that paragraph they come before, "töflu" or
+   * "töluliðum": "Á eftir 1. mgr." would place them after it.
+   */
+  before?: string
+  /** The article has one paragraph, which the table or list is cited without */
+  single?: boolean
 }
+
+/**
+ * Where the list or table of paragraph `mgr` is: " í 1. mgr. 5. gr.
+ * reglugerðarinnar". An article of one paragraph is cited without it, as
+ * amending regulations do: " í 5. gr. reglugerðarinnar", or nothing under
+ * "Eftirfarandi breytingar verða á 5. gr.". `word` is "eftir" for the
+ * phrases that place a list after its paragraph: "Töluliðir eftir 1. mgr.".
+ */
+const inParagraph = (mgr: number, where: string, single: boolean, word = 'í') =>
+  mgr > 0 && !single
+    ? ` ${word} ${mgr}. mgr.${where}`
+    : where
+    ? ` í${where}`
+    : ''
 
 /**
  * One or more new paragraphs added at the same place. They are written as
@@ -251,11 +273,18 @@ type NewParagraphs = {
  * @param atEnd - they follow the article's last paragraph
  */
 const formatNewParagraphs = (
-  { paragraph, blocks, count }: NewParagraphs,
+  { paragraph, blocks, count, before, single }: NewParagraphs,
   atEnd = false,
 ): Amendment => {
   const html = blocks.join('')
   return (where) => {
+    if (before) {
+      return `<p>Á undan ${before}${inParagraph(paragraph, where, !!single)} ${
+        count === 1
+          ? 'kemur ný málsgrein'
+          : `koma ${countWord(count)} nýjar málsgreinar`
+      }, svohljóðandi:</p>${html}` as HTMLText
+    }
     if (atEnd && paragraph > 0) {
       const target = where ? `Við${where}` : 'Við greinina'
       return (
@@ -270,7 +299,7 @@ const formatNewParagraphs = (
       return (
         paragraph > 0
           ? `<p>Á eftir ${paragraph}. mgr.${where} kemur ný málsgrein sem orðast svo:</p>${html}`
-          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein svohljóðandi: </p>${html}`
+          : `<p>Á undan 1. mgr.${where} kemur ný málsgrein, svohljóðandi:</p>${html}`
       ) as HTMLText
     }
     const position =
@@ -279,6 +308,17 @@ const formatNewParagraphs = (
       count,
     )} nýjar málsgreinar, svohljóðandi:</p>${html}` as HTMLText
   }
+}
+
+/**
+ * Paragraphs removed from an article, as one amendment: "6., 7. og 8. mgr.
+ * falla brott." It comes after the article's other amendments, so the
+ * paragraph numbers they cite are not yet changed by the removal.
+ */
+const formatDeletedParagraphs = (numbers: number[]): Amendment => {
+  const at = `${joinWithOg(numbers.map((n) => `${n}.`))} mgr.`
+  const verb = numbers.length > 1 ? 'falla' : 'fellur'
+  return (where) => `<p>${at}${where} ${verb} brott.</p>` as HTMLText
 }
 
 type ArticleGroup = {
@@ -539,8 +579,54 @@ export const formatAmendingRegBody = (
     // New paragraphs in a row, merged into one amendment
     let newParagraphs: NewParagraphs | undefined
 
+    // Base paragraphs removed, written as one amendment after the others
+    const deletedParagraphs: number[] = []
+    // The last base paragraph kept, which new paragraphs are placed after
+    let lastKept = 0
+
+    const isSingleParagraph =
+      group.filter(
+        (e) =>
+          e.nodeName.toLowerCase() === 'p' &&
+          !e.hasAttribute('data-diff-signature') &&
+          !isEmptyWithout(e, 'ins'),
+      ).length === 1
+
     // The new side of a list already written together with its old side
     const handled = new Set<Element>()
+
+    // Each base table's place among the base tables of its paragraph
+    const tablesInParagraph = new Map<
+      Element,
+      { index: number; count: number }
+    >()
+    let paragraphTables: Element[] = []
+    const countTables = () => {
+      paragraphTables.forEach((t, i) =>
+        tablesInParagraph.set(t, {
+          index: i + 1,
+          count: paragraphTables.length,
+        }),
+      )
+      paragraphTables = []
+    }
+    group.forEach((e) => {
+      const tag = e.nodeName.toLowerCase()
+      if (tag === 'p' && !containsAnyTitleClass(e)) {
+        // A new paragraph is not one of the base regulation's
+        if (!isEmptyWithout(e, 'ins')) {
+          countTables()
+        }
+      } else if (
+        tag !== 'ol' &&
+        !containsAnyTitleClass(e) &&
+        getTable(e) &&
+        !isEmptyWithout(e, 'ins')
+      ) {
+        paragraphTables.push(e)
+      }
+    })
+    countTables()
 
     group.forEach((element) => {
       // The closing date line and signatories: never an amendment.
@@ -581,12 +667,30 @@ export const formatAmendingRegBody = (
       // The paragraph a list or table follows
       const mgr = paragraph
 
+      // New paragraphs in a row end at this element. A table or list of the
+      // paragraph they follow ends them before it, not after the paragraph.
+      const closeNewParagraphs = (block?: string) => {
+        if (
+          newParagraphs &&
+          block &&
+          newParagraphs.paragraph > 0 &&
+          newParagraphs.paragraph === mgr
+        ) {
+          newParagraphs.before = block
+          newParagraphs.single = isSingleParagraph
+          testGroup.amendments[newParagraphs.index] =
+            formatNewParagraphs(newParagraphs)
+        }
+        newParagraphs = undefined
+      }
+
       const replacingList =
         isLetterList || isNumberList ? getReplacingList(element) : undefined
       const replacedByLettered = isLetteredList(replacingList)
       if (replacingList) {
         handled.add(replacingList)
-        newParagraphs = undefined
+        // The old list, as the base regulation has it
+        closeNewParagraphs(isLetterList ? 'stafliðum' : 'töluliðum')
         testGroup.isDeletion = false
         testGroup.isAddition = false
         const items = isLetterList ? 'Stafliðir' : 'Töluliðir'
@@ -594,11 +698,18 @@ export const formatAmendingRegBody = (
         testGroup.amendments.push(
           (where) =>
             ((replacedByLettered !== isLetterList
-              ? `<p>${items} í ${mgr}. mgr.${where} verða ${
+              ? `<p>${items}${inParagraph(
+                  mgr,
+                  where,
+                  isSingleParagraph,
+                )} verða ${
                   isLetterList ? 'töluliðir' : 'stafliðir'
                 } og orðast svo:</p>`
-              : `<p>${items} í ${mgr}. mgr.${where} orðast svo:</p>`) +
-              newList) as HTMLText,
+              : `<p>${items}${inParagraph(
+                  mgr,
+                  where,
+                  isSingleParagraph,
+                )} orðast svo:</p>`) + newList) as HTMLText,
         )
         return
       }
@@ -611,21 +722,25 @@ export const formatAmendingRegBody = (
         isWholeListFormatChange(element) &&
         !isListTypeChange(element)
       ) {
-        newParagraphs = undefined
+        // Which list was which is not known here either
+        closeNewParagraphs()
         testGroup.isDeletion = false
         testGroup.isAddition = false
         return
       }
 
       if ((isLetterList || isNumberList) && isListTypeChange(element)) {
-        newParagraphs = undefined
+        // The diff holds the new list only: the base one was the other type
+        closeNewParagraphs(isLetterList ? 'töluliðum' : 'stafliðum')
         testGroup.isDeletion = false
         testGroup.isAddition = false
         testGroup.amendments.push(
           (where) =>
-            `<p>${
-              isLetterList ? 'Töluliðir' : 'Stafliðir'
-            } í ${mgr}. mgr.${where} verða ${
+            `<p>${isLetterList ? 'Töluliðir' : 'Stafliðir'}${inParagraph(
+              mgr,
+              where,
+              isSingleParagraph,
+            )} verða ${
               isLetterList ? 'stafliðir' : 'töluliðir'
             }.</p>` as HTMLText,
         )
@@ -669,7 +784,7 @@ export const formatAmendingRegBody = (
         oldText,
         isDeleted,
         isAddition,
-        liHtml,
+        liChanges,
         newTextElement,
       } = getDeletionOrAddition(element, elementType)
 
@@ -682,11 +797,45 @@ export const formatAmendingRegBody = (
         hasInsert &&
         isAddition &&
         isEmptyWithout(element, 'ins')
+      const isDeletedParagraph = isParagraph && hasDeletion && isDeleted
       if (isParagraph && !isNewParagraph) {
         paragraph++
+        if (!isDeletedParagraph) {
+          lastKept = paragraph
+        }
       }
-      if (!isNewParagraph && !isNewList) {
-        newParagraphs = undefined
+      // A list or table belongs to the paragraph before it, and is removed
+      // with it
+      const isBlockOfDeletedParagraph =
+        (isLetterList || isNumberList || !!table) &&
+        hasDeletion &&
+        isDeleted &&
+        deletedParagraphs.includes(mgr)
+      // A removed paragraph leaves new paragraphs on either side of it in a row
+      if (
+        !isNewParagraph &&
+        !isNewList &&
+        !isDeletedParagraph &&
+        !isBlockOfDeletedParagraph
+      ) {
+        // A base table or list, not one removed or added
+        const isBaseBlock =
+          !isEmptyWithout(element, 'del') && !isEmptyWithout(element, 'ins')
+        // "2. töflu" when the paragraph has more than one
+        const tableInParagraph = table && tablesInParagraph.get(element)
+        closeNewParagraphs(
+          !isBaseBlock
+            ? undefined
+            : tableInParagraph && tableInParagraph.count > 1
+            ? `${tableInParagraph.index}. töflu`
+            : table
+            ? 'töflu'
+            : isLetterList
+            ? 'stafliðum'
+            : isNumberList
+            ? 'töluliðum'
+            : undefined,
+        )
       }
       const paragraphNumber = paragraph
 
@@ -704,8 +853,9 @@ export const formatAmendingRegBody = (
             testGroup.isDeletion = true
           }
           if (isParagraph) {
-            amendment = (where) =>
-              `<p>${paragraphNumber}. mgr.${where} fellur brott.</p>` as HTMLText
+            deletedParagraphs.push(paragraphNumber)
+          } else if (isBlockOfDeletedParagraph) {
+            // Covered by its paragraph's removal
           } else if (isSectionTitle) {
             amendment = (where) =>
               `<p>Fyrirsögn${
@@ -713,9 +863,12 @@ export const formatAmendingRegBody = (
               } fellur brott.</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             amendment = (where) =>
-              `<p>${
-                isLetterList ? 'Stafliðir' : 'Töluliðir'
-              } eftir ${mgr}. mgr.${where} falla brott.</p>` as HTMLText
+              `<p>${isLetterList ? 'Stafliðir' : 'Töluliðir'}${inParagraph(
+                mgr,
+                where,
+                isSingleParagraph,
+                'eftir',
+              )} falla brott.</p>` as HTMLText
           } else if (table) {
             amendment = (where) =>
               `<p>${tableName}${
@@ -744,7 +897,7 @@ export const formatAmendingRegBody = (
             }
             newParagraphs = {
               index: testGroup.amendments.length,
-              paragraph: paragraphNumber,
+              paragraph: lastKept,
               blocks: [html],
               count: 1,
             }
@@ -779,9 +932,12 @@ export const formatAmendingRegBody = (
               return
             }
             amendment = (where) =>
-              `<p>${
-                isLetterList ? 'Stafliðum' : 'Töluliðum'
-              } eftir ${mgr}. mgr.${where} er bætt við:</p>${newList}` as HTMLText
+              `<p>${isLetterList ? 'Stafliðum' : 'Töluliðum'}${inParagraph(
+                mgr,
+                where,
+                isSingleParagraph,
+                'eftir',
+              )} er bætt við:</p>${newList}` as HTMLText
           } else if (table) {
             const newTable = afterChange(table)
             testGroup.body.push(newTable as HTMLText)
@@ -816,6 +972,10 @@ export const formatAmendingRegBody = (
             // Formatting alone changed: the wording did not, so it is not
             // restated.
             const formatOnly = getFormatOnlyChange(element)
+            // A change in one place is named by its words or sentences
+            const wordChange = formatOnly
+              ? undefined
+              : describeWordChange(element)
             amendment = (where) => {
               const at = `${paragraphNumber}. mgr.${where}`
               return (
@@ -825,16 +985,24 @@ export const formatAmendingRegBody = (
                   ? `<p>Snið ${quoteWords(
                       formatOnly,
                     )} í ${at} hefur breyst.</p>`
+                  : wordChange
+                  ? `<p>${wordChange(at)}</p>`
                   : `<p>${at} breytist og orðast svo:</p><p>${newText}</p>`
               ) as HTMLText
             }
           } else if (isLetterList || isNumberList) {
-            // A list whose items changed formatting only can leave nothing
-            // to say
-            if (liHtml) {
-              amendment = (where) =>
-                `<p>Eftirfarandi breytingar verða á ${mgr}. mgr.${where}:</p> ${liHtml}` as HTMLText
-            }
+            // Each item changed is an amendment of its own. An article of one
+            // paragraph is named without it: "1. tölul. 5. gr.". A list whose
+            // items changed formatting only can leave nothing to say.
+            liChanges.forEach((change) =>
+              testGroup.amendments.push((where) =>
+                change(
+                  mgr > 0 && !isSingleParagraph
+                    ? ` ${mgr}. mgr.${where}`
+                    : where,
+                ),
+              ),
+            )
           } else if (table) {
             amendment = (where) =>
               formatTableChange(
@@ -866,6 +1034,9 @@ export const formatAmendingRegBody = (
         newParagraphs,
         true,
       )
+    }
+    if (deletedParagraphs.length > 0) {
+      testGroup.amendments.push(formatDeletedParagraphs(deletedParagraphs))
     }
     return testGroup
   })

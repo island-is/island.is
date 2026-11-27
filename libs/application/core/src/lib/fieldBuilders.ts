@@ -587,6 +587,7 @@ export const buildSubmitField = (data: {
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
   renderLongErrors?: boolean
   formatLongErrorMessage?: (message: string) => string
+  stickyFooter?: boolean
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
@@ -601,6 +602,7 @@ export const buildSubmitField = (data: {
     marginBottom,
     renderLongErrors = false,
     formatLongErrorMessage,
+    stickyFooter,
   } = data
   return {
     children: undefined,
@@ -616,6 +618,7 @@ export const buildSubmitField = (data: {
         : false,
     renderLongErrors,
     formatLongErrorMessage,
+    stickyFooter,
     marginTop,
     marginBottom,
     type: FieldTypes.SUBMIT,

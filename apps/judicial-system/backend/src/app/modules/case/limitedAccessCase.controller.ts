@@ -86,10 +86,13 @@ export class LimitedAccessCaseController {
     CaseReadGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
+  // Response pipeline runs these in reverse registration order. File filtering
+  // must see the full appealEventLogs (including co-party APPEAL_STATEMENT_SENT)
+  // before CaseInterceptor redacts those rows for the defence user.
   @UseInterceptors(
     CompletedAppealAccessedInterceptor,
-    LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
+    LimitedAccessCaseFileInterceptor,
   )
   @Get('case/:caseId/limitedAccess')
   @ApiOkResponse({
@@ -229,7 +232,15 @@ export class LimitedAccessCaseController {
         user.nationalId,
         theCase.defendants,
       ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
       CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
         user.nationalId,
         theCase.civilClaimants,
       )

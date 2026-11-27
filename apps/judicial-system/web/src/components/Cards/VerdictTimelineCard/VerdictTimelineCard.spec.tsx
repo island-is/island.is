@@ -5,20 +5,29 @@ import userEvent from '@testing-library/user-event'
 import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
+  Defendant,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
   AppealCaseTransition,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-  UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -125,13 +134,14 @@ describe('VerdictTimelineCard', () => {
     {
       features = [] as Feature[],
       caseOverrides = {} as Partial<WorkingCase>,
+      user = mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF) as User,
     } = {},
   ) => {
     return render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
           <FeatureContext.Provider value={{ features, isLoading: false }}>
-            <UserContextWrapper userRole={UserRole.PUBLIC_PROSECUTOR_STAFF}>
+            <UserContext.Provider value={{ user }}>
               <FormContextWrapper
                 theCase={{
                   ...mockCase(CaseType.INDICTMENT),
@@ -148,7 +158,7 @@ describe('VerdictTimelineCard', () => {
                 {/* Modals portal into this container, normally supplied by PageLayout */}
                 <div id="modal" />
               </FormContextWrapper>
-            </UserContextWrapper>
+            </UserContext.Provider>
           </FeatureContext.Provider>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
@@ -646,6 +656,40 @@ describe('VerdictTimelineCard', () => {
       expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
     })
 
+    // A public prosecution prosecutor is sent to this card once a verdict
+    // appeal stands. The prosecution withdraws its appeal by changing the
+    // review decision, and the defendant's appeal is not the prosecutor's to
+    // withdraw, so the action is not offered.
+    it('offers no withdrawal to a public prosecution prosecutor', async () => {
+      const prosecutor = mockUser(UserRole.PROSECUTOR)
+
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          features: [Feature.INDICTMENT_APPEAL],
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+          user: {
+            ...prosecutor,
+            institution: {
+              ...prosecutor.institution,
+              type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+            },
+          } as User,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(await screen.findByText('Skráð í LÖKE')).toBeInTheDocument()
+      expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
+    })
+
     // An appeal date stamped before appeal cases existed has nothing to
     // withdraw on; it is cleared on the verdict as before, without a modal.
     it('clears the verdict date directly when there is no appeal case', async () => {
@@ -660,6 +704,97 @@ describe('VerdictTimelineCard', () => {
         screen.queryByRole('button', { name: 'Afturkalla' }),
       ).not.toBeInTheDocument()
       expect(mockTransitionAppealCase).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('prosecution statement deadline', () => {
+    const servedDefendant = {
+      ...mockDefendant,
+      verdict: {
+        serviceRequirement: 'NOT_REQUIRED',
+        serviceDate: '2026-05-01T00:00:00.000Z',
+      },
+    } as Defendant
+
+    it('shows the prosecution statement deadline on a standing appeal card', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: mockDefendant.id,
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
+          },
+        },
+      )
+
+      expect(
+        await screen.findByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('does not show the prosecution statement deadline for a defendant outside the appeal', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: 'other_defendant',
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
+          },
+        },
+      )
+
+      expect(await screen.findByText(name)).toBeInTheDocument()
+      expect(
+        screen.queryByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 })

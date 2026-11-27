@@ -7,7 +7,6 @@ import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  Button,
   Checkbox,
   GridColumn as Column,
   Input,
@@ -32,11 +31,18 @@ import { Deadline } from './components/Deadline/Deadline'
 import * as styles from './MainContent.css'
 
 interface Props {
+  onPreviewScreen: () => void
   openPreview: boolean
   setOpenPreview: Dispatch<SetStateAction<boolean>>
+  enforcePreviewRestrictions?: boolean
 }
 
-export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
+export const MainContent = ({
+  onPreviewScreen,
+  openPreview,
+  setOpenPreview,
+  enforcePreviewRestrictions,
+}: Props) => {
   const {
     control,
     controlDispatch,
@@ -49,6 +55,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const { formatMessage } = useIntl()
   const [identifierEditingEnabled, setIdentifierEditingEnabled] =
     useState(false)
+  const [fieldPreviewEnabled, setFieldPreviewEnabled] = useState(false)
 
   const showIdentifier =
     form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
@@ -84,6 +91,8 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
         <FieldContent
           identifierEditingEnabled={identifierEditingEnabled}
           setIdentifierEditingEnabled={setIdentifierEditingEnabled}
+          fieldPreviewEnabled={fieldPreviewEnabled}
+          setFieldPreviewEnabled={setFieldPreviewEnabled}
         />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (
@@ -91,16 +100,14 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PREMISES ? (
-        <Premises />
+        <Premises onPreview={onPreviewScreen} />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PARTIES ? (
-        <RelevantParties />
-      ) : openPreview ? (
-        <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
+        <RelevantParties onPreview={onPreviewScreen} />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.COMPLETED ? (
-        <Completed />
+        <Completed onPreview={onPreviewScreen} />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Urls' ? (
         <Urls />
@@ -280,7 +287,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
                             <ToggleSwitchCheckbox
                               className={styles.identifierToggle}
                               name="enableIdentifierEditing"
-                              label="Gera breytingu á identifier"
+                              label="Gera breytingu á identifier (má vera textastrengur)"
                               checked={identifierEditingEnabled}
                               disabled={isReadOnly}
                               onChange={setIdentifierEditingEnabled}
@@ -314,16 +321,13 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
               </Row>
             </>
           )}
-          <Row>
-            <Column>
-              <Box marginTop={4}>
-                <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                  {formatMessage(m.preview)}
-                </Button>
-              </Box>
-            </Column>
-          </Row>
         </Stack>
+      )}
+      {openPreview && (
+        <PreviewStepOrGroup
+          setOpenPreview={setOpenPreview}
+          enforceRestrictions={enforcePreviewRestrictions}
+        />
       )}
     </Box>
   )

@@ -2,17 +2,21 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseState,
+  AppealCaseType,
+  AppealRulingType,
   CaseFileCategory,
   CaseType,
   InstitutionType,
   User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
@@ -25,6 +29,7 @@ import {
   TransactionContext,
 } from '../../../../middleware'
 import { runInRequestContext } from '../../../../test'
+import { FileService } from '../../../file'
 import {
   AppealCase,
   AppealCaseJudge,
@@ -72,6 +77,7 @@ describe('AppealCaseController - Update', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealCaseJudgeRepositoryService: AppealCaseJudgeRepositoryService
   let mockUserService: UserService
+  let mockFileService: FileService
   let mockSequelize: Sequelize
   let transaction: Transaction
   let transactionContext: TransactionContext | undefined
@@ -85,8 +91,11 @@ describe('AppealCaseController - Update', () => {
       appealCaseRepositoryService,
       appealCaseJudgeRepositoryService,
       userService,
+      fileService,
       sequelize,
     } = await createTestingAppealCaseModule()
+
+    mockFileService = fileService
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealCaseJudgeRepositoryService = appealCaseJudgeRepositoryService
@@ -120,11 +129,14 @@ describe('AppealCaseController - Update', () => {
       const mockUpdate = mockAppealCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedAppealCase)
 
-      // The reload after a bench change returns the bench as stored.
+      // The reload after a change returns the appeal case as stored, with
+      // the bench when it was replaced.
       const mockFindById = mockAppealCaseRepositoryService.findById as jest.Mock
       mockFindById.mockResolvedValueOnce({
         ...updatedAppealCase,
-        appealJudges: bench(appealJudgeIds ?? []),
+        appealJudges: appealJudgeIds
+          ? bench(appealJudgeIds)
+          : appealCase.appealJudges,
       })
 
       // The route is guarded by CaseExistsForUpdateGuard, so the request
@@ -175,12 +187,252 @@ describe('AppealCaseController - Update', () => {
         { appealConclusion: 'Conclusion' },
         { transaction },
       )
+    })
+
+    // The row the update returns carries ids only, so the response is read
+    // back with its associations.
+    it('should return the appeal case as stored', () => {
+      expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
+        appealCaseId,
+        { transaction },
+      )
       expect(then.result).toEqual({ ...appealCase, ...update })
     })
 
     // An update announces nothing, so nothing waits for the commit.
     it('should register nothing to run after the commit', () => {
       expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+  })
+
+  describe('a ruling type is set on a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+    } as AppealCase
+    const update = { appealRulingType: AppealRulingType.RULING }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should store the ruling type', () => {
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealRulingType: AppealRulingType.RULING },
+        { transaction },
+      )
+      expect(then.result.appealRulingType).toBe(AppealRulingType.RULING)
+    })
+  })
+
+  describe('a ruling type is set on a ruling appeal', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.RULING,
+    } as AppealCase
+    const update = {
+      appealRulingType: AppealRulingType.VERDICT,
+      appealConclusion: 'Conclusion',
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should throw BadRequestException and store nothing', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('verdict appeal status', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const update = { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
+
+    it('should store the status on a verdict appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, update)
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT },
+        { transaction },
+      )
+      expect(then.result.verdictAppealStatus).toBe(
+        VerdictAppealStatus.UNDER_ADVISEMENT,
+      )
+    })
+
+    // The status belongs to the verdict appeal's own steps; a ruling appeal
+    // has none, so the column must stay empty there.
+    it('should refuse the status on a ruling appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.RULING,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, update)
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('a completed verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
+
+    // The court can still correct what it recorded: the outcome stays with it
+    // until it is released.
+    it('should store the update', async () => {
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealConclusion: 'Conclusion',
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealConclusion: 'Conclusion' },
+        { transaction },
+      )
+    })
+  })
+
+  describe('date of conclusion', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const enteredDate = new Date('2024-01-10T00:00:00Z')
+
+    it('should store the date on a verdict appeal and leave its ruling document alone before it is completed', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealRulingDate: enteredDate,
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealRulingDate: enteredDate },
+        { transaction },
+      )
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+
+    // The confirmed copy of the ruling document is stamped with this date.
+    it('should have the ruling document stamped again when the date of a completed verdict appeal changes', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealRulingDate: enteredDate,
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealRulingDate: enteredDate },
+        { transaction },
+      )
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).toHaveBeenCalledWith(caseId, transaction)
+    })
+
+    it('should leave the ruling document alone when a completed verdict appeal is sent the date it has', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDate: new Date(enteredDate),
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealRulingDate: enteredDate,
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      ['a verdict appeal', AppealCaseType.VERDICT, AppealCaseState.COMPLETED],
+      ['a ruling appeal', AppealCaseType.RULING, AppealCaseState.COMPLETED],
+    ])(
+      'should refuse to clear the date on %s',
+      async (_, appealType, appealState) => {
+        const appealCase = {
+          id: appealCaseId,
+          caseId,
+          appealType,
+          appealState,
+          appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+        } as AppealCase
+
+        const then = await givenWhenThen(theCase, appealCase, {
+          appealRulingDate: null,
+        } as unknown as UpdateAppealCaseDto)
+
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).not.toHaveBeenCalled()
+      },
+    )
+
+    // A ruling appeal is dated when it is completed.
+    it('should refuse the date on a ruling appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.RULING,
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase
+
+      const then = await givenWhenThen(
+        { id: caseId, type: CaseType.CUSTODY } as Case,
+        appealCase,
+        { appealRulingDate: enteredDate },
+      )
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -475,6 +727,31 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
+  describe('the bench is sent as null', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+      appealAssistantId: uuid(),
+      appealJudges: bench([uuid(), uuid(), uuid()]),
+    } as AppealCase
+    const update = { appealJudgeIds: null } as unknown as UpdateAppealCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should keep the bench and queue nothing', () => {
+      expect(
+        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(then.result).toBe(appealCase)
+    })
+  })
+
   describe('the bench is cleared', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
     const assistantId = uuid()
@@ -521,91 +798,6 @@ describe('AppealCaseController - Update', () => {
       expect(
         mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
       ).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('a judge is assigned to one slot', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judgeIds = [uuid(), uuid(), uuid()]
-    const newJudgeId = uuid()
-    const appealCase = {
-      id: appealCaseId,
-      caseId,
-      appealJudges: bench(judgeIds),
-    } as AppealCase
-    const update = { appealJudge2Id: newJudgeId }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should validate the new judge', () => {
-      expect(mockUserService.findById).toHaveBeenCalledWith(newJudgeId, {
-        transaction,
-      })
-    })
-
-    it('should replace only that position on the bench', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(
-        appealCaseId,
-        [judgeIds[0], newJudgeId, judgeIds[2]],
-        { transaction },
-      )
-    })
-
-    it('should not write the slot to the appeal case row', () => {
-      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-    })
-  })
-
-  // A bench copied from the legacy columns with seat 2 empty and seat 3 filled.
-  describe('a judge is assigned to a hole in a legacy bench', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judge1Id = uuid()
-    const judge3Id = uuid()
-    const newJudgeId = uuid()
-    const appealCase = {
-      id: appealCaseId,
-      caseId,
-      appealJudges: [
-        { userId: judge1Id, displayOrder: 0 },
-        { userId: judge3Id, displayOrder: 2 },
-      ] as AppealCaseJudge[],
-    } as AppealCase
-    const update = { appealJudge2Id: newJudgeId }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should fill the hole and keep the judge after it', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, newJudgeId, judge3Id], {
-        transaction,
-      })
-    })
-  })
-
-  describe('judges are assigned to the slots of an empty bench', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judge1Id = uuid()
-    const judge3Id = uuid()
-    const appealCase = { id: appealCaseId, caseId } as AppealCase
-    const update = { appealJudge1Id: judge1Id, appealJudge3Id: judge3Id }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should store the judges in slot order', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, judge3Id], {
-        transaction,
-      })
     })
   })
 

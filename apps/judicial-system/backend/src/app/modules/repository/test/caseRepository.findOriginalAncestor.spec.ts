@@ -1,3 +1,5 @@
+import type { Transaction } from 'sequelize'
+
 import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
@@ -45,7 +47,7 @@ describe('CaseRepositoryService — findOriginalAncestor', () => {
 
     const result = await caseRepositoryService.findOriginalAncestor(theCase)
 
-    expect(findOriginalAncestorId).toHaveBeenCalledWith(theCase)
+    expect(findOriginalAncestorId).toHaveBeenCalledWith(theCase, undefined)
     expect(result).toBe(theCase)
     expect(findById).not.toHaveBeenCalled()
   })
@@ -58,7 +60,27 @@ describe('CaseRepositoryService — findOriginalAncestor', () => {
 
     const result = await caseRepositoryService.findOriginalAncestor(theCase)
 
-    expect(findById).toHaveBeenCalledWith('origin-id')
+    expect(findById).toHaveBeenCalledWith('origin-id', undefined)
+    expect(result).toBe(originalAncestor)
+  })
+
+  // Runs from an interceptor while the route's guard may hold the case row's
+  // lock in the request's transaction, so both reads join that transaction.
+  it('walks the chain and loads the ancestor in the given transaction', async () => {
+    const theCase = { id: 'child-id' } as Case
+    const originalAncestor = { id: 'origin-id' } as Case
+    const transaction = {} as Transaction
+    findOriginalAncestorId.mockResolvedValueOnce('origin-id')
+    findById.mockResolvedValueOnce(originalAncestor)
+
+    const result = await caseRepositoryService.findOriginalAncestor(theCase, {
+      transaction,
+    })
+
+    expect(findOriginalAncestorId).toHaveBeenCalledWith(theCase, {
+      transaction,
+    })
+    expect(findById).toHaveBeenCalledWith('origin-id', { transaction })
     expect(result).toBe(originalAncestor)
   })
 

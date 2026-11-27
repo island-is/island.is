@@ -52,14 +52,20 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.Settings,
       children: [
         {
-          name: m.mySettingsInformation,
+          name: m.mySettingsPersonalInformation,
           searchHide: true,
           path: InformationPaths.Settings,
         },
         {
           name: m.mySettingsNotifications,
           searchHide: true,
+          activeIfExact: true,
           path: InformationPaths.SettingsNotifications,
+        },
+        {
+          name: m.mySettingsActorNotifications,
+          searchHide: true,
+          path: InformationPaths.SettingsActorNotifications,
         },
       ],
     },

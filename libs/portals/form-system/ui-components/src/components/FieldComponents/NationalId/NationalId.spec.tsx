@@ -1,4 +1,8 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing'
+import {
+  MockedProvider,
+  MockedResponse,
+  MockLink,
+} from '@apollo/client/testing'
 import { FormSystemField } from '@island.is/api/schema'
 import { GET_COMPANY, IDENTITY_QUERY } from '@island.is/form-system/graphql'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -33,6 +37,7 @@ jest.mock('@island.is/island-ui/core', () => ({
     readOnly,
     hasError,
     errorMessage,
+    tooltip,
   }: {
     label: string
     name: string
@@ -42,6 +47,7 @@ jest.mock('@island.is/island-ui/core', () => ({
     readOnly: boolean
     hasError: boolean
     errorMessage: string
+    tooltip?: string
   }) => (
     <label>
       {label}
@@ -51,6 +57,7 @@ jest.mock('@island.is/island-ui/core', () => ({
         onChange={onChange}
         onBlur={onBlur}
         readOnly={readOnly}
+        title={tooltip}
       />
       {hasError && errorMessage && <span role="alert">{errorMessage}</span>}
     </label>
@@ -68,6 +75,8 @@ const renderField = (
   mock?: MockedResponse | MockedResponse[],
   showAddress = false,
   mode: 'onBlur' | 'onSubmit' = 'onBlur',
+  isPreview = false,
+  tooltip?: FormSystemField['tooltip'],
 ) => {
   const dispatch = jest.fn()
   const onSubmit = jest.fn()
@@ -77,8 +86,9 @@ const renderField = (
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <NationalId
-            item={{ ...item, fieldSettings: { showAddress } }}
+            item={{ ...item, fieldSettings: { showAddress }, tooltip }}
             dispatch={dispatch}
+            isPreview={isPreview}
           />
           <button type="submit">Submit</button>
         </form>
@@ -97,6 +107,31 @@ const renderField = (
   )
   return { dispatch, onSubmit }
 }
+
+it.each([
+  { is: '  National ID help  ', en: 'English help' },
+  { is: ' \n ', en: 'English help' },
+  { is: '', en: 'English help' },
+  undefined,
+])(
+  'shows only the current language tooltip on the national ID input: %j',
+  (tooltip) => {
+    renderField(undefined, true, 'onBlur', false, tooltip)
+
+    expect(
+      screen
+        .getByRole('textbox', { name: 'National ID' })
+        .getAttribute('title'),
+    ).toBe(tooltip?.is?.trim() || null)
+    for (const label of [m.namePerson, m.address, m.postalCode, m.city]) {
+      expect(
+        screen
+          .getByRole('textbox', { name: label.defaultMessage })
+          .getAttribute('title'),
+      ).toBeNull()
+    }
+  },
+)
 
 it.each(
   (['onBlur', 'onSubmit'] as const).flatMap((mode) =>
@@ -278,6 +313,26 @@ describe.each([
     query,
     variables: { input: { nationalId: nationalId.replace('-', '') } },
   }
+
+  it('does not request a lookup in preview', async () => {
+    const requestSpy = jest.spyOn(MockLink.prototype, 'request')
+    try {
+      renderField({ request, result: { data: success } }, true, 'onBlur', true)
+      const input = screen.getByRole('textbox', { name: 'National ID' })
+      fireEvent.change(input, { target: { value: nationalId } })
+      fireEvent.blur(input)
+      await act(async () => {
+        await Promise.resolve()
+      })
+
+      expect(input.getAttribute('value')).toBe(nationalId)
+      expect(requestSpy).not.toHaveBeenCalled()
+      expect(screen.queryByRole('status')).toBeNull()
+      expect(screen.queryByDisplayValue(name)).toBeNull()
+    } finally {
+      requestSpy.mockRestore()
+    }
+  })
 
   it.each([
     { outcome: 'success', response: { result: { data: success } } },

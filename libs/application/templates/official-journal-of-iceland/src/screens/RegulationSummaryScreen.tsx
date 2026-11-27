@@ -100,11 +100,13 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
               price={price}
               priceLoading={priceLoading}
               priceError={!!priceError}
+              goToScreen={props.goToScreen}
             />
             {needsTextConfirmation && (
               <TextComparison
                 impacts={impacts}
                 advertHtml={application.answers?.advert?.html}
+                additions={application.answers?.advert?.additions}
                 confirmed={textConfirmed}
                 onConfirmedChange={setTextConfirmed}
               />

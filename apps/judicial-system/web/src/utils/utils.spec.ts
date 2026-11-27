@@ -14,6 +14,7 @@ import type {
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseType,
@@ -26,14 +27,19 @@ import {
 
 import * as formatters from './formatters'
 import {
+  applyAppealCaseUpdate,
   applyMergedCaseEntries,
   canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
+  getDefenceUserMatchingPartyIds,
+  getDefenceUserPartyIds,
+  getVerdictAppealStatementParty,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   isCurrentAppellantRepresentative,
+  isMatchingAppealCaseFile,
   isMatchingAppealCourtFile,
   isSentToPublicProsecutor,
   mapStringToGender,
@@ -42,6 +48,51 @@ import {
   rulingOrderChoices,
   userHasActiveInCourtAppeal,
 } from './utils'
+
+describe('applyAppealCaseUpdate', () => {
+  const workingCase = {
+    id: 'case',
+    appealCase: { id: 'ruling-appeal', appealCaseNumber: '1/2026' },
+    verdictAppealCase: { id: 'verdict-appeal', appealCaseNumber: null },
+    rulingOrderAppealCases: [
+      { id: 'order-appeal', appealCaseNumber: '2/2026' },
+    ],
+  } as unknown as WorkingCase
+
+  it('updates the case-level ruling appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'ruling-appeal', {
+      appealCaseNumber: '3/2026',
+    })
+
+    expect(updated.appealCase?.appealCaseNumber).toBe('3/2026')
+    expect(updated.verdictAppealCase).toBe(workingCase.verdictAppealCase)
+    expect(updated.rulingOrderAppealCases).toBe(
+      workingCase.rulingOrderAppealCases,
+    )
+  })
+
+  it('updates the verdict appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'verdict-appeal', {
+      appealCaseNumber: '555/2026',
+    })
+
+    expect(updated.verdictAppealCase?.appealCaseNumber).toBe('555/2026')
+    expect(updated.appealCase).toBe(workingCase.appealCase)
+    expect(updated.rulingOrderAppealCases).toBe(
+      workingCase.rulingOrderAppealCases,
+    )
+  })
+
+  it('updates a ruling order appeal', () => {
+    const updated = applyAppealCaseUpdate(workingCase, 'order-appeal', {
+      appealCaseNumber: '4/2026',
+    })
+
+    expect(updated.rulingOrderAppealCases?.[0].appealCaseNumber).toBe('4/2026')
+    expect(updated.appealCase).toBe(workingCase.appealCase)
+    expect(updated.verdictAppealCase).toBe(workingCase.verdictAppealCase)
+  })
+})
 
 describe('Utils', () => {
   describe('isSentToPublicProsecutor', () => {
@@ -1984,5 +2035,337 @@ describe('revertCaseLevelAppealDecision', () => {
     )
 
     expect(result).toEqual([otherPartyUpdated, rulingOrderDecision])
+  })
+})
+
+describe('getDefenceUserPartyIds', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  it('resolves a district-confirmed defendant', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'defendant_id' })
+  })
+
+  it('resolves an appeal-confirmed defendant without district confirmation', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'defendant_id' })
+  })
+
+  it('resolves an appeal-confirmed civil claimant spokesperson', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ civilClaimantId: 'claimant_id' })
+  })
+
+  it('requires hasSpokesperson for a district civil claimant spokesperson', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isSpokespersonConfirmed: true,
+              spokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({})
+  })
+
+  it('ignores a waived appeal defender', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({})
+  })
+
+  it('lists every defendant and civil claimant the defender is confirmed for', () => {
+    expect(
+      getDefenceUserMatchingPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'district_client',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0101302989',
+            },
+            {
+              id: 'appeal_client',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              spokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual([
+      { defendantId: 'district_client' },
+      { defendantId: 'appeal_client' },
+      { civilClaimantId: 'claimant_id' },
+    ])
+  })
+})
+
+describe('getVerdictAppealStatementParty', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  const twoConfirmedDefendants = {
+    type: CaseType.INDICTMENT,
+    defendants: [
+      {
+        id: 'earlier_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '0101302989',
+      },
+      {
+        id: 'later_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '0101302989',
+      },
+    ],
+  }
+
+  it('selects the confirmed party with the earliest open deadline', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: false,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'earlier_id' })
+  })
+
+  it('skips a party that has already filed and selects the next open deadline', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: false,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'earlier_id',
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'later_id' })
+  })
+
+  it('still selects a party whose deadline has expired', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: true,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'earlier_id' })
+  })
+
+  it('returns undefined when every confirmed party is ineligible', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: true,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'earlier_id',
+              },
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'later_id',
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toBeUndefined()
+  })
+})
+
+describe('isMatchingAppealCaseFile', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  const categories = [CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT]
+
+  it('matches a file for an appeal-confirmed defendant', () => {
+    expect(
+      isMatchingAppealCaseFile(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        categories,
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          defendantId: 'defendant_id',
+        },
+        defender,
+      ),
+    ).toBe(true)
+  })
+
+  it('rejects a file for another defendant when only appeal-confirmed for one', () => {
+    expect(
+      isMatchingAppealCaseFile(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'own_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+            {
+              id: 'other_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0909713459',
+            },
+          ],
+        } as WorkingCase,
+        categories,
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          defendantId: 'other_id',
+        },
+        defender,
+      ),
+    ).toBe(false)
   })
 })

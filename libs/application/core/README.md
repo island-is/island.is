@@ -43,7 +43,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
 + translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
 ```
@@ -85,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
 + institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
@@ -112,7 +112,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
  type: ApplicationTypes.EXAMPLE,
  name: m.name,
- codeOwner: CodeOwners.NordaApplications,
+ codeOwner: CodeOwners.Origo,
  institution: m.institutionName,
 + featureFlag: Feature.exampleApplication
  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
@@ -192,23 +192,57 @@ export enum ApplicationStatus {
 States can define their own life cycle:
 
 ```typescript
-type StateLifeCycle =
-  | {
-      // Controls visibility from my pages + /umsoknir/:type when in current state
-      shouldBeListed: boolean
-      shouldBePruned: false
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
-    }
-  | {
-      shouldBeListed: boolean
-      shouldBePruned: true
-      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
-      whenToPrune: number | ((application: Application) => Date)
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
-    }
+type StateLifeCycle = StateLifeCycleListing &
+  (
+    | {
+        shouldBePruned: false
+        shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      }
+    | {
+        shouldBePruned: true
+        // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+        whenToPrune: number | ((application: Application) => Date)
+        shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      }
+  )
+
+type StateLifeCycleListing =
+  | { shouldBeListed: false; hideFromApplicationSystemOverview?: never }
+  | { shouldBeListed: true; hideFromApplicationSystemOverview?: true }
 ```
 
 By default states will not be pruned and will always be listed. The default options are defined in `libs/application/core/src/lib/constants.ts`.
+
+##### Listing
+
+Two properties control where an application is listed while in a given state:
+
+- `shouldBeListed` is the master switch. When `false` the application is hidden everywhere: my pages, the native app and the application overview (`/umsoknir/:type`).
+- `hideFromApplicationSystemOverview` can only hide the application further. It hides it from the application overview (`/umsoknir/:type`) while keeping it listed in my pages and the native app. It is not allowed together with `shouldBeListed: false`, and TypeScript will report an error if you try.
+
+| `shouldBeListed` | `hideFromApplicationSystemOverview` | My pages / native app | `/umsoknir/:type` |
+| ---------------- | ----------------------------------- | --------------------- | ----------------- |
+| `false`          | (not allowed)                       | hidden                | hidden            |
+| `true`           | (not set)                           | listed                | listed            |
+| `true`           | `true`                              | listed                | hidden            |
+
+When no applications are left to show on `/umsoknir/:type`, the user is taken straight into a new application (prerequisites) instead of the overview. This makes `hideFromApplicationSystemOverview` useful for e.g. completed states, where the application should stay visible in my pages but should not stop the user from starting a new one.
+
+The presets in `constants.ts` can be extended:
+
+```typescript
+completed: {
+  meta: {
+    ...
+    lifecycle: {
+      ...DefaultStateLifeCycle,
+      hideFromApplicationSystemOverview: true,
+    },
+  },
+},
+```
+
+Note the difference in when the two properties take effect: `shouldBeListed` is persisted to the database (`isListed`) on state transitions, whereas `hideFromApplicationSystemOverview` is evaluated on every request and therefore applies immediately to existing applications in that state.
 
 Sample use case:
 
@@ -378,6 +412,16 @@ stateMachineConfig: {
 
 This will add a delete button in the Draft state available only to the `Applicant` role like so:
 application-pending-action.jpeg
+
+`delete` can also be a predicate `(application) => boolean` when the button should only appear conditionally — for example when a state can be re-entered after the application was sent to an external system and deleting it locally would leave the two systems out of sync:
+
+```ts
+{
+  id: 'applicant',
+  delete: (application) => !hasBeenSubmittedToExternalSystem(application),
+  ...
+}
+```
 
 ## Form
 
@@ -598,4 +642,4 @@ The reason default behavior does not work for all applications is because it cou
 
 ## Code owners and maintainers
 
-- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
+- [Origo](https://github.com/orgs/island-is/teams/origo/members)

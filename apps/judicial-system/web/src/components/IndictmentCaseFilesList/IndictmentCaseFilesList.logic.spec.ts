@@ -7,6 +7,7 @@ import {
   getVisibleSubpoenas,
   shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -15,6 +16,20 @@ const user = (role: UserRole, type?: InstitutionType): User =>
     role,
     ...(type ? { institution: { id: 'institution-id', type } } : {}),
   } as User)
+
+describe('shouldShowUploadedCaseFilesSection', () => {
+  it('hides the empty section when display is not forced', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, false)).toBe(false)
+  })
+
+  it('shows the empty section when display is forced after send to court', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, true)).toBe(true)
+  })
+
+  it('shows the section when there are uploaded case files', () => {
+    expect(shouldShowUploadedCaseFilesSection(1, false)).toBe(true)
+  })
+})
 
 describe('shouldShowPoliceDigitalCaseFilesSection', () => {
   const files = [{ id: '1' }]
@@ -157,6 +172,7 @@ describe('getVisibleSubpoenas', () => {
 describe('shouldHideCaseFilesRecordFromDefender', () => {
   const hiddenCaseId = 'hidden-case-id'
   const otherCaseId = 'other-case-id'
+  const splitDescendantId = 'split-descendant-id'
   const hiddenCaseIds = [hiddenCaseId]
 
   it('hides the case files record from a defender on a listed case', () => {
@@ -164,6 +180,7 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         hiddenCaseId,
         user(UserRole.DEFENDER),
+        undefined,
         hiddenCaseIds,
       ),
     ).toBe(true)
@@ -174,6 +191,7 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         otherCaseId,
         user(UserRole.DEFENDER),
+        undefined,
         hiddenCaseIds,
       ),
     ).toBe(false)
@@ -184,6 +202,40 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         hiddenCaseId,
         user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        undefined,
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('hides the case files record from a defender when originalAncestorId is listed', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.DEFENDER),
+        hiddenCaseId,
+        hiddenCaseIds,
+      ),
+    ).toBe(true)
+  })
+
+  it('keeps the case files record for a defender when originalAncestorId is unlisted', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.DEFENDER),
+        otherCaseId,
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('keeps the case files record for non-defence users when originalAncestorId is listed', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        hiddenCaseId,
         hiddenCaseIds,
       ),
     ).toBe(false)

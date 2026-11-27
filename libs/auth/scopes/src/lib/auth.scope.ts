@@ -19,4 +19,5 @@ export const delegationScopes = [
 export const DelegationAdminScopes = {
   read: '@admin.island.is/delegation-system',
   admin: '@admin.island.is/delegation-system:admin',
+  institution: '@admin.island.is/delegation-system:institution',
 }

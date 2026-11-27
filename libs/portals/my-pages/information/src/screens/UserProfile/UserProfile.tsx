@@ -5,6 +5,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { Markdown } from '@island.is/shared/components'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { msg } from '../../lib/messages'
 
@@ -15,8 +16,10 @@ const UserProfile = () => {
   return (
     <IntroWrapper
       marginBottom={[4, 4, 6]}
-      title={formatMessage(m.mySettings)}
-      intro={formatMessage(msg.overlayIntro)}
+      title={formatMessage(m.mySettingsPersonalInformation)}
+      introComponent={
+        <Markdown>{formatMessage(msg.userProfileIntro)}</Markdown>
+      }
       serviceProvider={{
         slug: ISLANDIS_SLUG,
         tooltip: formatMessage(m.userProfileTooltip),

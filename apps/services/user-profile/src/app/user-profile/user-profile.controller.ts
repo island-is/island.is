@@ -7,6 +7,7 @@ import {
   Get,
   Headers,
   Param,
+  ParseArrayPipe,
   ParseUUIDPipe,
   Patch,
   Query,
@@ -30,10 +31,12 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
+import { UserProfileInclude } from '../types/UserProfileInclude'
 import { ActorProfileDto } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { EmailsService } from './emails.service'
 import { EmailsDto } from './dto/emails.dto'
+import { NotificationSettingsService } from './notification-settings.service'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -51,6 +54,7 @@ export class UserProfileController {
     private readonly userProfileService: UserProfileService,
     private readonly emailsService: EmailsService,
     private readonly auditService: AuditService,
+    private readonly notificationSettingsService: NotificationSettingsService,
   ) {}
 
   @Get('/')
@@ -94,6 +98,16 @@ export class UserProfileController {
           description: 'Client type',
           enum: ClientType,
         },
+        include: {
+          required: false,
+          description:
+            'Comma separated list of optional data to include in the response, e.g. notificationSettings returns the sender categories the user has blocked',
+          type: 'string',
+          isArray: true,
+          enum: UserProfileInclude,
+          style: 'form',
+          explode: false,
+        },
       },
     },
     response: { status: 200, type: UserProfileDto },
@@ -104,7 +118,10 @@ export class UserProfileController {
     AdminPortalScope.serviceDesk,
   ])
   @Audit<UserProfileDto>({
-    resources: (profile) => profile.nationalId,
+    resources: (profile) => [
+      profile.nationalId,
+      ...(profile.blockedCategories ?? []).map(({ key }) => key),
+    ],
   })
   @Scopes(
     UserProfileScope.system,
@@ -114,11 +131,39 @@ export class UserProfileController {
   async findUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
     @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,
+    @Query(
+      'include',
+      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
+    )
+    include: string[] = [],
   ): Promise<UserProfileDto> {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
-    return this.userProfileService.findById(nationalId, false, clientType)
+
+    const invalidIncludes = include.filter(
+      (value) => !Object.values<string>(UserProfileInclude).includes(value),
+    )
+    if (invalidIncludes.length > 0) {
+      throw new BadRequestException(
+        `Invalid include: ${invalidIncludes.join(', ')}`,
+      )
+    }
+
+    const userProfile = await this.userProfileService.findById(
+      nationalId,
+      false,
+      clientType,
+    )
+
+    if (!include.includes(UserProfileInclude.NOTIFICATION_SETTINGS)) {
+      return userProfile
+    }
+
+    const { blockedCategories } =
+      await this.notificationSettingsService.findSettings(nationalId)
+
+    return { ...userProfile, blockedCategories }
   }
 
   @Get('/.to-national-id/actor-profiles/.from-national-id')

@@ -1,10 +1,18 @@
+import type { FetchResult } from '@apollo/client'
+import { ApolloLink, Observable } from '@apollo/client'
+import type { MockedResponse } from '@apollo/client/testing'
 import { MockedProvider } from '@apollo/client/testing'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
+  AppealCourtSessionType,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -13,6 +21,7 @@ import {
   UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { LimitedAccessAcceptVerdictDocument } from '@island.is/judicial-system-web/src/utils/hooks/useVerdict/limitedAccessAcceptVerdict.generated'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
@@ -95,9 +104,40 @@ const completedCase = (
   ],
 })
 
-const renderOverview = (theCase: WorkingCase, features: Feature[] = []) =>
+// A link that answers nothing until the test settles a pending operation
+// itself, and that tells how often an operation was sent.
+const heldLink = () => {
+  const sent: { name: string; fail: () => void }[] = []
+
+  const link = new ApolloLink(
+    (operation) =>
+      new Observable<FetchResult>((observer) => {
+        sent.push({
+          name: operation.operationName,
+          fail: () => observer.error(new Error('Failed')),
+        })
+      }),
+  )
+
+  return {
+    link,
+    timesSent: (name: string) =>
+      sent.filter((operation) => operation.name === name).length,
+    fail: (name: string) =>
+      sent
+        .filter((operation) => operation.name === name)
+        .forEach((operation) => operation.fail()),
+  }
+}
+
+const renderOverview = (
+  theCase: WorkingCase,
+  features: Feature[] = [],
+  mocks: MockedResponse[] = [],
+  link?: ApolloLink,
+) =>
   render(
-    <MockedProvider mocks={[]} addTypename={false}>
+    <MockedProvider mocks={mocks} addTypename={false} link={link}>
       <FeatureContext.Provider value={{ features, isLoading: false }}>
         <UserContextWrapper
           userRole={UserRole.DEFENDER}
@@ -173,6 +213,156 @@ describe('Defender IndictmentOverview', () => {
     )
 
     expect(menuButtonOf(timelineCards[0])).not.toBeInTheDocument()
+  })
+
+  it('offers to appeal or accept a verdict the defendant can still appeal', async () => {
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+
+    expect(await screen.findByText('Áfrýja dómi')).toBeInTheDocument()
+    expect(screen.getByText('Una dómi')).toBeInTheDocument()
+  })
+
+  it('accepts the verdict only after the defender confirms', async () => {
+    const accept = jest.fn(() => ({
+      data: { limitedAccessAcceptVerdict: { defendantId: 'own_client_id' } },
+    }))
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [
+        {
+          request: {
+            query: LimitedAccessAcceptVerdictDocument,
+            variables: {
+              input: { caseId: 'test_id', defendantId: 'own_client_id' },
+            },
+          },
+          result: accept,
+        },
+      ],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+
+    expect(
+      await screen.findByText(
+        'Ertu viss um að þú viljir skrá að Eigin sakborningur unir dómi? Ríkissaksóknari fær tilkynningu.',
+      ),
+    ).toBeInTheDocument()
+    expect(accept).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Já, una dómi' }))
+
+    await waitFor(() => expect(accept).toHaveBeenCalledTimes(1))
+  })
+
+  it('closes the confirmation on Escape without accepting the verdict', async () => {
+    const { link, timesSent } = heldLink()
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [],
+      link,
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await screen.findByRole('button', { name: 'Já, una dómi' })
+
+    await userEvent.keyboard('{Escape}')
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Já, una dómi' }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(0)
+  })
+
+  it('keeps the confirmation open and locked while the verdict is being accepted', async () => {
+    const { link, timesSent, fail } = heldLink()
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [],
+      link,
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Já, una dómi' }),
+    )
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeDisabled(),
+    )
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(1)
+
+    await userEvent.keyboard('{Escape}')
+
+    // A confirmation that Escape had started closing would stay in the
+    // document, disabled, until its exit ended. Only one still open takes the
+    // failed answer and gives its buttons back.
+    fail('LimitedAccessAcceptVerdict')
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeEnabled(),
+    )
+    expect(screen.getByRole('button', { name: 'Já, una dómi' })).toBeEnabled()
   })
 
   it('offers to withdraw once the verdict has been appealed', async () => {
@@ -263,5 +453,203 @@ describe('Defender IndictmentOverview', () => {
       await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
     ).toBeInTheDocument()
     expect(screen.queryByText(/Ákæra birt/)).not.toBeInTheDocument()
+  })
+
+  // Once the court of appeals has called its sessions, they are on the
+  // defender's agenda the way a district court session is: every one of them,
+  // with its type, date, time and courtroom.
+  describe('the sessions the court of appeals has called', () => {
+    const daysFromNow = (days: number, hours: number): Date => {
+      const date = new Date()
+      date.setDate(date.getDate() + days)
+      date.setHours(hours, 15, 0, 0)
+
+      return date
+    }
+    const mainHearing = daysFromNow(30, 9)
+    const preparatoryHearing = daysFromNow(10, 13)
+
+    const withSessions = (appealState: AppealCaseState) =>
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState,
+          courtSessions: [
+            {
+              id: 'main_hearing_id',
+              sessionType: AppealCourtSessionType.MAIN_HEARING,
+              sessionDate: mainHearing.toISOString(),
+              courtRoom: '101',
+            },
+            {
+              id: 'preparatory_hearing_id',
+              sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+              sessionDate: preparatoryHearing.toISOString(),
+              courtRoom: '102',
+            },
+          ],
+        },
+      })
+
+    it('puts every booked session on the one agenda card', async () => {
+      renderOverview(withSessions(AppealCaseState.RECEIVED))
+
+      expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+      expect(screen.getAllByText('Á dagskrá')).toHaveLength(1)
+      expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+      expect(
+        screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
+      expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+      expect(
+        screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
+    })
+
+    // A log of what the court called, so the entries stay once it has ruled.
+    it('keeps the entries once the court of appeals has ruled', async () => {
+      renderOverview(withSessions(AppealCaseState.COMPLETED))
+
+      expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+      expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+      expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+    })
+  })
+
+  describe('verdict appeal statement deadline', () => {
+    it('shows the greinargerðarfrest on the defendant’s timeline card', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+          },
+        }),
+      )
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText(
+          '• Frestur til að skila greinargerð er til 14.09.2026',
+        ),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('offers the statement action on the card for a confirmed appeal defender', async () => {
+      const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'own_client_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+        },
+      })
+      const [ownClient, ...others] = theCase.defendants ?? []
+
+      renderOverview({
+        ...theCase,
+        defendants: ownClient
+          ? [
+              {
+                ...ownClient,
+                isAppealDefenderConfirmed: true,
+                appealDefenderNationalId: defenderNationalId,
+              },
+              ...others,
+            ]
+          : [],
+      })
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(menuButtonOf(timelineCards[0])).toBeInTheDocument()
+      expect(menuButtonOf(timelineCards[1])).not.toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('replaces the deadline with the sent date once the statement is filed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-09-10T12:00:00.000Z',
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'own_client_id',
+              },
+            ],
+          },
+        }),
+      )
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText('• Greinargerð send 10.09.2026'),
+      ).toBeInTheDocument()
+      expect(
+        within(timelineCards[0]).queryByText(
+          /Frestur til að skila greinargerð/,
+        ),
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('verdict appeal conclusion', () => {
+    it('shows Landsréttur’s dómsorð once the verdict appeal is completed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.COMPLETED,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        }),
+      )
+
+      expect(await screen.findByText('Dómsorð Landsréttar')).toBeInTheDocument()
+      expect(
+        screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Niðurstaða Landsréttar'),
+      ).not.toBeInTheDocument()
+    })
   })
 })

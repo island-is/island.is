@@ -14,6 +14,7 @@
 /apps/application-system/                                                                                                    @island-is/origo
 /apps/web*/                                                                                                                  @island-is/juni @island-is/stefna
 /libs/application/                                                                                                           @island-is/origo
+/.claude/skills/application-review/                                                                                          @island-is/origo
 /libs/portals/my-pages/                                                                                                      @island-is/hugsmidjan
 /libs/portals/admin/                                                                                                         @island-is/aranja
 /libs/portals/core/                                                                                                          @island-is/aranja @island-is/hugsmidjan
@@ -77,6 +78,9 @@
 /libs/application/templates/transport-authority/driving-learners-permit/                                                     @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-submission              @island-is/juni
+/libs/application/templates/fjarskiptastofa/                                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/fjarskiptastofa/                                            @island-is/juni
+/libs/clients/fjarskiptastofa/                                                                                               @island-is/juni
 /libs/api/domains/driving-license/                                                                                           @island-is/juni
 /libs/api/domains/education/                                                                                                 @island-is/juni @island-is/hugsmidjan @island-is/deloitte
 /libs/application/templates/estate/                                                                                          @island-is/juni
@@ -85,7 +89,7 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists/                                                         @island-is/juni
 /libs/shared/connected/src/lib/SignatureLists/                                                                               @island-is/juni
 /libs/api/domains/communications/                                                                                            @island-is/juni @island-is/stefna
-/apps/services/user-notification/                                                                                            @island-is/juni @island-is/aranja
+/apps/services/user-notification/                                                                                            @island-is/apro
 /apps/air-discount-scheme/                                                                                                   @island-is/hugsmidjan
 /libs/air-discount-scheme/                                                                                                   @island-is/hugsmidjan
 /libs/application/templates/p-sign/                                                                                          @island-is/juni
@@ -158,6 +162,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/municipalities-financial-aid                                                                               @island-is/kolibri-robin-hood
 /libs/clients/municipalities-financial-aid                                                                                   @island-is/kolibri-robin-hood
 
+/libs/clients/rvk-financial-aid                                                                                              @island-is/origo
+
 /libs/clients/hms/                                                                                                           @island-is/origo
 /libs/clients/hms-rental-agreement/                                                                                          @island-is/origo @island-is/hugsmidjan
 /libs/api/domains/hms/                                                                                                       @island-is/origo @island-is/hugsmidjan
@@ -183,7 +189,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/license-service/                                                                                           @island-is/hugsmidjan @island-is/aranja
 /libs/api/domains/work-machines/                                                                                             @island-is/hugsmidjan @island-is/origo
 /libs/api/domains/national-registry/                                                                                         @island-is/hugsmidjan
-/libs/api/domains/notifications/                                                                                             @island-is/hugsmidjan
+/libs/api/domains/notifications/                                                                                             @island-is/apro
 /libs/api/domains/user-profile/                                                                                              @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                                                  @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                                                  @island-is/hugsmidjan
@@ -226,7 +232,7 @@ codemagic.yaml                                                                  
 /libs/clients/regulations/                                                                                                   @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                                      @island-is/hugsmidjan @island-is/stefna
 /libs/clients/vehicles-mileage/                                                                                              @island-is/hugsmidjan
-/libs/clients/user-notification/                                                                                             @island-is/hugsmidjan
+/libs/clients/user-notification/                                                                                             @island-is/apro
 /libs/clients/passports/                                                                                                     @island-is/hugsmidjan
 /libs/clients/police-cases/                                                                                                  @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                                        @island-is/hugsmidjan
@@ -469,7 +475,6 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                                                 @island-is/origo @island-is/aranja
-/libs/clients/vehicle-service-fjs-v1/                                                                                        @island-is/origo
 
 /libs/application/templates/transport-authority/anonymity-in-vehicle-registry                                                @island-is/origo
 /libs/application/templates/transport-authority/change-co-owner-of-vehicle                                                   @island-is/origo
@@ -517,6 +522,7 @@ codemagic.yaml                                                                  
 /libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-equality-statistics/                                                                            @island-is/hugsmidjan
 /libs/api/domains/directorate-of-equality-application/                                                                       @island-is/hugsmidjan
+/libs/api/domains/directorate-of-equality/                                                                                   @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 
 /libs/application/templates/aosh/change-machine-supervisor                                                                   @island-is/origo

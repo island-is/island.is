@@ -12,11 +12,15 @@ import {
   ScopesApi,
   ScopesControllerFindCategoriesDirectionEnum,
   ScopesControllerFindTagsDirectionEnum,
+  ScopesControllerFindTagsRequestGrantorTypeEnum,
   MeDelegationsControllerFindAllDirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
 
 import { ScopeCategory } from '../models/scopeCategory.model'
 import { ScopeTag } from '../models/scopeTag.model'
+import { ScopeDelegationSettings } from '../models/scopeDelegationSettings.model'
+import { ScopeDelegationSettingsInput } from '../dto/scopeDelegationSettings.input'
+import { RequestGrantorType } from '../dto/requestGrantorType'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -25,6 +29,22 @@ export class ScopeCategoriesResolver {
 
   private scopesApiWithAuth(auth: Auth) {
     return this.scopesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  @Query(() => [ScopeDelegationSettings], {
+    name: 'authScopeDelegationSettings',
+    description:
+      'How the given scopes can be delegated: delegation types that give access and whether they can be requested.',
+  })
+  async getScopeDelegationSettings(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeDelegationSettingsInput })
+    input: ScopeDelegationSettingsInput,
+  ): Promise<ScopeDelegationSettings[]> {
+    const { scopes } = await this.scopesApiWithAuth(
+      user,
+    ).scopesControllerFindDelegationSettings({ scopes: input.scopes })
+    return scopes
   }
 
   @Query(() => [ScopeCategory], {
@@ -40,13 +60,22 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategory[]> {
     const categories = await this.scopesApiWithAuth(
       user,
     ).scopesControllerFindCategories({
       lang,
-      direction:
-        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
+      direction: requestGrantorType
+        ? ScopesControllerFindCategoriesDirectionEnum.request
+        : (direction as unknown as ScopesControllerFindCategoriesDirectionEnum),
+      requestGrantorType,
     })
 
     return categories as ScopeCategory[]
@@ -65,10 +94,21 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTag[]> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
-      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
+      direction: requestGrantorType
+        ? ScopesControllerFindTagsDirectionEnum.request
+        : (direction as unknown as ScopesControllerFindTagsDirectionEnum),
+      requestGrantorType:
+        requestGrantorType as unknown as ScopesControllerFindTagsRequestGrantorTypeEnum,
     })
 
     return tags as ScopeTag[]

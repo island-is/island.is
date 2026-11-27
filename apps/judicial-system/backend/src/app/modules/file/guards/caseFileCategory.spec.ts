@@ -1,7 +1,11 @@
 import {
+  AppealEventType,
   CaseFileCategory,
   CaseState,
   CaseType,
+  courtOfAppealsRoles,
+  DefendantEventType,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -9,7 +13,9 @@ import {
 import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
+  canUserAccessCaseFileCategory,
   getConfirmedDefendantsForDefender,
+  getDefenceUserCaseFileCategories,
   getDefenceUserVisiblePoliceCaseNumbers,
   getDefenderVisiblePoliceCaseNumbers,
   getSpokespersonVisiblePoliceCaseNumbers,
@@ -22,14 +28,24 @@ const makeDefendant = (
     id: string
     defenderNationalId: string
     isDefenderChoiceConfirmed: boolean
+    caseFilesSharedWithDefender: boolean
+    appealDefenderNationalId: string
+    isAppealDefenderConfirmed: boolean
+    isAppealDefenderWaived: boolean
     policeCaseNumbers: string[]
+    eventLogs: { eventType: DefendantEventType; created: Date }[]
   }> = {},
 ): Defendant =>
   ({
     id: overrides.id ?? 'defendant-id',
     defenderNationalId: overrides.defenderNationalId ?? null,
     isDefenderChoiceConfirmed: overrides.isDefenderChoiceConfirmed ?? false,
+    caseFilesSharedWithDefender: overrides.caseFilesSharedWithDefender ?? false,
+    appealDefenderNationalId: overrides.appealDefenderNationalId ?? null,
+    isAppealDefenderConfirmed: overrides.isAppealDefenderConfirmed ?? false,
+    isAppealDefenderWaived: overrides.isAppealDefenderWaived ?? false,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
+    eventLogs: overrides.eventLogs ?? [],
   } as unknown as Defendant)
 
 const makeCivilClaimant = (
@@ -39,6 +55,9 @@ const makeCivilClaimant = (
     caseFilesSharedWithSpokesperson: boolean
     policeCaseNumbers: string[]
     hasSpokesperson: boolean
+    hasAppealSpokesperson: boolean
+    appealSpokespersonNationalId: string
+    isAppealSpokespersonConfirmed: boolean
   }> = {},
 ): CivilClaimant =>
   ({
@@ -47,6 +66,9 @@ const makeCivilClaimant = (
     caseFilesSharedWithSpokesperson:
       overrides.caseFilesSharedWithSpokesperson ?? true,
     spokespersonNationalId: overrides.spokespersonNationalId ?? '1234567890',
+    hasAppealSpokesperson: overrides.hasAppealSpokesperson,
+    appealSpokespersonNationalId: overrides.appealSpokespersonNationalId,
+    isAppealSpokespersonConfirmed: overrides.isAppealSpokespersonConfirmed,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
   } as unknown as CivilClaimant)
 
@@ -502,6 +524,252 @@ describe('canLimitedAccessUserViewCaseFile - ruling order', () => {
   })
 })
 
+describe('getDefenceUserCaseFileCategories - appeal confirmation', () => {
+  const nationalId = '1234567890'
+
+  it('returns the full district set for a confirmed appeal defender', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+    expect(categories).toContain(
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    )
+  })
+
+  it('returns the full district set for a confirmed appeal spokesperson', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      undefined,
+      [
+        makeCivilClaimant({
+          hasAppealSpokesperson: true,
+          appealSpokespersonNationalId: nationalId,
+          isAppealSpokespersonConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('keeps the full district set for a confirmed district defender without appeal confirmation', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          defenderNationalId: nationalId,
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+    expect(categories).toContain(
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    )
+  })
+})
+
+describe('verdict appeal ruling', () => {
+  const nationalId = '1234567890'
+  const category = CaseFileCategory.VERDICT_APPEAL_RULING
+
+  it.each(courtOfAppealsRoles)('is accessible to %s', (role) => {
+    const user = {
+      role,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(true)
+  })
+
+  it.each([
+    [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+    [UserRole.PROSECUTOR, InstitutionType.PUBLIC_PROSECUTORS_OFFICE],
+    [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+    [UserRole.DEFENDER, undefined],
+  ])('is not accessible to %s at %s', (role, type) => {
+    const user = { role, institution: type ? { type } : undefined } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(false)
+  })
+
+  it('is not accessible without a user', () => {
+    expect(canUserAccessCaseFileCategory(undefined, category)).toBe(false)
+  })
+
+  it('leaves every other category alone', () => {
+    const others = Object.values(CaseFileCategory).filter(
+      (other) => other !== category,
+    )
+
+    expect(
+      others.every((other) => canUserAccessCaseFileCategory(undefined, other)),
+    ).toBe(true)
+    expect(canUserAccessCaseFileCategory(undefined, undefined)).toBe(true)
+  })
+
+  it('is not among the categories of a confirmed appeal defender', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(category)
+  })
+
+  it.each([
+    [UserRole.DEFENDER, undefined],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+  ])('cannot be viewed by limited access user %s at %s', (role, type) => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user: {
+        nationalId,
+        name: 'Limited Access User',
+        role,
+        institution: type ? { type } : undefined,
+      } as User,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: category,
+      defendants: [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(false)
+  })
+})
+
+describe('canLimitedAccessUserViewCaseFile - appeal confirmation', () => {
+  const nationalId = '1234567890'
+  const user = {
+    nationalId,
+    name: 'Appeal Defender',
+    role: UserRole.DEFENDER,
+  } as User
+
+  it('allows district case files for a confirmed appeal defender', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CASE_FILE,
+      defendants: [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('denies access when the appeal defender appointment is waived', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: true,
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('denies access when the appeal spokesperson has been removed', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      undefined,
+      [
+        makeCivilClaimant({
+          hasAppealSpokesperson: false,
+          appealSpokespersonNationalId: nationalId,
+          isAppealSpokespersonConfirmed: true,
+          hasSpokesperson: false,
+          isSpokespersonConfirmed: false,
+          caseFilesSharedWithSpokesperson: false,
+          spokespersonNationalId: '0000000000',
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('allows criminal records for the defendant the appeal defender is confirmed for', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CRIMINAL_RECORD,
+      defendantId: 'defendant-id',
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('denies criminal records for a defendant the appeal defender is not confirmed for', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CRIMINAL_RECORD,
+      defendantId: 'other-defendant-id',
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'other-defendant-id',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(false)
+  })
+})
+
 describe('isConfirmedDefenderOfSpecificDefendant', () => {
   it('should return true when user is confirmed defender of the specific defendant', () => {
     const defendants = [
@@ -547,5 +815,221 @@ describe('isConfirmedDefenderOfSpecificDefendant', () => {
     )
 
     expect(result).toBe(false)
+  })
+})
+
+describe('canLimitedAccessUserViewCaseFile - verdict appeal cutoff exemption', () => {
+  const nationalId = '1234567890'
+  const user = {
+    nationalId,
+    name: 'Defender',
+    role: UserRole.DEFENDER,
+  } as User
+  const cutoff = new Date('2024-01-10')
+  const afterCutoff = new Date('2024-02-01')
+
+  it('denies a post-cutoff co-defendant statement to a district-only dismissed defender', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: afterCutoff,
+      defendants: [
+        makeDefendant({
+          id: 'own-defendant',
+          defenderNationalId: nationalId,
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+          eventLogs: [
+            {
+              eventType: DefendantEventType.INDICTMENT_DISMISSED,
+              created: cutoff,
+            },
+          ],
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          defenderNationalId: '9999999999',
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+        }),
+      ],
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'co-defendant',
+          created: afterCutoff,
+        },
+      ],
+    })
+
+    expect(canView).toBe(false)
+  })
+
+  it('allows a post-cutoff co-defendant statement to a confirmed appeal advocate', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: afterCutoff,
+      defendants: [
+        makeDefendant({
+          id: 'own-defendant',
+          defenderNationalId: nationalId,
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+          eventLogs: [
+            {
+              eventType: DefendantEventType.INDICTMENT_DISMISSED,
+              created: cutoff,
+            },
+          ],
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          defenderNationalId: '9999999999',
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+        }),
+      ],
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'co-defendant',
+          created: afterCutoff,
+        },
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+})
+
+describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () => {
+  const nationalId = '1234567890'
+  const user = {
+    nationalId,
+    name: 'Appeal Defender',
+    role: UserRole.DEFENDER,
+  } as User
+  const filedAt = new Date('2024-02-01T12:00:00Z')
+  const beforeFiling = new Date('2024-02-01T11:00:00Z')
+  const afterFiling = new Date('2024-02-01T13:00:00Z')
+
+  it('allows the confirmed appeal advocate to see their own incomplete statement', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'defendant-id',
+      fileCreated: beforeFiling,
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+      appealEventLogs: [],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('hides a co-defendant incomplete statement until APPEAL_STATEMENT_SENT', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: beforeFiling,
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+      appealEventLogs: [],
+    })
+
+    expect(canView).toBe(false)
+  })
+
+  it('shows a co-defendant statement filed on or before APPEAL_STATEMENT_SENT', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: beforeFiling,
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'co-defendant',
+          created: filedAt,
+        },
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('hides a co-defendant orphan upload created after APPEAL_STATEMENT_SENT', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: afterFiling,
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'co-defendant',
+          created: filedAt,
+        },
+      ],
+    })
+
+    expect(canView).toBe(false)
   })
 })

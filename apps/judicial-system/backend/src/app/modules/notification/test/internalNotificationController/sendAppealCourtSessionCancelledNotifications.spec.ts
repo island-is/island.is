@@ -147,13 +147,13 @@ describe('InternalNotificationController - Send appeal court session cancelled n
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Þinghald fellt niður í máli ${appealCaseNumber}`,
-          html: `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}</a>.`,
+          html: `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
 
     it('should tell the defence, pointing at the defender view', () => {
-      const defenderHtml = `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}">${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}</a>.`
+      const defenderHtml = `${expectedDetails}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({

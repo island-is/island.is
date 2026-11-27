@@ -40,14 +40,15 @@ export const createAppealSummons = (
   issuer: AppealSummonsPdfIssuer,
   confirmation?: Confirmation,
   issuedDate?: Date,
+  caseName?: string | null,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
-      top: 40,
-      bottom: 60,
-      left: 50,
-      right: 50,
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
     },
     bufferPages: true,
   })
@@ -86,8 +87,11 @@ export const createAppealSummons = (
   addHugeHeading(doc, APPEAL_SUMMONS_TITLE, 'Times-Bold')
   addEmptyLines(doc)
 
-  const defendantNames = (theCase.defendants ?? []).map(
-    (defendant) => defendant.name,
+  // Style-of-cause fallback names only the defendants on this summons, not
+  // every defendant on the case (a partial appeal must not name the others).
+  const defendantNames = defendants.map(
+    (row) =>
+      theCase.defendants?.find((item) => item.id === row.defendantId)?.name,
   )
   const closingDate = issuedDate ?? confirmation?.date ?? nowFactory()
 
@@ -108,6 +112,7 @@ export const createAppealSummons = (
         rulingDate: theCase.rulingDate,
         courtCaseNumber: theCase.courtCaseNumber,
         defendantNames,
+        caseName,
       }),
       'Times-Roman',
     )

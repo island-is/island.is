@@ -4,7 +4,9 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealEventType,
   HashAlgorithm,
   InstitutionType,
@@ -15,6 +17,7 @@ import {
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
 import { getCaseFileHash } from '../../../formatters'
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { PdfService } from '../../case'
 import {
   AppealCase,
@@ -24,6 +27,8 @@ import {
   Case,
 } from '../../repository'
 import { AppealSummonsController } from '../appealSummons.controller'
+
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 
 describe('AppealSummonsController - Confirm', () => {
   const caseId = uuid()
@@ -41,9 +46,10 @@ describe('AppealSummonsController - Confirm', () => {
     },
   } as User
 
+  const caseName = 'Ákæruvaldið gegn Jóni Jónssyni'
   const theCase = {
     id: caseId,
-    verdictAppealCase: { id: appealCaseId } as AppealCase,
+    verdictAppealCase: { id: appealCaseId, caseName } as AppealCase,
   } as Case
 
   const draft = {
@@ -83,6 +89,7 @@ describe('AppealSummonsController - Confirm', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
+    ;(queueMessagesAfterCommit as jest.Mock).mockClear()
   })
 
   it('confirms a draft, freezes the hash and logs the event', async () => {
@@ -147,13 +154,13 @@ describe('AppealSummonsController - Confirm', () => {
       user,
       afterConfirm,
       undefined,
-      { cacheInS3: false },
+      { cacheInS3: false, caseName },
     )
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenNthCalledWith(
       2,
       summonsId,
       caseId,
-      { hash, hashAlgorithm: HashAlgorithm.SHA256 },
+      { hash, hashAlgorithm: HashAlgorithm.SHA256, caseName },
       { transaction },
     )
     expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
@@ -170,6 +177,15 @@ describe('AppealSummonsController - Confirm', () => {
       },
       { transaction },
     )
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_SUMMONS_CONFIRMED,
+      },
+    })
     expect(transaction.afterCommit).toHaveBeenCalled()
     expect(mockPdfService.uploadAppealSummonsPdf).toHaveBeenCalledWith(
       theCase,

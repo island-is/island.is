@@ -3,7 +3,7 @@ import { useTheme } from 'styled-components'
 import { isAndroid } from '../../utils/devices'
 
 export const LoadingIcon = () => {
-  const { color, spacing } = useTheme()
+  const { tokens, spacing } = useTheme()
 
   return (
     <View
@@ -14,7 +14,7 @@ export const LoadingIcon = () => {
     >
       <ActivityIndicator
         size="small"
-        color={color.blue400}
+        color={tokens.interactive.foreground.primary}
         {...(isAndroid && {
           style: { marginVertical: spacing[1], paddingRight: spacing[1] },
         })}

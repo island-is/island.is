@@ -23,6 +23,18 @@ export enum AppealCaseType {
   VERDICT = 'VERDICT',
 }
 
+// How far the court of appeals has come with a verdict appeal, as the court
+// itself records it. Null until the court has recorded one. It is not the
+// appeal's state: an appeal the court marks COMPLETED here is still RECEIVED
+// until it is completed through its own transition.
+export enum VerdictAppealStatus {
+  STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
+  COURT_SESSION_SCHEDULED = 'COURT_SESSION_SCHEDULED',
+  POSTPONED = 'POSTPONED',
+  UNDER_ADVISEMENT = 'UNDER_ADVISEMENT',
+  COMPLETED = 'COMPLETED',
+}
+
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
@@ -52,6 +64,14 @@ export enum AppealCaseRulingDecision {
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
   DISCONTINUED = 'DISCONTINUED',
+}
+
+// Whether the court of appeals concludes a verdict appeal with a judgment
+// (VERDICT, dómur) or with a ruling (RULING, úrskurður). The court chooses:
+// the ruling decision does not determine it. A ruling appeal has none.
+export enum AppealRulingType {
+  VERDICT = 'VERDICT',
+  RULING = 'RULING',
 }
 
 export const getStatementDeadline = (appealReceived: Date): Date => {
@@ -118,6 +138,9 @@ export const appealCorrectionLock = (
 // more than three are stored and shown as they are.
 export const APPEAL_JUDGE_COUNT = 3
 
+// The most judges the court of appeals seats on one case.
+export const MAX_APPEAL_JUDGE_COUNT = 5
+
 export interface AppealJudgeFields<U> {
   displayOrder?: number | null
   userId?: string | null
@@ -150,19 +173,6 @@ export const getPresidingAppealJudge = <U>(
   appealCase?: AppealJudgesFields<U> | null,
 ): U | undefined => getAppealJudges(appealCase)[0]
 
-// The judge at a given display order, for the fixed seats appealJudge1..3 that
-// clients not yet on appealJudges still use. Keyed by display order rather than
-// by position on the bench: a bench copied from the legacy columns can have a
-// hole (seat 2 empty, seat 3 filled), and a seat must be read and written the
-// same way or filling the hole overwrites the judge after it.
-export const getAppealJudgeInSeat = <U>(
-  appealCase?: AppealJudgesFields<U> | null,
-  seat = 0,
-): U | undefined =>
-  getOrderedAppealJudges(appealCase).find(
-    (judge) => (judge.displayOrder ?? 0) === seat,
-  )?.user ?? undefined
-
 // The user ids of the judges in bench order, read from the row's user id and
 // falling back to the loaded user.
 export const getAppealJudgeUserIds = (
@@ -171,6 +181,11 @@ export const getAppealJudgeUserIds = (
   getOrderedAppealJudges(appealCase)
     .map((judge) => judge.userId ?? judge.user?.id)
     .filter((id): id is string => Boolean(id))
+
+// Whether two benches are the same judges in the same order. A reordered
+// bench changes who presides, so it counts as a change.
+export const isSameAppealBench = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((id, index) => id === b[index])
 
 // Whether the bench is complete: at least APPEAL_JUDGE_COUNT judges are
 // registered. Counts rows rather than loaded users so an unloaded user

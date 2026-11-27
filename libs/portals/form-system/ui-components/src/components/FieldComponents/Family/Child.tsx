@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
-import { GET_FAMILY_MEMBERS } from '@island.is/form-system/graphql'
+import { FamilyTypes } from '@island.is/form-system/enums'
+import { GET_CUSTODY_CHILDREN } from '@island.is/form-system/graphql'
 import {
   Box,
   LoadingDots,
@@ -11,13 +12,16 @@ import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  isPreview?: boolean
 }
 
 type FamilyMember = {
@@ -33,44 +37,54 @@ type FamilyOption = {
 type RegistryChild = {
   nationalId: string
   fullName?: string | null
-  details?: { name?: { fullName?: string | null } | null } | null
 }
 
-export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
+type CustodyChildrenData = {
+  formSystemCustodyChildren: RegistryChild[]
+}
+
+export const Child = ({
+  item,
+  valueIndex = 0,
+  dispatch,
+  isPreview = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
-  const cached = (item.list?.length ?? 0) > 0
-  const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
-    skip: cached,
-    onCompleted: (data) => {
-      const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-        []) as RegistryChild[]
-      dispatch?.({
-        type: 'SET_FIELD_LIST',
-        payload: {
-          id: item.id,
-          list: children.map((child) => {
-            const name =
-              child.details?.name?.fullName ??
-              child.fullName ??
-              child.nationalId
-            return {
-              id: child.nationalId,
-              label: { is: name, en: name },
-              value: child.nationalId,
-              isSelected: false,
-            }
-          }),
-          placeholder: null,
-        },
-      })
+  const cached = !isPreview && (item.list?.length ?? 0) > 0
+  const { data, loading, error } = useQuery<CustodyChildrenData>(
+    GET_CUSTODY_CHILDREN,
+    {
+      skip: isPreview || cached,
+      onCompleted: (data) => {
+        const children = data.formSystemCustodyChildren
+        dispatch?.({
+          type: 'SET_FIELD_LIST',
+          payload: {
+            id: item.id,
+            list: children.map((child) => {
+              const name = child.fullName ?? child.nationalId
+              return {
+                id: child.nationalId,
+                label: { is: name, en: name },
+                value: child.nationalId,
+                isSelected: false,
+              }
+            }),
+            placeholder: null,
+          },
+        })
+      },
     },
-  })
+  )
   const fieldName = `${item.id}.${valueIndex}`
   const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
 
-  const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-    []) as RegistryChild[]
+  const children =
+    (isPreview
+      ? previewMockData[FieldTypesEnum.FAMILY][FamilyTypes.CHILD]
+      : data
+    )?.formSystemCustodyChildren ?? []
   const options: FamilyOption[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value
@@ -86,11 +100,9 @@ export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
           : [],
       )
     : children.map((child) => ({
-        label:
-          child.details?.name?.fullName ?? child.fullName ?? child.nationalId,
+        label: child.fullName ?? child.nationalId,
         value: {
-          name:
-            child.details?.name?.fullName ?? child.fullName ?? child.nationalId,
+          name: child.fullName ?? child.nationalId,
           nationalId: child.nationalId,
         },
       }))
@@ -147,8 +159,12 @@ export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
               payload: { id: item.id, value: name, valueIndex },
             })
           }}
-          hasError={Boolean(fieldState.error)}
-          errorMessage={fieldState.error?.message}
+          hasError={Boolean(error || fieldState.error)}
+          errorMessage={
+            error
+              ? formatMessage(m.basicErrorMessage)
+              : fieldState.error?.message
+          }
         />
       )}
     />

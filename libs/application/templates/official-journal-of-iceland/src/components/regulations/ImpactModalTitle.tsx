@@ -20,13 +20,27 @@ export type ImpactModalTitleProps = {
   name: string
   onChangeDate: (newDate: Date | undefined) => void
   date?: string // ISODate string from answers
+  /** The regulation's effective date, when the impact can take it */
+  defaultDate?: string
+  /** The regulation's effective date, whether or not the impact can take it */
+  regulationEffectiveDate?: string
   minDate?: Date
   readOnly?: boolean
 }
 
 export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
-  const { type, tag, title, name, onChangeDate, date, minDate, readOnly } =
-    props
+  const {
+    type,
+    tag,
+    title,
+    name,
+    onChangeDate,
+    date,
+    defaultDate,
+    regulationEffectiveDate,
+    minDate,
+    readOnly,
+  } = props
 
   return (
     <Box paddingY={4}>
@@ -64,6 +78,8 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
       )}
       <ImpactDate
         date={date}
+        defaultDate={defaultDate}
+        regulationEffectiveDate={regulationEffectiveDate}
         size="full"
         minDate={minDate}
         onChange={onChangeDate}

@@ -114,15 +114,27 @@ export const Summary = ({ state }: Props) => {
                   field.fieldType !== FieldTypesEnum.MESSAGE,
               ) ?? []
 
-            // Render only once, outside of any multiset grouping
-            const nonMultisetFields = visibleFields.filter(
-              (f) => f.isPartOfMultiset === false,
-            )
-
-            // Grouped by value index: all values[0] across fields, then values[1], ...
-            const multisetFields = visibleFields.filter(
-              (f) => f.isPartOfMultiset !== false,
-            )
+            const firstMultisetFieldIndex = screen?.isMulti
+              ? visibleFields.findIndex(
+                  (field) => field.isPartOfMultiset !== false,
+                )
+              : -1
+            const leadingFields =
+              firstMultisetFieldIndex === -1
+                ? visibleFields
+                : visibleFields.slice(0, firstMultisetFieldIndex)
+            const multisetFields =
+              firstMultisetFieldIndex === -1
+                ? []
+                : visibleFields.filter(
+                    (field) => field.isPartOfMultiset !== false,
+                  )
+            const trailingFields =
+              firstMultisetFieldIndex === -1
+                ? []
+                : visibleFields
+                    .slice(firstMultisetFieldIndex)
+                    .filter((field) => field.isPartOfMultiset === false)
 
             const numberOfItems = Math.max(
               1,
@@ -176,7 +188,7 @@ export const Summary = ({ state }: Props) => {
                       </Box>
 
                       <Box>
-                        {nonMultisetFields.map((field, index) => (
+                        {leadingFields.map((field, index) => (
                           <Box
                             key={field.id ?? `non-multi-${index}`}
                             marginBottom={1}
@@ -234,6 +246,16 @@ export const Summary = ({ state }: Props) => {
                             </Box>
                           ),
                         )}
+                        {trailingFields.map((field) => (
+                          <Box key={field.id} marginBottom={1}>
+                            <Display
+                              field={field}
+                              requiredMissing={
+                                Boolean(field.isRequired) && hasError(field, 0)
+                              }
+                            />
+                          </Box>
+                        ))}
                       </Box>
                     </GridColumn>
 

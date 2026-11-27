@@ -1,6 +1,7 @@
 import { User } from '@island.is/auth-nest-tools'
 
 import { Form } from '../forms/models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
 import { Section } from '../sections/models/section.model'
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
 import { Screen } from './models/screen.model'
@@ -33,6 +34,52 @@ describe('ScreensService.update', () => {
 
     return { service, screen }
   }
+
+  it.each([null, undefined])(
+    'preserves the name when the update contains %s',
+    async (name) => {
+      const { service, screen } = setup()
+      screen.name = { is: 'Existing screen', en: 'Existing screen' }
+      const update = Object.assign(new UpdateScreenDto(), {
+        name,
+        isMulti: false,
+        multiMax: 0,
+      })
+
+      await service.update(user, screen.id, update)
+
+      expect(screen.name).toEqual({
+        is: 'Existing screen',
+        en: 'Existing screen',
+      })
+      expect(screen).toMatchObject({ isMulti: false, multiMax: 0 })
+      expect(screen.save).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  it('preserves the name when it is omitted', async () => {
+    const { service, screen } = setup()
+    screen.name = { is: 'Existing screen', en: 'Existing screen' }
+
+    await service.update(user, screen.id, { identifier: 'new-identifier' })
+
+    expect(screen.name).toEqual({
+      is: 'Existing screen',
+      en: 'Existing screen',
+    })
+    expect(screen.identifier).toBe('new-identifier')
+    expect(screen.save).toHaveBeenCalledTimes(1)
+  })
+
+  it('allows clearing both name translations', async () => {
+    const { service, screen } = setup()
+    screen.name = { is: 'Existing screen', en: 'Existing screen' }
+
+    await service.update(user, screen.id, { name: { is: '', en: '' } })
+
+    expect(screen.name).toEqual({ is: '', en: '' })
+    expect(screen.save).toHaveBeenCalledTimes(1)
+  })
 
   it.each([null, undefined])(
     'preserves the identifier when the update contains %s',
@@ -110,4 +157,63 @@ describe('ScreensService.create', () => {
     })
     expect(screen.save).toHaveBeenCalledTimes(1)
   })
+})
+
+describe('ScreensService.delete', () => {
+  it.each([
+    { fields: [] },
+    { fields: [{ id: 'field-id', list: [{ id: 'option-id' }] }] },
+  ])(
+    'removes references to the screen and its descendants: %j',
+    async ({ fields }) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const screen = {
+        id: 'screen-id',
+        sectionId: 'section-id',
+        fields,
+        $get: jest.fn().mockResolvedValue(fields),
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }
+      const form = {
+        organizationNationalId: user.nationalId,
+        dependencies: [
+          { parentProp: 'screen-id', childProps: ['kept-id'] },
+          ...(fields.length
+            ? [{ parentProp: 'option-id', childProps: ['kept-id'] }]
+            : []),
+          {
+            parentProp: 'kept-parent',
+            childProps: [
+              'screen-id',
+              ...(fields.length ? ['field-id', 'option-id'] : []),
+              'kept-id',
+            ],
+          },
+        ],
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const service = new ScreensService(
+        {
+          findByPk: jest.fn().mockResolvedValue(screen),
+        } as unknown as typeof Screen,
+        {
+          findByPk: jest.fn().mockResolvedValue({ formId: 'form-id' }),
+        } as unknown as typeof Section,
+        {
+          findByPk: jest.fn().mockResolvedValue(form),
+        } as unknown as typeof Form,
+      )
+
+      await service.delete(user, screen.id)
+
+      expect(screen.$get).toHaveBeenCalledWith('fields', {
+        include: [ListItem],
+      })
+      expect(form.dependencies).toEqual([
+        { parentProp: 'kept-parent', childProps: ['kept-id'] },
+      ])
+      expect(form.save).toHaveBeenCalledTimes(1)
+      expect(screen.destroy).toHaveBeenCalledTimes(1)
+    },
+  )
 })

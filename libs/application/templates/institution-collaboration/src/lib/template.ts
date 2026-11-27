@@ -38,7 +38,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: m.application.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.application.institutionName,
   dataSchema,
   translationNamespaces:

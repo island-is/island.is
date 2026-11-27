@@ -6,7 +6,11 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
-import { m as ndcMessages } from '@island.is/application/templates/no-debt-certificate'
+import { getValueViaPath } from '@island.is/application/core'
+import {
+  CertificateLanguage,
+  m as ndcMessages,
+} from '@island.is/application/templates/no-debt-certificate'
 
 @Injectable()
 export class NoDebtCertificateService extends BaseTemplateApiService {
@@ -18,10 +22,14 @@ export class NoDebtCertificateService extends BaseTemplateApiService {
   }
 
   async getDebtLessCertificate({
+    application,
     auth,
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
-    const lang = currentUserLocale === 'is' ? 'IS' : 'EN'
+    const certificateLanguage =
+      getValueViaPath<string>(application.answers, 'certificateLanguage') ??
+      currentUserLocale
+    const lang = certificateLanguage === CertificateLanguage.IS ? 'IS' : 'EN'
 
     const response = await this.financeService.getDebtLessCertificate(
       auth.nationalId,

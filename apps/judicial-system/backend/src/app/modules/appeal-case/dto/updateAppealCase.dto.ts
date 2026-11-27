@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  ArrayMaxSize,
   ArrayUnique,
   IsArray,
   IsBoolean,
@@ -13,7 +14,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseRulingDecision,
+  AppealRulingType,
+  MAX_APPEAL_JUDGE_COUNT,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 export class UpdateAppealCaseDto {
@@ -21,6 +25,11 @@ export class UpdateAppealCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly appealCaseNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly caseName?: string
 
   @IsOptional()
   @IsString()
@@ -33,27 +42,10 @@ export class UpdateAppealCaseDto {
   @IsOptional()
   @IsArray()
   @ArrayUnique()
+  @ArrayMaxSize(MAX_APPEAL_JUDGE_COUNT)
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly appealJudgeIds?: string[]
-
-  // One position on the bench each, for clients that have not moved to
-  // appealJudgeIds: a slot replaces the judge at that position and leaves the
-  // rest of the bench as it is. Ignored when appealJudgeIds is present.
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge1Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge2Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge3Id?: string
 
   @IsOptional()
   @IsString()
@@ -69,6 +61,19 @@ export class UpdateAppealCaseDto {
   @IsEnum(AppealCaseRulingDecision)
   @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
   readonly appealRulingDecision?: AppealCaseRulingDecision
+
+  @IsOptional()
+  @IsEnum(AppealRulingType)
+  @ApiPropertyOptional({ enum: AppealRulingType })
+  readonly appealRulingType?: AppealRulingType
+
+  // Only a verdict appeal takes it from the court of appeals; the service
+  // rejects it on a ruling appeal, whose date is set when it is completed.
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly appealRulingDate?: Date
 
   @IsOptional()
   @Type(() => Date)
@@ -92,4 +97,10 @@ export class UpdateAppealCaseDto {
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  // Only a verdict appeal has one; the service rejects it on a ruling appeal.
+  @IsOptional()
+  @IsEnum(VerdictAppealStatus)
+  @ApiPropertyOptional({ enum: VerdictAppealStatus })
+  readonly verdictAppealStatus?: VerdictAppealStatus
 }

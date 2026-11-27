@@ -16,6 +16,7 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -25,9 +26,10 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { jwtDecode } from 'jwt-decode'
+import axios from 'axios'
 import * as kennitala from 'kennitala'
 import pick from 'lodash/pick'
-import { Op, QueryTypes } from 'sequelize'
+import { Op, QueryTypes, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
@@ -67,7 +69,10 @@ import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
 import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
+import { FileService } from '../file/file.service'
+import { getApplicationFiles } from '../../../utils/applicationFiles'
 
 @Injectable()
 export class ApplicationsService {
@@ -91,6 +96,7 @@ export class ApplicationsService {
     private readonly serviceManager: ServiceManager,
     private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
+    private readonly fileService: FileService,
   ) {}
 
   private isFakeUserAllowed(form: Form, user: User | null): boolean {
@@ -145,18 +151,37 @@ export class ApplicationsService {
 
     let newApplicationId = ''
 
-    const isTest = form.status !== FormStatus.PUBLISHED
-
     const nationalId = user.nationalId
     const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
+        const lockedForm = await this.formModel.findByPk(form.id, {
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        if (!lockedForm) {
+          throw new NotFoundException(`Form with id '${form.id}' not found`)
+        }
+        if (
+          lockedForm.isInaccessible ||
+          lockedForm.status === FormStatus.ARCHIVED
+        ) {
+          throw new ForbiddenException(
+            `Form with id '${form.id}' is inaccessible`,
+          )
+        }
+        if (lockedForm.status !== form.status) {
+          throw new ConflictException(
+            `Form with id '${form.id}' has changed status. Please try again.`,
+          )
+        }
+
         const newApplication: Application = await this.applicationModel.create(
           {
             formId: form.id,
             organizationId: form.organizationId,
-            isTest: isTest,
+            isTest: lockedForm.status !== FormStatus.PUBLISHED,
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,
@@ -367,15 +392,32 @@ export class ApplicationsService {
   }
 
   async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
+    return this.sequelize.transaction((transaction) =>
+      this.submitLocked(id, user, transaction),
+    )
+  }
+
+  private async submitLocked(
+    id: string,
+    user: User | undefined,
+    transaction: Transaction,
+  ): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const form = await this.formModel.findByPk(application.formId)
+    if (application.status !== ApplicationStatus.DRAFT) {
+      throw new ConflictException(`Application with id '${id}' is not a draft.`)
+    }
+
+    const form = await this.formModel.findByPk(application.formId, {
+      transaction,
+    })
 
     if (!form) {
       throw new NotFoundException(
@@ -400,7 +442,12 @@ export class ApplicationsService {
       }
     }
 
-    const applicationResponseDto = await this.getApplication(id, '', null)
+    const applicationResponseDto = await this.getApplication(
+      id,
+      '',
+      null,
+      transaction,
+    )
 
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
@@ -449,14 +496,17 @@ export class ApplicationsService {
 
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
-    const applicationEvent = await this.applicationEventModel.create({
-      applicationId: application.id,
-      eventType: ApplicationEvents.APPLICATION_SUBMITTED,
-      eventMessage: {
-        is: 'Umsókn móttekin',
-        en: 'Application submitted',
-      },
-    } as ApplicationEvent)
+    const applicationEvent = await this.applicationEventModel.create(
+      {
+        applicationId: application.id,
+        eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+        eventMessage: {
+          is: 'Umsókn móttekin',
+          en: 'Application submitted',
+        },
+      } as ApplicationEvent,
+      { transaction },
+    )
     if (!applicationDto.events) {
       applicationDto.events = []
     }
@@ -477,6 +527,7 @@ export class ApplicationsService {
       zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
+    // Keep the row locked through sending and saving so archiving rechecks its status.
     const success = await this.serviceManager.send(
       applicationDto,
       zendeskInstance,
@@ -484,26 +535,21 @@ export class ApplicationsService {
     )
 
     if (success) {
-      try {
-        application.status = applicationDto.status
-        application.submittedAt = applicationDto.submittedAt
-        application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
-        await application.save()
-        this.logger.info('form system application submitted', {
-          applicationId: application.id,
-          formId: form.id,
-          formSlug: form.slug,
-          organizationNationalId: applicationDto.organizationNationalId,
-          isTest: application.isTest,
-          submittedWithPayment: !user,
-          datadogEvent: 'form_system_application_submitted',
-        })
-      } catch (error) {
-        await applicationEvent.destroy()
-        throw error
-      }
+      application.status = applicationDto.status
+      application.submittedAt = applicationDto.submittedAt
+      application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
+      await application.save({ transaction })
+      this.logger.info('form system application submitted', {
+        applicationId: application.id,
+        formId: form.id,
+        formSlug: form.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: application.isTest,
+        submittedWithPayment: !user,
+        datadogEvent: 'form_system_application_submitted',
+      })
     } else {
-      await applicationEvent.destroy()
+      await applicationEvent.destroy({ transaction })
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()
@@ -592,9 +638,11 @@ export class ApplicationsService {
     applicationId: string,
     slug: string,
     user: User | null,
+    transaction?: Transaction,
   ): Promise<ApplicationResponseDto> {
     try {
       const application = await this.applicationModel.findOne({
+        transaction,
         where: { id: applicationId },
         include: [
           {
@@ -619,6 +667,7 @@ export class ApplicationsService {
         application.formId,
         applicationId,
         slug,
+        transaction,
       )
 
       if (!this.isFakeUserAllowed(form, user)) {
@@ -767,11 +816,53 @@ export class ApplicationsService {
       )
     }
 
-    const pdf = await buildApplicationPdf(response.application, locale)
+    const pdf = await this.createApplicationPdf(response.application, locale)
     return {
       base64: pdf.toString('base64'),
       filename: `${slug}-${applicationId}.pdf`,
     }
+  }
+
+  async createApplicationPdf(
+    application: ApplicationDto,
+    locale: Locale = 'is',
+  ): Promise<Buffer> {
+    const organization = application.organizationNationalId
+      ? await this.organizationModel.findOne({
+          where: { nationalId: application.organizationNationalId },
+        })
+      : null
+    if (application.organizationNationalId && !organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${application.organizationNationalId} not found`,
+      )
+    }
+    const logoUrl = organization?.logo?.is
+    let logo: Buffer | undefined
+
+    if (logoUrl) {
+      const url = getOrganizationLogoUrl(logoUrl)
+      url.searchParams.set('fm', 'png')
+      url.searchParams.set('w', '240')
+      url.searchParams.set('h', '120')
+      url.searchParams.set('fit', 'pad')
+      try {
+        const response = await axios.get<ArrayBuffer>(url.toString(), {
+          responseType: 'arraybuffer',
+          timeout: 10000,
+          maxContentLength: 5 * 1024 * 1024,
+          maxRedirects: 0,
+        })
+        logo = Buffer.from(response.data)
+      } catch (error) {
+        this.logger.warn('Failed to download organization logo for PDF', {
+          applicationId: application.id,
+          error,
+        })
+      }
+    }
+
+    return buildApplicationPdf(application, locale, logo)
   }
 
   async findAllByNationalId(
@@ -957,8 +1048,10 @@ export class ApplicationsService {
     formId: string,
     applicationId: string,
     slug: string,
+    transaction?: Transaction,
   ): Promise<Form> {
     const form = await this.formModel.findOne({
+      transaction,
       where: { id: formId },
       include: [
         {
@@ -1335,34 +1428,41 @@ export class ApplicationsService {
   }
 
   async deleteApplication(id: string, user: User): Promise<void> {
-    const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
-    })
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      const application = await this.applicationModel.findByPk(id, {
+        include: [{ model: Value, as: 'values', separate: true }],
+        transaction,
+        lock: Transaction.LOCK.UPDATE,
+      })
 
-    if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
-    }
+      if (!application) {
+        throw new NotFoundException(`Application with id '${id}' not found`)
+      }
 
-    const form = await this.formModel.findByPk(application.formId)
+      const form = await this.formModel.findByPk(application.formId, {
+        transaction,
+      })
 
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${application.formId}' not found`,
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete application '${id}'`,
+        )
+      }
+
+      const keys = getApplicationFiles(application, this.logger).map(
+        ({ key }) => key,
       )
-    }
-
-    const loginTypes = await this.getLoginTypes(user)
-    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
-    if (
-      !this.doesUserMatchApplication(application, user) ||
-      !hasRequiredDelegation
-    ) {
-      throw new ForbiddenException(
-        `User does not have permission to delete application '${id}'`,
-      )
-    }
-
-    await this.sequelize.transaction(async (transaction) => {
       await this.applicationEventModel.destroy({
         where: { applicationId: id },
         transaction,
@@ -1374,7 +1474,12 @@ export class ApplicationsService {
       })
 
       await application.destroy({ transaction })
+      return keys
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
   }
 
   async getDataFromUrl(

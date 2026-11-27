@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { setStringAsync } from 'expo-clipboard'
 import styled, { useTheme } from 'styled-components/native'
 
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 import { ViewStyle } from 'react-native'
@@ -13,13 +13,7 @@ const Host = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
 `
 const Content = styled.View`
   flex-direction: row;
@@ -41,13 +35,7 @@ const Right = styled.View`
 
 const CopyCodeContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-top-color: ${token((t) => t.border.primary)};
 `
 
 const CopyCodeButton = styled.TouchableOpacity`
@@ -58,23 +46,14 @@ const CopyCodeButton = styled.TouchableOpacity`
 
 const ValidUntil = styled.Text`
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade300,
-      light: theme.color.blue100,
-    }),
-    true,
-  )};
+  background-color: ${token((t) => t.background.brandMinimal)};
   padding: ${({ theme }) => theme.spacing[1]}px;
   overflow: hidden;
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 
   ${font({
     fontWeight: '600',
-    color: ({ theme }) => ({
-      light: theme.color.blue400,
-      dark: theme.color.blue300,
-    }),
+    color: ({ theme }) => theme.tokens.foreground.brand,
     fontSize: 12,
     lineHeight: 16,
   })};
@@ -144,7 +123,10 @@ export function AirDiscountCard({
       {credit !== 0 && (
         <CopyCodeContainer>
           <CopyCodeButton onPress={() => setStringAsync(code ?? '')}>
-            <Typography variant="heading5" color={theme.color.blue400}>
+            <Typography
+              variant="heading5"
+              color={theme.tokens.interactive.foreground.primary}
+            >
               <FormattedMessage
                 id="airDiscount.copyDiscountCode"
                 defaultMessage="Afrita kóða"

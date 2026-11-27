@@ -4,7 +4,9 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 
 import {
   AppealCaseRulingDecision,
+  AppealRulingType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -24,6 +26,11 @@ export class UpdateAppealCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly caseName?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly appealAssistantId?: string
 
@@ -33,23 +40,6 @@ export class UpdateAppealCaseInput {
   @IsArray()
   @Field(() => [ID], { nullable: true })
   readonly appealJudgeIds?: string[]
-
-  // One position on the bench each, for clients that have not moved to
-  // appealJudgeIds.
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge1Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge2Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge3Id?: string
 
   @Allow()
   @IsOptional()
@@ -63,8 +53,24 @@ export class UpdateAppealCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => AppealRulingType, { nullable: true })
+  readonly appealRulingType?: AppealRulingType
+
+  @Allow()
+  @IsOptional()
+  @IsEnum(VerdictAppealStatus)
+  @Field(() => VerdictAppealStatus, { nullable: true })
+  readonly verdictAppealStatus?: VerdictAppealStatus
+
+  @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly appealRulingModifiedHistory?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDate?: string
 
   @Allow()
   @IsOptional()

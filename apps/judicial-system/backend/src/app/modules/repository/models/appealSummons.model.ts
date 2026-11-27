@@ -16,6 +16,7 @@ import { HashAlgorithm } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
 import { AppealSummonsDefendant } from './appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from './appealSummonsServiceRecipient.model'
 import { Case } from './case.model'
 import { User } from './user.model'
 
@@ -71,6 +72,15 @@ export class AppealSummons extends Model {
   @ApiPropertyOptional({ type: Date })
   confirmedDate?: Date
 
+  /**********
+   * Style-of-cause frozen into the confirmed PDF. Written with the hash at
+   * confirm so a later change to appeal_case.case_name cannot alter these
+   * bytes if the S3 cache is missing and the PDF must be regenerated.
+   **********/
+  @Column({ type: DataType.TEXT, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  caseName?: string
+
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   sentToCourtOfAppealsDate?: Date
@@ -90,4 +100,11 @@ export class AppealSummons extends Model {
   @HasMany(() => AppealSummonsDefendant, 'appealSummonsId')
   @ApiPropertyOptional({ type: () => AppealSummonsDefendant, isArray: true })
   defendants?: AppealSummonsDefendant[]
+
+  @HasMany(() => AppealSummonsServiceRecipient, 'appealSummonsId')
+  @ApiPropertyOptional({
+    type: () => AppealSummonsServiceRecipient,
+    isArray: true,
+  })
+  services?: AppealSummonsServiceRecipient[]
 }

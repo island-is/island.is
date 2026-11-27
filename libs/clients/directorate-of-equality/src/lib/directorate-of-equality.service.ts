@@ -1,14 +1,28 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null } from '@island.is/clients/middlewares'
 import {
+  addApplicationEqualityAttachment,
+  getApplicationApiKeys,
+  getApplicationPartnerClient,
+  getApplicationPartnerClientKeys,
+  getApplicationPartnerDelegations,
+  getApplicationPartnerProviders,
+  grantApplicationPartnerDelegation,
+  issueApplicationApiKey,
+  issueApplicationPartnerClientKey,
+  revokeApplicationApiKey,
+  revokeApplicationPartnerClientKey,
+  revokeApplicationPartnerDelegation,
   analyzeApplicationSalaryReport,
   createApplicationReportDraft,
+  deleteApplicationEqualityAttachment,
   deleteApplicationReportDraft,
   editApplicationEqualityContent,
   editApplicationOutliers,
   getApplicationActiveEqualityReport,
   getApplicationBlankExcelTemplate,
+  getApplicationEqualityAttachments,
   getApplicationEqualityContentPdf,
   getApplicationCompany,
   getApplicationDraftAnalysis,
@@ -16,7 +30,10 @@ import {
   getApplicationEqualityReportTemplateDocx,
   getApplicationReport,
   getApplicationReportDraft,
+  getApplicationReportImprovementPlanPdf,
   getApplicationReportOutliers,
+  getApplicationReportPdf,
+  getApplicationReports,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
   getApplicationSalaryReportEligibility,
@@ -28,6 +45,8 @@ import {
   listApplicationDraftOutlierGroups,
   listApplicationDraftRoles,
   listApplicationDraftRolesWithSteps,
+  presignApplicationEqualityAttachment,
+  presignApplicationEqualityPlan,
   presignApplicationImportUpload,
   submitApplicationReportComment,
   submitApplicationReportDraft,
@@ -37,15 +56,29 @@ import {
   withdrawApplicationReport,
 } from '../../gen/fetch'
 import type {
+  ApiKeyDto,
+  CompanyPartnerDelegationDto,
+  CreateApiKeyDto,
+  CreatePartnerClientKeyDto,
+  GetApiKeysResponseDto,
+  GetCompanyPartnerDelegationsResponseDto,
+  GetPartnerClientKeysResponseDto,
+  GetPartnerProvidersResponseDto,
+  GrantPartnerDelegationDto,
+  IssuedApiKeyDto,
+  IssuedPartnerClientKeyDto,
+  PartnerClientDto,
+  PartnerClientKeyDto,
+  ApplicationCompanyDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
-  CompanyDto,
   CreateDraftReportDto,
   CreateReportResponseDto,
   DraftDetailDto,
   EditEqualityContentDto,
   EditOutliersDto,
   EqualityReportSummaryDto,
+  GetApplicationReportsResponseDto,
   GetDraftCriteriaResponseDto,
   GetDraftCriteriaTreeResponseDto,
   GetDraftEmployeesResponseDto,
@@ -53,11 +86,14 @@ import type {
   GetDraftOutlierGroupsResponseDto,
   GetDraftRolesResponseDto,
   GetDraftRolesWithStepsResponseDto,
+  GetReportAttachmentsResponseDto,
   GetReportOutliersResponseDto,
   ImportKeyDto,
   GetSubCriterionCatalogResponseDto,
   ParsedReportDto,
   PresignUploadResponseDto,
+  ReportAttachmentDto,
+  ReportAttachmentExtensionEnum,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
   SalaryReportEligibilityDto,
@@ -67,42 +103,28 @@ import type {
   SyncDraftDto,
   UpdateDraftDto,
 } from '../../gen/fetch'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-
-const LOGGING_CONTEXT = 'DirectorateOfEqualityClientService'
 
 @Injectable()
 export class DirectorateOfEqualityClientService {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
-
-  private async unwrap<TResponse extends { data: unknown }>(
+  private unwrap<TResponse extends { data: unknown }>(
     user: User,
     fn: () => Promise<TResponse>,
-    errorLogMessage: string,
   ) {
-    try {
-      return await data(withAuthContext(user, fn))
-    } catch (error) {
-      this.logger.error(errorLogMessage, { context: LOGGING_CONTEXT, error })
-      throw error
-    }
+    return data(withAuthContext(user, fn))
   }
 
-  async getCompany(user: User): Promise<CompanyDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationCompany(),
-      'Failed to get company data from DOE',
-    )
+  async getCompany(user: User): Promise<ApplicationCompanyDto> {
+    return this.unwrap(user, () => getApplicationCompany())
+  }
+
+  async getReports(
+    user: User,
+  ): Promise<GetApplicationReportsResponseDto | null> {
+    return dataOr404Null(withAuthContext(user, () => getApplicationReports()))
   }
 
   async getActiveEqualityReport(user: User): Promise<EqualityReportSummaryDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationActiveEqualityReport(),
-      'Failed to get active equality report',
-    )
+    return this.unwrap(user, () => getApplicationActiveEqualityReport())
   }
 
   /**
@@ -117,19 +139,11 @@ export class DirectorateOfEqualityClientService {
   async getSalaryReportEligibility(
     user: User,
   ): Promise<SalaryReportEligibilityDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationSalaryReportEligibility(),
-      'Failed to get salary report eligibility',
-    )
+    return this.unwrap(user, () => getApplicationSalaryReportEligibility())
   }
 
   async getEqualityReportTemplateDocx(user: User): Promise<Blob> {
-    return this.unwrap(
-      user,
-      () => getApplicationEqualityReportTemplateDocx(),
-      'Failed to get equality report template DOCX',
-    )
+    return this.unwrap(user, () => getApplicationEqualityReportTemplateDocx())
   }
 
   /**
@@ -144,10 +158,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<Blob | File> {
-    return this.unwrap(
-      user,
-      () => getApplicationEqualityContentPdf({ path: { providerId } }),
-      'Failed to get equality content PDF',
+    return this.unwrap(user, () =>
+      getApplicationEqualityContentPdf({ path: { providerId } }),
     )
   }
 
@@ -155,10 +167,23 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<ApplicationReportDetailDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationReport({ path: { providerId } }),
-      'Failed to get report',
+    return this.unwrap(user, () =>
+      getApplicationReport({ path: { providerId } }),
+    )
+  }
+
+  async getReportPdf(user: User, providerId: string): Promise<Blob | File> {
+    return this.unwrap(user, () =>
+      getApplicationReportPdf({ path: { providerId } }),
+    )
+  }
+
+  async getReportImprovementPlanPdf(
+    user: User,
+    providerId: string,
+  ): Promise<Blob | File> {
+    return this.unwrap(user, () =>
+      getApplicationReportImprovementPlanPdf({ path: { providerId } }),
     )
   }
 
@@ -166,10 +191,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<ApplicationReportCommentDto[]> {
-    return this.unwrap(
-      user,
-      () => getApplicationReportComments({ path: { providerId } }),
-      'Failed to get report comments',
+    return this.unwrap(user, () =>
+      getApplicationReportComments({ path: { providerId } }),
     )
   }
 
@@ -178,26 +201,75 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: EditEqualityContentDto,
   ): Promise<ApplicationReportDetailDto> {
-    return this.unwrap(
-      user,
-      () => editApplicationEqualityContent({ path: { providerId }, body }),
-      'Failed to edit equality content',
+    return this.unwrap(user, () =>
+      editApplicationEqualityContent({ path: { providerId }, body }),
+    )
+  }
+
+  // The plan PDF, uploaded like a fylgiskjal: the browser PUTs to the URL and
+  // the key goes back as `equalityReportPdfKey` on updateDraft or
+  // editEqualityContent. Single use; DMR deletes the object once stored.
+  async presignEqualityPlan(
+    user: User,
+    providerId: string,
+  ): Promise<PresignUploadResponseDto> {
+    return this.unwrap(user, () =>
+      presignApplicationEqualityPlan({ path: { providerId } }),
     )
   }
 
   async getBlankExcelTemplate(user: User): Promise<Blob | File> {
-    return this.unwrap(
-      user,
-      () => getApplicationBlankExcelTemplate(),
-      'Failed to get blank Excel template',
-    )
+    return this.unwrap(user, () => getApplicationBlankExcelTemplate())
   }
 
   async presignImportUpload(user: User): Promise<PresignUploadResponseDto> {
-    return this.unwrap(
-      user,
-      () => presignApplicationImportUpload(),
-      'Failed to presign salary report upload',
+    return this.unwrap(user, () => presignApplicationImportUpload())
+  }
+
+  // Fylgiskjöl on an EQUALITY report. The bytes never pass through here:
+  // presign hands back an S3 URL the browser PUTs to, and add registers the
+  // staged key. DMR allows changes only while the report is DRAFT or IN_REVIEW.
+  async presignEqualityAttachment(
+    user: User,
+    providerId: string,
+    extension: ReportAttachmentExtensionEnum,
+  ): Promise<PresignUploadResponseDto> {
+    return this.unwrap(user, () =>
+      presignApplicationEqualityAttachment({
+        path: { providerId },
+        body: { extension },
+      }),
+    )
+  }
+
+  async addEqualityAttachment(
+    user: User,
+    providerId: string,
+    body: { key: string; filename: string },
+  ): Promise<ReportAttachmentDto> {
+    return this.unwrap(user, () =>
+      addApplicationEqualityAttachment({ path: { providerId }, body }),
+    )
+  }
+
+  async getEqualityAttachments(
+    user: User,
+    providerId: string,
+  ): Promise<GetReportAttachmentsResponseDto> {
+    return this.unwrap(user, () =>
+      getApplicationEqualityAttachments({ path: { providerId } }),
+    )
+  }
+
+  async deleteEqualityAttachment(
+    user: User,
+    providerId: string,
+    attachmentId: string,
+  ): Promise<void> {
+    return this.unwrap(user, () =>
+      deleteApplicationEqualityAttachment({
+        path: { providerId, attachmentId },
+      }),
     )
   }
 
@@ -205,10 +277,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     key: string,
   ): Promise<ParsedReportDto> {
-    return this.unwrap(
-      user,
-      () => importApplicationSalaryReportWorkbook({ body: { key } }),
-      'Failed to import salary report workbook',
+    return this.unwrap(user, () =>
+      importApplicationSalaryReportWorkbook({ body: { key } }),
     )
   }
 
@@ -216,22 +286,14 @@ export class DirectorateOfEqualityClientService {
     user: User,
     body: SalaryAnalysisRequestDto,
   ): Promise<SalaryAnalysisResponseDto> {
-    return this.unwrap(
-      user,
-      () => analyzeApplicationSalaryReport({ body }),
-      'Failed to analyze salary report',
-    )
+    return this.unwrap(user, () => analyzeApplicationSalaryReport({ body }))
   }
 
   async submitSalaryReport(
     user: User,
     body: SubmitSalaryReportDto,
   ): Promise<CreateReportResponseDto> {
-    return this.unwrap(
-      user,
-      () => submitApplicationSalaryReport({ body }),
-      'Failed to submit salary report',
-    )
+    return this.unwrap(user, () => submitApplicationSalaryReport({ body }))
   }
 
   async getReportOutliers(
@@ -240,14 +302,11 @@ export class DirectorateOfEqualityClientService {
     page?: number,
     pageSize?: number,
   ): Promise<GetReportOutliersResponseDto> {
-    return this.unwrap(
-      user,
-      () =>
-        getApplicationReportOutliers({
-          path: { providerId },
-          query: { page, pageSize },
-        }),
-      'Failed to get report outliers',
+    return this.unwrap(user, () =>
+      getApplicationReportOutliers({
+        path: { providerId },
+        query: { page, pageSize },
+      }),
     )
   }
 
@@ -256,21 +315,15 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: EditOutliersDto,
   ): Promise<ApplicationReportDetailDto> {
-    return this.unwrap(
-      user,
-      () => editApplicationOutliers({ path: { providerId }, body }),
-      'Failed to edit outliers',
+    return this.unwrap(user, () =>
+      editApplicationOutliers({ path: { providerId }, body }),
     )
   }
 
   async getSubCriterionCatalog(
     user: User,
   ): Promise<GetSubCriterionCatalogResponseDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationSubCriterionCatalog(),
-      'Failed to get sub-criterion catalog',
-    )
+    return this.unwrap(user, () => getApplicationSubCriterionCatalog())
   }
 
   async submitReportComment(
@@ -278,10 +331,8 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: SubmitApplicationReportCommentDto,
   ): Promise<ApplicationReportCommentDto> {
-    return this.unwrap(
-      user,
-      () => submitApplicationReportComment({ path: { providerId }, body }),
-      'Failed to submit report comment',
+    return this.unwrap(user, () =>
+      submitApplicationReportComment({ path: { providerId }, body }),
     )
   }
 
@@ -289,18 +340,12 @@ export class DirectorateOfEqualityClientService {
     user: User,
     body: CreateDraftReportDto,
   ): Promise<CreateReportResponseDto> {
-    return this.unwrap(
-      user,
-      () => createApplicationReportDraft({ body }),
-      'Failed to create report draft',
-    )
+    return this.unwrap(user, () => createApplicationReportDraft({ body }))
   }
 
   async getDraft(user: User, providerId: string): Promise<DraftDetailDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationReportDraft({ path: { providerId } }),
-      'Failed to get report draft',
+    return this.unwrap(user, () =>
+      getApplicationReportDraft({ path: { providerId } }),
     )
   }
 
@@ -309,18 +354,14 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: UpdateDraftDto,
   ): Promise<DraftDetailDto> {
-    return this.unwrap(
-      user,
-      () => updateApplicationReportDraft({ path: { providerId }, body }),
-      'Failed to update report draft',
+    return this.unwrap(user, () =>
+      updateApplicationReportDraft({ path: { providerId }, body }),
     )
   }
 
   async deleteDraft(user: User, providerId: string): Promise<void> {
-    return this.unwrap(
-      user,
-      () => deleteApplicationReportDraft({ path: { providerId } }),
-      'Failed to delete report draft',
+    return this.unwrap(user, () =>
+      deleteApplicationReportDraft({ path: { providerId } }),
     )
   }
 
@@ -328,10 +369,8 @@ export class DirectorateOfEqualityClientService {
   // applicant deleted. Idempotent on WITHDRAWN; 400 once the report is decided
   // (APPROVED/DENIED/SUPERSEDED), 404 when there is no report for providerId.
   async withdrawReport(user: User, providerId: string): Promise<void> {
-    return this.unwrap(
-      user,
-      () => withdrawApplicationReport({ path: { providerId } }),
-      'Failed to withdraw report',
+    return this.unwrap(user, () =>
+      withdrawApplicationReport({ path: { providerId } }),
     )
   }
 
@@ -340,10 +379,8 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: SubmitDraftDto,
   ): Promise<CreateReportResponseDto> {
-    return this.unwrap(
-      user,
-      () => submitApplicationReportDraft({ path: { providerId }, body }),
-      'Failed to submit report draft',
+    return this.unwrap(user, () =>
+      submitApplicationReportDraft({ path: { providerId }, body }),
     )
   }
 
@@ -352,11 +389,8 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: ImportKeyDto,
   ): Promise<DraftDetailDto> {
-    return this.unwrap(
-      user,
-      () =>
-        importApplicationReportDraftWorkbook({ path: { providerId }, body }),
-      'Failed to import report draft workbook',
+    return this.unwrap(user, () =>
+      importApplicationReportDraftWorkbook({ path: { providerId }, body }),
     )
   }
 
@@ -365,10 +399,8 @@ export class DirectorateOfEqualityClientService {
     providerId: string,
     body: SyncDraftDto,
   ): Promise<void> {
-    return this.unwrap(
-      user,
-      () => syncApplicationReportDraft({ path: { providerId }, body }),
-      'Failed to sync report draft',
+    return this.unwrap(user, () =>
+      syncApplicationReportDraft({ path: { providerId }, body }),
     )
   }
 
@@ -376,10 +408,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<SalaryAnalysisResponseDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationDraftAnalysis({ path: { providerId } }),
-      'Failed to get draft analysis',
+    return this.unwrap(user, () =>
+      getApplicationDraftAnalysis({ path: { providerId } }),
     )
   }
 
@@ -387,10 +417,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<GetDraftRolesResponseDto> {
-    return this.unwrap(
-      user,
-      () => listApplicationDraftRoles({ path: { providerId } }),
-      'Failed to list draft roles',
+    return this.unwrap(user, () =>
+      listApplicationDraftRoles({ path: { providerId } }),
     )
   }
 
@@ -400,14 +428,11 @@ export class DirectorateOfEqualityClientService {
     page?: number,
     pageSize?: number,
   ): Promise<GetDraftEmployeesResponseDto> {
-    return this.unwrap(
-      user,
-      () =>
-        listApplicationDraftEmployees({
-          path: { providerId },
-          query: { page, pageSize },
-        }),
-      'Failed to list draft employees',
+    return this.unwrap(user, () =>
+      listApplicationDraftEmployees({
+        path: { providerId },
+        query: { page, pageSize },
+      }),
     )
   }
 
@@ -415,10 +440,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<GetDraftCriteriaResponseDto> {
-    return this.unwrap(
-      user,
-      () => listApplicationDraftCriteria({ path: { providerId } }),
-      'Failed to list draft criteria',
+    return this.unwrap(user, () =>
+      listApplicationDraftCriteria({ path: { providerId } }),
     )
   }
 
@@ -426,10 +449,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<GetDraftRolesWithStepsResponseDto> {
-    return this.unwrap(
-      user,
-      () => listApplicationDraftRolesWithSteps({ path: { providerId } }),
-      'Failed to list draft roles with steps',
+    return this.unwrap(user, () =>
+      listApplicationDraftRolesWithSteps({ path: { providerId } }),
     )
   }
 
@@ -439,14 +460,11 @@ export class DirectorateOfEqualityClientService {
     page?: number,
     pageSize?: number,
   ): Promise<GetDraftEmployeesWithStepsResponseDto> {
-    return this.unwrap(
-      user,
-      () =>
-        listApplicationDraftEmployeesWithSteps({
-          path: { providerId },
-          query: { page, pageSize },
-        }),
-      'Failed to list draft employees with steps',
+    return this.unwrap(user, () =>
+      listApplicationDraftEmployeesWithSteps({
+        path: { providerId },
+        query: { page, pageSize },
+      }),
     )
   }
 
@@ -454,10 +472,8 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<GetDraftCriteriaTreeResponseDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationDraftCriteriaTree({ path: { providerId } }),
-      'Failed to get draft criteria tree',
+    return this.unwrap(user, () =>
+      getApplicationDraftCriteriaTree({ path: { providerId } }),
     )
   }
 
@@ -465,10 +481,77 @@ export class DirectorateOfEqualityClientService {
     user: User,
     providerId: string,
   ): Promise<GetDraftOutlierGroupsResponseDto> {
-    return this.unwrap(
-      user,
-      () => listApplicationDraftOutlierGroups({ path: { providerId } }),
-      'Failed to list draft outlier groups',
+    return this.unwrap(user, () =>
+      listApplicationDraftOutlierGroups({ path: { providerId } }),
+    )
+  }
+
+  async getPartnerClient(user: User): Promise<PartnerClientDto> {
+    return this.unwrap(user, () => getApplicationPartnerClient())
+  }
+
+  async getApiKeys(user: User): Promise<GetApiKeysResponseDto> {
+    return this.unwrap(user, () => getApplicationApiKeys())
+  }
+
+  async issueApiKey(
+    user: User,
+    body: CreateApiKeyDto,
+  ): Promise<IssuedApiKeyDto> {
+    return this.unwrap(user, () => issueApplicationApiKey({ body }))
+  }
+
+  async revokeApiKey(user: User, id: string): Promise<ApiKeyDto> {
+    return this.unwrap(user, () => revokeApplicationApiKey({ path: { id } }))
+  }
+
+  async getPartnerClientKeys(
+    user: User,
+  ): Promise<GetPartnerClientKeysResponseDto> {
+    return this.unwrap(user, () => getApplicationPartnerClientKeys())
+  }
+
+  async issuePartnerClientKey(
+    user: User,
+    body: CreatePartnerClientKeyDto,
+  ): Promise<IssuedPartnerClientKeyDto> {
+    return this.unwrap(user, () => issueApplicationPartnerClientKey({ body }))
+  }
+
+  async revokePartnerClientKey(
+    user: User,
+    id: string,
+  ): Promise<PartnerClientKeyDto> {
+    return this.unwrap(user, () =>
+      revokeApplicationPartnerClientKey({ path: { id } }),
+    )
+  }
+
+  async getPartnerProviders(
+    user: User,
+  ): Promise<GetPartnerProvidersResponseDto> {
+    return this.unwrap(user, () => getApplicationPartnerProviders())
+  }
+
+  async getPartnerDelegations(
+    user: User,
+  ): Promise<GetCompanyPartnerDelegationsResponseDto> {
+    return this.unwrap(user, () => getApplicationPartnerDelegations())
+  }
+
+  async grantPartnerDelegation(
+    user: User,
+    body: GrantPartnerDelegationDto,
+  ): Promise<CompanyPartnerDelegationDto> {
+    return this.unwrap(user, () => grantApplicationPartnerDelegation({ body }))
+  }
+
+  async revokePartnerDelegation(
+    user: User,
+    id: string,
+  ): Promise<CompanyPartnerDelegationDto> {
+    return this.unwrap(user, () =>
+      revokeApplicationPartnerDelegation({ path: { id } }),
     )
   }
 }

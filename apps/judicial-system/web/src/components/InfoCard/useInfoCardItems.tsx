@@ -15,6 +15,7 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  getAppealJudges,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -26,6 +27,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
+  AppealCase,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -33,6 +35,7 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getVerdictAppealRulingDecisionLabel } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealSummary/VerdictAppealSummary.logic'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
@@ -47,7 +50,6 @@ import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
 import type { Item } from './InfoCard'
-import { getCaseDefenderFallback } from './useInfoCardItems.logic'
 import { strings } from './useInfoCardItems.strings'
 import * as styles from './InfoCard.css'
 
@@ -55,7 +57,14 @@ type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
 
 // Semantic heading level for the item titles built here. The visual size stays
 // h4 so only the level exposed to assistive technology changes.
-const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
+//
+// `appealCase` names the appeal the Court of Appeals items describe. Left
+// undefined, the appeal is resolved from the query string; null means there is
+// no appeal to describe.
+const useInfoCardItems = (
+  titleAs: HeadingLevel = 'h4',
+  appealCase?: AppealCase | null,
+) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
@@ -63,7 +72,10 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   // and an appeal of each ruling order at once, and the Court of Appeals opens
   // one page per appeal, naming it in the query string. Falls back to the case
   // level appeal, which is what every page without that query string wants.
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  // A page that knows its appeal passes it instead.
+  const appealCaseFromQuery = useTargetAppealCaseByAppealCaseId()
+  const targetAppealCase =
+    appealCase === undefined ? appealCaseFromQuery : appealCase
 
   const defendants = ({
     caseType,
@@ -91,14 +103,23 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
         <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
-              ? formatMessage(core.defendant, {
-                  suffix: isMultipleDefendants ? 'ar' : 'i',
-                })
+              ? formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  {
+                    suffix: isMultipleDefendants ? 'ar' : 'i',
+                  },
+                )
               : isMultipleDefendants
-              ? formatMessage(core.indictmentDefendants)
-              : formatMessage(core.indictmentDefendant, {
-                  gender: getDefaultDefendantGender(defendants),
-                }),
+              ? core.indictmentDefendants
+              : formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  {
+                    gender: getDefaultDefendantGender(defendants),
+                  },
+                ),
           )}
         </Text>
       ),
@@ -116,7 +137,6 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
                     defendant={defendant}
                     courtId={workingCase.court?.id}
                     defender={{
-                      ...getCaseDefenderFallback(workingCase),
                       sessionArrangement: workingCase.sessionArrangements,
                     }}
                     displayAppealExpirationInfo={displayAppealExpirationInfo}
@@ -170,9 +190,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     onClick?: () => void,
   ): Item => ({
     id: 'prosecutor-item',
-    title: isRequestCase(caseType)
-      ? formatMessage(core.prosecutorPerson)
-      : strings.prosecutor,
+    title: isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     values: [
       RenderPersonalData({
         name: workingCase.prosecutor?.name,
@@ -190,20 +208,20 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const policeCaseNumbers: Item = {
     id: 'police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       workingCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   }
 
   const court: Item = {
     id: 'court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [workingCase.court?.name || ''],
   }
 
   const courtCaseNumber: Item = {
     id: 'court-case-number-item',
-    title: formatMessage(core.courtCaseNumber),
+    title: core.courtCaseNumber,
     values: [workingCase.courtCaseNumber],
   }
 
@@ -224,7 +242,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const judge: Item = {
     id: 'judges-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [
       RenderPersonalData({
         name: workingCase.judge?.name,
@@ -235,13 +253,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const caseType: Item = {
     id: 'case-type-item',
-    title: formatMessage(core.caseType),
+    title: core.caseType,
     values: [capitalize(formatCaseType(workingCase.type))],
   }
 
   const registrar: Item = {
     id: 'registrar-item',
-    title: formatMessage(core.registrar),
+    title: core.registrar,
     values: [
       RenderPersonalData({
         name: workingCase.registrar?.name,
@@ -304,7 +322,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCasePoliceCaseNumbers = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-police-case-number-item',
-    title: formatMessage(core.policeCaseNumber),
+    title: core.policeCaseNumber,
     values:
       mergedCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   })
@@ -336,13 +354,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCaseJudge = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-judge-item',
-    title: formatMessage(core.judge),
+    title: core.judge,
     values: [mergedCase.judge?.name],
   })
 
   const mergedCaseCourt = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-item',
-    title: formatMessage(core.court),
+    title: core.court,
     values: [mergedCase.court?.name],
   })
 
@@ -401,30 +419,34 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
-    title: formatMessage(core.appealCaseNumberHeading),
+    title: core.appealCaseNumberHeading,
     values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
-    title: formatMessage(core.appealAssistantHeading),
+    title: core.appealAssistantHeading,
     values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
     id: 'appeal-judges-item',
-    title: formatMessage(core.appealJudgesHeading),
+    title: core.appealJudgesHeading,
     values: [
       <>
-        {sortByIcelandicAlphabet([
-          targetAppealCase?.appealJudge1?.name || '',
-          targetAppealCase?.appealJudge2?.name || '',
-          targetAppealCase?.appealJudge3?.name || '',
-        ]).map((judge, index) => (
+        {sortByIcelandicAlphabet(
+          getAppealJudges(targetAppealCase).map((judge) => judge.name || ''),
+        ).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
       </>,
     ],
+  }
+
+  const appealRulingDecision: Item = {
+    id: 'appeal-ruling-decision-item',
+    title: 'Lyktir',
+    values: [getVerdictAppealRulingDecisionLabel(targetAppealCase)],
   }
 
   const indictmentReviewer: Item = {
@@ -474,10 +496,16 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const parentCaseValidToDate: Item = {
     id: 'parent-case-valid-to-date-item',
     title: workingCase.parentCase
-      ? formatMessage(core.pastRestrictionCase, {
-          caseType: workingCase.type,
-        })
-      : formatMessage(core.arrestDate),
+      ? formatMessage(
+          {
+            id: core.pastRestrictionCase,
+            defaultMessage: core.pastRestrictionCase,
+          },
+          {
+            caseType: workingCase.type,
+          },
+        )
+      : core.arrestDate,
     values: [
       workingCase.parentCase
         ? `${capitalize(
@@ -607,6 +635,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    appealRulingDecision,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,

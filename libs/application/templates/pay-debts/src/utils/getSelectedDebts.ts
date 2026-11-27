@@ -14,31 +14,26 @@ export const getAmountToPay = (
     : Math.min(Math.max(amount, 1), debt.debts)
 }
 
-export const getSelectedDebts = (application: Application): SelectedDebt[] => {
-  const selectedFlags =
-    getValueViaPath<boolean[]>(application.answers, 'selectedDebts') ?? []
-  const payIds =
-    getValueViaPath<string[]>(application.answers, 'selectedDebtIds') ?? []
-  const amountsToPay =
-    getValueViaPath<string[]>(application.answers, 'debtsToPay') ?? []
+export const pickSelectedDebts = (
+  debts: CustomerDebt[],
+  selectedFlags?: boolean[],
+  payIds?: string[],
+): SelectedDebt[] => {
+  const selectedPayIds = new Set(
+    (payIds ?? []).filter((_payId, index) => selectedFlags?.[index]),
+  )
 
-  const amountByPayId = new Map<string, string | undefined>()
-  payIds.forEach((payId, index) => {
-    if (selectedFlags[index]) {
-      amountByPayId.set(payId, amountsToPay[index])
-    }
-  })
-
-  return getDebts(application).reduce<SelectedDebt[]>((selected, debt) => {
-    if (!amountByPayId.has(debt.payID)) {
-      return selected
-    }
-
-    selected.push({ ...debt, amountToPay: debt.debts })
-
-    return selected
-  }, [])
+  return debts
+    .filter((debt) => selectedPayIds.has(debt.payID))
+    .map((debt) => ({ ...debt, amountToPay: debt.debts }))
 }
+
+export const getSelectedDebts = (application: Application): SelectedDebt[] =>
+  pickSelectedDebts(
+    getDebts(application),
+    getValueViaPath<boolean[]>(application.answers, 'selectedDebts'),
+    getValueViaPath<string[]>(application.answers, 'selectedDebtIds'),
+  )
 
 export const getDebtPaymentItems = (application: Application) =>
   getSelectedDebts(application).map((debt) => ({

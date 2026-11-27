@@ -1,4 +1,5 @@
 import { AppealEventType } from './eventLog'
+import { UserRole } from './user'
 
 // The party a statement deadline belongs to: a defendant, a civil claimant,
 // or - when neither is named - the prosecution. The same shape the appeal
@@ -22,21 +23,38 @@ export const findAppealStatementDeadline = <T extends AppealStatementParty>(
 ): T | undefined =>
   deadlines?.find((deadline) => isSameAppealStatementParty(deadline, party))
 
+export interface AppealStatementEvent extends AppealStatementParty {
+  eventType?: string | null
+  userRole?: string | null
+  created?: string | Date | null
+}
+
+// The events backfilled from the appeal case's legacy statement dates name
+// no party at all; a defender's is told by the role it carries.
+const isLegacyDefenderEvent = (eventLog: AppealStatementEvent): boolean =>
+  !eventLog.defendantId &&
+  !eventLog.civilClaimantId &&
+  eventLog.userRole === UserRole.DEFENDER
+
+// The APPEAL_STATEMENT_SENT row for this party, if any. Used as the filed
+// gate and as the cutoff so a later orphan upload is not treated as part of
+// that filing.
+export const findFiledAppealStatementEvent = (
+  eventLogs: AppealStatementEvent[] | null | undefined,
+  party: AppealStatementParty,
+): AppealStatementEvent | undefined =>
+  eventLogs?.find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+      isSameAppealStatementParty(eventLog, party) &&
+      !isLegacyDefenderEvent(eventLog),
+  )
+
 // Whether the party has filed its statement in the appeal, read from the
 // event the statement upload writes. A row naming no party is the
-// prosecution's; a court user uploading on a party's behalf, when that
-// arrives, has to name the party the same way.
+// prosecution's, unless it is a legacy defender's; a court user uploading on
+// a party's behalf names the party the same way.
 export const hasFiledAppealStatement = (
-  eventLogs:
-    | (AppealStatementParty & { eventType?: string | null })[]
-    | null
-    | undefined,
+  eventLogs: AppealStatementEvent[] | null | undefined,
   party: AppealStatementParty,
-): boolean =>
-  Boolean(
-    eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
-        isSameAppealStatementParty(eventLog, party),
-    ),
-  )
+): boolean => Boolean(findFiledAppealStatementEvent(eventLogs, party))

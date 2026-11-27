@@ -9,10 +9,11 @@ import {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 
-import { Breakdown, DescriptionText } from '../..'
+import Breakdown from '../../Breakdown/Breakdown'
+import DescriptionText from '../../DescriptionText/DescriptionText'
 import { ApproveOptions, ExternalData, FAApplication } from '../../../lib/types'
 import { aidAmount as aidAmountMessages } from '../../../lib/messages'
-import { findFamilyStatus } from '../../..'
+import { findFamilyStatus } from '../../../lib/utils'
 
 interface EstimationProps {
   application: FAApplication
@@ -34,9 +35,10 @@ export const Estimation = ({ application, municipality }: EstimationProps) => {
   }
 
   const aidAmount = useMemo(() => {
-    if (application.answers.homeCircumstances.type && municipality.data) {
+    const homeCircumstances = application.answers?.homeCircumstances?.type
+    if (homeCircumstances && municipality.data) {
       return aidCalculator(
-        application.answers.homeCircumstances.type,
+        homeCircumstances,
         getAidType()
           ? municipality.data.individualAid
           : municipality.data.cohabitationAid,

@@ -18,6 +18,8 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   investigationCases,
+  isInvestigationCase,
+  isRestrictionCase,
   PunishmentType,
   RequestSharedWithDefender,
   restrictionCases,
@@ -34,6 +36,7 @@ import { AppealEventLog } from '../models/appealEventLog.model'
 import { AppealStatementDeadline } from '../models/appealStatementDeadline.model'
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -55,6 +58,17 @@ import { User } from '../models/user.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
 import { UpdateDateLog } from '../services/dateLogRepository.service'
+
+// The assistant of an appeal case, as a user. Every appeal case include loads
+// it along with the bench, so an appeal case read anywhere carries both.
+// Built per use: Sequelize records the parent on an include object, so one
+// object shared by sibling appeal case includes joins the institution against
+// whichever sibling claimed it last.
+export const appealAssistantInclude = (): Includeable => ({
+  model: User,
+  as: 'appealAssistant',
+  include: [{ model: Institution, as: 'institution' }],
+})
 
 // The bench of an appeal case, presiding judge first. Every appeal case include
 // loads it, whatever kind of appeal the case is.
@@ -85,11 +99,7 @@ export const caseInclude: Includeable[] = [
     as: 'appealCase',
     required: false,
     include: [
-      {
-        model: User,
-        as: 'appealAssistant',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -105,6 +115,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -132,6 +143,13 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
@@ -153,16 +171,22 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
-        // Most recently booked first, so the session the court has just
-        // called is at the top of the list rather than wherever its date
-        // falls.
-        order: [['created', 'DESC']],
+        // Earliest session first, like a calendar, the order the court's list
+        // and the parties' agenda card both read in.
+        order: [['sessionDate', 'ASC']],
         separate: true,
       },
       {
@@ -180,11 +204,7 @@ export const caseInclude: Includeable[] = [
     required: false,
     separate: true,
     include: [
-      {
-        model: User,
-        as: 'appealAssistant',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -421,7 +441,14 @@ export const caseInclude: Includeable[] = [
       {
         model: Defendant,
         as: 'defendants',
-        attributes: ['id', 'defenderNationalId', 'isDefenderChoiceConfirmed'],
+        attributes: [
+          'id',
+          'defenderNationalId',
+          'isDefenderChoiceConfirmed',
+          'appealDefenderNationalId',
+          'isAppealDefenderConfirmed',
+          'isAppealDefenderWaived',
+        ],
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -434,6 +461,9 @@ export const caseInclude: Includeable[] = [
           'hasSpokesperson',
           'spokespersonNationalId',
           'isSpokespersonConfirmed',
+          'hasAppealSpokesperson',
+          'appealSpokespersonNationalId',
+          'isAppealSpokespersonConfirmed',
         ],
         required: false,
         order: [['created', 'ASC']],
@@ -473,6 +503,16 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'DESC']],
             separate: true,
           },
+          // Needed when MergedCaseExistsGuard swaps request.case: defence
+          // visibility filters use defendant.policeCaseNumbers (virtual over
+          // these rows). Without them the filter sees an empty assignment
+          // list and permits every police case number on the merged case.
+          {
+            model: CaseDefendantPoliceCaseNumber,
+            as: 'caseDefendantPoliceCaseNumbers',
+            required: false,
+            separate: true,
+          },
         ],
         separate: true,
       },
@@ -484,6 +524,9 @@ export const caseInclude: Includeable[] = [
           'hasSpokesperson',
           'spokespersonNationalId',
           'isSpokespersonConfirmed',
+          'hasAppealSpokesperson',
+          'appealSpokespersonNationalId',
+          'isAppealSpokespersonConfirmed',
         ],
         required: false,
         order: [['created', 'ASC']],
@@ -530,6 +573,7 @@ export const caseInclude: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.COURT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
           },
@@ -578,7 +622,9 @@ export const caseInclude: Includeable[] = [
       {
         // A split case takes the civil claimants that applied to the defendant
         // who left with it, so a spokesperson can be a confirmed party here.
-        // The attributes are the ones that decide whether they may open it.
+        // District and appeal confirmation fields both matter: the zip route
+        // loads this include via CaseExistsGuard and judges split files against
+        // the split case's parties.
         model: CivilClaimant,
         as: 'civilClaimants',
         attributes: [
@@ -586,6 +632,9 @@ export const caseInclude: Includeable[] = [
           'hasSpokesperson',
           'spokespersonNationalId',
           'isSpokespersonConfirmed',
+          'hasAppealSpokesperson',
+          'appealSpokespersonNationalId',
+          'isAppealSpokespersonConfirmed',
         ],
         required: false,
         order: [['created', 'ASC']],
@@ -609,6 +658,7 @@ export const caseInclude: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.COURT_CASE_FILE,
             ],
           },
           created: { [Op.lt]: col('Case.created') },
@@ -622,7 +672,8 @@ export const caseInclude: Includeable[] = [
 // A case is archivable ninety days after it stopped being worked on - the
 // window is measured by the database's own clock, so it does not depend on
 // when the archiving job happens to run.
-const archiveLifetime = literal('current_date - 90')
+const archiveLifetimeDays = 90
+const archiveLifetime = literal(`current_date - ${archiveLifetimeDays}`)
 
 // Which cases have outlived their retention window: request and investigation
 // cases that were deleted, ones that never got past the court, and ones whose
@@ -630,6 +681,14 @@ const archiveLifetime = literal('current_date - 90')
 export const archivableCaseWhere: WhereOptions = {
   [Op.and]: [
     { isArchived: false },
+    // A super admin can keep a case alive past its regular lifetime. The date
+    // only ever postpones archiving - the regular window below still applies.
+    {
+      [Op.or]: [
+        { archiveNotBefore: null },
+        { archiveNotBefore: { [Op.lt]: literal('current_timestamp') } },
+      ],
+    },
     {
       [Op.or]: [
         {
@@ -684,6 +743,60 @@ export const archivableCaseWhere: WhereOptions = {
   ],
 }
 
+// When the regular lifetime of a request case runs out, by the same rules as
+// archivableCaseWhere - keep the two in step. Those rules compare against
+// whole days, so a case is first archived at the start of the day that follows
+// the last day of its window. Undefined when those rules never
+// archive the case: an indictment, a deleted case (archived at once rather
+// than after a window) or a completed case missing the date its window is
+// measured from.
+export const getRegularArchiveDate = (
+  theCase: Pick<
+    Case,
+    'type' | 'state' | 'created' | 'rulingDate' | 'validToDate'
+  >,
+): Date | undefined => {
+  const isRestriction = isRestrictionCase(theCase.type)
+
+  if (!isRestriction && !isInvestigationCase(theCase.type)) {
+    return undefined
+  }
+
+  let windowStart: Date | undefined
+
+  switch (theCase.state) {
+    case CaseState.NEW:
+    case CaseState.DRAFT:
+    case CaseState.SUBMITTED:
+    case CaseState.RECEIVED:
+      windowStart = theCase.created
+      break
+    case CaseState.REJECTED:
+    case CaseState.DISMISSED:
+      windowStart = theCase.rulingDate
+      break
+    case CaseState.ACCEPTED:
+      windowStart = isRestriction ? theCase.validToDate : theCase.rulingDate
+      break
+    default:
+      windowStart = undefined
+  }
+
+  if (!windowStart) {
+    return undefined
+  }
+
+  const start = new Date(windowStart)
+
+  return new Date(
+    Date.UTC(
+      start.getUTCFullYear(),
+      start.getUTCMonth(),
+      start.getUTCDate() + archiveLifetimeDays + 1,
+    ),
+  )
+}
+
 // Everything the archive is built from: every model that carries an encrypted
 // property is read here, because the same transaction writes the archive and
 // clears those properties off the live rows.
@@ -705,10 +818,10 @@ export const archivableCaseInclude: Includeable[] = [
   { model: AppealDecision, as: 'appealDecisions' },
 ]
 
-// The archived children are stored as arrays of property values carrying no ids
-// of their own, so a child's position is its only identity - this order is the
-// order they are written to the archive in, and the order any future restore
-// would have to assume. Nothing in this codebase reads the archive back.
+// Archives written before row ids were added store the children as arrays of
+// property values carrying no ids of their own, so a child's position is its
+// only identity - this order is the order they are written to the archive in,
+// and the order a restore has to read them back in.
 export const archivableCaseOrder: Order = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'displayOrder', 'ASC'],
@@ -977,11 +1090,6 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'indictmentSubtypes',
   'state',
   'policeCaseNumbers',
-  'defenderName',
-  'defenderNationalId',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'requestSharedWithDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -1000,6 +1108,9 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'courtRecordSignatoryId',
   'courtRecordSignatureDate',
   'parentCaseId',
+  // CaseInterceptor → findOriginalAncestorId reads this FK off the loaded
+  // case. Without it, split indictments resolve to themselves for defenders.
+  'splitCaseId',
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
@@ -1021,6 +1132,9 @@ const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
   'id',
   'defenderNationalId',
   'isDefenderChoiceConfirmed',
+  'appealDefenderNationalId',
+  'isAppealDefenderConfirmed',
+  'isAppealDefenderWaived',
 ]
 
 const mergedCaseDefendantAttributes: (keyof Defendant)[] = [
@@ -1033,10 +1147,56 @@ const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
   'hasSpokesperson',
   'spokespersonNationalId',
   'isSpokespersonConfirmed',
+  'hasAppealSpokesperson',
+  'appealSpokespersonNationalId',
+  'isAppealSpokespersonConfirmed',
 ]
 
 const normalizeNationalId = (nationalId: string): string =>
   nationalId.replace(/-/g, '')
+
+// District or court of appeals confirmation for the defence user on a linked case.
+// Waived appeal appointments and removed appeal spokespersons stay out, matching
+// Defendant.isConfirmedAppealDefenderOfDefendant /
+// CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant.
+const linkedCaseDefendantWhereForDefenceUser = (
+  defenderNationalId: string,
+): WhereOptions => ({
+  [Op.or]: [
+    {
+      defenderNationalId,
+      isDefenderChoiceConfirmed: true,
+    },
+    {
+      appealDefenderNationalId: defenderNationalId,
+      isAppealDefenderConfirmed: true,
+      [Op.or]: [
+        { isAppealDefenderWaived: false },
+        { isAppealDefenderWaived: { [Op.is]: null } },
+      ],
+    },
+  ],
+})
+
+const linkedCaseCivilClaimantWhereForDefenceUser = (
+  defenderNationalId: string,
+): WhereOptions => ({
+  [Op.or]: [
+    {
+      hasSpokesperson: true,
+      spokespersonNationalId: defenderNationalId,
+      isSpokespersonConfirmed: true,
+    },
+    {
+      appealSpokespersonNationalId: defenderNationalId,
+      isAppealSpokespersonConfirmed: true,
+      [Op.or]: [
+        { hasAppealSpokesperson: true },
+        { hasAppealSpokesperson: { [Op.is]: null } },
+      ],
+    },
+  ],
+})
 
 const getLinkedCaseDefendantsInclude = (
   defenderNationalId?: string,
@@ -1047,12 +1207,7 @@ const getLinkedCaseDefendantsInclude = (
   required: false,
   order: [['created', 'ASC']],
   ...(defenderNationalId
-    ? {
-        where: {
-          defenderNationalId,
-          isDefenderChoiceConfirmed: true,
-        },
-      }
+    ? { where: linkedCaseDefendantWhereForDefenceUser(defenderNationalId) }
     : {}),
 })
 
@@ -1066,12 +1221,7 @@ const getMergedCaseDefendantsInclude = (
   order: [['created', 'ASC']],
   separate: true,
   ...(defenderNationalId
-    ? {
-        where: {
-          defenderNationalId,
-          isDefenderChoiceConfirmed: true,
-        },
-      }
+    ? { where: linkedCaseDefendantWhereForDefenceUser(defenderNationalId) }
     : {}),
   include: [
     {
@@ -1109,19 +1259,15 @@ const getLinkedCaseCivilClaimantsInclude = (
   ...(separate ? { separate: true } : {}),
   ...(defenderNationalId
     ? {
-        where: {
-          hasSpokesperson: true,
-          spokespersonNationalId: defenderNationalId,
-          isSpokespersonConfirmed: true,
-        },
+        where: linkedCaseCivilClaimantWhereForDefenceUser(defenderNationalId),
       }
     : {}),
 })
 
 // The case graph a limited access user is served. A defence user only ever
-// sees the parties they act for on the cases linked to this one, so their
-// national id - stored without a separator - narrows those joins; any other
-// caller reads the links unfiltered.
+// sees the parties they act for on the cases linked to this one (district or
+// court of appeals confirmation), so their national id - stored without a separator -
+// narrows those joins; any other caller reads the links unfiltered.
 export const getLimitedAccessCaseInclude = (
   defenceUserNationalId?: string,
 ): Includeable[] => {
@@ -1171,11 +1317,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'appealCase',
       required: false,
       include: [
-        {
-          model: User,
-          as: 'appealAssistant',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1191,6 +1333,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1203,7 +1346,16 @@ export const getLimitedAccessCaseInclude = (
           model: AppealCourtSession,
           as: 'courtSessions',
           required: false,
+          // Earliest session first, like a calendar, the order the court's list
+          // and the parties' agenda card both read in.
           order: [['sessionDate', 'ASC']],
+          separate: true,
+        },
+        {
+          model: AppealStatementDeadline,
+          as: 'statementDeadlines',
+          required: false,
+          order: [['created', 'ASC']],
           separate: true,
         },
       ],
@@ -1214,11 +1366,7 @@ export const getLimitedAccessCaseInclude = (
       required: false,
       separate: true,
       include: [
-        {
-          model: User,
-          as: 'appealAssistant',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1372,6 +1520,7 @@ export const getLimitedAccessCaseInclude = (
           CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.COURT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
           CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
           CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
@@ -1441,6 +1590,7 @@ export const getLimitedAccessCaseInclude = (
                 CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.DEFENDANT_CASE_FILE,
+                CaseFileCategory.COURT_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIM,
                 CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
               ],
@@ -1522,15 +1672,11 @@ export const getLimitedAccessCaseInclude = (
         {
           // A split case takes the civil claimants that applied to the defendant
           // who left with it, so a spokesperson can be a confirmed party here.
-          // The attributes are the ones that decide whether they may open it.
+          // The attributes are the ones that decide whether they may open it
+          // (district or court of appeals confirmation).
           model: CivilClaimant,
           as: 'civilClaimants',
-          attributes: [
-            'id',
-            'hasSpokesperson',
-            'spokespersonNationalId',
-            'isSpokespersonConfirmed',
-          ],
+          attributes: linkedCaseCivilClaimantAccessAttributes,
           required: false,
           order: [['created', 'ASC']],
           separate: true,
@@ -1553,6 +1699,7 @@ export const getLimitedAccessCaseInclude = (
                 CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+                CaseFileCategory.COURT_CASE_FILE,
               ],
             },
             created: { [Op.lt]: col('Case.created') },
@@ -1575,10 +1722,6 @@ export interface UpdateCase
     Case,
     | 'indictmentSubtypes'
     | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -1635,10 +1778,10 @@ export interface UpdateCase
     | 'hasCivilClaims'
     | 'isArchived'
   > {
+  archiveNotBefore?: Case['archiveNotBefore'] | null
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
-  requestSharedWithDefender?: Case['requestSharedWithDefender'] | null
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
   courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
@@ -1670,6 +1813,7 @@ export interface UpdateAppealCase
   extends Pick<
     AppealCase,
     | 'appealCaseNumber'
+    | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
     | 'appealAssistantId'
@@ -1682,6 +1826,7 @@ export interface UpdateAppealCase
     | 'appealIsolationToDate'
     | 'rulingFileId'
     | 'appealDate'
+    | 'verdictAppealStatus'
   > {
   appealState?: AppealCase['appealState']
 }

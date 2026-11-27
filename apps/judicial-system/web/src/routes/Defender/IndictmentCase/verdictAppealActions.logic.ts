@@ -1,6 +1,8 @@
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   canDefendantAppealVerdict,
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -8,9 +10,13 @@ import type {
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  CaseIndictmentRulingDecision,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-export type VerdictAppealAction = 'APPEAL' | 'WITHDRAW'
+export type VerdictAppealAction = 'APPEAL' | 'ACCEPT' | 'WITHDRAW'
 
 // A defender acts on the verdict of one specific defendant, and only one they
 // have been confirmed as the defender of. This is the same test the backend
@@ -24,6 +30,22 @@ export const isConfirmedDefenderOf = (
       defendant.defenderNationalId &&
       normalizeAndFormatNationalId(user?.nationalId).includes(
         defendant.defenderNationalId,
+      ),
+  )
+
+// Landsréttur confirmation for this defendant — required to file a verdict-
+// appeal greinargerð. Distinct from district confirmation, which is enough to
+// appeal or withdraw the appeal itself.
+export const isConfirmedAppealDefenderOf = (
+  user: User | undefined,
+  defendant: Defendant,
+): boolean =>
+  Boolean(
+    defendant.isAppealDefenderConfirmed &&
+      !defendant.isAppealDefenderWaived &&
+      defendant.appealDefenderNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        defendant.appealDefenderNationalId,
       ),
   )
 
@@ -54,25 +76,88 @@ export const canDefenderWithdrawVerdictAppealOf = (
   Boolean(defendant.verdict?.appealDate) &&
   Boolean(workingCase.verdictAppealCase?.id)
 
-// The single action the defendant's verdict timeline card offers this user, if
-// any. Nothing is offered while the feature is hidden.
-export const getVerdictAppealAction = (
+// Whether this defender may register that the defendant accepts the verdict:
+// whenever they could still appeal it, and it is not accepted already.
+export const canDefenderAcceptVerdictOf = (
+  workingCase: WorkingCase,
+  defendant: Defendant,
+  user: User | undefined,
+): boolean =>
+  canDefenderAppealVerdictOf(workingCase, defendant, user) &&
+  defendant.verdict?.appealDecision !== VerdictAppealDecision.ACCEPT
+
+// The actions the defendant's verdict timeline card offers this user, in menu
+// order. A filed appeal can only be withdrawn; otherwise the defender may
+// appeal, accept, or both. Nothing is offered while the feature is hidden.
+// Statement filing is separate (canDefenderFileVerdictStatementOf).
+export const getVerdictAppealActions = (
   workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
   isFeatureEnabled: boolean,
-): VerdictAppealAction | undefined => {
+): VerdictAppealAction[] => {
   if (!isFeatureEnabled) {
-    return undefined
+    return []
   }
 
   if (canDefenderWithdrawVerdictAppealOf(workingCase, defendant, user)) {
-    return 'WITHDRAW'
+    return ['WITHDRAW']
   }
+
+  const actions: VerdictAppealAction[] = []
 
   if (canDefenderAppealVerdictOf(workingCase, defendant, user)) {
-    return 'APPEAL'
+    actions.push('APPEAL')
   }
 
-  return undefined
+  if (canDefenderAcceptVerdictOf(workingCase, defendant, user)) {
+    actions.push('ACCEPT')
+  }
+
+  return actions
+}
+
+// Whether the verdict appeal is still open for defence actions (not completed
+// or withdrawn). Shared by statement CTA visibility and timeline card logic.
+export const isVerdictAppealOpen = (
+  appeal:
+    | Pick<NonNullable<WorkingCase['verdictAppealCase']>, 'appealState'>
+    | null
+    | undefined,
+): boolean =>
+  Boolean(
+    appeal &&
+      appeal.appealState !== AppealCaseState.COMPLETED &&
+      appeal.appealState !== AppealCaseState.WITHDRAWN,
+  )
+
+// Whether this appeal-confirmed defender may upload a greinargerð for this
+// defendant on the open verdict appeal. Requires a statement deadline (expired
+// is fine — late filing is allowed) and that the party has not already filed.
+export const canDefenderFileVerdictStatementOf = (
+  workingCase: WorkingCase,
+  defendant: Defendant,
+  user: User | undefined,
+): boolean => {
+  const appeal = workingCase.verdictAppealCase
+
+  if (!isVerdictAppealOpen(appeal)) {
+    return false
+  }
+
+  if (!isConfirmedAppealDefenderOf(user, defendant)) {
+    return false
+  }
+
+  const party = { defendantId: defendant.id }
+  const statementDeadline = findAppealStatementDeadline(
+    appeal?.statementDeadlines,
+    party,
+  )
+
+  if (!statementDeadline?.deadline) {
+    return false
+  }
+
+  return !hasFiledAppealStatement(appeal?.appealEventLogs, party)
 }

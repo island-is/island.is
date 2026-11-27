@@ -25,6 +25,7 @@ import {
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
+  CaseLifetimeResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -67,6 +68,7 @@ import {
   PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { ServiceInterruptionBanner } from '../service-interruption-banner'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
@@ -231,6 +233,13 @@ export class BackendService {
     return this.put(`user/${userId}`, updateUser)
   }
 
+  extendCaseLifetime(
+    caseId: string,
+    days: number,
+  ): Promise<CaseLifetimeResponse> {
+    return this.patch(`case/${caseId}/lifetime`, { days })
+  }
+
   getMessageSuspensions(): Promise<MessageSuspension[]> {
     return this.get('message-suspension')
   }
@@ -240,6 +249,19 @@ export class BackendService {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
+  getServiceInterruptionBanner(): Promise<ServiceInterruptionBanner> {
+    return this.get('service-interruption-banner')
+  }
+
+  updateServiceInterruptionBanner(
+    updateServiceInterruptionBanner: unknown,
+  ): Promise<ServiceInterruptionBanner> {
+    return this.patch(
+      'service-interruption-banner',
+      updateServiceInterruptionBanner,
+    )
   }
 
   getCase(caseId: string): Promise<Case> {
@@ -424,9 +446,13 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
       eventType,
+      defendantId,
+      civilClaimantId,
     })
   }
 
@@ -723,7 +749,7 @@ export class BackendService {
 
   createAppealSummons(
     caseId: string,
-    createAppealSummons: { defendants: unknown[] },
+    createAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
   }
@@ -731,7 +757,7 @@ export class BackendService {
   updateAppealSummons(
     caseId: string,
     appealSummonsId: string,
-    updateAppealSummons: { defendants: unknown[] },
+    updateAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}`,
@@ -764,6 +790,23 @@ export class BackendService {
       `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
       {},
     )
+  }
+
+  sendAppealSummonsToService(
+    caseId: string,
+    appealSummonsId: string,
+    body: {
+      recipients: { defendantId?: string; civilClaimantId?: string }[]
+    },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToService`,
+      body,
+    )
+  }
+
+  syncAppealSummonsServiceStatuses(caseId: string): Promise<AppealSummons[]> {
+    return this.post(`case/${caseId}/appealSummons/syncServiceStatuses`, {})
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
@@ -1023,6 +1066,15 @@ export class BackendService {
     )
   }
 
+  limitedAccessAcceptVerdict(
+    caseId: string,
+    defendantId: string,
+  ): Promise<Verdict> {
+    return this.post(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}/verdict/accept`,
+    )
+  }
+
   limitedAccessTransitionAppealCase(
     caseId: string,
     appealCaseId: string,
@@ -1038,10 +1090,12 @@ export class BackendService {
     caseId: string,
     appealCaseId: string,
     eventType: string,
+    defendantId?: string,
+    civilClaimantId?: string,
   ): Promise<AppealCase> {
     return this.post(
       `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
-      { eventType },
+      { eventType, defendantId, civilClaimantId },
     )
   }
 

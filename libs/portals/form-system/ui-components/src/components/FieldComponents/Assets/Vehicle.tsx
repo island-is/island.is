@@ -32,6 +32,7 @@ interface Props {
   dispatch?: Dispatch<Action>
   valueIndex?: number
   state?: ApplicationState
+  isPreview?: boolean
 }
 
 type SelectItem = {
@@ -87,7 +88,12 @@ type PublicVehicleSearchVars = {
 
 const VEHICLES_PAGE_SIZE = 100
 
-export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
+export const Vehicle = ({
+  item,
+  dispatch,
+  valueIndex = 0,
+  isPreview = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger, setValue, setError, clearErrors } = useFormContext()
   const client = useApolloClient()
@@ -150,7 +156,9 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [selectedOption, setSelectedOption] = useState<SelectItem | undefined>(
     undefined,
   )
-  const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
+  const [isLoading, setIsLoading] = useState(
+    shouldFetch && !cached && !isPreview,
+  )
   const [vehiclesFetchHasError, setVehiclesFetchHasError] = useState(false)
 
   const [searchLoading, setSearchLoading] = useState(false)
@@ -229,6 +237,8 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const searchPublicVehicle = async (search: string) => {
+    if (isPreview) return
+
     const normalized = search.trim().toUpperCase()
 
     if (!normalized) {
@@ -314,7 +324,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   useEffect(() => {
     let cancelled = false
 
-    if (!shouldFetch) {
+    if (isPreview || !shouldFetch) {
       setIsLoading(false)
       return
     }
@@ -499,7 +509,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   return (
-    <Stack space={2}>
+    <Stack space={[1, 1, 2]}>
       <Controller
         key={`${item.id}-${valueIndex}_registrationNumber`}
         name={registrationNumberField}
@@ -513,11 +523,12 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
         }}
         render={({ field, fieldState }) => (
           <GridRow>
-            <GridColumn span="6/10">
+            <GridColumn span={['1/1', '1/1', '6/10']}>
               <Input
                 label={item.name?.[lang] ?? ''}
                 name="vehicleSearch"
                 value={field.value}
+                backgroundColor="blue"
                 onChange={(e) => {
                   const upper = e.target.value.toUpperCase()
                   field.onChange(upper)
@@ -547,7 +558,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
       {searchLoading && <LoadingDots />}
 
-      <GridRow>
+      <GridRow rowGap={1}>
         <GridColumn span={['1/1', '1/1', '1/1', '7/10']}>
           <Controller
             key={`${item.id}-${valueIndex}_model`}

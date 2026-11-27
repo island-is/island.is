@@ -188,6 +188,40 @@ export class CaseRepositoryService {
   }
 
   /**
+   * A case with its assigned prosecutor - so the prosecutor can be notified
+   * about a delivery that the police system rejected.
+   */
+  async findByIdWithProsecutor(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding case ${id} with its prosecutor`)
+
+      const result = await this.caseModel.findByPk(id, {
+        include: [{ model: User, as: 'prosecutor' }],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its prosecutor:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
    * The case an indictment was split from, with the full case graph - what a
    * document about the split case renders the original case from. Unlike
    * findLiveById this applies no state filter: the source case is read on
@@ -259,14 +293,25 @@ export class CaseRepositoryService {
     }
   }
 
-  async findParentCaseId(id: string): Promise<string | null | undefined> {
+  // The ancestor reads take the request's transaction where the route has
+  // one: they run from interceptors after a guard may have locked the case
+  // row in it, and a read outside it would need a second pool connection
+  // while that lock blocks the requests holding the others.
+  async findParentCaseId(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<string | null | undefined> {
     const result = await this.caseModel.findByPk(id, {
       attributes: ['parentCaseId'],
+      transaction: options?.transaction,
     })
     return result?.parentCaseId
   }
 
-  async findOriginalAncestorId(theCase: Case): Promise<string> {
+  async findOriginalAncestorId(
+    theCase: Case,
+    options?: { transaction?: Transaction },
+  ): Promise<string> {
     // Split indictment continuations point back to the original via splitCaseId
     if (isIndictmentCase(theCase.type) && theCase.splitCaseId) {
       return theCase.splitCaseId
@@ -279,7 +324,7 @@ export class CaseRepositoryService {
 
     while (parentCaseId) {
       originalAncestorId = parentCaseId
-      parentCaseId = await this.findParentCaseId(parentCaseId)
+      parentCaseId = await this.findParentCaseId(parentCaseId, options)
     }
 
     return originalAncestorId
@@ -288,14 +333,20 @@ export class CaseRepositoryService {
   // The case the police files of a case family live under: the split origin of
   // a split indictment, otherwise the root of the parentCaseId chain. Returns
   // the given case itself when it is its own original ancestor.
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    const originalAncestorId = await this.findOriginalAncestorId(theCase)
+  async findOriginalAncestor(
+    theCase: Case,
+    options?: { transaction?: Transaction },
+  ): Promise<Case> {
+    const originalAncestorId = await this.findOriginalAncestorId(
+      theCase,
+      options,
+    )
 
     if (originalAncestorId === theCase.id) {
       return theCase
     }
 
-    const originalAncestor = await this.findById(originalAncestorId)
+    const originalAncestor = await this.findById(originalAncestorId, options)
 
     if (!originalAncestor) {
       throw new InternalServerErrorException(
@@ -344,16 +395,43 @@ export class CaseRepositoryService {
   // the archive is built from. The caller writes the archive and clears the
   // encrypted properties in the same transaction, so this read joins the
   // transaction too.
+  //
+  // The case row is locked, and checked again under the lock, before the graph
+  // is read: a lifetime extension or a restore that commits in between would
+  // otherwise be overwritten by an archive decided on what the case was before.
   async findNextCaseToArchive(transaction: Transaction): Promise<Case | null> {
     try {
       this.logger.debug('Finding the next case to archive')
 
-      const result = await this.caseModel.findOne({
-        where: archivableCaseWhere,
-        include: archivableCaseInclude,
-        order: archivableCaseOrder,
-        transaction,
-      })
+      let result: Case | null = null
+
+      for (let attempt = 0; attempt < 3 && !result; attempt++) {
+        const candidate = await this.caseModel.findOne({
+          attributes: ['id'],
+          where: archivableCaseWhere,
+          transaction,
+        })
+
+        if (!candidate) {
+          break
+        }
+
+        const locked = await this.lockByIdForUpdate(candidate.id, transaction, {
+          [Op.and]: [{ id: candidate.id }, archivableCaseWhere],
+        })
+
+        // A candidate that stopped being archivable is not picked again
+        if (!locked) {
+          continue
+        }
+
+        result = await this.caseModel.findOne({
+          where: { id: candidate.id },
+          include: archivableCaseInclude,
+          order: archivableCaseOrder,
+          transaction,
+        })
+      }
 
       this.logger.debug(`Case to archive ${result ? 'found' : 'not found'}`)
 
@@ -366,6 +444,39 @@ export class CaseRepositoryService {
       return result
     } catch (error) {
       this.logger.error('Error finding the next case to archive:', { error })
+
+      throw error
+    }
+  }
+
+  // A case with the graph its archive was built from, in the order the archive
+  // was written in, whether or not the case is archived or deleted - the caller
+  // decides what to make of either. The case row is locked first, so neither
+  // the archiving job nor another restore can get in between the read and the
+  // write that follows.
+  async findWithArchiveGraphByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(id, transaction)
+
+    if (!locked) {
+      return null
+    }
+
+    try {
+      this.logger.debug(`Finding case ${id} with its archive graph`)
+
+      return await this.caseModel.findOne({
+        where: { id },
+        include: archivableCaseInclude,
+        order: archivableCaseOrder,
+        transaction,
+      })
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its archive graph:`, {
+        error,
+      })
 
       throw error
     }

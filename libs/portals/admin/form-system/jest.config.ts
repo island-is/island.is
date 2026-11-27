@@ -1,10 +1,11 @@
 module.exports = {
   displayName: 'form-system',
   preset: '../../../../jest.preset.js',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
+    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '../../../../coverage/libs/portals/admin/form-system',
 }

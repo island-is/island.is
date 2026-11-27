@@ -28,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isAdvocateContactValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './Advocates.strings'
 
@@ -153,7 +154,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         <Box display="flex" justifyContent="spaceBetween">
           <Text variant="h4">
             {`${capitalize(
-              formatMessage(core.indictmentDefendant, { gender }),
+              formatMessage(
+                {
+                  id: core.indictmentDefendant,
+                  defaultMessage: core.indictmentDefendant,
+                },
+                { gender },
+              ),
             )} ${defendant.name}`}
           </Text>
           {defendant.isDefenderChoiceConfirmed && (
@@ -179,7 +186,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
                 defaultMessage: strings.defendantWaivesRightToCounsel,
               },
               {
-                accused: formatMessage(core.indictmentDefendant, { gender }),
+                accused: formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  { gender },
+                ),
               },
             ),
           )}
@@ -284,7 +297,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               colorScheme={
                 defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
               }
-              disabled={workingCase.state === CaseState.CORRECTING}
+              disabled={
+                workingCase.state === CaseState.CORRECTING ||
+                !isAdvocateContactValid(
+                  defendant.defenderEmail,
+                  defendant.defenderPhoneNumber,
+                )
+              }
               onClick={() => {
                 setDisplayModal(true)
               }}

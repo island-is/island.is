@@ -337,4 +337,56 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })
+
+  // Nobody outside the court of appeals can tell that it has concluded the
+  // appeal, so the withdrawal is still on offer to them.
+  describe.each([
+    ['one of two appellants', [defendantId, otherDefendantId]],
+    ['the only appellant', [defendantId]],
+  ])(
+    'the office withdraws for %s after the court concluded the appeal',
+    (_, appellants) => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(
+          mockAppealCaseRepositoryService.findById as jest.Mock
+        ).mockResolvedValue({
+          ...appealCase,
+          appealState: AppealCaseState.COMPLETED,
+        })
+        ;(
+          mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
+        ).mockResolvedValue(
+          appellants.map((id) => appealedEvent(id, '2026-06-04T13:34:00Z')),
+        )
+
+        then = await givenWhenThen(dto)
+      })
+
+      it('should refuse without saying that the appeal is concluded', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(
+          'The verdict appeal cannot be withdrawn',
+        )
+      })
+
+      it('should read the state of the appeal under the lock', () => {
+        expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
+          appealCaseId,
+          { transaction },
+        )
+      })
+
+      it('should change nothing', () => {
+        expect(
+          mockAppealEventLogRepositoryService.create,
+        ).not.toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+        expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
+        expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
+      })
+    },
+  )
 })

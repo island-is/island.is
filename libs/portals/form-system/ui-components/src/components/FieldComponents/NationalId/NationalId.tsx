@@ -26,6 +26,7 @@ interface Props {
   dispatch?: Dispatch<Action>
   hasError?: boolean
   valueIndex?: number
+  isPreview?: boolean
 }
 
 const nationalIdRegex = /^\d{6}-\d{4}$/
@@ -49,6 +50,7 @@ export const NationalId = ({
   dispatch,
   hasError,
   valueIndex = 0,
+  isPreview = false,
 }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
@@ -79,6 +81,7 @@ export const NationalId = ({
   const lastQueriedRef = useRef<string | undefined>(undefined)
 
   const shouldQueryBase =
+    !isPreview &&
     isCompleteNationalId &&
     isValidFormat &&
     queryId !== undefined &&
@@ -283,6 +286,7 @@ export const NationalId = ({
               <Input
                 label={item.name[lang] ?? formatMessage(m.nationalId)}
                 name="kennitala"
+                tooltip={item.tooltip?.[lang]?.trim() || undefined}
                 required={item?.isRequired ?? false}
                 backgroundColor="blue"
                 value={field.value}

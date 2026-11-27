@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -16,6 +16,8 @@ import {
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   isAppealFileDeletionLocked,
   isCompletedCase,
   isDefenceUser,
@@ -36,11 +38,18 @@ import {
   RulingFileLabel,
   SectionHeading,
   UserContext,
+  type WorkingCase,
 } from '@island.is/judicial-system-web/src/components'
+import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealEventType,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  canDefenderFileVerdictStatementOf,
+  isVerdictAppealOpen,
+} from '@island.is/judicial-system-web/src/routes/Defender/IndictmentCase/verdictAppealActions.logic'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useAppealCase,
@@ -51,22 +60,143 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
+  type DefenceUserPartyIds,
   getAppealActorText,
+  getDefenceUserAppealConfirmedPartyIds,
   getDefenceUserPartyIds,
+  getVerdictAppealStatementParty,
   isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-const Statement = () => {
-  const { workingCase, refreshCase } = useContext(FormContext)
+interface Props {
+  /**
+   * When true, target the case's verdictAppealCase and use verdict-appeal
+   * statement categories instead of the kæra appeal-case row.
+   */
+  isVerdictAppeal?: boolean
+}
+
+const resolveVerdictAppealParty = (
+  workingCase: WorkingCase,
+  user: User | undefined,
+  query: {
+    defendantId?: string | string[]
+    civilClaimantId?: string | string[]
+  },
+): DefenceUserPartyIds => {
+  const queryDefendantId = Array.isArray(query.defendantId)
+    ? query.defendantId[0]
+    : query.defendantId
+  const queryCivilClaimantId = Array.isArray(query.civilClaimantId)
+    ? query.civilClaimantId[0]
+    : query.civilClaimantId
+
+  const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
+
+  // An explicit party query that does not match an appeal-confirmed party
+  // fails closed — never remap to another client.
+  if (queryDefendantId) {
+    return (
+      appealParties.find((party) => party.defendantId === queryDefendantId) ??
+      {}
+    )
+  }
+
+  if (queryCivilClaimantId) {
+    return (
+      appealParties.find(
+        (party) => party.civilClaimantId === queryCivilClaimantId,
+      ) ?? {}
+    )
+  }
+
+  // No party query: pick among appeal-confirmed parties by earliest deadline.
+  // Do not fall back to getDefenceUserPartyIds (district-or-appeal).
+  return getVerdictAppealStatementParty(workingCase, user) ?? {}
+}
+
+const canAccessVerdictAppealStatementPage = (
+  workingCase: WorkingCase,
+  user: User | undefined,
+  party: DefenceUserPartyIds,
+): boolean => {
+  const appeal = workingCase.verdictAppealCase
+
+  if (!isVerdictAppealOpen(appeal)) {
+    return false
+  }
+
+  if (party.defendantId) {
+    const defendant = workingCase.defendants?.find(
+      (entry) => entry.id === party.defendantId,
+    )
+
+    return Boolean(
+      defendant &&
+        canDefenderFileVerdictStatementOf(workingCase, defendant, user),
+    )
+  }
+
+  if (party.civilClaimantId) {
+    const isAppealConfirmedSpokesperson = getDefenceUserAppealConfirmedPartyIds(
+      workingCase,
+      user,
+    ).some(
+      (confirmedParty) =>
+        confirmedParty.civilClaimantId === party.civilClaimantId,
+    )
+
+    if (!isAppealConfirmedSpokesperson) {
+      return false
+    }
+
+    const statementDeadline = findAppealStatementDeadline(
+      appeal?.statementDeadlines,
+      party,
+    )
+
+    // An expired deadline still allows access — late filing is accepted.
+    if (!statementDeadline?.deadline) {
+      return false
+    }
+
+    return !hasFiledAppealStatement(appeal?.appealEventLogs, party)
+  }
+
+  return false
+}
+
+const Statement = ({ isVerdictAppeal = false }: Props) => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
-  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    workingCase,
-    user,
-  )
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { defendantId, civilClaimantId } = isVerdictAppeal
+    ? resolveVerdictAppealParty(workingCase, user, router.query)
+    : getDefenceUserPartyIds(workingCase, user)
+  const filingPartyName = (() => {
+    if (!isVerdictAppeal) {
+      return undefined
+    }
+
+    if (defendantId) {
+      return workingCase.defendants?.find(
+        (defendant) => defendant.id === defendantId,
+      )?.name
+    }
+
+    if (civilClaimantId) {
+      return workingCase.civilClaimants?.find(
+        (civilClaimant) => civilClaimant.id === civilClaimantId,
+      )?.name
+    }
+
+    return undefined
+  })()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -80,24 +210,37 @@ const Statement = () => {
     caseId: workingCase.id,
   })
 
-  // Statement events target the specific appeal-case row.
-  const targetAppealCase = useTargetAppealCaseByRulingFileId()
+  // Statement events target the specific appeal-case row. Verdict appeals
+  // are case-level (no rulingFileId) — use the case-level verdictAppealCase.
+  const rulingFileAppealCase = useTargetAppealCaseByRulingFileId()
+  const targetAppealCase = isVerdictAppeal
+    ? workingCase.verdictAppealCase
+    : rulingFileAppealCase
   const targetAppealCaseId = targetAppealCase?.id
+  const rulingFileId = isVerdictAppeal
+    ? undefined
+    : rulingFileAppealCase?.rulingFileId
 
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
     civilClaimantId,
-    targetAppealCase?.rulingFileId,
+    rulingFileId,
   )
 
-  const appealStatementType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
-    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
+  // Verdict-appeal Statement is only mounted under /verjandi, so prosecutor
+  // verdict-appeal categories are unreachable here.
+  const appealStatementType = isVerdictAppeal
+    ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT
+    : isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
+    : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
 
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
+  const appealCaseFilesType = isVerdictAppeal
+    ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
+    : isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
+    : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
 
   const previousUrl = `${
     isDefenceUser(user)
@@ -111,13 +254,39 @@ const Statement = () => {
       : SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${workingCase.id}`
 
-  const handleNextButtonClick = useCallback(async () => {
-    const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => file.percent === 0),
-      updateUploadFile,
-    )
+  // Overview already hides the CTA once the appeal is over; keep the direct
+  // route from becoming a back door for completed / withdrawn appeals.
+  useEffect(() => {
+    if (!isVerdictAppeal || isLoadingWorkingCase || !user) {
+      return
+    }
 
-    if (uploadResult !== 'ALL_SUCCEEDED') {
+    if (
+      !canAccessVerdictAppealStatementPage(workingCase, user, {
+        defendantId,
+        civilClaimantId,
+      })
+    ) {
+      router.replace(previousUrl)
+    }
+  }, [
+    isVerdictAppeal,
+    isLoadingWorkingCase,
+    user,
+    workingCase,
+    defendantId,
+    civilClaimantId,
+    router,
+    previousUrl,
+  ])
+
+  const handleNextButtonClick = useCallback(async () => {
+    if (isSubmitting) {
+      return
+    }
+
+    // Do not file against a stale FormProvider case while the route case loads.
+    if (isVerdictAppeal && isLoadingWorkingCase) {
       return
     }
 
@@ -125,31 +294,63 @@ const Statement = () => {
       return
     }
 
-    const sent = await createAppealEventLog(
-      workingCase.id,
-      targetAppealCaseId,
-      AppealEventType.APPEAL_STATEMENT_SENT,
-    )
+    if (isVerdictAppeal && !defendantId && !civilClaimantId) {
+      return
+    }
 
-    if (sent) {
-      setVisibleModal('STATEMENT_SENT')
+    setIsSubmitting(true)
+
+    try {
+      const uploadResult = await handleUpload(
+        uploadFiles.filter((file) => file.percent === 0),
+        updateUploadFile,
+      )
+
+      if (uploadResult !== 'ALL_SUCCEEDED') {
+        return
+      }
+
+      const sent = await createAppealEventLog(
+        workingCase.id,
+        targetAppealCaseId,
+        AppealEventType.APPEAL_STATEMENT_SENT,
+        isVerdictAppeal ? { defendantId, civilClaimantId } : undefined,
+      )
+
+      if (sent) {
+        setVisibleModal('STATEMENT_SENT')
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }, [
+    isSubmitting,
+    isVerdictAppeal,
+    isLoadingWorkingCase,
     handleUpload,
     uploadFiles,
     updateUploadFile,
     targetAppealCaseId,
     createAppealEventLog,
     workingCase.id,
+    defendantId,
+    civilClaimantId,
   ])
 
   const handleRemoveFile = (file: TUploadFile) => {
     if (file.key) {
       // Files that have been sent to the court of appeals can no longer be
       // deleted once it has registered its case number
-      if (isAppealFileDeletionLocked(file.category, targetAppealCase)) {
+      if (
+        isAppealFileDeletionLocked(file.category, targetAppealCase, {
+          defendantId: file.defendantId ?? defendantId,
+          civilClaimantId: file.civilClaimantId ?? civilClaimantId,
+        })
+      ) {
         toast.error(
-          'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer',
+          targetAppealCase?.appealCaseNumber
+            ? 'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer'
+            : 'Ekki er hægt að eyða greinargerð eftir að hún hefur verið send',
         )
 
         return
@@ -167,130 +368,207 @@ const Statement = () => {
       status: FileUploadStatus.done,
       defendantId,
       civilClaimantId,
-      rulingFileId: targetAppealCase?.rulingFileId,
+      rulingFileId,
     })
   }
 
   const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    // Verdict-appeal statements are per selected party. Do not show another
+    // client's files on this page — that would enable send for the wrong party.
+    if (isVerdictAppeal) {
+      const belongsToSelectedParty =
+        (Boolean(defendantId) && file.defendantId === defendantId) ||
+        (Boolean(civilClaimantId) && file.civilClaimantId === civilClaimantId)
+
+      if (!belongsToSelectedParty) {
+        return false
+      }
+    }
+
     return isMatchingAppealCaseFile(
       workingCase,
       [category],
       file,
       user,
-      targetAppealCase?.rulingFileId,
+      rulingFileId,
     )
   }
   const appealStatementFiles = uploadFiles.filter((file) =>
     filter(file, appealStatementType),
   )
 
-  return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
-      <FormContentContainer>
-        <PageTitle>Greinargerð</PageTitle>
-        <Box marginBottom={7}>
-          {workingCase.courtCaseNumber && (
-            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
-              Mál nr. {workingCase.courtCaseNumber}
-            </Text>
-          )}
-          {workingCase.rulingDate && (
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          )}
-          <RulingFileLabel
-            caseFiles={workingCase.caseFiles}
-            rulingFileId={targetAppealCase?.rulingFileId}
-          />
-          <Text variant="h5" as="h5">
-            {getAppealActorText(workingCase, targetAppealCase)}
-          </Text>
-        </Box>
-        {user && (
-          <>
-            <Box component="section" marginBottom={5}>
-              <SectionHeading title="Greinargerð" required />
+  const showFilingControls =
+    !isVerdictAppeal || (!isLoadingWorkingCase && !caseNotFound)
 
-              <InputFileUpload
-                name="appealStatement"
-                files={appealStatementFiles}
-                accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                onChange={(files) => handleChange(files, appealStatementType)}
-                onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => onOpenFile(file)}
-                hideIcons={!allFilesDoneOrError}
-                disabled={!allFilesDoneOrError}
-              />
+  return (
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isVerdictAppeal && isLoadingWorkingCase}
+      notFound={isVerdictAppeal && caseNotFound}
+    >
+      <PageHeader
+        title={
+          isVerdictAppeal
+            ? 'Greinargerð - Réttarvörslugátt'
+            : titles.shared.appealToCourtOfAppeals
+        }
+      />
+      {showFilingControls && (
+        <>
+          <FormContentContainer>
+            <PageTitle>Greinargerð</PageTitle>
+            <Box marginBottom={7}>
+              {workingCase.courtCaseNumber && (
+                <Text
+                  as="h2"
+                  variant="h2"
+                  fontWeight="semiBold"
+                  marginBottom={1}
+                >
+                  Mál nr. {workingCase.courtCaseNumber}
+                </Text>
+              )}
+              {isVerdictAppeal ? (
+                <>
+                  {workingCase.rulingDate && (
+                    <DateLabel
+                      text="Máli lokið"
+                      date={workingCase.rulingDate}
+                      hideTime
+                      as="h3"
+                    />
+                  )}
+                  {filingPartyName && (
+                    <Text variant="h5" as="h5">
+                      Greinargerð fyrir {filingPartyName}
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <>
+                  {workingCase.rulingDate && (
+                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
+                  )}
+                  <RulingFileLabel
+                    caseFiles={workingCase.caseFiles}
+                    rulingFileId={rulingFileId}
+                  />
+                  <Text variant="h5" as="h5">
+                    {getAppealActorText(workingCase, targetAppealCase)}
+                  </Text>
+                </>
+              )}
             </Box>
-            <Box
-              component="section"
-              marginBottom={isProsecutionUser(user) ? 5 : 10}
-            >
-              <SectionHeading title="Gögn" marginBottom={1} />
-              <Text marginBottom={3} whiteSpace="preWrap">
-                Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
-                upp hér að neðan.
-                {'\n'}
+            {user && (
+              <>
+                <Box component="section" marginBottom={5}>
+                  <SectionHeading title="Greinargerð" required />
+
+                  <InputFileUpload
+                    name="appealStatement"
+                    files={appealStatementFiles}
+                    accept={'application/pdf'}
+                    title={core.uploadBoxTitle}
+                    description={formatMessage(
+                      {
+                        id: core.uploadBoxDescription,
+                        defaultMessage: core.uploadBoxDescription,
+                      },
+                      {
+                        fileEndings: '.pdf',
+                      },
+                    )}
+                    buttonLabel={core.uploadBoxButtonLabel}
+                    onChange={(files) =>
+                      handleChange(files, appealStatementType)
+                    }
+                    onRemove={(file) => handleRemoveFile(file)}
+                    onOpenFile={(file) => onOpenFile(file)}
+                    hideIcons={!allFilesDoneOrError}
+                    disabled={!allFilesDoneOrError || isSubmitting}
+                  />
+                </Box>
+                <Box
+                  component="section"
+                  marginBottom={isProsecutionUser(user) ? 5 : 10}
+                >
+                  <SectionHeading title="Gögn" marginBottom={1} />
+                  <Text marginBottom={3} whiteSpace="preWrap">
+                    Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða
+                    þeim upp hér að neðan.
+                    {'\n'}
+                    {!isIndictmentCase(workingCase.type) &&
+                      !isDefenceUser(user) &&
+                      'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
+                  </Text>
+                  <InputFileUpload
+                    name="appealCaseFiles"
+                    files={uploadFiles.filter((file) =>
+                      filter(file, appealCaseFilesType),
+                    )}
+                    accept={'application/pdf'}
+                    title={core.uploadBoxTitle}
+                    description={formatMessage(
+                      {
+                        id: core.uploadBoxDescription,
+                        defaultMessage: core.uploadBoxDescription,
+                      },
+                      {
+                        fileEndings: '.pdf',
+                      },
+                    )}
+                    buttonLabel={core.uploadBoxButtonLabel}
+                    onChange={(files) =>
+                      handleChange(files, appealCaseFilesType)
+                    }
+                    onRemove={(file) => handleRemoveFile(file)}
+                    onOpenFile={(file) => onOpenFile(file)}
+                    hideIcons={!allFilesDoneOrError}
+                    disabled={!allFilesDoneOrError || isSubmitting}
+                  />
+                </Box>
                 {!isIndictmentCase(workingCase.type) &&
-                  !isDefenceUser(user) &&
-                  'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.'}
-              </Text>
-              <InputFileUpload
-                name="appealCaseFiles"
-                files={uploadFiles.filter((file) =>
-                  filter(file, appealCaseFilesType),
-                )}
-                accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                onChange={(files) => handleChange(files, appealCaseFilesType)}
-                onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => onOpenFile(file)}
-                hideIcons={!allFilesDoneOrError}
-                disabled={!allFilesDoneOrError}
-              />
-            </Box>
-            {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-              <Box component="section">
-                <RequestAppealRulingNotToBePublishedCheckbox />
-              </Box>
+                  isProsecutionUser(user) && (
+                    <Box component="section">
+                      <RequestAppealRulingNotToBePublishedCheckbox />
+                    </Box>
+                  )}
+              </>
             )}
-          </>
-        )}
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={previousUrl}
-          actions={[
-            {
-              text: someFilesError ? 'Reyna aftur' : 'Senda greinargerð',
-              colorScheme: someFilesError ? 'destructive' : 'default',
-              onClick: handleNextButtonClick,
-              disabled:
-                !targetAppealCaseId ||
-                appealStatementFiles.length === 0 ||
-                isCreatingAppealEventLog,
-              loading: !allFilesDoneOrError || isCreatingAppealEventLog,
-              testId: 'continueButton',
-            },
-          ]}
-        />
-      </FormContentContainer>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={previousUrl}
+              actions={[
+                {
+                  text: someFilesError ? 'Reyna aftur' : 'Senda greinargerð',
+                  colorScheme: someFilesError ? 'destructive' : 'default',
+                  onClick: handleNextButtonClick,
+                  disabled:
+                    !targetAppealCaseId ||
+                    appealStatementFiles.length === 0 ||
+                    !allFilesDoneOrError ||
+                    isCreatingAppealEventLog ||
+                    isSubmitting ||
+                    (isVerdictAppeal && !defendantId && !civilClaimantId),
+                  loading:
+                    !allFilesDoneOrError ||
+                    isCreatingAppealEventLog ||
+                    isSubmitting,
+                  testId: 'continueButton',
+                },
+              ]}
+            />
+          </FormContentContainer>
+        </>
+      )}
       {visibleModal === 'STATEMENT_SENT' && (
         <Modal
           title="Greinargerð hefur verið send Landsrétti"
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => {
                 refreshCase()
                 router.push(previousUrl)

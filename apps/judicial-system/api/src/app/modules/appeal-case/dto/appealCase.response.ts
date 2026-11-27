@@ -4,7 +4,9 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
+  AppealRulingType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../../appeal-summons'
@@ -17,6 +19,8 @@ import { AppealStatementDeadline } from './appealStatementDeadline.response'
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
 registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
+registerEnumType(AppealRulingType, { name: 'AppealRulingType' })
+registerEnumType(VerdictAppealStatus, { name: 'VerdictAppealStatus' })
 
 @ObjectType()
 export class AppealDefendantStatementDate {
@@ -71,8 +75,16 @@ export class AppealCase {
   @Field(() => AppealCaseType, { nullable: true })
   readonly appealType?: AppealCaseType
 
+  // How far the court of appeals has come with a verdict appeal, as the court
+  // records it. Null until it has, and for a ruling appeal.
+  @Field(() => VerdictAppealStatus, { nullable: true })
+  readonly verdictAppealStatus?: VerdictAppealStatus
+
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
+
+  @Field(() => String, { nullable: true })
+  readonly caseName?: string
 
   @Field(() => String, { nullable: true })
   readonly appealReceivedByCourtDate?: string
@@ -99,14 +111,12 @@ export class AppealCase {
   @Field(() => [AppealCaseJudge], { nullable: true })
   readonly appealJudges?: AppealCaseJudge[]
 
-  // The bench as three fixed slots, for clients that have not moved to
-  // appealJudges. Resolved from the bench in AppealCaseResolver.
-  readonly appealJudge1?: User
-  readonly appealJudge2?: User
-  readonly appealJudge3?: User
-
   @Field(() => AppealCaseRulingDecision, { nullable: true })
   readonly appealRulingDecision?: AppealCaseRulingDecision
+
+  // Set on a verdict appeal only: a judgment (VERDICT) or a ruling (RULING).
+  @Field(() => AppealRulingType, { nullable: true })
+  readonly appealRulingType?: AppealRulingType
 
   @Field(() => String, { nullable: true })
   readonly appealConclusion?: string

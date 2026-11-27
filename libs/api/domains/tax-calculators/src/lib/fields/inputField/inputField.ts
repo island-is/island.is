@@ -22,7 +22,6 @@ import type {
 import { InputFieldDependency } from '../../models/inputFieldDependency.model'
 import { NumberInputDependencyValue } from '../../models/numberInputDependencyValue.model'
 import { StringInputDependencyValue } from '../../models/stringInputDependencyValue.model'
-import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
 /* Exhaustive records make added source types fail at compile time. */
 const INPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
@@ -85,15 +84,16 @@ export const toInputField = (field: CalculatorField): InputField => {
 
   switch (field.type) {
     case 'number': {
-      const range = field.semantic && NUMERIC_SEMANTIC_RANGE[field.semantic]
       const inputField: NumberInputField = {
         ...shared,
         type: INPUT_FIELD_TYPE_BY_CLIENT_TYPE[field.type],
         semantic: field.semantic
           ? SEMANTIC_BY_CLIENT_SEMANTIC[field.semantic]
           : undefined,
-        min: range ? range.min : undefined,
-        max: range ? range.max : undefined,
+        min: field.minimum,
+        max: field.maximum,
+        integer: field.integer ?? false,
+        defaultValue: field.defaultValue,
       }
       return inputField
     }

@@ -6,7 +6,7 @@ import { ApolloError } from '@apollo/client'
 
 import {
   Typography,
-  Heading,
+  SectionHeader,
   ChevronRight,
   ViewPager,
   EmptyCard,
@@ -114,7 +114,7 @@ const AirDiscountModule = React.memo(
             disabled={count === 0}
             onPress={() => router.navigate(`/more/air-discount`)}
           >
-            <Heading
+            <SectionHeader
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
@@ -124,7 +124,10 @@ const AirDiscountModule = React.memo(
                       alignItems: 'center',
                     }}
                   >
-                    <Typography variant="heading5" color={theme.color.blue400}>
+                    <Typography
+                      variant="heading5"
+                      color={theme.tokens.interactive.foreground.primary}
+                    >
                       <FormattedMessage id="button.seeAll" />
                     </Typography>
                     <ChevronRight />
@@ -133,7 +136,7 @@ const AirDiscountModule = React.memo(
               }
             >
               <FormattedMessage id="homeOptions.airDiscount" />
-            </Heading>
+            </SectionHeader>
           </TouchableOpacity>
           {loading && !data ? (
             <GeneralCardSkeleton height={146} />

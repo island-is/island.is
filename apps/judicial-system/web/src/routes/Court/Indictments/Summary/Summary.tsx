@@ -47,11 +47,11 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as styles from '@island.is/judicial-system-web/src/utils/styles/modalPdfPreview.css'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './Summary.strings'
-import * as styles from './Summary.css'
 
 type modal = 'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'CORRECTION_EXPLANATION'
 
@@ -229,9 +229,12 @@ const Summary: FC = () => {
           <AppealRulingModifiedAlert />
           <Box component="section" className={stack({ gap: 1 })}>
             <Text variant="h2" as="h2">
-              {formatMessage(core.caseNumber, {
-                caseNumber: workingCase.courtCaseNumber,
-              })}
+              {formatMessage(
+                { id: core.caseNumber, defaultMessage: core.caseNumber },
+                {
+                  caseNumber: workingCase.courtCaseNumber,
+                },
+              )}
             </Text>
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>

@@ -12,7 +12,6 @@ import {
 import { messages } from '../lib/messages'
 import { useIntl } from 'react-intl'
 import { useEffect, useRef, useState } from 'react'
-import mammoth from 'mammoth'
 import { FileRejection } from 'react-dropzone'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -20,41 +19,25 @@ import { useLocale } from '@island.is/localization'
 import { ApiActions, draftActionId } from '../utils/constants'
 import { escapeHtml, htmlToPlainText } from '../utils/htmlHelpers'
 import {
+  MAX_INLINE_BASE64_LENGTH,
+  MAX_PLAN_PDF_BYTES,
+  convertDocxToHtml,
+  isPlanRejection,
+} from '../utils/planUpload'
+import {
   EqualityContentPayload,
   useEnsureEqualityDraft,
   useEqualityContentPush,
 } from '../utils/useEqualityDraft'
+import { useScreenEntered } from '../utils/useScreenEntered'
 
 interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-/**
- * Mirrors DMR's 4MB cap on a decoded PDF.
- *
- * Not an arbitrary UX limit: the file rides as base64 inside a GraphQL
- * variable, and base64 inflates by 4/3 against DMR's own request-body ceiling.
- * Raising it here alone would just move the rejection later.
- */
-const MAX_PDF_BYTES = 4 * 1024 * 1024
-
-/**
- * Reads a File into base64, without the data-URI prefix `readAsDataURL` adds.
- *
- * Chunked rather than `String.fromCharCode(...bytes)`: spreading a
- * multi-megabyte array into an argument list overflows the call stack well
- * below the 4MB this has to handle.
- */
-const fileToBase64 = async (file: File): Promise<string> => {
-  const bytes = new Uint8Array(await file.arrayBuffer())
-  const CHUNK = 0x8000
-  let binary = ''
-
-  for (let i = 0; i < bytes.length; i += CHUNK) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK))
-  }
-
-  return btoa(binary)
+const EDITOR_BEFORE_SUBMIT = {
+  allowMultiple: true,
+  customCallbackId: 'equalityReportEditor',
 }
 
 export const Editor = ({
@@ -75,7 +58,8 @@ export const Editor = ({
       : 'draft'
 
   const ensureDraft = useEnsureEqualityDraft(application)
-  const { pushDraftContent, pushRetryContent } = useEqualityContentPush()
+  const { uploadPlanPdf, pushDraftContent, pushRetryContent } =
+    useEqualityContentPush()
 
   const initialFilename = getValueViaPath<string>(
     application.answers,
@@ -106,6 +90,9 @@ export const Editor = ({
   // Last filename known to match DMR's stored content. Both pushes replace
   // wholesale, so a failed one leaves DMR still holding exactly this file.
   const lastGoodFilenameRef = useRef(initialFilename ?? '')
+  // The last upload was a .docx whose images were left out. Mount-local: it
+  // explains the upload just made, not one from an earlier visit.
+  const [imagesNotIncluded, setImagesNotIncluded] = useState(false)
 
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
@@ -128,8 +115,12 @@ export const Editor = ({
     return () => setSubmitButtonDisabled?.(false)
   }, [uploadUnresolved, setSubmitButtonDisabled])
 
+  const screenEntered = useScreenEntered()
+
   // Kept out of the disabled flag above: a button greyed out on arrival
   // explains nothing, so the untouched case blocks on press with a reason.
+  // `screenEntered` re-registers it after Screen's arrival clear, which would
+  // otherwise leave an untouched screen with no guard at all.
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
@@ -143,8 +134,11 @@ export const Editor = ({
         return [false, message]
       }
       return [true, null]
-    })
+      // Composed, not replacing: EqualityAttachments shares this screen and
+      // registers its own guard, which a plain registration would wipe out.
+    }, EDITOR_BEFORE_SUBMIT)
   }, [
+    screenEntered,
     uploadUnresolved,
     hasSettledFile,
     setBeforeSubmitCallback,
@@ -174,10 +168,12 @@ export const Editor = ({
     // to DMR cannot leave the old valid filename waving the applicant through.
     setValue('goalsAndActions.filename', '', { shouldValidate: true })
     setSelectedFile({ name: file.name, status: FileUploadStatus.uploading })
+    setImagesNotIncluded(false)
 
     try {
       const name = file.name.toLowerCase()
       let payload: EqualityContentPayload
+      let droppedImages = false
 
       if (name.endsWith('.pdf')) {
         /*
@@ -185,30 +181,40 @@ export const Editor = ({
          * PDFs. The company's layout, tables and images survive, where mammoth
          * would have flattened them.
          *
-         * Size is checked here because the file travels as base64 inside a
-         * GraphQL variable, which inflates it by 4/3 against a 4MB server cap.
-         * Failing on selection tells the applicant what is wrong; failing after
-         * the upload just says "villa".
+         * The bytes go straight to S3 by presigned URL, like a fylgiskjal, and
+         * only the key passes through GraphQL. DMR checks size and signature
+         * again on registration; these checks just fail early with a reason.
          */
-        if (file.size > MAX_PDF_BYTES) {
+        if (file.size === 0) {
+          resetAfterFailure()
+          setUploadFailed(true)
+          setRejectionMessage(formatMessage(m.editorPdfRejected))
+          return
+        }
+        if (file.size > MAX_PLAN_PDF_BYTES) {
           resetAfterFailure()
           setUploadFailed(true)
           setRejectionMessage(formatMessage(m.editorFileTooLarge))
           return
         }
 
+        // DMR presigns against an existing report, so the draft comes first.
+        if (mode === 'draft') await ensureDraft()
+
+        // A fresh key for every attempt: DMR consumes one on success and
+        // refuses it after, so a key is never kept or reused.
         payload = {
-          kind: 'pdf',
-          base64: await fileToBase64(file),
+          kind: 'pdfKey',
+          key: await uploadPlanPdf(application.id, file),
           filename: file.name,
         }
       } else {
         let html = ''
 
         if (name.endsWith('.docx')) {
-          const arrayBuffer = await file.arrayBuffer()
-          const result = await mammoth.convertToHtml({ arrayBuffer })
-          html = result.value
+          const converted = await convertDocxToHtml(await file.arrayBuffer())
+          html = converted.html
+          droppedImages = converted.imageCount > 0
         } else if (name.endsWith('.txt')) {
           const text = await file.text()
           html = text
@@ -225,15 +231,31 @@ export const Editor = ({
         // Converts to nothing, so there is nothing to send: same as unsupported.
         // Deliberately not applied to the PDF branch — a scanned plan is all
         // images and has no extractable text, but it is still a real plan.
+        // A .docx that is only images lands here too, and is better pointed
+        // at PDF than told its format is unsupported.
         const plainTextLength = htmlToPlainText(html).length
         if (plainTextLength === 0) {
           resetAfterFailure()
           setUploadFailed(true)
-          setRejectionMessage(formatMessage(m.editorUnsupportedFile))
+          setRejectionMessage(
+            formatMessage(
+              droppedImages
+                ? m.editorImagesNotIncluded
+                : m.editorUnsupportedFile,
+            ),
+          )
           return
         }
 
-        payload = { kind: 'html', base64: Buffer.from(html).toString('base64') }
+        const base64 = Buffer.from(html).toString('base64')
+        if (base64.length > MAX_INLINE_BASE64_LENGTH) {
+          resetAfterFailure()
+          setUploadFailed(true)
+          setRejectionMessage(formatMessage(m.editorDocumentTooLarge))
+          return
+        }
+
+        payload = { kind: 'html', base64 }
       }
 
       if (mode === 'draft') {
@@ -247,10 +269,15 @@ export const Editor = ({
       setValue('goalsAndActions.filename', file.name, { shouldValidate: true })
       setSelectedFile({ name: file.name, status: FileUploadStatus.done })
       setUploadSuccess(true)
-    } catch {
+      setImagesNotIncluded(droppedImages)
+    } catch (error) {
       resetAfterFailure()
       setUploadFailed(true)
-      setActionError(formatMessage(m.editorUploadError))
+      setActionError(
+        formatMessage(
+          isPlanRejection(error) ? m.editorPdfRejected : m.editorUploadError,
+        ),
+      )
     } finally {
       setIsUploading(false)
     }
@@ -385,6 +412,15 @@ export const Editor = ({
           <AlertMessage
             type="success"
             message={formatMessage(m.editorUploadSuccess)}
+          />
+        </Box>
+      )}
+
+      {uploadSuccess && imagesNotIncluded && (
+        <Box marginTop={2}>
+          <AlertMessage
+            type="info"
+            message={formatMessage(m.editorImagesNotIncluded)}
           />
         </Box>
       )}

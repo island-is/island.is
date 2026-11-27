@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,7 +6,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -20,7 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useAppealStatementDeadline from '@island.is/judicial-system-web/src/utils/hooks/useAppealStatementDeadline'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
@@ -32,6 +30,7 @@ import type { StatementDeadlineParty } from './VerdictAppealStatementDeadlines.l
 import {
   applyStatementDeadline,
   getStatementDeadlineParties,
+  getStatementUploadUrl,
 } from './VerdictAppealStatementDeadlines.logic'
 
 /**
@@ -56,7 +55,6 @@ const VerdictAppealStatementDeadlines = () => {
   // appeal when the URL names no appeal, and this page is never about that
   // one.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const { setAppealStatementDeadline, isSettingAppealStatementDeadline } =
     useAppealStatementDeadline()
@@ -89,8 +87,8 @@ const VerdictAppealStatementDeadlines = () => {
     const saved = await setAppealStatementDeadline({
       caseId: workingCase.id,
       appealCaseId: verdictAppealCase.id,
-      defendantId: party.party.defendantId ?? undefined,
-      civilClaimantId: party.party.civilClaimantId ?? undefined,
+      defendantId: party.ids.defendantId ?? undefined,
+      civilClaimantId: party.ids.civilClaimantId ?? undefined,
       // The picker gives a day at midnight, and that is what is sent: the
       // backend compares deadlines as instants, so a time of day on one
       // would let the same day pass as an extension.
@@ -108,6 +106,16 @@ const VerdictAppealStatementDeadlines = () => {
     return true
   }
 
+  // The court files a party's statement itself when it arrives outside the
+  // system; the page it goes to names the party in its query.
+  const goToUpload = (party: StatementDeadlineParty) => {
+    if (verdictAppealCase) {
+      router.push(
+        getStatementUploadUrl(workingCase.id, verdictAppealCase.id, party),
+      )
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -116,7 +124,9 @@ const VerdictAppealStatementDeadlines = () => {
       isValid
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader
+        title={titles.courtOfAppeal.verdictAppeal.statementDeadlines}
+      />
       <FormContentContainer>
         <Box marginBottom={5}>
           <PageTitle marginBottom={caseNumber || headerLines.length ? 1 : 0}>
@@ -142,6 +152,7 @@ const VerdictAppealStatementDeadlines = () => {
                 party={party}
                 onSend={sendDeadline}
                 isSending={isSettingAppealStatementDeadline}
+                onUpload={goToUpload}
               />
             ))}
           </BlueBox>
@@ -152,7 +163,7 @@ const VerdictAppealStatementDeadlines = () => {
           previousUrl={defenderUrl}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE),

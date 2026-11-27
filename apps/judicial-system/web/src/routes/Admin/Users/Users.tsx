@@ -1,5 +1,4 @@
 import { useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -11,9 +10,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  ADMIN_CASE_LIFETIME_ROUTE,
   ADMIN_CHANGE_USER_ROUTE,
   ADMIN_CREATE_USER_ROUTE,
   ADMIN_MESSAGE_SUSPENSION_ROUTE,
+  ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE,
   ADMIN_STATISTICS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -44,8 +45,6 @@ export const Users = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([])
-
-  const { formatMessage } = useIntl()
   const {
     allInstitutions,
     loading: institutionsLoading,
@@ -110,7 +109,7 @@ export const Users = () => {
 
   return (
     <div className={styles.userControlContainer}>
-      <PageHeader title={formatMessage(titles.admin.users)} />
+      <PageHeader title={titles.admin.users} />
       <Box display="flex" marginBottom={9} justifyContent="spaceBetween">
         <Button
           icon="add"
@@ -121,6 +120,17 @@ export const Users = () => {
           Nýr notandi
         </Button>
         <Box display="flex" columnGap={2}>
+          {user?.role === UserRole.ADMIN && (
+            <Button
+              variant="ghost"
+              icon="time"
+              onClick={() => {
+                router.push(ADMIN_CASE_LIFETIME_ROUTE)
+              }}
+            >
+              Líftími R-mála
+            </Button>
+          )}
           {(user?.role === UserRole.ADMIN ||
             user?.canManageMessageSuspension) && (
             <Button
@@ -131,6 +141,18 @@ export const Users = () => {
               }}
             >
               Biðröð
+            </Button>
+          )}
+          {(user?.role === UserRole.ADMIN ||
+            user?.canManageServiceInterruptionBanner) && (
+            <Button
+              variant="ghost"
+              icon="warning"
+              onClick={() => {
+                router.push(ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE)
+              }}
+            >
+              Viðvörunarborði
             </Button>
           )}
           <Button

@@ -157,6 +157,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       position={state.isFloating ? 'fixed' : undefined}
       bottom={state.isFloating ? 2 : undefined}
       marginTop={state.isFloating ? undefined : 4}
+      className={state.isFloating ? styles.floating : undefined}
       style={
         state.isFloating ? { left: state.left, width: state.width } : undefined
       }

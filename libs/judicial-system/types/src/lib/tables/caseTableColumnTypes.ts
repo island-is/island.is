@@ -42,12 +42,24 @@ const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
 // appeal, so they cannot share the appealCase-backed columns above even where
 // the title is the same.
 const verdictAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
+// The number of whichever case-level appeal came last, on a list that holds
+// both appealed rulings and appealed verdicts.
+const latestAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const districtCourtRulingDate: CaseTableColumn = { title: 'Dómur héraðsdóms' }
 const verdictAppealAppellant: CaseTableColumn = { title: 'Áfrýjað af' }
 const verdictAppealState: CaseTableColumn = { title: 'Staða' }
 const verdictAppealHead: CaseTableColumn = { title: 'Dómsformaður' }
 const verdictAppealCompletedDate: CaseTableColumn = { title: 'Máli lokið' }
 const verdictAppealResult: CaseTableColumn = { title: 'Niðurstaða' }
+// The public prosecution's view of an appealed verdict. Its prosecutors follow
+// the appeal from their own side, so who appealed is a tag rather than text and
+// the status is how far the appeal has come, not what the court of appeals has
+// left to do with it.
+const appealProsecutor: CaseTableColumn = { title: 'Saksóknari' }
+const verdictAppealAppellantTag: CaseTableColumn = { title: 'Áfrýjað af' }
+const verdictAppealDate: CaseTableColumn = { title: 'Áfrýjað' }
+const verdictAppealProgress: CaseTableColumn = { title: 'Staða' }
+const verdictAppealCourtSession: CaseTableColumn = { title: 'Fyrirtaka' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -80,12 +92,18 @@ export const caseTableColumns = {
   prosecutor,
   prosecutorInitials,
   verdictAppealCaseNumber,
+  latestAppealCaseNumber,
   districtCourtRulingDate,
   verdictAppealAppellant,
   verdictAppealState,
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  appealProsecutor,
+  verdictAppealAppellantTag,
+  verdictAppealDate,
+  verdictAppealProgress,
+  verdictAppealCourtSession,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

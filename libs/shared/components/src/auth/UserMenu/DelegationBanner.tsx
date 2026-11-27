@@ -11,7 +11,11 @@ import { userMessages } from '@island.is/shared/translations'
 import { checkDelegation } from '@island.is/shared/utils'
 import * as styles from './DelegationBanner.css'
 
-export const DelegationBanner = () => {
+interface DelegationBannerProps {
+  exitTargetLink?: string
+}
+
+export const DelegationBanner = ({ exitTargetLink }: DelegationBannerProps) => {
   const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { switchUser } = useAuth()
@@ -45,7 +49,7 @@ export const DelegationBanner = () => {
                   variant="text"
                   size="small"
                   colorScheme="negative"
-                  onClick={() => switchUser(actor.nationalId)}
+                  onClick={() => switchUser(actor.nationalId, exitTargetLink)}
                   icon="logOut"
                   iconType="outline"
                 >

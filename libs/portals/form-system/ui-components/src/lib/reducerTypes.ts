@@ -26,7 +26,12 @@ export interface ApplicationState {
   screenError?: FormSystemValidationError
   isValid?: boolean
   submitted?: boolean
+  pendingUploads?: number
+  isNavigating?: boolean
 }
+
+// False means a guarded action was rejected before dispatch.
+export type ApplicationDispatch = (action: Action) => boolean | void
 
 export interface Action {
   type: string

@@ -11,13 +11,16 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   hasGeneratedCourtRecordPdf,
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isRequestCase,
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 
+import { isRequestSharedWithDefender } from '../defendant'
 import {
+  canLimitedAccessUserViewCaseFile,
   FileService,
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
@@ -30,6 +33,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CivilClaimant,
+  DateLog,
   Defendant,
 } from '../repository'
 import { PdfService } from './pdf.service'
@@ -55,10 +59,11 @@ export class LimitedAccessCaseService {
     caseId: string,
     options?: { transaction?: Transaction; user?: TUser },
   ): Promise<Case> {
+    const defenceUserNationalId = this.defenceUserNationalId(options?.user)
     const theCase = await this.caseRepositoryService.findLimitedAccessById(
       caseId,
       {
-        defenceUserNationalId: this.defenceUserNationalId(options?.user),
+        defenceUserNationalId,
         transaction: options?.transaction,
       },
     )
@@ -67,7 +72,7 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return theCase
+    return this.restrictCaseFilesForDefenceUser(theCase, options?.user)
   }
 
   /**
@@ -81,9 +86,10 @@ export class LimitedAccessCaseService {
     transaction: Transaction,
     user?: TUser,
   ): Promise<Case> {
+    const defenceUserNationalId = this.defenceUserNationalId(user)
     const theCase =
       await this.caseRepositoryService.findLimitedAccessByIdForUpdate(caseId, {
-        defenceUserNationalId: this.defenceUserNationalId(user),
+        defenceUserNationalId,
         transaction,
       })
 
@@ -91,12 +97,107 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return theCase
+    return this.restrictCaseFilesForDefenceUser(theCase, user)
   }
 
   // Only a defence user has their view of the linked cases narrowed
   private defenceUserNationalId(user?: TUser): string | undefined {
     return user && isDefenceUser(user) ? user.nationalId : undefined
+  }
+
+  // Case / merged / split caseFiles the defence user may see, each with the
+  // owning case (for S3) and the access-control case. Same per-file rules as
+  // downloads / LimitedAccessCaseFileInterceptor. Merged files are judged
+  // against the parent (merged includes omit sharing / appeal fields); split
+  // files against the split case.
+  private getDefenceUserAccessibleCaseFiles(
+    theCase: Case,
+    user: TUser,
+  ): { file: CaseFile; owningCase: Case }[] {
+    const accessible: { file: CaseFile; owningCase: Case }[] = []
+
+    const consider = (file: CaseFile, owningCase: Case, accessCase: Case) => {
+      if (
+        canLimitedAccessUserViewCaseFile({
+          user,
+          caseType: accessCase.type,
+          caseState: accessCase.state,
+          submittedBy: file.submittedBy,
+          fileRepresentative: file.fileRepresentative,
+          caseFileCategory: file.category,
+          defendants: accessCase.defendants,
+          civilClaimants: accessCase.civilClaimants,
+          defendantId: file.defendantId,
+          fileCreated: file.created,
+          civilClaimantId: file.civilClaimantId,
+          isRulingOrderInConfirmedCourtSession:
+            isRulingOrderInConfirmedCourtSession(
+              file.id,
+              accessCase.courtSessions,
+            ),
+          appealEventLogs: accessCase.verdictAppealCase?.appealEventLogs,
+        })
+      ) {
+        accessible.push({ file, owningCase })
+      }
+    }
+
+    const sources = [
+      { owningCase: theCase, accessCase: theCase },
+      ...(theCase.mergedCases ?? []).map((merged) => ({
+        owningCase: merged,
+        accessCase: theCase,
+      })),
+      ...(theCase.splitCases ?? []).map((split) => ({
+        owningCase: split,
+        accessCase: split,
+      })),
+    ]
+
+    for (const { owningCase, accessCase } of sources) {
+      for (const file of owningCase.caseFiles ?? []) {
+        consider(file, owningCase, accessCase)
+      }
+    }
+
+    return accessible
+  }
+
+  // Strip rows the defence user may not see before the limited-access payload
+  // leaves the service.
+  private restrictCaseFilesForDefenceUser(theCase: Case, user?: TUser): Case {
+    if (!user || !isDefenceUser(user)) {
+      return theCase
+    }
+
+    const filesByOwningCase = new Map<Case, CaseFile[]>()
+
+    for (const { file, owningCase } of this.getDefenceUserAccessibleCaseFiles(
+      theCase,
+      user,
+    )) {
+      const files = filesByOwningCase.get(owningCase) ?? []
+      files.push(file)
+      filesByOwningCase.set(owningCase, files)
+    }
+
+    if (theCase.caseFiles) {
+      theCase.caseFiles = filesByOwningCase.get(theCase) ?? []
+    }
+
+    for (const merged of theCase.mergedCases ?? []) {
+      if (merged.caseFiles) {
+        merged.caseFiles = filesByOwningCase.get(merged) ?? []
+      }
+    }
+
+    for (const split of theCase.splitCases ?? []) {
+      if (split.caseFiles) {
+        split.caseFiles = filesByOwningCase.get(split) ?? []
+      }
+    }
+
+    return theCase
   }
 
   async update(
@@ -196,96 +297,88 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
-    const cutoffDate = getDefenceUserCutoffDate(
-      user.nationalId,
-      theCase.defendants,
-      theCase.civilClaimants,
-    )
-
-    const allowedCaseFiles =
-      theCase.caseFiles?.filter((file) => {
-        if (!file.isKeyAccessible || !file.category) {
-          return false
-        }
-
-        // A ruling order uploaded during the course of a case is only visible
-        // once it has been added to a confirmed court session. One pronounced
-        // orally has nothing to add to the zip until it has been written up.
-        if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
-          return (
-            !isRulingOrderWithoutDocument(file) &&
-            isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions)
-          )
-        }
-
-        if (!allowedCaseFileCategories.includes(file.category)) {
-          return false
-        }
-
-        if (cutoffDate && file.created > cutoffDate) {
-          return false
-        }
-
-        if (
-          (file.category === CaseFileCategory.CRIMINAL_RECORD ||
-            file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
-          file.defendantId
-        ) {
-          return Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
-            user.nationalId,
-            file.defendantId,
-            theCase.defendants,
-          )
-        }
-
-        return true
-      }) ?? []
-
     const promises: Promise<void>[] = []
     const filesToZip: { data: Buffer; name: string }[] = []
 
-    allowedCaseFiles.forEach((file) => {
-      promises.push(
-        this.tryAddCaseFileFromS3ToFilesToZip(theCase, file, filesToZip),
-      )
-    })
+    // Same visibility as the limited-access payload; skip oral ruling orders
+    // with no document and keys we cannot fetch.
+    for (const { file, owningCase } of this.getDefenceUserAccessibleCaseFiles(
+      theCase,
+      user,
+    )) {
+      if (!file.isKeyAccessible || isRulingOrderWithoutDocument(file)) {
+        continue
+      }
 
+      promises.push(
+        this.tryAddCaseFileFromS3ToFilesToZip(owningCase, file, filesToZip),
+      )
+    }
+
+    // The zip is available while the case is still open, so each generated
+    // document is held to the same condition as its own download: the request
+    // follows the prosecutor's sharing choice, and the court record and ruling
+    // are drafts until the case is completed.
     if (isRequestCase(theCase.type)) {
-      promises.push(
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getRequestPdf(theCase),
-          'Krafa.pdf',
-          filesToZip,
-        ),
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getCourtRecordPdf(theCase, user),
-          'Þingbók.pdf',
-          filesToZip,
-        ),
-      )
-
-      if (!theCase.isCompletedWithoutRuling) {
+      if (
+        isRequestSharedWithDefender({
+          state: theCase.state,
+          defendants: theCase.defendants,
+          nationalId: user.nationalId,
+          hasArraignmentDate: Boolean(
+            DateLog.arraignmentDate(theCase.dateLogs),
+          ),
+        })
+      ) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
-            this.pdfService.getRulingPdf(theCase),
-            'Úrskurður.pdf',
+            this.pdfService.getRequestPdf(theCase),
+            'Krafa.pdf',
             filesToZip,
           ),
         )
       }
+
+      if (isCompletedCase(theCase.state)) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdf(theCase, user),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+
+        if (!theCase.isCompletedWithoutRuling) {
+          promises.push(
+            this.tryAddGeneratedPdfToFilesToZip(
+              this.pdfService.getRulingPdf(theCase),
+              'Úrskurður.pdf',
+              filesToZip,
+            ),
+          )
+        }
+      }
     }
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      (Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+    const hasIndictmentFileAccess =
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
         user.nationalId,
         theCase.defendants,
       ) ||
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-          user.nationalId,
-          theCase.civilClaimants,
-        ))
-    ) {
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+
+    if (isIndictmentCase(theCase.type) && hasIndictmentFileAccess) {
       promises.push(
         this.tryAddGeneratedPdfToFilesToZip(
           this.pdfService.getIndictmentPdf(theCase, transaction),
@@ -294,22 +387,12 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip =
-        Defendant.isConfirmedDefenderOfDefendant(
-          user.nationalId,
-          theCase.defendants,
-        ) ||
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-          user.nationalId,
-          theCase.civilClaimants,
-        )
-          ? getDefenceUserVisiblePoliceCaseNumbers(
-              user.nationalId,
-              theCase.defendants,
-              theCase.civilClaimants,
-              theCase.policeCaseNumbers,
-            )
-          : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip = getDefenceUserVisiblePoliceCaseNumbers(
+        user.nationalId,
+        theCase.defendants,
+        theCase.civilClaimants,
+        theCase.policeCaseNumbers,
+      )
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
@@ -321,10 +404,24 @@ export class LimitedAccessCaseService {
         )
       })
 
-      const myDefendants = getConfirmedDefendantsForDefender(
-        user.nationalId,
-        theCase.defendants,
+      const myDefendantsById = new Map(
+        getConfirmedDefendantsForDefender(
+          user.nationalId,
+          theCase.defendants,
+        ).map((defendant) => [defendant.id, defendant]),
       )
+
+      for (const defendant of theCase.defendants ?? []) {
+        if (
+          Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+            defendant,
+          ])
+        ) {
+          myDefendantsById.set(defendant.id, defendant)
+        }
+      }
+
+      const myDefendants = [...myDefendantsById.values()]
 
       myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>

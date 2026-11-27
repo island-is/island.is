@@ -16,7 +16,9 @@ import {
 } from '@island.is/clients/rsk/company-registry'
 import {
   ActorProfileDto,
+  BlockedCategoryDto,
   UserProfileDto,
+  UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -24,7 +26,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 
 import { UserNotificationsConfig } from '../../../../config'
@@ -76,19 +78,34 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
 import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
 import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
 import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
-import { HnippTemplatePriorityType } from '../dto/hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from '../dto/hnippTemplate.response'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
 const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
 
+let mockBlockedCategories: BlockedCategoryDto[] = []
+
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
-    ({ xParamNationalId }: { xParamNationalId: string }) => {
+    ({
+      xParamNationalId,
+      include,
+    }: {
+      xParamNationalId: string
+      include?: UserProfileInclude[]
+    }) => {
+      const userProfile = userProfiles.find(
+        (u) => u.nationalId === xParamNationalId,
+      ) as UserProfileDto
+
       return Promise.resolve(
-        userProfiles.find(
-          (u) => u.nationalId === xParamNationalId,
-        ) as UserProfileDto,
+        include?.includes(UserProfileInclude.NotificationSettings)
+          ? { ...userProfile, blockedCategories: mockBlockedCategories }
+          : userProfile,
       )
     },
   ),
@@ -547,6 +564,37 @@ describe('NotificationsWorkerService', () => {
   })
 
   describe('Actor Notifications', () => {
+    it('should keep the deadline when onBehalfOf is provided without rootMessageId', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      const queueAddSpy = jest.spyOn(queue, 'add')
+
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        onBehalfOf: {
+          nationalId: userWithDelegations.nationalId,
+          name: userWithDelegations.name,
+        },
+        deadline,
+      })
+      await wait(3)
+
+      const userNotifications = await notificationModel.findAll({
+        where: { recipient: userWithDelegations.nationalId },
+      })
+      expect(userNotifications).toHaveLength(1)
+      expect(userNotifications[0].deadline?.toISOString()).toBe(deadline)
+
+      const actorMessages = queueAddSpy.mock.calls
+        .map(([message]) => message as InternalCreateHnippNotificationDto)
+        .filter(
+          (message) => message.rootMessageId === userNotifications[0].messageId,
+        )
+      expect(actorMessages).toHaveLength(1)
+      expect(actorMessages[0].deadline).toBe(deadline)
+    })
+
     it('should target a specific actor when onBehalfOf is provided without rootMessageId', async () => {
       // Clear mocks to isolate this test
       jest.clearAllMocks()
@@ -1144,6 +1192,7 @@ describe('NotificationsWorkerService', () => {
     const mockTemplateCategory = (
       labels: { is?: string; en?: string },
       priorityType?: HnippTemplatePriorityType,
+      sourceType?: HnippTemplateSourceType,
     ) =>
       jest
         .spyOn(notificationsService, 'getTemplate')
@@ -1152,6 +1201,7 @@ describe('NotificationsWorkerService', () => {
             hnippCategory: locale === 'en' ? labels.en : labels.is,
             hnippCategoryIs: labels.is,
             priorityType,
+            sourceType,
           }),
         )
 
@@ -1182,6 +1232,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         category: null,
         priorityType: null,
+        sourceType: 'General',
       })
     })
 
@@ -1290,6 +1341,63 @@ describe('NotificationsWorkerService', () => {
       expect(senders[0].priorityType).toBe('Actionable')
     })
 
+    it('should record the source type of the template on the sender and the notification', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Actionable', 'Event')
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].sourceType).toBe('Event')
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(notifications[0].sourceType).toBe('Event')
+    })
+
+    it('should store the deadline on the notification, and null without one', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        deadline,
+      })
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // The two jobs may be stored in either order
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(2)
+      expect(
+        notifications.map((n) => n.deadline?.toISOString() ?? null),
+      ).toEqual(expect.arrayContaining([deadline, null]))
+    })
+
+    it('should forward the deadline to delegation holders', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      const queueAddSpy = jest.spyOn(queue, 'add')
+
+      await queue.add({
+        recipient: userWithDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        deadline,
+      })
+      await wait(3)
+
+      const delegationMessages = queueAddSpy.mock.calls
+        .map(([message]) => message as InternalCreateHnippNotificationDto)
+        .filter((message) => message.rootMessageId)
+      expect(delegationMessages.length).toBeGreaterThan(0)
+      delegationMessages.forEach((message) =>
+        expect(message.deadline).toBe(deadline),
+      )
+    })
+
     it('should record each template of a sender separately', async () => {
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
@@ -1316,11 +1424,11 @@ describe('NotificationsWorkerService', () => {
       ])
     })
 
-    it('should keep the latest category and priority type of a template', async () => {
-      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative')
+    it('should keep the latest category, priority type and source type of a template', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative', 'General')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      mockTemplateCategory({ is: 'Skattar' }, 'Actionable')
+      mockTemplateCategory({ is: 'Skattar' }, 'Actionable', 'Mail')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
       const senders = await userNotificationSenderModel.findAll()
@@ -1329,6 +1437,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         category: 'skattar',
         priorityType: 'Actionable',
+        sourceType: 'Mail',
       })
     })
 
@@ -1374,6 +1483,228 @@ describe('NotificationsWorkerService', () => {
       )
 
       bulkCreateSpy.mockRestore()
+    })
+  })
+
+  describe('Blocked sender categories', () => {
+    const recipient = userWithNoDelegations.nationalId
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+
+    const block = (blockedSenderId: string, category: string) => {
+      mockBlockedCategories = [
+        {
+          key: `${blockedSenderId}-${category}`,
+          senderId: blockedSenderId,
+          category,
+          categoryLabel: { is: category },
+        },
+      ]
+    }
+
+    const expectIncludesSettings = (included: boolean) =>
+      expect(
+        MockV2UsersApi.userProfileControllerFindUserProfile,
+      ).toHaveBeenCalledWith({
+        xParamNationalId: recipient,
+        include: included
+          ? [UserProfileInclude.NotificationSettings]
+          : undefined,
+      })
+
+    const mockCategory = (
+      isLabel?: string,
+      overrides: Partial<ReturnType<typeof getMockHnippTemplate>> = {},
+    ) =>
+      jest.spyOn(notificationsService, 'getTemplate').mockResolvedValue(
+        getMockHnippTemplate({
+          hnippCategory: isLabel,
+          hnippCategoryIs: isLabel,
+          ...overrides,
+        }),
+      )
+
+    const send = async ({
+      sender = senderId,
+      urgent,
+    }: { sender?: string; urgent?: boolean } = {}) => {
+      await queue.add({
+        recipient,
+        senderId: sender,
+        templateId: mockTemplateId,
+        urgent,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+      await wait(2)
+    }
+
+    const expectDelivered = async (wasSent: boolean) => {
+      const notifications = await notificationModel.findAll({
+        where: { recipient },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(notifications[0].wasSent).toBe(wasSent)
+      if (wasSent) {
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+        expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(
+          1,
+        )
+      } else {
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+        expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+      }
+    }
+
+    afterEach(() => {
+      mockBlockedCategories = []
+    })
+
+    it('should not deliver when the sender and category are blocked', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+
+      await expectDelivered(false)
+      expectIncludesSettings(true)
+    })
+
+    it('should ignore blocked categories when the feature flag is disabled', async () => {
+      const featureFlagService = app.get(FeatureFlagService)
+      const getValue = featureFlagService.getValue.bind(featureFlagService)
+      const getValueSpy = jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation((feature, defaultValue, user) =>
+          feature === Features.isNotificationBlockedCategoriesEnabled
+            ? Promise.resolve(false)
+            : getValue(feature, defaultValue, user),
+        )
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      try {
+        await send()
+      } finally {
+        getValueSpy.mockRestore()
+      }
+
+      await expectDelivered(true)
+      expectIncludesSettings(false)
+    })
+
+    it('should deliver without blocked categories when the feature flag lookup fails', async () => {
+      const featureFlagService = app.get(FeatureFlagService)
+      const getValue = featureFlagService.getValue.bind(featureFlagService)
+      const getValueSpy = jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation((feature, defaultValue, user) =>
+          feature === Features.isNotificationBlockedCategoriesEnabled
+            ? Promise.reject(new Error('feature flag service unavailable'))
+            : getValue(feature, defaultValue, user),
+        )
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      try {
+        await send()
+      } finally {
+        getValueSpy.mockRestore()
+      }
+
+      await expectDelivered(true)
+      expectIncludesSettings(false)
+    })
+
+    it('should match a dashed sender id', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send({ sender: dashedSenderId })
+
+      await expectDelivered(false)
+    })
+
+    it('should treat a template without a category as almennt', async () => {
+      mockCategory(undefined)
+      block(senderId, 'almennt')
+
+      await send()
+
+      await expectDelivered(false)
+    })
+
+    it('should deliver when another category is blocked for the sender', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'skattar')
+
+      await send()
+
+      await expectDelivered(true)
+    })
+
+    it('should deliver when the category is blocked for another sender', async () => {
+      mockCategory('Heilbrigðismál')
+      block(otherSenderId, 'heilbrigdismal')
+
+      await send()
+
+      await expectDelivered(true)
+    })
+
+    it('should deliver urgent notifications even when the category is blocked', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await send({ urgent: true })
+
+      await expectDelivered(true)
+      expectIncludesSettings(false)
+    })
+
+    it('should not look up settings when the notification has no sender', async () => {
+      mockCategory('Heilbrigðismál')
+
+      await queue.add({
+        recipient,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+      await wait(2)
+
+      await expectDelivered(true)
+      expectIncludesSettings(false)
+    })
+
+    it('should still send SMS for templates with smsDelivery ALWAYS but no email or push', async () => {
+      mockCategory('Heilbrigðismál', {
+        priorityType: 'Informative',
+        smsDelivery: 'ALWAYS',
+      })
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+      await wait(5)
+
+      await expectDelivered(false)
+      const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+        (call) => call[0],
+      )
+      expect(calledNumbers).toContain(userWithNoDelegations.mobilePhoneNumber)
+    })
+
+    it('should not send SMS for OPT_IN templates', async () => {
+      mockCategory('Heilbrigðismál', {
+        priorityType: 'Informative',
+        smsDelivery: 'OPT_IN',
+      })
+      block(senderId, 'heilbrigdismal')
+
+      await send()
+      await wait(5)
+
+      await expectDelivered(false)
+      expect(smsService.sendSms).not.toHaveBeenCalled()
     })
   })
 
@@ -1774,9 +2105,11 @@ describe('NotificationsWorkerService', () => {
     }>([
       { isUrgent: true, priorityType: 'Informative', shouldSend: true },
       { isUrgent: true, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: true, priorityType: 'Important', shouldSend: true },
       { isUrgent: true, priorityType: undefined, shouldSend: true },
       { isUrgent: false, priorityType: 'Informative', shouldSend: false },
       { isUrgent: false, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: false, priorityType: 'Important', shouldSend: false },
       { isUrgent: false, priorityType: undefined, shouldSend: false },
     ])(
       'and given notification urgency is $isUrgent and template priority is $priorityType',

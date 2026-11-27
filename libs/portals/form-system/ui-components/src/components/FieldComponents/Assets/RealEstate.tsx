@@ -39,6 +39,7 @@ interface Props {
   dispatch?: Dispatch<Action>
   valueIndex?: number
   state?: ApplicationState
+  isPreview?: boolean
 }
 
 type SelectItem = {
@@ -104,7 +105,12 @@ const sanitizePropertyNumberInput = (propertyNumber: string) => {
   return sanitized.slice(0, /^F/i.test(sanitized) ? 8 : 7)
 }
 
-export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
+export const RealEstate = ({
+  item,
+  dispatch,
+  valueIndex = 0,
+  isPreview = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger, setValue, setError, clearErrors } = useFormContext()
   const client = useApolloClient()
@@ -153,7 +159,9 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [selectedOption, setSelectedOption] = useState<SelectItem | undefined>(
     undefined,
   )
-  const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
+  const [isLoading, setIsLoading] = useState(
+    shouldFetch && !cached && !isPreview,
+  )
   const [propertiesFetchHasError, setPropertiesFetchHasError] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [isPropertySearchFocused, setIsPropertySearchFocused] = useState(false)
@@ -231,6 +239,8 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const fetchProperty = async (propertyNumber: string) => {
+    if (isPreview) return
+
     const requestId = ++propertyRequestId.current
     const trimmed = propertyNumber.trim()
     const normalized = normalizePropertyNumber(trimmed)
@@ -369,7 +379,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   useEffect(() => {
     let cancelled = false
 
-    if (!shouldFetch) {
+    if (isPreview || !shouldFetch) {
       setIsLoading(false)
       return
     }
@@ -575,7 +585,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       }}
       render={({ field, fieldState }) => (
         <GridRow>
-          <GridColumn span="6/10">
+          <GridColumn span={['1/1', '1/1', '6/10']}>
             <Input
               label={item.name?.[lang] ?? ''}
               name="propertySearch"
@@ -617,12 +627,12 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   )
 
   return (
-    <Stack space={2}>
+    <Stack space={[1, 1, 2]}>
       {propertyNumberInput}
 
       {searchLoading && <LoadingDots />}
 
-      <GridRow>
+      <GridRow rowGap={1}>
         <GridColumn span={['1/1', '1/1', '1/1', '7/10']}>
           <Controller
             key={`${item.id}-${valueIndex}_address`}

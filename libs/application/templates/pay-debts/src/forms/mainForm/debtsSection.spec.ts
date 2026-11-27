@@ -171,7 +171,11 @@ describe('debtsSection', () => {
     const rows = table?.rows
     const expandedRows = table?.expandedRows?.rows
 
-    if (typeof rows !== 'function' || typeof expandedRows !== 'function') {
+    if (
+      !table ||
+      typeof rows !== 'function' ||
+      typeof expandedRows !== 'function'
+    ) {
       throw new Error('Expected the table rows to be derived from the debts')
     }
 
@@ -186,7 +190,9 @@ describe('debtsSection', () => {
       answers: {},
     } as unknown as Application
 
-    expect(rows(application)[0][2]).toBe(messages.table.noDateLabel)
+    expect(rows(application, table, 'is')[0][2]).toBe(
+      messages.table.noDateLabel,
+    )
     expect(expandedRows(application)[0][0][0]).toBe(messages.table.noDateLabel)
   })
 
@@ -209,7 +215,7 @@ describe('debtsSection', () => {
     ).toBe(false)
   })
 
-  it('warns about salary withholding only on the debts it applies to', () => {
+  it('flags salary withholding only on the rows it applies to', () => {
     const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
       | InteractiveTableField
       | undefined
@@ -230,10 +236,7 @@ describe('debtsSection', () => {
     } as unknown as Application
 
     expect(info(application)).toEqual([
-      {
-        ...messages.table.salaryWithholdingInfo,
-        values: { payerName: 'Mocklaunagreiðandi ehf.' },
-      },
+      messages.table.salaryWithholdingInfo,
       undefined,
     ])
   })

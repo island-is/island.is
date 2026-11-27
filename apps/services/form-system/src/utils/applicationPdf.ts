@@ -1,6 +1,7 @@
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
 import PDFDocument from 'pdfkit'
+import sanitizeHtml from 'sanitize-html'
 import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 
@@ -16,8 +17,11 @@ const colors = {
 }
 
 const pageMargin = 56
+const logoWidth = 120
+const logoHeight = 60
+const contentTop = pageMargin + logoHeight + 12
 const contentWidth = 483
-const footerHeight = 28
+const footerHeight = 40
 const sectionContentReservation = 150
 const screenContentReservation = 90
 const screenIndent = 10
@@ -25,7 +29,7 @@ const fieldIndent = 20
 
 const translations = {
   application: { is: 'Umsókn', en: 'Application' },
-  applicationNumber: { is: 'Númer umsóknar', en: 'Application number' },
+  applicationNumber: { is: 'Númer', en: 'number' },
   received: { is: 'Móttekin', en: 'Received' },
   page: { is: 'Bls.', en: 'Page' },
   selected: { is: 'Hakað við', en: 'checked' },
@@ -63,6 +67,18 @@ const textFor = (
   value: { is?: string; en?: string } | undefined,
   locale: Locale,
 ) => (locale === 'en' ? value?.en || value?.is : value?.is || value?.en) ?? ''
+
+const informationTextFor = (
+  value: { is?: string; en?: string } | undefined,
+  locale: Locale,
+) =>
+  sanitizeHtml(value?.[locale] ?? '', {
+    allowedTags: [],
+    allowedAttributes: {},
+  })
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
 
 const formatDate = (
   value: Date | string | null | undefined,
@@ -145,9 +161,9 @@ const fileNames = (value: unknown): string[] => {
 
 const drawPageChrome = (
   document: PDFKit.PDFDocument,
-  organizationName: string,
   locale: Locale,
   page: number,
+  logo?: Buffer,
 ) => {
   const { width, height } = document.page
   const footerTop = height - pageMargin - footerHeight
@@ -156,19 +172,15 @@ const drawPageChrome = (
 
   document.save()
   document.fillColor(colors.accent).rect(0, 0, width, 8).fill()
-  document
-    .fillColor(colors.muted)
-    .font('Helvetica')
-    .fontSize(8)
-    .text(
-      truncateText(
-        document,
-        organizationName,
-        contentWidth - document.widthOfString(pageNumber) - 16,
-      ),
-      pageMargin,
-      footerTop,
-    )
+  document.fillColor(colors.muted).font('Helvetica').fontSize(8)
+  if (page === 1) {
+    if (logo) {
+      document.image(logo, width - pageMargin - logoWidth, pageMargin, {
+        fit: [logoWidth, logoHeight],
+        align: 'right',
+      })
+    }
+  }
   document.text(
     pageNumber,
     pageMargin + contentWidth - document.widthOfString(pageNumber),
@@ -390,10 +402,13 @@ const drawField = (
   document: PDFKit.PDFDocument,
   field: {
     name: { is: string }
-    description?: { is?: string; en?: string }
+    informationText?: { is?: string; en?: string }
     isRequired?: boolean
     fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
+    fieldSettings?: {
+      isAddressRequired?: boolean
+      subLabel?: { is?: string; en?: string }
+    }
     values?: Array<{ json?: unknown }>
   },
   showLabel: boolean,
@@ -403,15 +418,24 @@ const drawField = (
     drawMessage(
       document,
       textFor(field.name, locale),
-      textFor(field.description, locale),
+      informationTextFor(field.informationText, locale),
     )
     return
   }
 
+  const informationText = informationTextFor(field.informationText, locale)
+  if (field.fieldType !== FieldTypesEnum.APPLICANT && informationText.trim()) {
+    drawMessage(document, '', informationText)
+  }
   const lines = fieldLines(field, locale)
+  const label = `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`
+  const subLabel =
+    field.fieldType === FieldTypesEnum.CHECKBOX
+      ? field.fieldSettings?.subLabel?.[locale] ?? ''
+      : ''
   drawValue(
     document,
-    `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`,
+    subLabel.trim() ? `${label}\n${subLabel}` : label,
     lines.map((line) => `${line.prefix}${line.text}`).join('\n') ||
       textFor(translations.noAnswer, locale),
     showLabel,
@@ -447,6 +471,7 @@ const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {
 export const buildApplicationPdf = (
   application: ApplicationDto,
   locale: Locale = 'is',
+  logo?: Buffer,
 ): Promise<Buffer> =>
   new Promise((resolve, reject) => {
     const title =
@@ -454,7 +479,20 @@ export const buildApplicationPdf = (
       textFor(translations.application, locale)
     const organizationName =
       textFor(application.organizationName, locale) || title
-    const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
+    const receivedAt = application.submittedAt
+      ? new Date(application.submittedAt).toLocaleString(
+          locale === 'en' ? 'en-GB' : 'is-IS',
+        )
+      : undefined
+    const document = new PDFDocument({
+      margins: {
+        top: contentTop,
+        right: pageMargin,
+        bottom: pageMargin,
+        left: pageMargin,
+      },
+      size: 'A4',
+    })
     const chunks: Buffer[] = []
     let page = 1
 
@@ -463,34 +501,33 @@ export const buildApplicationPdf = (
     document.on('error', reject)
     document.on('pageAdded', () => {
       page += 1
-      drawPageChrome(document, organizationName, locale, page)
+      drawPageChrome(document, locale, page, logo)
     })
 
     document.info.Title = title
-    drawPageChrome(document, organizationName, locale, page)
+    drawPageChrome(document, locale, page, logo)
     document
       .fillColor(colors.accent)
       .font('Helvetica-Bold')
       .fontSize(20)
       .text(title)
     document.moveDown(0.45)
-    document
-      .fillColor(colors.muted)
-      .font('Helvetica')
-      .fontSize(10)
-      .text(
-        `${textFor(translations.applicationNumber, locale)}: ${
-          application.id ?? ''
-        }`,
-      )
-    if (application.submittedAt) {
+    document.fillColor(colors.muted).font('Helvetica').fontSize(10)
+    const metadataOptions = { width: contentWidth, align: 'left' as const }
+    document.text(
+      truncateText(document, organizationName, contentWidth),
+      pageMargin,
+      document.y,
+      metadataOptions,
+    )
+    if (receivedAt) {
       document.text(
-        `${textFor(translations.received, locale)}: ${new Date(
-          application.submittedAt,
-        ).toLocaleString(locale === 'en' ? 'en-GB' : 'is-IS')}`,
+        `${textFor(translations.received, locale)}: ${receivedAt}`,
+        pageMargin,
+        document.y,
+        metadataOptions,
       )
     }
-
     const premises = application.sections?.find(
       (section) => section.sectionType === SectionTypes.PREMISES,
     )
@@ -585,5 +622,17 @@ export const buildApplicationPdf = (
       }
     }
 
+    document
+      .fillColor(colors.muted)
+      .font('Helvetica')
+      .fontSize(8)
+      .text(
+        `${textFor(translations.applicationNumber, locale)}: ${
+          application.id ?? ''
+        }`,
+        pageMargin,
+        document.page.height - pageMargin - footerHeight,
+        { width: contentWidth, lineBreak: false },
+      )
     document.end()
   })

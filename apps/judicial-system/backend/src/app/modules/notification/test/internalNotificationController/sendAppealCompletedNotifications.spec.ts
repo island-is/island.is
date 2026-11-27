@@ -98,9 +98,6 @@ describe('InternalNotificationController - Send appeal completed notifications',
             },
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
-            defenderNationalId,
-            defenderName: hasDefender ? defender.name : undefined,
-            defenderEmail: hasDefender ? defender.email : undefined,
             defendants: hasDefender
               ? [
                   {

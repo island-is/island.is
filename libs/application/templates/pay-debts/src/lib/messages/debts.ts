@@ -19,6 +19,26 @@ export const debts = {
       description: 'Label of the submit button on the debts screen',
     },
   }),
+  salaryWithholding: defineMessages({
+    title: {
+      id: 'pd.application:debts.salaryWithholding.title',
+      defaultMessage: 'Athugið!',
+      description:
+        'Title of the banner shown when a debt is withheld from the applicant salary',
+    },
+    message: {
+      id: 'pd.application:debts.salaryWithholding.message',
+      defaultMessage:
+        'Valið inniheldur skuldir sem eru merktar til frádráttar af launum. Launagreiðandi er: {payerName}. Viltu halda áfram með greiðsluferlið?',
+      description:
+        'Body of the banner shown when a debt is withheld from the applicant salary',
+    },
+    closeButtonLabel: {
+      id: 'pd.application:debts.salaryWithholding.closeButtonLabel',
+      defaultMessage: 'Loka',
+      description: 'Screen reader label of the banner close button',
+    },
+  }),
   limit: defineMessages({
     title: {
       id: 'pd.application:debts.limit.title',
@@ -134,11 +154,10 @@ export const debts = {
         'Invoice document link header of the expanded charge type sub-table',
     },
     salaryWithholdingInfo: {
-      id: 'pd.application:debts.table.salaryWithholdingInfo#markdown',
-      defaultMessage:
-        'Þessi skuld er merkt til frádráttar af launum. Launagreiðandi er: {payerName}.\nViltu halda áfram með greiðsluferlið?',
+      id: 'pd.application:debts.table.salaryWithholdingInfo',
+      defaultMessage: 'Þessi skuld er merkt til frádráttar af launum.',
       description:
-        'Shown in the expanded row of a debt that is being withheld from the applicant salary',
+        'Shown in the expanded row of a debt that is withheld from the applicant salary',
     },
     noDateLabel: {
       id: 'pd.application:debts.table.noDateLabel',

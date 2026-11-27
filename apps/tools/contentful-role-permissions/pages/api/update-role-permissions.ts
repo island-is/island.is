@@ -12,6 +12,7 @@ import {
   applyAssetPolicies,
   applyEntryEditPolicies,
   applyEntryGlobalReadPolicies,
+  applyReadableByAllEntryPolicy,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getContentfulManagementApiClient,
@@ -100,6 +101,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     )
 
     applyEntryGlobalReadPolicies(policies, globallyReadableContentTypeIds)
+
+    applyReadableByAllEntryPolicy(policies)
 
     applyAssetPolicies(
       policies,

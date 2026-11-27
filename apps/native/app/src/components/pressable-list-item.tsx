@@ -89,7 +89,11 @@ export const PressableListItem = memo(
 
     return (
       <PressableHighlight
-        highlightColor={theme.shade.shade100}
+        style={
+          !item.opened && {
+            backgroundColor: theme.tokens.background.brandMinimal,
+          }
+        }
         onPress={onPress}
         testID={`${testIDs.INBOX_ITEM}_${item.id}`}
       >
@@ -100,6 +104,7 @@ export const PressableListItem = memo(
             item.publicationDate ? new Date(item.publicationDate) : undefined
           }
           unread={!item.opened}
+          unreadBackground={false}
           urgent={!!item.isUrgent}
           replyable={!!item.replyable}
           starred={!!item.bookmarked}

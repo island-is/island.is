@@ -11,6 +11,7 @@ import {
   IOrganizationParentSubpage,
   IOrganizationSubpage,
   IProjectPage,
+  IProjectParentSubpage,
   IProjectSubpage,
 } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
@@ -33,7 +34,11 @@ export class LinkGroup {
 type PageAbove = IProjectPage
 
 type LinkType = Omit<
-  ILink | IOrganizationSubpage | IProjectSubpage | IOrganizationParentSubpage,
+  | ILink
+  | IOrganizationSubpage
+  | IProjectSubpage
+  | IOrganizationParentSubpage
+  | IProjectParentSubpage,
   'update' | 'toPlainObject'
 >
 
@@ -72,8 +77,14 @@ const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
     return generateOrganizationSubpageLink(
       link as IOrganizationSubpage | IOrganizationParentSubpage,
     )
-  } else if (contentTypeId === 'projectSubpage') {
-    return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
+  } else if (
+    contentTypeId === 'projectSubpage' ||
+    contentTypeId === 'projectParentSubpage'
+  ) {
+    return generateProjectSubpageLink(
+      link as IProjectSubpage | IProjectParentSubpage,
+      pageAbove,
+    )
   } else if (contentTypeId === 'link') {
     return mapLink(link as ILink)
   }
@@ -110,7 +121,7 @@ export const generateOrganizationSubpageLink = (
 }
 
 const generateProjectSubpageLink = (
-  subpage: IProjectSubpage,
+  subpage: IProjectSubpage | IProjectParentSubpage,
   pageAbove?: PageAbove,
 ) => {
   const prefix = getProjectPageUrlPrefix(subpage.sys.locale)

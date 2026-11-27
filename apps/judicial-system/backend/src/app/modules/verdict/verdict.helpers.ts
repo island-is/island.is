@@ -10,7 +10,8 @@ import { Verdict } from '../repository'
 
 /**
  * Guards the acts that *are* an appeal of a verdict - the defendant appealing
- * from the app, and a defender filing an appeal declaration - as opposed to the
+ * from the app, and a defender filing an appeal declaration - and a defender
+ * registering that the defendant accepts the verdict, as opposed to the
  * public prosecution office's bookkeeping about an appeal that already happened,
  * which its own path deliberately allows after the deadline has run out. Here
  * the deadline is hard. Note that it runs until midnight at the end of its last

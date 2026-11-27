@@ -1,0 +1,400 @@
+import isWithinInterval from 'date-fns/isWithinInterval'
+import parseISO from 'date-fns/parseISO'
+import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
+import isThisMonth from 'date-fns/isThisMonth'
+import isValid from 'date-fns/isValid'
+import format from 'date-fns/format'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import {
+  AnswerValidationError,
+  NO,
+  NO_ANSWER,
+  YES,
+  buildValidationError,
+} from '@island.is/application/core'
+import {
+  Application,
+  StaticText,
+  StaticTextObject,
+} from '@island.is/application/types'
+import { StartDateOptions, MINIMUM_PERIOD_LENGTH } from '../../constants'
+import {
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  isPeriodsContinuous,
+} from '../parentalLeaveUtils'
+import {
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  minimumRatio,
+  usageMaxMonths,
+  usageMinMonths,
+} from '../../config'
+import { errorMessages } from '../messages'
+import { Period } from '../../types'
+import { MessageDescriptor } from 'react-intl'
+
+// The minimum length is in calendar days, both ends included. Rights are still
+// counted in 30 day months by `calculatePeriodLength`.
+const isShorterThanMinimum = (start: Date, end: Date) =>
+  differenceInCalendarDays(end, start) + 1 < MINIMUM_PERIOD_LENGTH
+
+const hasBeenAnswered = (answer: unknown) => answer !== undefined
+export const buildError = (
+  message: StaticText,
+  path: string,
+  root?: string,
+) => {
+  const pathString = root ? `${root}.${path}` : path
+  return buildValidationError(pathString)(message)
+}
+
+export type ValidateField<T> = {
+  fieldName: string
+  validationFn: (value: T) => boolean
+  message: MessageDescriptor
+}
+
+export const validateFieldInDictionary = <T extends object>(
+  dictionary: Record<string, T>,
+  answerField: string,
+  fieldName: string,
+  validationFn: (value: T) => boolean,
+  message: MessageDescriptor,
+) => {
+  try {
+    const invalidKey = Object.keys(dictionary).find((key) => {
+      const currentPeriod = dictionary[key]
+      // eslint-disable-next-line no-prototype-builtins
+      if (currentPeriod.hasOwnProperty(fieldName)) {
+        return validationFn(currentPeriod)
+      }
+      return false
+    })
+
+    if (invalidKey) {
+      return buildError(message, `${answerField}[${invalidKey}].${fieldName}`)
+    }
+  } catch (e) {
+    // Ignore
+  }
+}
+
+export const dateIsWithinOtherPeriods = (
+  date: Date,
+  periods: Period[],
+  periodIndex?: number,
+) => {
+  for (const currentPeriod of periods) {
+    if (currentPeriod.rawIndex === periodIndex) {
+      continue
+    }
+
+    if (!currentPeriod.startDate || !currentPeriod.endDate) {
+      continue
+    }
+
+    const currentPeriodStart = parseISO(currentPeriod.startDate)
+    const currentPeriodEnd = parseISO(currentPeriod.endDate)
+
+    // isWithinInterval throws a RangeError for invalid or reversed intervals
+    if (
+      !isValid(currentPeriodStart) ||
+      !isValid(currentPeriodEnd) ||
+      currentPeriodStart > currentPeriodEnd
+    ) {
+      continue
+    }
+
+    if (
+      isWithinInterval(date, {
+        start: currentPeriodStart,
+        end: currentPeriodEnd,
+      })
+    ) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * A period shorter than MINIMUM_PERIOD_LENGTH is only allowed when it starts the
+ * day after another period ends. Deleting the period before it leaves it on its
+ * own, so the whole plan is checked, not just the latest period. Periods VMST
+ * has paid or approved, and periods already over, can't be changed and are
+ * skipped.
+ */
+export const findShortPeriodWithoutPredecessor = (
+  periods: Period[],
+): Period | undefined => {
+  const today = new Date()
+  const sorted = periods
+    .filter((period) => !!period?.startDate && !!period?.endDate)
+    .sort(
+      (a, b) =>
+        parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime(),
+    )
+
+  return sorted.find((period, index) => {
+    if (period.paid || period.approved === true) {
+      return false
+    }
+
+    const start = parseISO(period.startDate)
+    const end = parseISO(period.endDate)
+
+    if (!isValid(start) || !isValid(end) || end < start) {
+      return false
+    }
+
+    if (end < today && !isThisMonth(start)) {
+      return false
+    }
+
+    if (isPeriodsContinuous(sorted[index - 1], period)) {
+      return false
+    }
+
+    return isShorterThanMinimum(start, end)
+  })
+}
+
+export const getShortPeriodWithoutPredecessorError = (
+  periods: Period[],
+): StaticTextObject | undefined => {
+  const period = findShortPeriodWithoutPredecessor(periods)
+
+  if (!period) {
+    return undefined
+  }
+
+  return {
+    ...errorMessages.periodsShortPeriodNotContinuous,
+    values: {
+      index: periods.indexOf(period) + 1,
+      startDate: format(parseISO(period.startDate), 'dd.MM.yyyy'),
+      endDate: format(parseISO(period.endDate), 'dd.MM.yyyy'),
+      minimumDays: MINIMUM_PERIOD_LENGTH,
+    },
+  }
+}
+
+const validFirstPeriodStartValues = [
+  StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+  StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+  StartDateOptions.SPECIFIC_DATE,
+  StartDateOptions.ADOPTION_DATE,
+]
+
+export const validatePeriod = (
+  period: Period,
+  isFirstPeriod: boolean,
+  existingPeriods: Period[],
+  application: Application,
+  buildError: (
+    field: string | null,
+    message: StaticTextObject,
+    values?: Record<string, unknown>,
+  ) => AnswerValidationError,
+) => {
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+  if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
+    return buildError(null, errorMessages.dateOfBirth)
+  }
+
+  const dob = parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
+  const today = new Date()
+  const minimumStartDate = addMonths(
+    dob,
+    -minimumPeriodStartBeforeExpectedDateOfBirth,
+  )
+
+  const maximumStartDate = addDays(addMonths(dob, usageMaxMonths), -15)
+  const maximumEndDate = addMonths(dob, usageMaxMonths)
+
+  const { firstPeriodStart, startDate, useLength, endDate, ratio } = period
+
+  if (isFirstPeriod) {
+    if (!firstPeriodStart) {
+      return buildError(
+        'firstPeriodStart',
+        errorMessages.periodsFirstPeriodStartDateDefinitionMissing,
+      )
+    } else if (
+      !validFirstPeriodStartValues.includes(
+        firstPeriodStart as StartDateOptions,
+      )
+    ) {
+      return buildError(
+        'firstPeriodStart',
+        errorMessages.periodsFirstPeriodStartDateDefinitionInvalid,
+      )
+    }
+  }
+
+  let startDateValue: Date | undefined
+  if (startDate === NO_ANSWER) {
+    return buildError('startDate', errorMessages.periodsStartMissing)
+  } else if (hasBeenAnswered(startDate)) {
+    if (isFirstPeriod && parseISO(startDate) > today) {
+      startDateValue =
+        firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
+        firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
+        firstPeriodStart === StartDateOptions.ADOPTION_DATE
+          ? dob
+          : parseISO(startDate)
+    } else {
+      startDateValue = parseISO(startDate)
+    }
+
+    if (!isValid(startDateValue)) {
+      return buildError('startDate', errorMessages.periodsStartDate)
+    }
+
+    // Only skip the minimumStartDate check for past periods when the
+    // child is already born. This prevents retroactive invalidation when
+    // the actual date of birth shifts after the expected date.
+    // If the child is not yet born, always enforce the minimum regardless
+    // of whether the start date is in the past or future.
+    const isBornAlready = dob <= today
+    if (
+      startDateValue < minimumStartDate &&
+      (!isBornAlready || today <= startDateValue)
+    ) {
+      return buildError('startDate', errorMessages.periodsStartDate)
+    }
+
+    if (
+      dateIsWithinOtherPeriods(startDateValue, existingPeriods, period.rawIndex)
+    ) {
+      return buildError('startDate', errorMessages.periodsStartDateOverlaps)
+    }
+
+    if (startDateValue > maximumStartDate) {
+      return buildError('startDate', errorMessages.periodsPeriodRange, {
+        usageMaxMonths: usageMaxMonths - usageMinMonths,
+      })
+    }
+  }
+
+  const useLengthIsValid = useLength === YES || useLength === NO
+
+  if (hasBeenAnswered(useLength) && !useLengthIsValid) {
+    return buildError(
+      'useLength',
+      errorMessages.periodsEndDateDefinitionMissing,
+    )
+  }
+
+  if (hasBeenAnswered(endDate) && !isValid(parseISO(endDate))) {
+    return buildError('endDate', errorMessages.periodsEndDateRequired)
+  } else if (hasBeenAnswered(endDate)) {
+    if (!useLengthIsValid) {
+      return buildError(
+        'endDate',
+        errorMessages.periodsEndDateDefinitionMissing,
+      )
+    }
+
+    const endDateValue = parseISO(endDate)
+
+    if (
+      dateIsWithinOtherPeriods(endDateValue, existingPeriods, period.rawIndex)
+    ) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsEndDateOverlapsPeriod,
+      )
+    }
+
+    if (endDateValue >= maximumEndDate) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsPeriodRange,
+        {
+          usageMaxMonths,
+        },
+      )
+    }
+
+    if (startDateValue === undefined || !isValid(startDateValue)) {
+      return buildError('startDate', errorMessages.periodsStartMissing)
+    }
+
+    if (endDateValue < startDateValue) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsEndDateBeforeStartDate,
+      )
+    }
+
+    // Neither end lies within another period, checked above, but the period
+    // may still span one
+    const spannedPeriod = existingPeriods.find((other) => {
+      const otherStart = other.startDate ? parseISO(other.startDate) : undefined
+      return (
+        otherStart !== undefined &&
+        isValid(otherStart) &&
+        isWithinInterval(otherStart, {
+          start: startDateValue as Date,
+          end: endDateValue,
+        })
+      )
+    })
+
+    if (spannedPeriod) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsSpansOtherPeriod,
+      )
+    }
+
+    // Stop check period in the past from VMST
+    // Sometime they changed period to less than 14 days
+    // A short period may follow any period ending the day before it, not only
+    // the last one in the list, which need not be the previous one by date.
+    if (
+      !(
+        endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
+      ) &&
+      !existingPeriods.some((other) => isPeriodsContinuous(other, period))
+    ) {
+      if (isShorterThanMinimum(startDateValue, endDateValue)) {
+        return buildError(
+          useLength === YES ? 'endDateDuration' : 'endDate',
+          errorMessages.periodsEndDateMinimumPeriod,
+          {
+            minPeriodDays: MINIMUM_PERIOD_LENGTH,
+          },
+        )
+      }
+    }
+  }
+
+  if (ratio === NO_ANSWER) {
+    return buildError('ratio', errorMessages.periodsRatioMissing)
+  } else if (hasBeenAnswered(ratio)) {
+    if (!hasBeenAnswered(startDate)) {
+      return buildError('ratio', errorMessages.periodsStartMissing)
+    }
+
+    if (!hasBeenAnswered(endDate)) {
+      return buildError('ratio', errorMessages.periodsEndDateRequired)
+    }
+
+    const ratioValue = Number(ratio)
+
+    if (isNaN(ratioValue)) {
+      return buildError('ratio', errorMessages.periodsRatioInvalid)
+    }
+
+    if (ratioValue < minimumRatio * 100) {
+      return buildError('ratio', errorMessages.periodsRatioBelowMinimum)
+    } else if (ratioValue > 100) {
+      return buildError('ratio', errorMessages.periodsRatioAboveMaximum)
+    }
+  }
+}

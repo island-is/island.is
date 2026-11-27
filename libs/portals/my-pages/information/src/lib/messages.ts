@@ -146,6 +146,15 @@ export const spmm = defineMessages({
     id: 'sp.family:legal-residence-tooltip',
     defaultMessage: 'Götuheiti, Húsnúmer, Íbúðarnúmer, Póstnúmer, Sveitarfélag',
   },
+  temporaryResidence: {
+    id: 'sp.family:temporary-residence',
+    defaultMessage: 'Tímabundið aðsetur',
+  },
+  temporaryResidenceTooltip: {
+    id: 'sp.family:temporary-residence-tooltip',
+    defaultMessage:
+      'Athugið að tímabundið aðsetur er ekki það sama og lögheimili.',
+  },
 })
 
 export const mInformationNotifications = defineMessages({
@@ -226,6 +235,10 @@ export const msg = defineMessages({
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
     defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,
+  },
+  userProfileIntro: {
+    id: 'sp.settings:user-profile-intro-text',
+    defaultMessage: `Við komum til með að senda þér mikilvægar tilkynningar og því er gott að hafa netfang og símanúmer rétt skráð. Við meðhöndlum persónuupplýsingar í samræmi við [persónuverndarstefnu Ísland.is](https://island.is/s/stafraent-island/personuverndarstefna-island-is).`,
   },
   companysSettingsIntro: {
     id: 'sp.settings:company-settings-intro-text',
@@ -356,6 +369,10 @@ export const urls = defineMessages({
     defaultMessage:
       'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
   },
+  editTemporaryResidence: {
+    id: 'sp.family:url-edit-temporary-residence',
+    defaultMessage: 'https://www.skra.is/folk/flutningur/timabundid-adsetur/',
+  },
   editReligion: {
     id: 'sp.family:url-edit-religion-adult',
     defaultMessage:
@@ -404,6 +421,23 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:intro-text',
     defaultMessage:
       'Veldu hvernig þú vilt að stofnanir geti sent þér tilkynningar.',
+  },
+  introV2: {
+    id: 'sp.notifications:intro-text-v2',
+    defaultMessage:
+      'Veldu hvernig þú vilt að stofnanir geti sent þér tilkynningar. Þú getur afþakkað almennar tilkynningar frá stofnunum eða flokki hér að neðan. Mikilvæg erindi sem krefjast viðbragða frá þér berast þér þó alltaf.',
+  },
+  notificationsLink: {
+    id: 'sp.notifications:notifications-link',
+    defaultMessage: 'Skoða mínar tilkynningar',
+  },
+  notificationsTabHow: {
+    id: 'sp.notifications:notifications-tab-how',
+    defaultMessage: 'Hvernig viltu fá tilkynningar?',
+  },
+  notificationsTabWhat: {
+    id: 'sp.notifications:notifications-tab-what',
+    defaultMessage: 'Hvaða tilkynningar viltu fá?',
   },
   emailNotifications: {
     id: 'sp.notifications:email-notifications',
@@ -483,6 +517,50 @@ export const mNotifications = defineMessages({
   actionablePriorityOnlyAriaLabel: {
     id: 'sp.notifications:actionable-priority-only-aria-label',
     defaultMessage: 'Fá aðeins viðbragðstilkynningar?',
+  },
+  actionablePriorityOnlyAlertTitle: {
+    id: 'sp.notifications:actionable-priority-only-alert-title',
+    defaultMessage: 'Kveikt er á viðbragðstilkynningum',
+  },
+  actionablePriorityOnlyAlertMessage: {
+    id: 'sp.notifications:actionable-priority-only-alert-message',
+    defaultMessage:
+      'Á meðan kveikt er á að fá aðeins viðbragðstilkynningar er ekki hægt að breyta stillingum fyrir einstakar stofnanir.',
+  },
+  howIntro: {
+    id: 'sp.notifications:notifications-how-intro',
+    defaultMessage: 'Veldu hvernig þú vilt fá tilkynningar frá stofnunum',
+  },
+  howIntroTitle: {
+    id: 'sp.notifications:notifications-how-intro-title',
+    defaultMessage: 'Samskiptaleiðir',
+  },
+  whatIntro: {
+    id: 'sp.notifications:notifications-what-intro',
+    defaultMessage:
+      'Veldu frá hvaða stofnun eða flokki þú vilt frá tilkynningar. Hér birtast aðeins stofnanir og flokkar sem þú hefur fengið skilaboð frá.',
+  },
+  whatIntroTitle: {
+    id: 'sp.notifications:notifications-what-intro-title',
+    defaultMessage: 'Stofnanir',
+  },
+  searchPlaceholder: {
+    id: 'sp.notifications:search-placeholder',
+    defaultMessage: 'Leitaðu að stofnun eða flokk',
+  },
+  categoriesBlockedCount: {
+    id: 'sp.notifications:categories-blocked-count',
+    defaultMessage:
+      '{count, plural, one {# flokkur afþakkaður} other {# flokkar afþakkaðir}}',
+  },
+  actorNotificationSettingsIntroTitle: {
+    id: 'sp.notifications:actor-notification-settings-intro-title',
+    defaultMessage: 'Tilkynningastillingar umboðsaðila',
+  },
+  actorNotificationSettingsIntro: {
+    id: 'sp.notifications:actor-notification-settings-intro',
+    defaultMessage:
+      'Hér stillir þú tilkynningar sem þú færð í umboði fyrir aðra, ekki þínar eigin. Þú velur hvernig og hvaða tilkynningar þú færð fyrir hvern aðila sem hefur veitt þér umboð. Tilkynningar sem krefjast viðbragða berast þér alltaf á meðan umboðið er í gildi.',
   },
 })
 

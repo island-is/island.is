@@ -3,6 +3,10 @@ fragment NotificationMetadataFields on NotificationMetadata {
   updated
   created
   read
+  wasSent
+  priorityType
+  sourceType
+  deadline
 }
 
 fragment NotificationSenderFields on NotificationSender {
@@ -30,5 +34,9 @@ fragment NotificationDataFields on Notification {
   }
   message {
     ...NotificationMessageFields
+  }
+  category {
+    key
+    label
   }
 }

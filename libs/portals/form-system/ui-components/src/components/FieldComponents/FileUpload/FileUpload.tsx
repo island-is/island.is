@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Dispatch, useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { useLocale } from '@island.is/localization'
 
@@ -14,15 +14,21 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Action, ApplicationState, getValue, uploadToS3 } from '../../../lib'
+import {
+  ApplicationDispatch,
+  ApplicationState,
+  getValue,
+  uploadToS3,
+} from '../../../lib'
 import { m } from '../../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
+  valueIndex?: number
   hasError?: boolean
-  dispatch?: Dispatch<Action>
-  state?: ApplicationState
+  dispatch?: ApplicationDispatch
+  state?: Partial<ApplicationState>
 }
 
 const normalizeS3Keys = (raw: unknown): string[] => {
@@ -33,8 +39,11 @@ const normalizeS3Keys = (raw: unknown): string[] => {
   return []
 }
 
-const initializeFiles = (item: FormSystemField): UploadFile[] => {
-  const s3Keys = normalizeS3Keys(getValue(item, 's3Key'))
+const initializeFiles = (
+  item: FormSystemField,
+  valueIndex: number,
+): UploadFile[] => {
+  const s3Keys = normalizeS3Keys(getValue(item, 's3Key', valueIndex))
   if (!s3Keys) {
     return []
   }
@@ -50,10 +59,24 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
   })
 }
 
-export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
+export const FileUpload = ({
+  item,
+  valueIndex = 0,
+  hasError,
+  dispatch,
+  state,
+}: Props) => {
   const { formatMessage, lang } = useLocale()
   const { control, setValue, trigger, clearErrors } = useFormContext()
-  const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
+  const fieldName = `${item.id}.${valueIndex}`
+  const [files, setFiles] = useState<UploadFile[]>(
+    initializeFiles(item, valueIndex),
+  )
+  const filesRef = useRef(files)
+  const updateFiles = useCallback((next: UploadFile[]) => {
+    filesRef.current = next
+    setFiles(next)
+  }, [])
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
@@ -61,7 +84,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
   const [uploadFile] = useMutation(STORE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
-  const applicationId = state?.application.id
+  const applicationId = state?.application?.id
 
   const types =
     item?.fieldSettings?.fileTypes
@@ -69,14 +92,28 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       .map((t) => t.trim())
       .filter((t) => t.length > 0 && t !== '*') ?? []
 
-  const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...updated } : f)),
-    )
-  }, [])
+  const updateFile = useCallback(
+    (id: string, updated: Partial<UploadFile>) => {
+      const next = filesRef.current.map((f) =>
+        f.id === id ? { ...f, ...updated } : f,
+      )
+      updateFiles(next)
+      return next
+    },
+    [updateFiles],
+  )
 
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
+      if (!applicationId) return
+
+      if (dispatch?.({ type: 'START_FILE_UPLOAD' }) === false) return
+      const existing = filesRef.current.some((f) => f.id === id)
+      if (existing) {
+        updateFile(id, { status: FileUploadStatus.uploading, percent: 0 })
+      } else {
+        updateFiles([...filesRef.current, file])
+      }
       try {
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
@@ -100,52 +137,41 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
               storeFileDto: {
                 fieldId: item.id,
                 sourceKey: presigned.fields.key,
-                valueId: item.values?.[0]?.id || '',
+                valueId: item.values?.[valueIndex]?.id || '',
               },
             },
           },
         })
 
-        if (!applicationId) {
-          throw new Error('Missing applicationId for file key construction')
-        }
-
         const newKey = `${applicationId}/${presigned.fields.key}`
 
-        setFiles((prev) => {
-          const next = prev.map((f) =>
-            f.id === id
-              ? {
-                  ...f,
-                  status: FileUploadStatus.done,
-                  percent: 100,
-                  key: newKey,
-                }
-              : f,
-          )
-
-          const nextKeys = next
-            .map((f) => f.key)
-            .filter((k): k is string => typeof k === 'string' && k.length > 0)
-
-          dispatch?.({
-            type: 'SET_FILES',
-            payload: { id: item.id, value: nextKeys },
-          })
-
-          setValue(item.id, nextKeys, {
-            shouldDirty: true,
-            shouldValidate: true,
-          })
-          trigger(item.id)
-
-          return next
+        const next = updateFile(id, {
+          status: FileUploadStatus.done,
+          percent: 100,
+          key: newKey,
         })
+
+        const nextKeys = next
+          .map((f) => f.key)
+          .filter((k): k is string => typeof k === 'string' && k.length > 0)
+
+        dispatch?.({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: nextKeys, valueIndex },
+        })
+
+        setValue(fieldName, nextKeys, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        await trigger(fieldName)
       } catch (err) {
         updateFile(id, {
           status: FileUploadStatus.error,
           error: formatMessage(m.uploadFailed),
         })
+      } finally {
+        dispatch?.({ type: 'FINISH_FILE_UPLOAD' })
       }
     },
     [
@@ -154,22 +180,26 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       item,
       dispatch,
       updateFile,
+      updateFiles,
       formatMessage,
       setValue,
       trigger,
       applicationId,
+      fieldName,
+      valueIndex,
     ],
   )
 
   const onChange = useCallback(
     (selectedFiles: File[]) => {
+      if (state?.isNavigating || state?.submitted) return
       const maxSize = item?.fieldSettings?.fileMaxSize
 
       if (
-        files.length + selectedFiles.length >
+        filesRef.current.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
-        clearErrors(item.id)
+        clearErrors(fieldName)
         setError(
           `${formatMessage(m.maxFileError)} ${
             item.fieldSettings?.maxFiles ?? 1
@@ -181,7 +211,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       if (typeof maxSize === 'number' && maxSize > 0) {
         const tooLarge = selectedFiles.find((f) => f.size > maxSize)
         if (tooLarge) {
-          clearErrors(item.id)
+          clearErrors(fieldName)
           const maxSizeInMb = Math.round((maxSize / (1024 * 1024)) * 10) / 10
           setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
           return
@@ -190,65 +220,115 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
       setError(undefined)
 
-      const uploadFiles: UploadFile[] = selectedFiles.map((file) => ({
-        id: `${file.name}-${uuid()}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        status: FileUploadStatus.uploading,
-        percent: 0,
-        originalFileObj: file,
-      }))
+      const uploadFiles: UploadFile[] = selectedFiles.map((file) => {
+        const id = uuid()
+        return {
+          id: `${file.name}-${id}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          status: applicationId
+            ? FileUploadStatus.uploading
+            : FileUploadStatus.done,
+          percent: applicationId ? 0 : 100,
+          originalFileObj: file,
+          key: applicationId ? undefined : `preview/${id}_${file.name}`,
+        }
+      })
 
-      setFiles((prev) => [...prev, ...uploadFiles])
+      if (!applicationId) {
+        const nextFiles = [...filesRef.current, ...uploadFiles]
+        const nextKeys = nextFiles
+          .map((file) => file.key)
+          .filter(Boolean) as string[]
+        updateFiles(nextFiles)
+        dispatch?.({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: nextKeys, valueIndex },
+        })
+        setValue(fieldName, nextKeys, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        trigger(fieldName)
+        return
+      }
 
       uploadFiles.forEach((f) => {
         handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, handleUpload, clearErrors],
+    [
+      applicationId,
+      state?.isNavigating,
+      state?.submitted,
+      updateFiles,
+      item,
+      formatMessage,
+      handleUpload,
+      clearErrors,
+      fieldName,
+      valueIndex,
+      dispatch,
+      setValue,
+      trigger,
+    ],
   )
 
   const onRetry = useCallback(
     (file: UploadFile) => {
+      if (!applicationId) return
+
       if (file.originalFileObj && file.id) {
-        updateFile(file.id, {
-          status: FileUploadStatus.uploading,
-          percent: 0,
-        })
         handleUpload(file, file.id)
       }
     },
-    [handleUpload, updateFile],
+    [applicationId, handleUpload],
   )
 
   const onRemove = useCallback(
     (file: UploadFile) => {
-      deleteFile({
-        variables: {
-          input: {
-            deleteFileDto: {
-              key: file.key,
-              valueId: item.values?.[0]?.id,
+      if (state?.isNavigating || state?.submitted) return
+      if (applicationId) {
+        deleteFile({
+          variables: {
+            input: {
+              deleteFileDto: {
+                key: file.key,
+                valueId: item.values?.[valueIndex]?.id,
+              },
             },
           },
-        },
-      })
-      const newFiles = files.filter(
+        })
+      }
+      const newFiles = filesRef.current.filter(
         (f) => (f.key ?? f.id) !== (file.key ?? file.id),
       )
-      setFiles(newFiles)
+      updateFiles(newFiles)
       setError(undefined)
 
       const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
       dispatch?.({
         type: 'SET_FILES',
-        payload: { id: item.id, value: newKeys },
+        payload: { id: item.id, value: newKeys, valueIndex },
       })
-      setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
-      trigger(item.id)
+      setValue(fieldName, newKeys, { shouldDirty: true, shouldValidate: true })
+      trigger(fieldName)
     },
-    [deleteFile, dispatch, files, item.id, item.values, setValue, trigger],
+    [
+      applicationId,
+      state?.isNavigating,
+      state?.submitted,
+      deleteFile,
+      dispatch,
+      updateFiles,
+      item.id,
+      item.values,
+      fieldName,
+      valueIndex,
+      setValue,
+      trigger,
+    ],
   )
 
   const title = item.isRequired
@@ -257,10 +337,10 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={fieldName}
       control={control}
-      defaultValue={normalizeS3Keys(getValue(item, 's3Key'))}
+      defaultValue={normalizeS3Keys(getValue(item, 's3Key', valueIndex))}
       rules={{
         validate: (v) =>
           !(item.isRequired ?? false) ||
@@ -269,7 +349,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       }}
       render={({ fieldState }) => (
         <InputFileUpload
-          name={`fileUpload-${item.id}`}
+          name={`fileUpload-${item.id}-${valueIndex}`}
           files={files}
           accept={types}
           title={title}
@@ -278,11 +358,14 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
           })}
           buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
           disabled={
+            state?.isNavigating ||
+            state?.submitted ||
             types.length === 0 ||
             !item.fieldSettings?.fileMaxSize ||
             !item.fieldSettings?.maxFiles
           }
           onChange={onChange}
+          hideIcons={state?.isNavigating || state?.submitted}
           onRemove={onRemove}
           onRetry={onRetry}
           errorMessage={fieldState.error?.message ?? error}

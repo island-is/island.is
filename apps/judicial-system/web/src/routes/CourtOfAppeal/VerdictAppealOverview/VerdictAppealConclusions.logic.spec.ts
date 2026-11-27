@@ -1,5 +1,10 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealRulingType,
+  CaseIndictmentRulingDecision,
+  VerdictAppealStatus,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getVerdictAppealConclusions } from './VerdictAppealConclusions.logic'
 
@@ -65,10 +70,13 @@ describe('getVerdictAppealConclusions', () => {
       getVerdictAppealConclusions(
         caseWith({
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
-            appealJudge1: { name: 'Jón Höskuldsson' },
-            appealJudge2: { name: 'Ásgeir Magnússon' },
-            appealJudge3: { name: 'Hildur Briem' },
+            appealJudges: [
+              { displayOrder: 0, user: { name: 'Jón Höskuldsson' } },
+              { displayOrder: 1, user: { name: 'Ásgeir Magnússon' } },
+              { displayOrder: 2, user: { name: 'Hildur Briem' } },
+            ],
           },
         } as Partial<ConclusionCase>),
       ),
@@ -82,17 +90,65 @@ describe('getVerdictAppealConclusions', () => {
     ])
   })
 
+  it('titles the court of appeals words for a ruling when it ended with one', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+            appealRulingType: AppealRulingType.RULING,
+            appealConclusion: 'Málinu er vísað frá Landsrétti.',
+          },
+        } as Partial<ConclusionCase>),
+      )[0].title,
+    ).toBe('Úrskurðarorð Landsréttar')
+  })
+
   it('leaves out a judge seat that was never filled', () => {
     expect(
       getVerdictAppealConclusions(
         caseWith({
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
-            appealJudge1: { name: 'Ásgeir Magnússon' },
+            appealJudges: [
+              { displayOrder: 0, user: { name: 'Ásgeir Magnússon' } },
+            ],
           },
         } as Partial<ConclusionCase>),
       )[0].signedBy,
     ).toEqual(['Ásgeir Magnússon'])
+  })
+
+  // Words recorded under "Lokið" stay on record when the status is moved away
+  // from it. The district court's words are shown regardless.
+  it('leaves out the court of appeals words while the appeal is not marked finished', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          courtSessions: [{ ruling: 'Ákærði sæti fangelsi í 12 mánuði.' }],
+          verdictAppealCase: {
+            appealState: AppealCaseState.APPEALED,
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        } as Partial<ConclusionCase>),
+      ).map((conclusion) => conclusion.title),
+    ).toEqual(['Dómsorð héraðsdóms'])
+  })
+
+  it('keeps the court of appeals words of a completed appeal under another status', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          verdictAppealCase: {
+            appealState: AppealCaseState.COMPLETED,
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        } as Partial<ConclusionCase>),
+      ).map((conclusion) => conclusion.title),
+    ).toEqual(['Dómsorð Landsréttar'])
   })
 
   // Read side by side, district court first - the order the proceeding went in.
@@ -102,6 +158,7 @@ describe('getVerdictAppealConclusions', () => {
         caseWith({
           courtSessions: [{ ruling: 'Ákærði sæti fangelsi í 12 mánuði.' }],
           verdictAppealCase: {
+            verdictAppealStatus: VerdictAppealStatus.COMPLETED,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
           },
         } as Partial<ConclusionCase>),

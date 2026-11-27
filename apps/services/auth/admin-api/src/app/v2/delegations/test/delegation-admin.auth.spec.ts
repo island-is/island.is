@@ -138,6 +138,30 @@ describe('withoutAuth and permissions', () => {
     },
   )
 
+  it('GET /delegation-admin should be allowed with only the admin scope', async () => {
+    // Arrange
+    const user = createCurrentUser({ scope: [DelegationAdminScopes.admin] })
+    const app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user,
+      dbType: 'postgres',
+    })
+    const server = request(app.getHttpServer())
+
+    // Act
+    const res = await getRequestMethod(
+      server,
+      'GET',
+    )('/delegation-admin').set('X-Query-National-Id', user.nationalId)
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // CleanUp
+    app.cleanUp()
+  })
+
   describe('POST /delegation-admin/zendesk', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>

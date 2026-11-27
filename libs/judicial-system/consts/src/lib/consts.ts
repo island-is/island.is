@@ -107,6 +107,8 @@ export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_CASE_ROUTE = '/verjandi/akaera'
 export const DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 export const DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE = '/verjandi/akaera/afryjun'
+export const DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE =
+  '/verjandi/akaera/greinargerd'
 
 export const DEFENDER_APPEAL_CASE_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_CASE_STATEMENT_ROUTE =
@@ -144,10 +146,14 @@ export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
 // routes above. The steps that follow this one land under the same segment.
 export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
   '/landsrettur/afryjun/yfirlit'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE =
+  '/landsrettur/afryjun/skraning-og-uthlutun'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
   '/landsrettur/afryjun/verjandi'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE =
   '/landsrettur/afryjun/greinargerdarfrestir'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE =
+  '/landsrettur/afryjun/greinargerd'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
   '/landsrettur/afryjun/stada-og-lyktir'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE =
@@ -260,6 +266,9 @@ export const ADMIN_CREATE_USER_ROUTE = '/notendur/nyr'
 export const ADMIN_CHANGE_USER_ROUTE = '/notendur/breyta'
 export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
 export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
+export const ADMIN_SERVICE_INTERRUPTION_BANNER_ROUTE =
+  '/notendur/vidvorunar-bordi'
+export const ADMIN_CASE_LIFETIME_ROUTE = '/notendur/liftimi-mala'
 
 //#endregion Admin user routes
 

@@ -17,7 +17,60 @@ describe('defence case tables', () => {
       CaseTableType.DEFENCE_REQUEST_CASES_COMPLETED,
       CaseTableType.DEFENCE_INDICTMENTS_IN_PROGRESS,
       CaseTableType.DEFENCE_INDICTMENTS_APPEALED,
+      CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED,
       CaseTableType.DEFENCE_INDICTMENTS_COMPLETED,
+    ])
+  })
+
+  it('describes the appealed verdicts card as the design does', () => {
+    const table = getCaseTableGroups(defenceUser)[1].tables[2]
+
+    expect([
+      table.route,
+      table.title,
+      table.description,
+      table.includeCounter,
+    ]).toEqual([
+      'sakamal-i-afryjunarferli',
+      'Sakamál í áfrýjunarferli',
+      'Dómar í sakamálum sem eru í áfrýjunarferli hjá Landsrétti.',
+      true,
+    ])
+    expect(getCaseTableType(defenceUser, 'sakamal-i-afryjunarferli')).toBe(
+      CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED,
+    )
+  })
+
+  // An appealed verdict stays among the completed cases, and its court of
+  // appeals number has to show there as it does on the appealed verdicts list.
+  it('shows the number of either appeal on the completed indictments list', () => {
+    const table = caseTables[CaseTableType.DEFENCE_INDICTMENTS_COMPLETED]
+
+    expect(table.columnKeys[0]).toBe('latestAppealCaseNumber')
+    expect(table.columns[0].title).toBe('Málsnúmer')
+  })
+
+  // The ruling appeal columns share titles with these - "Málsnúmer", "Staða" -
+  // so the keys are what shows the list reads the verdict appeal.
+  it('reads the verdict appeal on the appealed verdicts list', () => {
+    const table = caseTables[CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED]
+
+    expect(table.title).toBe('Sakamál í áfrýjunarferli')
+    expect(table.columnKeys).toEqual([
+      'verdictAppealCaseNumber',
+      'defendants',
+      'caseType',
+      'verdictAppealDate',
+      'verdictAppealProgress',
+      'verdictAppealCourtSession',
+    ])
+    expect(table.columns.map((column) => column.title)).toEqual([
+      'Málsnúmer',
+      'Varnaraðili',
+      'Tegund',
+      'Áfrýjað',
+      'Staða',
+      'Fyrirtaka',
     ])
   })
 
@@ -247,16 +300,58 @@ describe('public prosecution case tables', () => {
     expect(reviewed).toContain('indictmentRulingDecision')
   })
 
-  // The office's list of the same name is the one the columns were borrowed
-  // from, and the ticket leaves tidying them to a later one.
-  it('borrows the columns of the office list of the same name', () => {
+  it('titles the appealed list columns as the design does', () => {
+    expect(
+      caseTables[
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
+      ].columns.map((column) => column.title),
+    ).toEqual([
+      'Málsnúmer',
+      'Varnaraðili',
+      'Saksóknari',
+      'Áfrýjað af',
+      'Áfrýjað',
+      'Staða',
+      'Fyrirtaka',
+    ])
+  })
+
+  // The list is about the verdict appeal, so every appeal column has to read
+  // that one. The ruling appeal columns share titles with these - "Málsnúmer",
+  // "Áfrýjað af", "Staða" - so the titles alone would not catch a list showing
+  // the number or the state of the wrong appeal.
+  it('reads the verdict appeal on the appealed list, not the ruling appeal', () => {
+    const columnKeys =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
+        .columnKeys
+
+    expect(columnKeys).toEqual([
+      'verdictAppealCaseNumber',
+      'defendants',
+      'appealProsecutor',
+      'verdictAppealAppellantTag',
+      'verdictAppealDate',
+      'verdictAppealProgress',
+      'verdictAppealCourtSession',
+    ])
+  })
+
+  // Every prosecutor at the office sees every appealed verdict, so the filter
+  // is how one of them finds the appeals that are theirs to argue. The two
+  // review lists are the user's own work already and have nothing to narrow.
+  it('offers the my cases filter on the appealed list only', () => {
     expect(
       caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
-        .columnKeys,
-    ).toEqual(
-      caseTables[CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]
-        .columnKeys,
-    )
+        .hasMyCasesFilter,
+    ).toBe(true)
+    expect(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]
+        .hasMyCasesFilter,
+    ).toBe(false)
+    expect(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]
+        .hasMyCasesFilter,
+    ).toBe(false)
   })
 
   // The ordinary prosecutor's groups are spread into this user's, so adding a

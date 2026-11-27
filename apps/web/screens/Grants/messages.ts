@@ -162,6 +162,10 @@ export const m = {
       id: 'web.grants:single.type',
       defaultMessage: 'Tegund',
     },
+    types: {
+      id: 'web.grants:single.types',
+      defaultMessage: 'Tegundir',
+    },
     applications: {
       id: 'web.grants:single.applications',
       defaultMessage: 'Umsóknir',

@@ -1,15 +1,19 @@
 import {
+  type AppealStatementEvent,
   CaseFileCategory,
   CaseState,
   CaseType,
   DefendantEventType,
+  findFiledAppealStatementEvent,
   isCompletedCase,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isPrisonAdminUser,
   isPrisonStaffUser,
   isRequestCase,
   User,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -19,6 +23,16 @@ import {
   DefendantEventLog,
 } from '../../repository'
 import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
+
+// The court of appeals' judgment or ruling on a verdict appeal belongs to
+// that court alone: nobody else is shown it, can fetch it, upload it or
+// remove it. It is named in none of the category lists below for that reason.
+export const canUserAccessCaseFileCategory = (
+  user: User | undefined,
+  category?: CaseFileCategory | null,
+): boolean =>
+  category !== CaseFileCategory.VERDICT_APPEAL_RULING ||
+  isCourtOfAppealsUser(user)
 
 // A ruling order uploaded during the course of a case is only visible to
 // parties (everyone except district-court users) once it has been added to a
@@ -62,6 +76,7 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
     CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
     CaseFileCategory.DEFENDANT_CASE_FILE,
+    CaseFileCategory.COURT_CASE_FILE,
     CaseFileCategory.CIVIL_CLAIM,
     // Appeal file categories — in indictment cases, all appeal files are
     // visible to defence users (unlike request cases where prosecution
@@ -156,12 +171,19 @@ const getDefenceUserIndictmentCaseFileCategories = (
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
+  // Confirmed appeal advocates see the same indictment file set as a district
+  // defender with case-file access — whether or not they were the héraðsverjandi.
   if (
     Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
       nationalId,
       defendants,
     ) ||
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      nationalId,
+      civilClaimants,
+    ) ||
+    Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
       nationalId,
       civilClaimants,
     )
@@ -187,6 +209,58 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
+// Incomplete greinargerð uploads stay private to the party's own confirmed
+// defender/advocate until APPEAL_STATEMENT_SENT. Co-parties and prosecution
+// drafts must not leak through limited-access listing or download, and files
+// uploaded after that party's SENT are treated as orphans (same cutoff as the
+// overview).
+const canDefenceUserViewVerdictAppealStatementFile = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants: Defendant[] | undefined,
+  civilClaimants: CivilClaimant[] | undefined,
+  defendantId: string | undefined,
+  civilClaimantId: string | null | undefined,
+  fileCreated: Date | undefined,
+  appealEventLogs: AppealStatementEvent[] | null | undefined,
+): boolean => {
+  if (!verdictAppealStatementFileCategories.includes(caseFileCategory)) {
+    return true
+  }
+
+  const party = { defendantId, civilClaimantId }
+  const defendant = defendants?.find((d) => d.id === defendantId)
+  const civilClaimant = civilClaimants?.find((c) => c.id === civilClaimantId)
+
+  const isOwnParty = Boolean(
+    (defendant &&
+      (Defendant.isConfirmedDefenderOfDefendant(nationalId, [defendant]) ||
+        Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, [
+          defendant,
+        ]))) ||
+      (civilClaimant &&
+        (CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(nationalId, [
+          civilClaimant,
+        ]) ||
+          CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+            nationalId,
+            [civilClaimant],
+          ))),
+  )
+
+  if (isOwnParty) {
+    return true
+  }
+
+  const filedEvent = findFiledAppealStatementEvent(appealEventLogs, party)
+
+  if (!filedEvent?.created || !fileCreated) {
+    return false
+  }
+
+  return fileCreated.getTime() <= new Date(filedEvent.created).getTime()
+}
+
 const canDefenceUserViewCaseFile = ({
   nationalId,
   userName,
@@ -201,6 +275,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   nationalId: string
   userName: string
@@ -215,6 +290,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -227,7 +303,27 @@ const canDefenceUserViewCaseFile = ({
       civilClaimants,
     )
 
-    if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
+    // District dismissal cutoff must not hide verdict-appeal greinargerðir
+    // for a confirmed appeal advocate (including co-defendant filings they
+    // may open). A district-only defender of a dismissed client keeps the
+    // cutoff — they must not see later co-defendant statements through this
+    // exemption alone.
+    const isVerdictAppealStatementFile =
+      verdictAppealStatementFileCategories.includes(caseFileCategory)
+
+    const hasConfirmedAppealAppointment =
+      Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+        nationalId,
+        civilClaimants,
+      )
+
+    if (
+      cutoffDate &&
+      fileCreated &&
+      fileCreated > cutoffDate &&
+      !(isVerdictAppealStatementFile && hasConfirmedAppealAppointment)
+    ) {
       return false
     }
 
@@ -242,12 +338,21 @@ const canDefenceUserViewCaseFile = ({
         caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
       defendantId
     ) {
+      const defendant = defendants?.find((d) => d.id === defendantId)
+      const isAppealDefenderOfDefendant =
+        Boolean(defendant) &&
+        Defendant.isConfirmedAppealDefenderOfDefendant(
+          nationalId,
+          defendant ? [defendant] : undefined,
+        )
+
       if (
         !Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
           nationalId,
           defendantId,
           defendants,
-        )
+        ) &&
+        !isAppealDefenderOfDefendant
       ) {
         return false
       }
@@ -269,6 +374,21 @@ const canDefenceUserViewCaseFile = ({
       ) || hasUserSubmittedCaseFile
 
     if (!categoryAllowed) {
+      return false
+    }
+
+    if (
+      !canDefenceUserViewVerdictAppealStatementFile(
+        nationalId,
+        caseFileCategory,
+        defendants,
+        civilClaimants,
+        defendantId,
+        civilClaimantId,
+        fileCreated,
+        appealEventLogs,
+      )
+    ) {
       return false
     }
 
@@ -316,6 +436,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   user: User
   caseType: CaseType
@@ -329,6 +450,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: AppealStatementEvent[] | null
 }) => {
   if (!caseFileCategory) {
     return false
@@ -349,6 +471,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       civilClaimantId,
       fileCreated,
       isRulingOrderInConfirmedCourtSession,
+      appealEventLogs,
     })
   }
 
@@ -395,7 +518,11 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   const myDefendants = (defendants ?? []).filter(
     (d) =>
-      d.isDefenderChoiceConfirmed && d.defenderNationalId === userNationalId,
+      (d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId === userNationalId) ||
+      (d.isAppealDefenderConfirmed &&
+        !d.isAppealDefenderWaived &&
+        d.appealDefenderNationalId === userNationalId),
   )
 
   const assignedToMe = new Set(
@@ -415,10 +542,13 @@ export const getSpokespersonVisiblePoliceCaseNumbers = (
 ): string[] => {
   const myClaimants = (civilClaimants ?? []).filter(
     (civilClaimant) =>
-      civilClaimant.hasSpokesperson &&
-      civilClaimant.isSpokespersonConfirmed &&
-      civilClaimant.caseFilesSharedWithSpokesperson &&
-      civilClaimant.spokespersonNationalId === userNationalId,
+      (civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
+        civilClaimant.spokespersonNationalId === userNationalId) ||
+      (civilClaimant.hasAppealSpokesperson !== false &&
+        civilClaimant.isAppealSpokespersonConfirmed &&
+        civilClaimant.appealSpokespersonNationalId === userNationalId),
   )
 
   if (myClaimants.length === 0) {
@@ -462,12 +592,15 @@ export const getDefenceUserVisiblePoliceCaseNumbers = (
   civilClaimants: CivilClaimant[] | undefined,
   allPoliceCaseNumbers: string[],
 ): string[] => {
-  const isDefender = Defendant.isConfirmedDefenderOfDefendant(
-    userNationalId,
-    defendants,
-  )
+  const isDefender =
+    Defendant.isConfirmedDefenderOfDefendant(userNationalId, defendants) ||
+    Defendant.isConfirmedAppealDefenderOfDefendant(userNationalId, defendants)
   const isSpokesperson =
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      userNationalId,
+      civilClaimants,
+    ) ||
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
       userNationalId,
       civilClaimants,
     )

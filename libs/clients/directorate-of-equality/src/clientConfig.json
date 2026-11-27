@@ -3,6 +3,7 @@
   "paths": {
     "/api/v1/application/company": {
       "get": {
+        "description": "The company the signed-in organisation resolves to, as in the register. `isServiceProvider` says whether the organisation is also an approved service provider (þjónustuaðili): it comes from the same live-partner-client lookup that guards `GET /application/partner-client`, so it is `true` exactly when those provider routes answer rather than 404.",
         "operationId": "getApplicationCompany",
         "parameters": [],
         "responses": {
@@ -10,7 +11,9 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CompanyDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationCompanyDto"
+                }
               }
             }
           },
@@ -31,6 +34,68 @@
             }
           },
           "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports": {
+      "get": {
+        "description": "The resolved company's submitted equality reports (jafnréttisáætlanir) and salary reports (jafnlaunaskýrslur), newest first. Exactly the reports `GET /application/reports/:providerId` opens for this company: each row's `providerId` is the handle that route takes, and a report the detail route would 404 on is never listed. Group reports appear only for the parent company that filed them — a subsidiary covered by a group report cannot open it, so it does not see it here either. Drafts are not listed: a draft is not a submission yet, and is reached through its own application under `reports/:providerId/draft`. Reports from every channel are listed: those the company filed on island.is, those a service provider filed for it over the partner API, and those Jafnréttisstofa entered for it; `submittedVia` says which. Every row opens with the read routes (detail, equality PDF, outliers, comments); only `ISLAND_IS` rows can be edited, commented on or withdrawn here. A report stored with no provider id — some entered by Jafnréttisstofa before ids were assigned — has no handle on any applicant route, so it is neither listed here nor openable. Withdrawn, denied and superseded reports are listed with their status. Empty when the company has filed nothing; 404 only when the authenticated kennitala has no company row yet.",
+        "operationId": "getApplicationReports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationReportsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
             "description": "",
             "content": {
               "application/json": {
@@ -412,7 +477,7 @@
     },
     "/api/v1/application/reports/salary/eligibility": {
       "get": {
-        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. One precondition is checked: the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives. Enforced as a 404 on `POST reports/salary`.\n\nThere is no longer any timing restriction: the 6-month renewal window was removed and a company may file however far out its current deadline is. Filing early is not free, though — a report’s three years run from APPROVAL, so whatever is left on the current certificate is absorbed rather than added, and a company with a year still to run gets three years from today instead of four. `earliestNewDueAt` (what filing now would earn) against `dueAt` (what they have) is the size of that trade, returned whether or not `eligible` is true so the portal can put it to the applicant before they start.",
+        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. One precondition is checked: the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts. A company registered as a sveitarfélag (sector `SVEITARFELAG`) is exempt and is never refused for this reason — so for a plan-less municipality this route says `eligible: true` while `GET reports/equality/active` still 404s; do not gate the submission on the latter. Enforced as a 404 on `POST reports/salary`.\n\nThere is no longer any timing restriction: the 6-month renewal window was removed and a company may file however far out its current deadline is. Filing early is not free, though — a report’s three years run from APPROVAL, so whatever is left on the current certificate is absorbed rather than added, and a company with a year still to run gets three years from today instead of four. `earliestNewDueAt` (what filing now would earn) against `dueAt` (what they have) is the size of that trade, returned whether or not `eligible` is true so the portal can put it to the applicant before they start.",
         "operationId": "getApplicationSalaryReportEligibility",
         "parameters": [],
         "responses": {
@@ -466,7 +531,7 @@
     },
     "/api/v1/application/reports/salary": {
       "post": {
-        "description": "Files a salary report for the resolved company. There is no timing restriction — the 6-month renewal window was removed, and a company may file however far out its current deadline is. See `GET reports/salary/eligibility` for what filing early costs.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`).\n\n409 on two distinct refusals: (1) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (2) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The two are not distinguished in the response body today; the reason is in `message`.",
+        "description": "Files a salary report for the resolved company. There is no timing restriction — the 6-month renewal window was removed, and a company may file however far out its current deadline is. See `GET reports/salary/eligibility` for what filing early costs.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register — and is not an exempt sveitarfélag (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`). An exempt company files with `equalityReportId` omitted.\n\n409 on two distinct refusals: (1) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (2) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The two are not distinguished in the response body today; the reason is in `message`.",
         "operationId": "submitApplicationSalaryReport",
         "parameters": [],
         "requestBody": {
@@ -705,14 +770,14 @@
     },
     "/api/v1/application/reports/{providerId}": {
       "get": {
-        "description": "Returns company-facing report detail with external comments. Looked up by upstream `providerId`.",
+        "description": "Returns company-facing report detail with external comments. Read-only across channels: opens any report `GET /application/reports` lists for this company — filed on island.is, by a service provider over the partner API, or by Jafnréttisstofa — under the same ownership rule. Only island.is-filed reports can be changed through the write routes.",
         "operationId": "getApplicationReport",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID). Identifies the report by the originator's own handle rather than the DoE-side `report.id`, which the applicant does not see. Resolved against reports whose parent company matches the authenticated company.",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
             "schema": { "type": "string" }
           }
         ],
@@ -773,14 +838,14 @@
         "tags": ["Application"]
       },
       "delete": {
-        "description": "Withdraws the report tied to an island.is application the applicant deleted upstream. Sets status to `WITHDRAWN` and emits `STATUS_CHANGED`. Allowed only before the report reaches a terminal state (`APPROVED`/`DENIED`/`SUPERSEDED`); idempotent on an already-`WITHDRAWN` report.",
+        "description": "Withdraws the report tied to an island.is application the applicant deleted upstream. Sets status to `WITHDRAWN` and emits `STATUS_CHANGED`. Allowed only before the report reaches a terminal state (`APPROVED`/`DENIED`/`SUPERSEDED`); idempotent on an already-`WITHDRAWN` report. island.is-filed reports only.",
         "operationId": "withdrawApplicationReport",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "The island.is application UUID only. This write route acts on reports the company filed on island.is: a `partner:` or `system:` handle answers 404, because a report filed through another channel is changed through that channel.",
             "schema": { "type": "string" }
           }
         ],
@@ -840,13 +905,147 @@
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
             "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the uploaded jafnréttisáætlun PDF verbatim. 404 when the report's equality content is HTML rather than an uploaded PDF.",
+            "description": "Returns the uploaded jafnréttisáætlun PDF verbatim. 404 when the report's equality content is HTML rather than an uploaded PDF. Takes any read handle from `GET /application/reports`, whichever channel filed the report.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/pdf": {
+      "get": {
+        "operationId": "getApplicationReportPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generates the signed-off report as a PDF — \"Jafnlaunaúttekt\" for a salary report, \"Jafnréttisáætlun\" for an equality report — from the report as it stands. For an `APPROVED` report this matches the document the approval notice attached. A `SUPERSEDED` report shows its validity as closed at supersession. Only for reports in status `APPROVED` or `SUPERSEDED`; 404 for any other status, as for a report that is not the company’s. 503 when too many PDFs are being generated; retry shortly. Takes any read handle from `GET /application/reports`, whichever channel filed the report.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/pdf/urbotaaetlun": {
+      "get": {
+        "operationId": "getApplicationReportImprovementPlanPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generates the úrbótaáætlun (the lágmarksmengi grouped by the groups the company defined, each with its ástæða, aðgerð and signature) as a PDF. Only for reports in status `APPROVED` or `SUPERSEDED`. Salary reports only — 400 for an equality report. 404 when the report has no outlier groups (a compliant company has no plan, and its report PDF states that as a finding), and for any other status, as for a report that is not the company’s. 503 when too many PDFs are being generated; retry shortly.",
             "content": {
               "application/pdf": {
                 "schema": { "type": "string", "format": "binary" }
@@ -901,14 +1100,14 @@
     },
     "/api/v1/application/reports/{providerId}/outliers": {
       "get": {
-        "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve.",
+        "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve. Read-only across channels: takes any read handle from `GET /application/reports`. Changing the explanations (`PUT …/outliers`) is island.is-only.",
         "operationId": "getApplicationReportOutliers",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
             "schema": { "type": "string" }
           },
           {
@@ -981,14 +1180,14 @@
         "tags": ["Application"]
       },
       "put": {
-        "description": "Replaces outlier explanations on a SALARY report. All-or-none — the submitted set must match the canonical detected outliers exactly. Allowed in status `POSTPONED` (transitions to `SUBMITTED`) or `IN_REVIEW` (status preserved). Always emits `EDITED`; the `POSTPONED → SUBMITTED` case additionally emits `STATUS_CHANGED`.",
+        "description": "Replaces outlier explanations on a SALARY report. All-or-none — the submitted set must match the canonical detected outliers exactly. Allowed in status `POSTPONED` (transitions to `SUBMITTED`) or `IN_REVIEW` (status preserved). Always emits `EDITED`; the `POSTPONED → SUBMITTED` case additionally emits `STATUS_CHANGED`. island.is-filed reports only.",
         "operationId": "editApplicationOutliers",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "The island.is application UUID only. This write route acts on reports the company filed on island.is: a `partner:` or `system:` handle answers 404, because a report filed through another channel is changed through that channel.",
             "schema": { "type": "string" }
           }
         ],
@@ -1059,14 +1258,14 @@
     },
     "/api/v1/application/reports/{providerId}/comments": {
       "get": {
-        "description": "The report's external comment thread on its own, ordered oldest-first. Only comments with `EXTERNAL` visibility are returned — reviewer-internal notes are never exposed to the applicant. Use this instead of re-fetching the report detail when only the conversation is needed; the same list is embedded as `externalComments` in `GET /application/reports/:providerId`.",
+        "description": "The report's external comment thread on its own, ordered oldest-first. Only comments with `EXTERNAL` visibility are returned — reviewer-internal notes are never exposed to the applicant. Use this instead of re-fetching the report detail when only the conversation is needed; the same list is embedded as `externalComments` in `GET /application/reports/:providerId`. Takes any read handle from `GET /application/reports`; posting a comment is island.is-only.",
         "operationId": "getApplicationReportComments",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
             "schema": { "type": "string" }
           }
         ],
@@ -1130,14 +1329,14 @@
         "tags": ["Application"]
       },
       "post": {
-        "description": "Submits an external comment on a report owned by the authenticated company. Report is looked up by upstream `providerId`.",
+        "description": "Submits an external comment on a report owned by the authenticated company. island.is-filed reports only: the comment thread of a report filed through another channel can be read here but not written to.",
         "operationId": "submitApplicationReportComment",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "The island.is application UUID only. This write route acts on reports the company filed on island.is: a `partner:` or `system:` handle answers 404, because a report filed through another channel is changed through that channel.",
             "schema": { "type": "string" }
           }
         ],
@@ -1210,14 +1409,14 @@
     },
     "/api/v1/application/reports/{providerId}/equality-content": {
       "put": {
-        "description": "Replaces the narrative body of an EQUALITY report in place. Allowed only on reports in status `IN_REVIEW`. Emits an `EDITED` event; status is preserved.",
+        "description": "Replaces the narrative body of an EQUALITY report in place. Allowed only on reports in status `IN_REVIEW`. Emits an `EDITED` event; status is preserved. island.is-filed reports only. A plan PDF may arrive inline (`equalityReportPdf`, base64) or by `equalityReportPdfKey` from `POST …/equality-content/presign`; the key is single use.",
         "operationId": "editApplicationEqualityContent",
         "parameters": [
           {
             "name": "providerId",
             "required": true,
             "in": "path",
-            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "description": "The island.is application UUID only. This write route acts on reports the company filed on island.is: a `partner:` or `system:` handle answers 404, because a report filed through another channel is changed through that channel.",
             "schema": { "type": "string" }
           }
         ],
@@ -1242,6 +1441,369 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/equality-content/presign": {
+      "post": {
+        "description": "Presigned PUT URL for the plan PDF of an EQUALITY report in status `DRAFT` or `IN_REVIEW`. PDF only; takes no body. Upload the bytes to `url`, then send `key` as `equalityReportPdfKey` (with `equalityReportPdfFilename`) on `PATCH …/draft` or `PUT …/equality-content`. The plan is then stored exactly as an inline `equalityReportPdf` would be: at most 4 MB, must be a PDF. A key is single use: a successful request consumes the upload, and resending it fails the request. An upload that is never registered expires after 24 hours.",
+        "operationId": "presignApplicationEqualityPlan",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignUploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/equality-attachments/presign": {
+      "post": {
+        "description": "Presigned PUT URL for one fylgiskjal (supporting file) on an EQUALITY report in status `DRAFT` or `IN_REVIEW`. Allowed types: pdf, docx, xlsx, xls. Upload the bytes to `url`, then register `key` with the attachments endpoint. Refused when the report already has 6 attachments.",
+        "operationId": "presignApplicationEqualityAttachment",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresignReportAttachmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignUploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/equality-attachments": {
+      "post": {
+        "description": "Registers an uploaded fylgiskjal: the API reads the staged file (at most 4 MB), checks its contents against its extension, stores it, and deletes the staged copy once the row has committed. At most 6 per report. On an `IN_REVIEW` report this emits `EDITED`.",
+        "operationId": "addApplicationEqualityAttachment",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReportAttachmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReportAttachmentDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "get": {
+        "description": "Lists the report's fylgiskjöl (metadata only, never the files).",
+        "operationId": "getApplicationEqualityAttachments",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetReportAttachmentsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/equality-attachments/{attachmentId}": {
+      "delete": {
+        "description": "Removes one fylgiskjal from an EQUALITY report in status `DRAFT` or `IN_REVIEW`. On an `IN_REVIEW` report this emits `EDITED`.",
+        "operationId": "deleteApplicationEqualityAttachment",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "attachmentId",
+            "required": true,
+            "in": "path",
+            "schema": { "format": "uuid", "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "" },
           "400": {
             "description": "",
             "content": {
@@ -1468,6 +2030,521 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/partner-providers": {
+      "get": {
+        "description": "Every approved provider the signed-in company may allow to act for it, by name. Active providers only, each with its kennitala so two similar names can be told apart. Built from the approved list alone — nothing a provider puts in a link can add to it.",
+        "operationId": "getApplicationPartnerProviders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPartnerProvidersResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-delegations": {
+      "get": {
+        "description": "The providers the signed-in company currently allows to act for it, newest first, revoked providers left out. Reads the same live delegation rows the partner API enforces — by company id here, by kennitala there, which a composite foreign key keeps pointing at the same company — so what this lists is exactly who can file.",
+        "operationId": "getApplicationPartnerDelegations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCompanyPartnerDelegationsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "post": {
+        "description": "Allows a provider to act for the signed-in company. Omit `scopes` to hand over everything the provider was approved for, as the self-service web does — a delegation is all or nothing. `404` for a provider that is not on the approved list; `400` for a named scope it was not approved for; `409` if it is already allowed. Recorded on the company’s timeline.",
+        "operationId": "grantApplicationPartnerDelegation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantPartnerDelegationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-delegations/{id}": {
+      "delete": {
+        "description": "Withdraws a provider’s permission to act for the signed-in company. Takes effect on the provider’s next request. Idempotent. Another company’s delegation answers 404.",
+        "operationId": "revokeApplicationPartnerDelegation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "format": "uuid", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client": {
+      "get": {
+        "description": "The signed-in organisation’s own provider record, if Jafnréttisstofa has approved it as one. `404` for anyone else — which is how the self-service web decides whether to show the provider screens. Needs no entry in the employer register.",
+        "operationId": "getApplicationPartnerClient",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PartnerClientDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client/keys": {
+      "get": {
+        "description": "Every vendor key the signed-in provider holds, newest first, revoked and expired ones included. Never contains a secret.",
+        "operationId": "getApplicationPartnerClientKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPartnerClientKeysResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "post": {
+        "description": "Mints a vendor key (`doev_…`) for the signed-in provider. **The secret is shown exactly once.** Rotate by minting a new one, deploying it, then revoking the old one.",
+        "operationId": "issueApplicationPartnerClientKey",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePartnerClientKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssuedPartnerClientKeyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client/keys/{id}": {
+      "delete": {
+        "description": "Revokes one of the signed-in provider’s keys. Idempotent. Another provider’s key answers 404.",
+        "operationId": "revokeApplicationPartnerClientKey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The key’s `id` as listed, not the `keyId` inside the credential.",
+            "schema": { "format": "uuid", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PartnerClientKeyDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/draft": {
       "post": {
         "description": "Opens a DRAFT report at \"initial contact\" (the applicant leaving the prerequisites step upstream). The report is invisible to reviewers until submitted; the portal builds it up via the bulk sync endpoint. Idempotent on the upstream (provider_type, provider_id) tuple — a retried call returns the existing draft. Auto-provisions the company on first contact.",
@@ -1598,7 +2675,7 @@
         "tags": ["Application"]
       },
       "patch": {
-        "description": "Patches report-level header fields (contact / admin / headcount / equality narrative) on a DRAFT report. PATCH semantics: omitted keys are left untouched, an explicit null clears the column. Returns the refreshed draft detail. 404 if the draft is not owned by the company or has already been submitted.",
+        "description": "Patches report-level header fields (contact / admin / headcount / equality narrative) on a DRAFT report. PATCH semantics: omitted keys are left untouched, an explicit null clears the column. A plan PDF may arrive inline (`equalityReportPdf`, base64) or by `equalityReportPdfKey` from `POST …/equality-content/presign`; the key is single use, so omit it from later saves. Returns the refreshed draft detail. 404 if the draft is not owned by the company or has already been submitted.",
         "operationId": "updateApplicationReportDraft",
         "parameters": [
           {
@@ -1733,7 +2810,7 @@
     },
     "/api/v1/application/reports/{providerId}/draft/submit": {
       "post": {
-        "description": "Finalises a DRAFT (DRAFT → SUBMITTED, or POSTPONED when a salary report's outliers are acknowledged but not yet explained). Freezes derived scores + the result snapshot, creates the company_report snapshot from the payload (parent + subsidiaries), and makes the report visible to reviewers. For salary reports, `equalityReportId` must reference an APPROVED equality report if it is sent at all; omit it and the server resolves the company's current coverage — which is the only option when that coverage is a legacy certificate, since it has no report row to name. A 404 means nothing covers the company.",
+        "description": "Finalises a DRAFT (DRAFT → SUBMITTED, or POSTPONED when a salary report's outliers are acknowledged but not yet explained). Freezes derived scores + the result snapshot, creates the company_report snapshot from the payload (parent + subsidiaries), and makes the report visible to reviewers. For salary reports, `equalityReportId` must reference an APPROVED equality report if it is sent at all; omit it and the server resolves the company's current coverage — which is the only option when that coverage is a legacy certificate, since it has no report row to name. A 404 means nothing covers the company and it is not a municipality — municipalities may file without coverage.",
         "operationId": "submitApplicationReportDraft",
         "parameters": [
           {
@@ -3007,7 +4084,7 @@
         "description": "One reporting obligation's own state. NOT_REQUIRED means the company does not owe this report at all — it is the absence of an obligation, not a compliance failure. ACTION_PLAN_MISSING applies only to a salary report, which alone can be postponed pending outlier explanations.",
         "enum": ["NOT_REQUIRED", "MISSING", "ACTION_PLAN_MISSING", "COVERED"]
       },
-      "CompanyDto": {
+      "ApplicationCompanyDto": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
@@ -3109,6 +4186,10 @@
           "hasLegacyReports": {
             "type": "boolean",
             "description": "Derived: the Directorate's retired SharePoint register holds at least one row for this company. Drives whether the detail view offers the legacy-data tab; says nothing about compliance — the row may record a lapsed or surrendered certificate."
+          },
+          "isServiceProvider": {
+            "type": "boolean",
+            "description": "True when this organisation is also an approved service provider (þjónustuaðili) — a live partner client, not revoked. Decided by the same lookup that guards `GET /application/partner-client` and the provider key routes, so `true` here means those routes answer and `false` means they 404."
           }
         },
         "required": [
@@ -3128,7 +4209,8 @@
           "salaryObligationStatus",
           "equalityReportOverdue",
           "salaryReportOverdue",
-          "hasLegacyReports"
+          "hasLegacyReports",
+          "isServiceProvider"
         ]
       },
       "ApiErrorDto": {
@@ -3147,6 +4229,9 @@
               "Unauthorized",
               "Forbidden",
               "BadRequest",
+              "Conflict",
+              "PayloadTooLarge",
+              "TooManyRequests",
               "InternalServerError",
               "ConnectionAcquireTimeoutError",
               "UnknownError"
@@ -3160,6 +4245,9 @@
               "Unauthorized",
               "Forbidden",
               "BadRequest",
+              "Conflict",
+              "PayloadTooLarge",
+              "TooManyRequests",
               "InternalServerError",
               "ConnectionAcquireTimeoutError",
               "UnknownError"
@@ -3173,6 +4261,110 @@
           "details": { "type": "array", "items": { "type": "string" } }
         },
         "required": ["statusCode", "timestamp"]
+      },
+      "ApplicationReportChannelEnum": {
+        "type": "string",
+        "enum": ["ISLAND_IS", "SERVICE_PROVIDER", "DIRECTORATE"],
+        "description": "Who filed the report: the company on island.is (`ISLAND_IS`), a service provider for it over the partner API (`SERVICE_PROVIDER`), or Jafnréttisstofa on its behalf (`DIRECTORATE`). Only `ISLAND_IS` reports can be edited, commented on or withdrawn here."
+      },
+      "ReportTypeEnum": { "type": "string", "enum": ["SALARY", "EQUALITY"] },
+      "ReportStatusEnum": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "SUBMITTED",
+          "POSTPONED",
+          "IN_REVIEW",
+          "DENIED",
+          "APPROVED",
+          "SUPERSEDED",
+          "WITHDRAWN"
+        ]
+      },
+      "SalaryDataBasisEnum": {
+        "type": "string",
+        "enum": ["MONTH", "AVERAGE"],
+        "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one."
+      },
+      "ApplicationReportListItemDto": {
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "description": "The handle the READ routes take: `GET /application/reports/:providerId`, its equality PDF, its outliers and its comment thread. A report filed on island.is is its bare application UUID; one a service provider filed is `partner:<the provider’s own id>`; one Jafnréttisstofa entered is `system:<id>`. URL-encode it as one path segment. The write routes (edit, outliers, comment, withdraw) accept only the bare island.is form, so a report filed through another channel is read-only here. Never the DoE-side `report.id`."
+          },
+          "submittedVia": {
+            "description": "Who filed the report: the company on island.is (`ISLAND_IS`), a service provider for it over the partner API (`SERVICE_PROVIDER`), or Jafnréttisstofa on its behalf (`DIRECTORATE`). Only `ISLAND_IS` reports can be edited, commented on or withdrawn here.",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationReportChannelEnum" }
+            ]
+          },
+          "importedFromExcel": {
+            "type": "boolean",
+            "description": "True when the salary data was uploaded as the Excel workbook rather than entered in the form. Independent of `submittedVia`."
+          },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/ReportTypeEnum" }]
+          },
+          "status": {
+            "allOf": [{ "$ref": "#/components/schemas/ReportStatusEnum" }]
+          },
+          "identifier": {
+            "type": "string",
+            "nullable": true,
+            "description": "Human-facing display code assigned by the Directorate. Not a lookup handle."
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the report was filed — the same value as `submittedAt` on the report detail. The list is ordered by this, newest first."
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When a reviewer approved the report. Null until approved."
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "The end of the period an approved report covers (three years from approval). Null until approved."
+          },
+          "salaryDataBasis": {
+            "nullable": true,
+            "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "Salary-only. The payroll month the data is based on, as `YYYY-MM-01`. Set when `salaryDataBasis` is `MONTH`, null otherwise."
+          }
+        },
+        "required": [
+          "providerId",
+          "submittedVia",
+          "importedFromExcel",
+          "type",
+          "status"
+        ]
+      },
+      "GetApplicationReportsResponseDto": {
+        "type": "object",
+        "properties": {
+          "reports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationReportListItemDto"
+            }
+          }
+        },
+        "required": ["reports"]
       },
       "SubCriterionCatalogEntryDto": {
         "type": "object",
@@ -3967,7 +5159,7 @@
             "type": "string",
             "enum": ["MISSING_EQUALITY_REPORT"],
             "nullable": true,
-            "description": "Machine-readable reason when `eligible` is false; null when eligible. Only `MISSING_EQUALITY_REPORT` today — no approved, in-force equality report and no unexpired legacy certificate."
+            "description": "Machine-readable reason when `eligible` is false; null when eligible. Only `MISSING_EQUALITY_REPORT` today — no approved, in-force equality report and no unexpired legacy certificate. Never returned for a municipality (sector `SVEITARFELAG`), which may file a salary report regardless of its equality report."
           },
           "dueAt": {
             "type": "string",
@@ -3985,11 +5177,6 @@
         },
         "required": ["eligible", "earliestNewDueAt"]
       },
-      "SalaryDataBasisEnum": {
-        "type": "string",
-        "enum": ["MONTH", "AVERAGE"],
-        "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one."
-      },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -4005,7 +5192,12 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
-          "nationalId": { "type": "string" }
+          "nationalId": {
+            "type": "string",
+            "pattern": "^\\d{6}[- ]?\\d{4}$",
+            "example": "0101901234",
+            "description": "National ID. Accepts XXXXXXXXXX, XXXXXX-XXXX, or XXXXXX XXXX — always normalised to XXXXXXXXXX."
+          }
         },
         "required": ["name", "nationalId"]
       },
@@ -4048,7 +5240,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "FK to the approved EQUALITY report this salary was audited against. Send null, or omit it, when `GET reports/equality/active` answered `source: LEGACY` (there is no id to send) — or to have the server resolve the company’s current coverage, which is the same answer that route gave."
+            "description": "FK to the approved EQUALITY report this salary was audited against. Send null, or omit it, when `GET reports/equality/active` answered `source: LEGACY` (there is no id to send), or when it answered 404 — or to have the server resolve the company’s filing basis itself, the same answer `GET reports/salary/eligibility` gives. That answer can be yes where `GET reports/equality/active` 404s: a company whose sector is SVEITARFELAG may file with no equality coverage, so do not refuse a salary submission on that 404."
           },
           "importedFromExcel": { "type": "boolean" },
           "providerId": {
@@ -4077,7 +5269,7 @@
             "description": "Job title (starfsheiti) of the company contact (tengiliður)."
           },
           "contactEmail": { "type": "string" },
-          "contactPhone": { "type": "string" },
+          "contactPhone": { "type": "string", "minLength": 1 },
           "averageEmployeeMaleCount": { "type": "number" },
           "averageEmployeeFemaleCount": { "type": "number" },
           "averageEmployeeNeutralCount": { "type": "number" },
@@ -4088,7 +5280,7 @@
           "salaryDataPeriod": {
             "type": "string",
             "nullable": true,
-            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`. Must name a month that has already happened, no earlier than 36 months ago. When the basis is `AVERAGE` there is no single month to name: island.is clears any value sent, and the partner API refuses it with a 400 — so do not send one."
+            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`. Must name a month that is over — last month at the latest — and no earlier than 36 months ago. When the basis is `AVERAGE` there is no single month to name: island.is clears any value sent, and the partner API refuses it with a 400 — so do not send one."
           },
           "parsed": {
             "description": "Parsed workbook payload from `POST /reports/excel/import`. Contains the criteria tree, role list, and employee rows.",
@@ -4096,6 +5288,7 @@
           },
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
+            "maxItems": 100,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubmitReportSubsidiaryDto"
@@ -4192,7 +5385,7 @@
             "description": "Job title (starfsheiti) of the company contact (tengiliður)."
           },
           "contactEmail": { "type": "string" },
-          "contactPhone": { "type": "string" },
+          "contactPhone": { "type": "string", "minLength": 1 },
           "equalityReportContent": {
             "type": "string",
             "description": "Narrative gender-equality plan as plain HTML. Persisted as `report.equality_report_content` and rendered into the approved PDF, so send the markup itself — not a base64 blob, not a document. Mutually exclusive with `equalityReportPdf`."
@@ -4210,6 +5403,7 @@
           "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
+            "maxItems": 100,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubmitReportSubsidiaryDto"
@@ -4225,20 +5419,6 @@
           "contactEmail",
           "contactPhone",
           "company"
-        ]
-      },
-      "ReportTypeEnum": { "type": "string", "enum": ["SALARY", "EQUALITY"] },
-      "ReportStatusEnum": {
-        "type": "string",
-        "enum": [
-          "DRAFT",
-          "SUBMITTED",
-          "POSTPONED",
-          "IN_REVIEW",
-          "DENIED",
-          "APPROVED",
-          "SUPERSEDED",
-          "WITHDRAWN"
         ]
       },
       "CompanyReportDto": {
@@ -4628,11 +5808,16 @@
           },
           "equalityReportPdf": {
             "type": "string",
-            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent` and `equalityReportPdfKey`. Max 4MB decoded."
           },
           "equalityReportPdfFilename": {
             "type": "string",
-            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` or `equalityReportPdfKey` is supplied."
+          },
+          "equalityReportPdfKey": {
+            "type": "string",
+            "description": "Object key from `POST …/equality-content/presign` for a plan PDF already uploaded to the presigned URL. Stored exactly as an inline `equalityReportPdf` would be (max 4MB, must be a PDF). Requires `equalityReportPdfFilename`. Cannot be combined with a non-empty `equalityReportPdf` or `equalityReportContent` (400); a null beside the key is ignored and the key wins. **Single use:** a successful request consumes the upload; presign again for another file.",
+            "maxLength": 256
           }
         }
       },
@@ -4679,6 +5864,74 @@
         },
         "required": ["groups"]
       },
+      "ReportAttachmentExtensionEnum": {
+        "type": "string",
+        "enum": ["pdf", "docx", "xlsx", "xls"],
+        "description": "The uploaded file's extension. Case and a leading dot are ignored."
+      },
+      "PresignReportAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "extension": {
+            "description": "The uploaded file's extension. Case and a leading dot are ignored.",
+            "allOf": [
+              { "$ref": "#/components/schemas/ReportAttachmentExtensionEnum" }
+            ]
+          }
+        },
+        "required": ["extension"]
+      },
+      "AddReportAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Object key returned by the attachment presign endpoint."
+          },
+          "filename": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "The name the file was uploaded under. Its extension must match the key."
+          }
+        },
+        "required": ["key", "filename"]
+      },
+      "ReportAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "filename": {
+            "type": "string",
+            "description": "The name the company uploaded the file under."
+          },
+          "extension": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ReportAttachmentExtensionEnum" }
+            ]
+          },
+          "sizeBytes": {
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          }
+        },
+        "required": ["id", "filename", "extension", "sizeBytes", "createdAt"]
+      },
+      "GetReportAttachmentsResponseDto": {
+        "type": "object",
+        "properties": {
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReportAttachmentDto" }
+          }
+        },
+        "required": ["attachments"]
+      },
       "CreateApiKeyDto": {
         "type": "object",
         "properties": {
@@ -4689,7 +5942,7 @@
           },
           "scopes": {
             "type": "array",
-            "description": "What the key may do. Omit for the default set — `report:read`, `salary:submit` and `equality:submit`, which is everything a vendor needs to file. `scoring:write` is never granted implicitly and must be named here: it authors the company’s starfsmat, which is a different act from filing against one, and it carries a delete that cascades the whole model away. An unrecognised scope is rejected rather than stored.",
+            "description": "What the key may do. Omit for every scope, `scoring:write` included — access is all or nothing, and no Jafnréttisstofa screen narrows it. Name a subset only to restrict a key deliberately; note that `scoring:write` carries a delete that cascades the whole starfsmat away. An empty array is refused rather than read as omitted, and an unrecognised scope is rejected rather than stored.",
             "items": {
               "type": "string",
               "enum": [
@@ -4786,6 +6039,11 @@
             "nullable": true,
             "description": "Kennitala of the person who minted the key on the island.is path. Null on the admin path, where `createdByUserId` names the reviewer instead."
           },
+          "createdByName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the person who minted the key on the self-service path, as island.is gave it at the time — show this instead of `createdByNationalId`. Null when the key was minted on the admin path, or before names were recorded; show a fallback then."
+          },
           "createdByUserId": {
             "type": "string",
             "nullable": true,
@@ -4838,6 +6096,275 @@
           }
         },
         "required": ["apiKeys"]
+      },
+      "PartnerProviderDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "nationalId": {
+            "type": "string",
+            "description": "The firm’s kennitala."
+          }
+        },
+        "required": ["id", "name", "nationalId"]
+      },
+      "GetPartnerProvidersResponseDto": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PartnerProviderDto" }
+          }
+        },
+        "required": ["providers"]
+      },
+      "CompanyPartnerDelegationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "provider": { "$ref": "#/components/schemas/PartnerProviderDto" },
+          "scopes": {
+            "type": "array",
+            "description": "What the company allowed this provider to do.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          },
+          "grantedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "grantedByNationalId": {
+            "type": "string",
+            "description": "Kennitala of the person who granted it."
+          },
+          "grantedByName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the person who granted it, as island.is gave it at the time — show this instead of `grantedByNationalId`. Null for delegations granted before names were recorded; show a fallback then."
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "scopes",
+          "grantedAt",
+          "grantedByNationalId"
+        ]
+      },
+      "GetCompanyPartnerDelegationsResponseDto": {
+        "type": "object",
+        "properties": {
+          "delegations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+            }
+          }
+        },
+        "required": ["delegations"]
+      },
+      "GrantPartnerDelegationDto": {
+        "type": "object",
+        "properties": {
+          "partnerClientId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The provider’s `id`, as listed."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Omit to hand the provider everything it was approved for — the self-service web always does: a delegation is all or nothing. Named, it must be within that approval. `scoring:write` lets the provider author and delete this company’s starfsmat.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          }
+        },
+        "required": ["partnerClientId"]
+      },
+      "PartnerClientDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "nationalId": {
+            "type": "string",
+            "description": "The firm’s kennitala."
+          },
+          "name": { "type": "string" },
+          "scopes": {
+            "type": "array",
+            "description": "The ceiling on what the firm may ever do. What it may do for a given company is this intersected with that company’s delegation.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          },
+          "createdByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The DoE admin who approved the firm."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Set once the firm is cut off. A revoked firm authenticates nowhere, whatever keys or delegations it still holds."
+          },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "scopes",
+          "createdByUserId",
+          "createdAt"
+        ]
+      },
+      "PartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "partnerClientId": { "type": "string", "format": "uuid" },
+          "keyId": {
+            "type": "string",
+            "description": "Public half of the key, as it appears in the issued credential. Not a secret."
+          },
+          "label": { "type": "string", "nullable": true },
+          "createdVia": {
+            "description": "Which issuance path minted the key — the firm itself on the self-service web, or a DoE reviewer.",
+            "allOf": [{ "$ref": "#/components/schemas/ApiKeyOriginEnum" }]
+          },
+          "createdByNationalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Kennitala of the person who minted the key on the self-service path. Null on the admin path."
+          },
+          "createdByName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the person who minted the key on the self-service path, as island.is gave it at the time — show this instead of `createdByNationalId`. Null when the key was minted on the admin path, or before names were recorded; show a fallback then."
+          },
+          "createdByUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "DoE reviewer who minted the key. Null on the self-service path."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Null means no expiry."
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Last time the key authenticated a request. Written at most once a minute per key."
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "revokedByNationalId": { "type": "string", "nullable": true },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "partnerClientId",
+          "keyId",
+          "createdVia",
+          "createdAt"
+        ]
+      },
+      "GetPartnerClientKeysResponseDto": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PartnerClientKeyDto" }
+          }
+        },
+        "required": ["keys"]
+      },
+      "CreatePartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label to tell this key apart from the others, e.g. the environment it is deployed to.",
+            "maxLength": 256
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Omit for no expiry."
+          }
+        }
+      },
+      "IssuedPartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The full plaintext key, `doev_<env>_<keyId>.<secret>`. Shown exactly once — it cannot be retrieved again, only replaced."
+          },
+          "id": { "type": "string", "format": "uuid" },
+          "partnerClientId": { "type": "string", "format": "uuid" },
+          "keyId": { "type": "string" },
+          "label": { "type": "string", "nullable": true },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["key", "id", "partnerClientId", "keyId", "createdAt"]
       },
       "CreateDraftCompanyDto": {
         "type": "object",
@@ -4987,7 +6514,7 @@
           "salaryDataPeriod": {
             "type": "string",
             "nullable": true,
-            "description": "The payroll month the salary data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Must name a month that has already happened, no earlier than 36 months ago. Required alongside `salaryDataBasis: MONTH` by submit time; ignored while the stored basis is `AVERAGE`."
+            "description": "The payroll month the salary data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Must name a month that is over — last month at the latest — and no earlier than 36 months ago. Required alongside `salaryDataBasis: MONTH` by submit time; ignored while the stored basis is `AVERAGE`."
           },
           "equalityReportContent": {
             "type": "string",
@@ -4996,13 +6523,19 @@
           },
           "equalityReportPdf": {
             "type": "string",
-            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded.",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent` and `equalityReportPdfKey`. Max 4MB decoded.",
             "nullable": true
           },
           "equalityReportPdfFilename": {
             "type": "string",
             "nullable": true,
-            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` or `equalityReportPdfKey` is supplied."
+          },
+          "equalityReportPdfKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "Object key from `POST …/equality-content/presign` for a plan PDF already uploaded to the presigned URL. Stored exactly as an inline `equalityReportPdf` would be (max 4MB, must be a PDF). Requires `equalityReportPdfFilename`. Cannot be combined with a non-empty `equalityReportPdf` or `equalityReportContent` (400); a null beside the key is ignored and the key wins. **Single use:** a successful request consumes the upload, so send the key once and omit it from later saves — resending it fails the whole PATCH, header fields included. A null or empty key is ignored; clear the plan with `equalityReportContent: null`.",
+            "maxLength": 256
           }
         }
       },
@@ -5011,6 +6544,7 @@
         "properties": {
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
+            "maxItems": 100,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubmitReportSubsidiaryDto"
@@ -5020,7 +6554,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "SALARY only: the APPROVED equality report this salary submission is audited against. Omit it to have the server resolve the company’s current coverage — the same answer `GET reports/equality/active` gives, and the only option for a company covered by a legacy certificate, which has no id to send. A 404 on submit means nothing covers the company."
+            "description": "SALARY only: the APPROVED equality report this salary submission is audited against. Omit it to have the server resolve the company’s filing basis — the same answer `GET reports/salary/eligibility` gives, and the only option for a company covered by a legacy certificate, which has no id to send. A 404 on submit means nothing covers the company and it is not a municipality — municipalities may file without coverage."
           },
           "outliersPostponed": {
             "type": "boolean",

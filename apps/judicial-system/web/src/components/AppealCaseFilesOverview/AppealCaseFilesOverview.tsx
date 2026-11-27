@@ -135,7 +135,11 @@ const AppealCaseFilesOverview = () => {
       file,
       user,
       targetAppealCase?.rulingFileId,
-    ) && !isAppealFileDeletionLocked(file.category, targetAppealCase)
+    ) &&
+    !isAppealFileDeletionLocked(file.category, targetAppealCase, {
+      defendantId: file.defendantId,
+      civilClaimantId: file.civilClaimantId,
+    })
 
   useEffect(() => {
     if (workingCase.caseFiles) {

@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -7,18 +12,43 @@ import { DirectorateOfEqualityClientService } from '@island.is/clients/directora
 import type {
   GetDraftEmployeesResponseDto,
   GetDraftEmployeesWithStepsResponseDto,
+  ReportAttachmentDto,
   SyncDraftDto,
 } from '@island.is/clients/directorate-of-equality'
+import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 
 import { DraftEmployeesInput } from './dto/draftEmployees.input'
 import { EditEqualityContentInput } from './dto/editEqualityContent.input'
+import {
+  AddEqualityAttachmentInput,
+  DeleteEqualityAttachmentInput,
+  EqualityAttachmentsInput,
+  PresignEqualityAttachmentInput,
+  PresignEqualityPlanInput,
+} from './dto/equalityAttachment.input'
+import type { PresignedUploadModel } from './dto/equalityAttachment.model'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
 import { UpdateEqualityDraftContentInput } from './dto/updateEqualityDraftContent.input'
-import { buildEqualityContentBody } from './equalityContent'
+import {
+  EQUALITY_PLAN_REJECTED,
+  buildEqualityContentBody,
+} from './equalityContent'
+import {
+  normaliseAttachmentExtension,
+  toAttachmentRejection,
+} from './equalityAttachments'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityApplicationService'
+
+// equality-report's States: DMR accepts attachment changes while the report is
+// DRAFT or IN_REVIEW, which on island.is are mainForm and draftRetryForm.
+const ATTACHMENT_EDITABLE_STATES = ['draft', 'draftRetry']
+
+// Same for the plan PDF's presign: DMR takes a new plan while the report is
+// DRAFT or IN_REVIEW.
+const PLAN_EDITABLE_STATES = ['draft', 'draftRetry']
 
 @Injectable()
 export class DirectorateOfEqualityApplicationService {
@@ -40,7 +70,7 @@ export class DirectorateOfEqualityApplicationService {
     applicationId: string,
     user: User,
     locale: Locale,
-    expectedState?: string,
+    expectedState?: string | string[],
   ): Promise<void> {
     let application
     try {
@@ -58,7 +88,9 @@ export class DirectorateOfEqualityApplicationService {
       throw error
     }
 
-    if (expectedState && application.state !== expectedState) {
+    const expectedStates =
+      expectedState === undefined ? undefined : [expectedState].flat()
+    if (expectedStates && !expectedStates.includes(application.state)) {
       this.logger.warn(
         'Rejected draft sync: application is not in the expected state',
         {
@@ -136,11 +168,15 @@ export class DirectorateOfEqualityApplicationService {
   ): Promise<boolean> {
     // 'draft' matches equality-report's States.DRAFT — the only state this content push is valid in.
     await this.assertOwnsApplication(input.applicationId, user, 'is', 'draft')
-    await this.directorateOfEqualityService.updateDraft(
-      user,
-      input.applicationId,
-      buildEqualityContentBody(input),
-    )
+    const push = () =>
+      this.directorateOfEqualityService.updateDraft(
+        user,
+        input.applicationId,
+        buildEqualityContentBody(input),
+      )
+    await (input.equalityReportPdfKey
+      ? this.withPlanUploadErrors(input.applicationId, push)
+      : push())
     return true
   }
 
@@ -157,10 +193,185 @@ export class DirectorateOfEqualityApplicationService {
       'is',
       'draftRetry',
     )
-    await this.directorateOfEqualityService.editEqualityContent(
-      user,
+    const push = () =>
+      this.directorateOfEqualityService.editEqualityContent(
+        user,
+        input.applicationId,
+        buildEqualityContentBody(input),
+      )
+    await (input.equalityReportPdfKey
+      ? this.withPlanUploadErrors(input.applicationId, push)
+      : push())
+    return true
+  }
+
+  // The plan PDF goes from the browser straight to S3, like a fylgiskjal; only
+  // the key comes back through the content mutations above. DMR allows it
+  // while the report is DRAFT or IN_REVIEW (mainForm and draftRetryForm).
+  async presignEqualityPlan(
+    input: PresignEqualityPlanInput,
+    user: User,
+  ): Promise<PresignedUploadModel> {
+    await this.assertOwnsApplication(
       input.applicationId,
-      buildEqualityContentBody(input),
+      user,
+      'is',
+      PLAN_EDITABLE_STATES,
+    )
+    // Logged, but not marked as a refused file: DMR's presign never sees the
+    // file, so its 4xx is about the report (no longer DRAFT/IN_REVIEW, not
+    // found), and the form should show its generic error, not "invalid PDF".
+    const { url, key } = await this.withPlanUploadErrors(
+      input.applicationId,
+      () =>
+        this.directorateOfEqualityService.presignEqualityPlan(
+          user,
+          input.applicationId,
+        ),
+      { fileRejection: false },
+    )
+    return { url, key }
+  }
+
+  /**
+   * The presigned plan path: presign, and a content push carrying a key.
+   * DMR's reasons (`details`) are English developer text, so they are logged
+   * here. On the push, where DMR reads the file, a 4xx becomes the
+   * EQUALITY_PLAN_REJECTED title the form shows its "invalid PDF" message
+   * under; `fileRejection: false` leaves other errors as they are. Inline HTML
+   * and base64 PDF pushes don't use this and fail as before.
+   */
+  private async withPlanUploadErrors<T>(
+    applicationId: string,
+    action: () => Promise<T>,
+    { fileRejection = true }: { fileRejection?: boolean } = {},
+  ): Promise<T> {
+    try {
+      return await action()
+    } catch (error) {
+      if (error instanceof FetchError) {
+        const body = error.body as
+          | { message?: unknown; details?: unknown }
+          | undefined
+        this.logger.warn('DMR refused an equality plan upload', {
+          applicationId,
+          status: error.status,
+          message: body?.message,
+          details: body?.details,
+          context: LOGGING_CONTEXT,
+        })
+        if (fileRejection && error.status >= 400 && error.status < 500) {
+          throw new HttpException(
+            { error: EQUALITY_PLAN_REJECTED, message: '' },
+            error.status,
+          )
+        }
+      }
+      throw error
+    }
+  }
+
+  // DMR's 4xx answers to an attachment call carry a curated, localized reason
+  // (unsupported type, macros found, contents don't match the extension, report
+  // no longer editable, 6 already attached). Re-thrown with that reason as the
+  // problem detail so the UI can show it. Anything else propagates as is.
+  private async withAttachmentErrors<T>(
+    applicationId: string,
+    action: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await action()
+    } catch (error) {
+      if (error instanceof FetchError) {
+        const rejection = toAttachmentRejection(error.status, error.body)
+        if (rejection) {
+          this.logger.warn('DMR refused an equality attachment call', {
+            applicationId,
+            status: error.status,
+            message: (error.body as { message?: unknown } | undefined)?.message,
+            context: LOGGING_CONTEXT,
+          })
+          throw rejection
+        }
+      }
+      throw error
+    }
+  }
+
+  async listEqualityAttachments(
+    input: EqualityAttachmentsInput,
+    user: User,
+  ): Promise<ReportAttachmentDto[]> {
+    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    const { attachments } =
+      await this.directorateOfEqualityService.getEqualityAttachments(
+        user,
+        input.applicationId,
+      )
+    return attachments
+  }
+
+  async presignEqualityAttachment(
+    input: PresignEqualityAttachmentInput,
+    user: User,
+  ): Promise<PresignedUploadModel> {
+    const extension = normaliseAttachmentExtension(input.extension)
+    if (!extension) {
+      throw new BadRequestException(`Unsupported extension: ${input.extension}`)
+    }
+    await this.assertOwnsApplication(
+      input.applicationId,
+      user,
+      'is',
+      ATTACHMENT_EDITABLE_STATES,
+    )
+    const { url, key } = await this.withAttachmentErrors(
+      input.applicationId,
+      () =>
+        this.directorateOfEqualityService.presignEqualityAttachment(
+          user,
+          input.applicationId,
+          extension,
+        ),
+    )
+    return { url, key }
+  }
+
+  async addEqualityAttachment(
+    input: AddEqualityAttachmentInput,
+    user: User,
+  ): Promise<ReportAttachmentDto> {
+    await this.assertOwnsApplication(
+      input.applicationId,
+      user,
+      'is',
+      ATTACHMENT_EDITABLE_STATES,
+    )
+    return this.withAttachmentErrors(input.applicationId, () =>
+      this.directorateOfEqualityService.addEqualityAttachment(
+        user,
+        input.applicationId,
+        { key: input.key, filename: input.filename },
+      ),
+    )
+  }
+
+  async deleteEqualityAttachment(
+    input: DeleteEqualityAttachmentInput,
+    user: User,
+  ): Promise<boolean> {
+    await this.assertOwnsApplication(
+      input.applicationId,
+      user,
+      'is',
+      ATTACHMENT_EDITABLE_STATES,
+    )
+    await this.withAttachmentErrors(input.applicationId, () =>
+      this.directorateOfEqualityService.deleteEqualityAttachment(
+        user,
+        input.applicationId,
+        input.attachmentId,
+      ),
     )
     return true
   }

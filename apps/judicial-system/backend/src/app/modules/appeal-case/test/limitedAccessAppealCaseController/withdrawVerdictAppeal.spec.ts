@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -15,7 +16,11 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { FileService } from '../../../file'
 import {
   AppealCase,
@@ -25,6 +30,7 @@ import {
   Case,
   CaseFile,
   CaseRepositoryService,
+  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
@@ -118,8 +124,10 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
   let mockFileService: FileService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -131,6 +139,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
+      defendantRepositoryService,
       verdictRepositoryService,
       fileService,
       sequelize,
@@ -139,14 +148,15 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
     mockFileService = fileService
 
+    mockSequelize = sequelize
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -158,17 +168,27 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     givenWhenThen = async (aCase, anAppealCase, transitionDto) => {
       const then = {} as Then
 
-      await limitedAccessAppealCaseController
-        .transition(
-          caseId,
-          appealCaseId,
-          defender,
-          aCase,
-          anAppealCase,
-          transitionDto,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+      // request transaction is already open - and holding a lock on this case
+      // row - by the time the handler runs. Guards do not execute in
+      // controller unit tests, so the request context and that transaction
+      // are set up here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await limitedAccessAppealCaseController.transition(
+            caseId,
+            appealCaseId,
+            defender,
+            aCase,
+            anAppealCase,
+            transitionDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -210,6 +230,23 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
         defendantId,
         verdictId,
         { appealDate: null },
+        { transaction },
+      )
+    })
+
+    // No appeal remains for this defendant, so the appeal appointment goes with
+    // the withdrawal even though another defendant's appeal keeps the case open.
+    it('should clear the appeal defender recorded on the defendant', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: null,
+        },
         { transaction },
       )
     })
@@ -305,6 +342,12 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
         { transaction },
       )
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+
+    // The prosecution appeal against this defendant still needs a confirmed
+    // appeal advocate on the row.
+    it('should keep the appeal defender while the prosecution appeal stands', () => {
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

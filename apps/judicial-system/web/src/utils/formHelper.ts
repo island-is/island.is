@@ -9,6 +9,7 @@ import {
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -348,6 +349,7 @@ export type stepValidationsType = {
   [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: WorkingCase) => boolean
   [COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: WorkingCase) => boolean
   [COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE]: () => boolean
   [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (
     theCase: WorkingCase,
   ) => boolean
@@ -463,6 +465,11 @@ export const stepValidations = (
     [COURT_OF_APPEAL_SUMMARY_ROUTE]: () =>
       appealCase?.appealState === 'COMPLETED',
     [COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
+    // The court records its own case number when it receives the appeal and
+    // does not move on without one. The bench is assigned later and confirmed
+    // on its own, so it does not hold the step.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE]: () =>
+      validations.isVerdictAppealRegistrationStepValid(appealCase),
     // The same rule the page itself goes by: the court does not move on until
     // every party's advocate is confirmed.
     [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (theCase: WorkingCase) =>
@@ -471,10 +478,13 @@ export const stepValidations = (
     // can come back for the rest, so the step never holds it (owner's
     // decision).
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE]: () => true,
-    // The status is not saved, so there is nothing on the case to check; the
-    // page's own isValid is what stops the court leaving it half done.
-    [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => true,
-    // Nothing follows the summary, so nothing asks whether it is complete.
+    // Only a finished appeal has something on it to check: how it ended. For
+    // every other status the page's own isValid is what stops the court
+    // leaving it half done.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () =>
+      validations.isVerdictAppealStatusStepValid(appealCase),
+    // The summary is only read: what finishes the appeal is the court
+    // confirming it there, not moving past it.
     [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }
 }

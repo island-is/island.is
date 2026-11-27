@@ -1,3 +1,4 @@
+import { AppealEventType } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CaseFile,
@@ -10,19 +11,28 @@ import {
   CaseType,
   InstitutionType,
   UserRole,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
   canConfirmAppealSummonsRow,
+  canDefenceUserAccessVerdictAppealFiles,
   canShowIssueAppealSummons,
+  canViewVerdictAppealFile,
+  canViewVerdictAppealStatementFile,
   formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
   formatAppealSummonsSentToCourtOfAppealsTooltip,
   getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
+  getAppealSummonsServiceBanners,
+  getAppealSummonsServiceRecipientOptions,
+  getVerdictAppealFileGroupKey,
   getVerdictAppealFileGroups,
+  getVerdictAppealFileGroupTitle,
+  getVerdictAppealFileSentInBy,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -82,6 +92,7 @@ describe('getVerdictAppealFileGroups', () => {
           id: 'own_client_id',
           name: 'Eigin sakborningur',
           isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
           defenderNationalId,
         },
         {
@@ -110,6 +121,36 @@ describe('getVerdictAppealFileGroups', () => {
     ).toEqual([])
   })
 
+  it('should include files for an appeal-confirmed defendant without district confirmation', () => {
+    const appealOnlyCase = {
+      id: 'case_id',
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: 'appeal_client_id',
+          name: 'Áfrýjunarverjandi',
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+      caseFiles: [
+        file(
+          'declaration',
+          'appeal_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-04T13:34:00.000Z',
+        ),
+      ],
+    } as WorkingCase
+
+    expect(getVerdictAppealFileGroups(appealOnlyCase, user)).toEqual([
+      {
+        defendant: appealOnlyCase.defendants?.[0],
+        files: appealOnlyCase.caseFiles,
+      },
+    ])
+  })
+
   it('should group the declaration and its files under the defendant, oldest first', () => {
     const groups = getVerdictAppealFileGroups(
       theCase([
@@ -130,7 +171,7 @@ describe('getVerdictAppealFileGroups', () => {
     )
 
     expect(groups).toHaveLength(1)
-    expect(groups[0].defendant.id).toBe('own_client_id')
+    expect(groups[0].defendant?.id).toBe('own_client_id')
     expect(groups[0].files.map((f) => f.id)).toEqual([
       'declaration',
       'attachment',
@@ -156,7 +197,7 @@ describe('getVerdictAppealFileGroups', () => {
       user,
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual(['own_client_id'])
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['own_client_id'])
   })
 
   it('should show a prosecution user every defendant, in case order', () => {
@@ -178,7 +219,7 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.PROSECUTOR),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
@@ -207,7 +248,7 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
@@ -234,10 +275,418 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
+  })
+
+  const withFiledStatement = (
+    caseFiles: CaseFile[],
+    party: { defendantId?: string; civilClaimantId?: string } = {
+      defendantId: 'own_client_id',
+    },
+    filedAt = '2026-06-05T14:00:00.000Z',
+  ): WorkingCase =>
+    ({
+      ...theCase(caseFiles),
+      verdictAppealCase: {
+        id: 'appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        appealEventLogs: [
+          {
+            id: 'sent',
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            defendantId: party.defendantId,
+            civilClaimantId: party.civilClaimantId,
+            created: filedAt,
+          },
+        ],
+      },
+    } as WorkingCase)
+
+  // Greinargerð mirrors kærumál: CoA / prosecution / defence see every party's
+  // statement on the overview, not only the client's the defender represents.
+  it('should include a filed greinargerð under the defendant for CoA', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement([
+        file(
+          'declaration',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-04T13:34:00.000Z',
+        ),
+        file(
+          'statement',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          '2026-06-05T13:34:00.000Z',
+        ),
+      ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0].files.map((f) => f.id)).toEqual([
+      'declaration',
+      'statement',
+    ])
+  })
+
+  it('should hide a statement upload until APPEAL_STATEMENT_SENT exists', () => {
+    const groups = getVerdictAppealFileGroups(
+      theCase([
+        file(
+          'statement',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          '2026-06-05T13:34:00.000Z',
+        ),
+      ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toEqual([])
+  })
+
+  it('should show another defendants greinargerð to a defence user', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement(
+        [
+          file(
+            'other-statement',
+            'other_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+        ],
+        { defendantId: 'other_client_id' },
+      ),
+      user,
+    )
+
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['other_client_id'])
+    expect(groups[0].files.map((f) => f.id)).toEqual(['other-statement'])
+  })
+
+  it('should keep a co-defendant greinargerð when that defendant is absent from the list', () => {
+    const appealOnlyCase = {
+      ...withFiledStatement(
+        [
+          file(
+            'other-statement',
+            'other_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+        ],
+        { defendantId: 'other_client_id' },
+      ),
+      defendants: [
+        {
+          id: 'own_client_id',
+          name: 'Eigin sakborningur',
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(appealOnlyCase, user)
+
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['other_client_id'])
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('other_client_id')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Dómfelldi')
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Verjandi sendi inn',
+    )
+  })
+
+  it('should not reconstruct filer initials from the current advocate on a redacted statement', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          defendant: {
+            id: 'other_client_id',
+            name: 'Annar sakborningur',
+            appealDefenderName: 'Verjandi Vilhjálmsdóttir',
+          },
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        },
+      ),
+    ).toBe('Verjandi sendi inn')
+  })
+
+  it('should fall back to the current advocate only for declarations without stored attribution', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          defendant: {
+            id: 'own_client_id',
+            name: 'Eigin sakborningur',
+            appealDefenderName: 'Verjandi Vilhjálmsdóttir',
+          },
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        },
+      ),
+    ).toBe('Verjandi (VV) sendi inn')
+  })
+
+  it('should not reconstruct filer initials from the current spokesperson on a redacted civil-claimant statement', () => {
+    expect(
+      getVerdictAppealFileSentInBy(
+        {
+          civilClaimant: {
+            id: 'claimant_id',
+            name: 'Bótakröfuhafi',
+            appealSpokespersonName: 'Lóa Lögmaður',
+            appealSpokespersonIsLawyer: true,
+          } as never,
+          files: [],
+        },
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        },
+      ),
+    ).toBe('Lögmaður sendi inn')
+  })
+
+  it('should group a civil-claimant greinargerð under the claimant', () => {
+    const theCaseWithClaimant = {
+      ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),
+      civilClaimants: [
+        {
+          id: 'claimant_id',
+          name: 'Bótakröfuhafi',
+          appealSpokespersonName: 'Lóa Lögmaður',
+          appealSpokespersonIsLawyer: true,
+        },
+      ],
+      caseFiles: [
+        {
+          id: 'cc-statement',
+          civilClaimantId: 'claimant_id',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          created: '2026-06-05T13:34:00.000Z',
+          name: 'cc-statement.pdf',
+          submittedBy: 'Gamli Lögmaður',
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(
+      theCaseWithClaimant,
+      mockUser(UserRole.PROSECUTOR),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('claimant_id')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Lögmaður (GL) sendi inn',
+    )
+  })
+
+  it('should not label an unnamed civil claimant as the prosecution', () => {
+    const theCaseWithClaimant = {
+      ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),
+      civilClaimants: [
+        {
+          id: 'claimant_id',
+          name: null,
+          appealSpokespersonName: 'Lóa Lögmaður',
+          appealSpokespersonIsLawyer: true,
+        },
+      ],
+      caseFiles: [
+        {
+          id: 'cc-statement',
+          civilClaimantId: 'claimant_id',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          created: '2026-06-05T13:34:00.000Z',
+          name: 'cc-statement.pdf',
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(
+      theCaseWithClaimant,
+      mockUser(UserRole.PROSECUTOR),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).not.toBe('Ákæruvaldið')
+  })
+
+  it('should hide a statement uploaded after the party already filed', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement(
+        [
+          file(
+            'filed-statement',
+            'own_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+          file(
+            'orphan-statement',
+            'own_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T15:00:00.000Z',
+          ),
+        ],
+        { defendantId: 'own_client_id' },
+        '2026-06-05T14:00:00.000Z',
+      ),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0].files.map((f) => f.id)).toEqual(['filed-statement'])
+  })
+
+  it('should put the prosecution greinargerð in its own group', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement(
+        [
+          {
+            id: 'pros-statement',
+            category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+            created: '2026-06-05T13:34:00.000Z',
+            name: 'pros-statement.pdf',
+          },
+        ],
+        {},
+      ),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('prosecution')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Ákæruvaldið')
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Ákærandi sendi inn',
+    )
+  })
+})
+
+describe('canViewVerdictAppealFile', () => {
+  it('rejects a declaration attachment that belongs to a ruling-order appeal', () => {
+    expect(
+      canViewVerdictAppealFile(
+        { id: 'case_id', type: CaseType.INDICTMENT } as WorkingCase,
+        [CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE],
+        {
+          category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          defendantId: 'd1',
+          rulingFileId: 'ruling_order_id',
+        },
+        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('canViewVerdictAppealStatementFile', () => {
+  const workingCase = {
+    defendants: [
+      {
+        id: 'own_client_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '1111111111',
+      },
+    ],
+    verdictAppealCase: {
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'own_client_id',
+          created: '2026-06-05T14:00:00.000Z',
+        },
+      ],
+    },
+  } as WorkingCase
+
+  const statement = {
+    category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    defendantId: 'own_client_id',
+    created: '2026-06-05T13:34:00.000Z',
+  }
+
+  it.each([UserRole.COURT_OF_APPEALS_JUDGE, UserRole.PROSECUTOR])(
+    'allows %s',
+    (role) => {
+      expect(
+        canViewVerdictAppealStatementFile(
+          workingCase,
+          statement,
+          mockUser(role),
+        ),
+      ).toBe(true)
+    },
+  )
+
+  it('allows a confirmed appeal defender', () => {
+    expect(
+      canViewVerdictAppealStatementFile(workingCase, statement, {
+        id: 'user_id',
+        role: UserRole.DEFENDER,
+        nationalId: '1111111111',
+      } as User),
+    ).toBe(true)
+  })
+
+  it('rejects a defence user without appeal or case-file access', () => {
+    expect(
+      canViewVerdictAppealStatementFile(workingCase, statement, {
+        id: 'user_id',
+        role: UserRole.DEFENDER,
+        nationalId: '9999999999',
+      } as User),
+    ).toBe(false)
+  })
+
+  it('rejects district court users', () => {
+    expect(
+      canViewVerdictAppealStatementFile(
+        workingCase,
+        statement,
+        mockUser(UserRole.DISTRICT_COURT_JUDGE),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('canDefenceUserAccessVerdictAppealFiles', () => {
+  it('is false for a confirmed district spokesperson without case-file access', () => {
+    expect(
+      canDefenceUserAccessVerdictAppealFiles(
+        {
+          civilClaimants: [
+            {
+              id: 'c1',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              caseFilesSharedWithSpokesperson: false,
+              spokespersonNationalId: '1111111111',
+            },
+          ],
+        },
+        {
+          id: 'user_id',
+          role: UserRole.DEFENDER,
+          nationalId: '1111111111',
+        } as User,
+      ),
+    ).toBe(false)
   })
 })
 
@@ -489,7 +938,7 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('offers send, edit, open and delete on a confirmed summons for staff', () => {
+  it('offers send to service, send to CoA, edit, open and delete on a confirmed summons for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
@@ -498,8 +947,15 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
+    ).toEqual([
+      'Senda í birtingu',
+      'Senda til Landsréttar',
+      'Breyta',
+      'Opna í nýjum flipa',
+      'Eyða',
+    ])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
@@ -511,8 +967,9 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Opna í nýjum flipa'])
+    ).toEqual(['Senda í birtingu', 'Opna í nýjum flipa'])
   })
 
   it('offers only open to a public prosecution prosecutor', () => {
@@ -539,6 +996,198 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
       ).map((item) => item.title),
     ).toEqual(['Opna í nýjum flipa'])
+  })
+})
+
+describe('getAppealSummonsServiceRecipientOptions', () => {
+  it('lists defendants on the summons and civil claimants on the case', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [{ defendantId: 'd1' } as never],
+          services: [{ civilClaimantId: 'c1' } as never],
+        },
+        [{ id: 'd1', name: 'Jón Jónsson', nationalId: '0000000000' } as never],
+        [
+          {
+            id: 'c1',
+            name: 'Binni',
+            nationalId: '1111111111',
+          } as never,
+          { id: 'c2', name: 'Bína', nationalId: '2222222222' } as never,
+        ],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón Jónsson',
+        defendantId: 'd1',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni',
+        civilClaimantId: 'c1',
+        alreadySent: true,
+        missingNationalId: false,
+      },
+      {
+        key: 'civilClaimant-c2',
+        label: 'Bína',
+        civilClaimantId: 'c2',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+    ])
+  })
+
+  it('marks recipients without a national id as ineligible', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [
+            { defendantId: 'd1' } as never,
+            { defendantId: 'd2' } as never,
+          ],
+          services: [],
+        },
+        [
+          { id: 'd1', name: 'Jón', nationalId: '0000000000' } as never,
+          { id: 'd2', name: 'Gunna', noNationalId: true } as never,
+        ],
+        [{ id: 'c1', name: 'Binni' } as never],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón',
+        defendantId: 'd1',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+      {
+        key: 'defendant-d2',
+        label: 'Dómfelldi Gunna (vantar kennitölu)',
+        defendantId: 'd2',
+        alreadySent: false,
+        missingNationalId: true,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni (vantar kennitölu)',
+        civilClaimantId: 'c1',
+        alreadySent: false,
+        missingNationalId: true,
+      },
+    ])
+  })
+})
+
+describe('getAppealSummonsServiceBanners', () => {
+  it('returns an info banner per service row that is still waiting', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        civilClaimants: [{ id: 'c1', name: 'Binni' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                },
+                {
+                  id: 's2',
+                  civilClaimantId: 'c1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-06T10:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.IN_PERSON,
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'info',
+        title: 'Áfrýjunarstefna bíður birtingar – Jón Jónsson',
+        message: expect.stringContaining('Send í birtingu'),
+      },
+      {
+        key: 's2',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt – Binni',
+        message: expect.stringContaining('Birt'),
+      },
+    ])
+  })
+
+  it('uses legal-paper wording when served via Lögbirtingablaðið', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-10T00:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.LEGAL_PAPER,
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt í Lögbirtingablaðinu – Jón Jónsson',
+        message: expect.stringContaining('Birt í Lögbirtingablaðinu'),
+      },
+    ])
+  })
+
+  it('shows an error banner when service failed', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceStatus: VerdictServiceStatus.FAILED,
+                  comment: 'Fannst ekki',
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'error',
+        title: 'Birting áfrýjunarstefnu mistókst – Jón Jónsson',
+        message: 'Fannst ekki',
+      },
+    ])
   })
 })
 
@@ -737,9 +1386,8 @@ describe('getAppealAppointmentLetters', () => {
   })
 
   describe('for a defence user', () => {
-    // Access to the case is the district court's confirmation, so that is
-    // what ties a defence user to a party here too - not the appeal advocate
-    // fields, which the court of appeals may fill with somebody else.
+    // A defence user is tied to a party by district confirmation or by the
+    // court of appeals' confirmed appeal appointment for that party.
     const defender = {
       ...mockUser(UserRole.DEFENDER),
       nationalId: '0101302989',
@@ -788,7 +1436,7 @@ describe('getAppealAppointmentLetters', () => {
       ).toEqual(['defendant-own_client_id', 'civilClaimant-own_claimant_id'])
     })
 
-    it('offers nothing to a defender the district court has not confirmed', () => {
+    it('offers nothing to a defender neither court has confirmed for the party', () => {
       expect(
         getAppealAppointmentLetters(
           appealedCase({
@@ -799,6 +1447,7 @@ describe('getAppealAppointmentLetters', () => {
                 defenderNationalId: '0101302989',
                 isAppealDefenderConfirmed: true,
                 appealDefenderName: 'Þórður Már Jónsson',
+                appealDefenderNationalId: '0909713459',
               },
             ],
           } as Partial<WorkingCase>),
@@ -811,7 +1460,7 @@ describe('getAppealAppointmentLetters', () => {
       ['not confirmed', { isSpokespersonConfirmed: false }],
       ['not recorded', { hasSpokesperson: false }],
     ])(
-      'offers nothing to a spokesperson the district court has %s',
+      'offers nothing to a spokesperson the district court has %s without an appeal appointment',
       (_name, fields) => {
         expect(
           getAppealAppointmentLetters(
@@ -823,7 +1472,7 @@ describe('getAppealAppointmentLetters', () => {
                   hasSpokesperson: true,
                   isSpokespersonConfirmed: true,
                   spokespersonNationalId: '0101302989',
-                  isAppealSpokespersonConfirmed: true,
+                  isAppealSpokespersonConfirmed: false,
                   appealSpokespersonName: 'Brynjar Sveinsson',
                   ...fields,
                 },
@@ -835,9 +1484,7 @@ describe('getAppealAppointmentLetters', () => {
       },
     )
 
-    // Being the one the court of appeals appointed is not, by itself, access
-    // to the case - that comes with the district court's confirmation.
-    it('offers nothing on the appeal appointment alone', () => {
+    it('offers the letter on the court of appeals appointment alone', () => {
       expect(
         getAppealAppointmentLetters(
           appealedCase({
@@ -853,8 +1500,27 @@ describe('getAppealAppointmentLetters', () => {
             ],
           } as Partial<WorkingCase>),
           defender,
-        ),
-      ).toEqual([])
+        ).map((row) => row.key),
+      ).toEqual(['defendant-defendant_id'])
+    })
+
+    it('offers the letter to a confirmed appeal spokesperson alone', () => {
+      expect(
+        getAppealAppointmentLetters(
+          appealedCase({
+            defendants: [],
+            civilClaimants: [
+              {
+                id: 'claimant_id',
+                isAppealSpokespersonConfirmed: true,
+                appealSpokespersonNationalId: '0101302989',
+                appealSpokespersonName: 'Brynjar Sveinsson',
+              },
+            ],
+          } as Partial<WorkingCase>),
+          defender,
+        ).map((row) => row.key),
+      ).toEqual(['civilClaimant-claimant_id'])
     })
   })
 

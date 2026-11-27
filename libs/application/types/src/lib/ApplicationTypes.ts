@@ -13,6 +13,7 @@ export enum ApplicationTypes {
   DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
+  PARENTAL_LEAVE_V2 = 'ParentalLeaveV2',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
@@ -111,6 +112,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  FJARSKIPTASTOFA_SELF_ASSESSMENT = 'FjarskiptastofaSelfAssessment',
 }
 
 export const ApplicationConfigurations = {
@@ -169,6 +171,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
     translation: ['pl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: {
+    slug: 'faedingarorlof-v2',
+    translation: ['plv2.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -559,11 +565,15 @@ export const ApplicationConfigurations = {
     translation: ['doe.sr.application', 'uiForms.application'],
   },
   [ApplicationTypes.PAY_DEBTS]: {
-    slug: 'greidum-rikinu',
+    slug: 'greida-skuld',
     translation: ['pd.application', 'uiForms.application'],
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    slug: 'sjalfsmat-fjarskiptastofu',
+    translation: ['fjs.sa.application', 'uiForms.application'],
   },
 }

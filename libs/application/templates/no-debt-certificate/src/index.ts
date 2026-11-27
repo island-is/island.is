@@ -6,3 +6,4 @@ export const getDataProviders = () => import('./dataProviders/')
 export default template
 
 export * from './lib/messages'
+export { CertificateLanguage } from './lib/constants'

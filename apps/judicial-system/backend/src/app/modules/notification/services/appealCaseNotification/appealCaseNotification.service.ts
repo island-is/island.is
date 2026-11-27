@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -89,7 +88,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -99,7 +97,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -287,7 +284,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     smsText = smsText.match(/rettarvorslugatt.island.is/g)
       ? smsText
-      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
+      : `${smsText} ${notifications.smsTail}`
 
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
@@ -324,7 +321,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       ) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
-            this.formatMessage,
             appealCase.appealCaseNumber,
             recipient.id === presidingJudge.id,
             presidingJudge.name,
@@ -1550,7 +1546,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           this.sendEmail({
             subject,
             html,
-            recipientName: this.formatMessage(notifications.emailNames.prison),
+            recipientName: notifications.emailNames.prison,
             recipientEmail: this.config.email.prisonEmail,
           }),
         )
@@ -1972,7 +1968,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     if (appealCase.appealReceivedByCourtDate) {
       recipients.push({
-        name: this.formatMessage(notifications.emailNames.courtOfAppeals),
+        name: notifications.emailNames.courtOfAppeals,
         email: this.getCourtEmail(this.config.courtOfAppealsId),
       })
     }
@@ -2041,7 +2037,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const html = (url?: string) =>
       url
-        ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">${url}</a>.`
+        ? `${details}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${url}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`
         : details
 
     const promises = [
@@ -2171,6 +2167,49 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       } sem fara átti fram ${this.appealCourtSessionWhen(
         appealCourtSession.sessionDate,
       )} í dómsal ${appealCourtSession.courtRoom}, fellur niður.`,
+    )
+  }
+  //#endregion
+
+  //#region APPEAL_SUMMONS_CONFIRMED notifications
+  private async sendAppealSummonsConfirmedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? theCase.id
+    const courtName =
+      theCase.court?.name !== undefined && theCase.court?.name !== null
+        ? theCase.court.name
+        : undefined
+    const caseUrl = `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`
+
+    const subject = formatIcuMessage(
+      strings.appealSummonsConfirmedCriminalRecordEmail.subject,
+      { courtCaseNumber },
+    )
+    const html = formatIcuMessage(
+      strings.appealSummonsConfirmedCriminalRecordEmail.body,
+      {
+        courtCaseNumber,
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+        linkStart: `<a href="${caseUrl}">`,
+        linkEnd: '</a>',
+        caseUrl,
+      },
+    )
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: formatIcuMessage(
+        notifications.emailNames.publicProsecutorCriminalRecords,
+      ),
+      recipientEmail: this.config.email.publicProsecutorCriminalRecordsEmail,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_SUMMONS_CONFIRMED,
+      [recipient],
     )
   }
   //#endregion
@@ -2379,6 +2418,8 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           appealCase,
           appealCourtSession,
         )
+      case AppealCaseNotificationType.APPEAL_SUMMONS_CONFIRMED:
+        return this.sendAppealSummonsConfirmedNotifications(theCase)
       case AppealCaseNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS:
         return this.sendAppealSummonsSentToCourtOfAppealsNotifications(
           theCase,
@@ -2409,8 +2450,6 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     appealCourtSessionId?: string,
     appealCourtSession?: AppealCourtSessionNotificationDto,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(
         type,

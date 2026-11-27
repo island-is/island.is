@@ -29,11 +29,6 @@ export const submitted = {
       defaultMessage: 'Endurhlaða',
       description: 'Reload button text',
     },
-    resubmit: {
-      id: 'ojoi.application:submitted.buttons.resubmit',
-      defaultMessage: 'Reyna aftur',
-      description: 'Resubmit button text when initial submission failed',
-    },
   }),
   errors: defineMessages({
     caseErrorTitle: {
@@ -46,17 +41,6 @@ export const submitted = {
       defaultMessage:
         'Vinsamlegast reynið aftur síðar eða hafið samband við Stjórnartíðindi',
       description: 'Case error message',
-    },
-    postApplicationErrorTitle: {
-      id: 'ojoi.application:submitted.errors.postApplicationErrorTitle',
-      defaultMessage: 'Ekki tókst að senda inn umsókn',
-      description: 'Post application error message',
-    },
-    postApplicationErrorMessage: {
-      id: 'ojoi.application:submitted.errors.postApplicationErrorMessage',
-      defaultMessage:
-        'Vinsamlegast reynið aftur síðar eða hafið samband við Stjórnartíðindi',
-      description: 'Post application error message',
     },
   }),
   bullets: defineMessages({

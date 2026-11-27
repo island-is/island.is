@@ -43,11 +43,16 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
   canRegisterVerdictAppeal,
+  canWithdrawVerdictAppeal,
   isAfterVerdictAppealDeadline,
   withAppealDefender,
 } from './VerdictTimelineCard.logic'
@@ -240,28 +245,49 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       items.push(prosecutionAppealItem)
     }
 
-    pushIf(
-      !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage(
-        {
-          id: strings.sendToPrisonAdminDate,
-          defaultMessage: strings.sendToPrisonAdminDate,
-        },
-        {
-          date: formatDate(defendant.sentToPrisonAdminDate),
-        },
-      ),
-    )
+    // Prosecution statement deadlines are case-level (no party ids). Only show
+    // them on cards for defendants who are part of the standing appeal.
+    const defendantIsInAppeal =
+      defendantHasStandingVerdictAppeal(
+        workingCase.verdictAppealCase,
+        defendant.id,
+      ) || Boolean(defendant.verdict?.appealDate)
 
-    pushIf(
-      !!(
-        defendant.isClosedWithoutEnforcement &&
-        defendant.closedWithoutEnforcementDate
-      ),
-      `Máli lokið án fullnustu ${formatDate(
-        defendant.closedWithoutEnforcementDate,
-      )}`,
-    )
+    if (defendantIsInAppeal) {
+      const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+        workingCase.verdictAppealCase,
+        {},
+      )
+
+      if (statementDeadlineItem) {
+        items.push(statementDeadlineItem)
+      }
+    }
+
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      items.push({
+        text: formatMessage(
+          {
+            id: strings.sendToPrisonAdminDate,
+            defaultMessage: strings.sendToPrisonAdminDate,
+          },
+          {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          },
+        ),
+      })
+    }
+
+    if (
+      defendant.isClosedWithoutEnforcement &&
+      defendant.closedWithoutEnforcementDate
+    ) {
+      items.push({
+        text: `Máli lokið án fullnustu ${formatDate(
+          defendant.closedWithoutEnforcementDate,
+        )}`,
+      })
+    }
 
     return items
   }, [
@@ -421,12 +447,12 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               )
             },
           },
-          // An appeal that exists as an appeal case can only be withdrawn on
-          // it, and that path is closed while verdict appeals are hidden, so
-          // the action is not offered then rather than offered to fail.
-          ...(verdict?.appealDate &&
-          (isVerdictAppealRegistrationEnabled ||
-            !workingCase.verdictAppealCase?.id)
+          ...(canWithdrawVerdictAppeal(
+            workingCase,
+            defendant,
+            user,
+            isVerdictAppealRegistrationEnabled,
+          )
             ? [
                 {
                   title: 'Afturkalla áfrýjun',
@@ -687,7 +713,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -716,7 +742,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -766,7 +792,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           } verður afturkölluð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -789,7 +815,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           )}.\nViltu skrá áfrýjunina?`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },

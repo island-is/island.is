@@ -3,6 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
+  AppealCaseState,
+  AppealCaseType,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -13,6 +16,7 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
+import type { Props } from './InfoCardClosedIndictment'
 import InfoCardClosedIndictment from './InfoCardClosedIndictment'
 
 const DEFENDER_NATIONAL_ID = '1234567890'
@@ -32,12 +36,13 @@ const renderClosedIndictment = (
   theCase: WorkingCase,
   userRole: UserRole = UserRole.PROSECUTOR,
   nationalId?: string,
+  props: Props = {},
 ) =>
   render(
     <IntlProviderWrapper>
       <UserContextWrapper userRole={userRole} nationalId={nationalId}>
         <FormContextWrapper theCase={theCase}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment {...props} />
         </FormContextWrapper>
       </UserContextWrapper>
     </IntlProviderWrapper>,
@@ -161,6 +166,7 @@ describe('InfoCardClosedIndictment', () => {
               civilClaimants: [
                 {
                   id: 'split-claimant',
+                  hasSpokesperson: true,
                   isSpokespersonConfirmed: true,
                   spokespersonNationalId: DEFENDER_NATIONAL_ID,
                 },
@@ -203,18 +209,22 @@ describe('InfoCardClosedIndictment', () => {
       id: 'case-level-appeal',
       appealCaseNumber: 'L-100/2026',
       appealAssistant: { name: 'Case Level Assistant' },
-      appealJudge1: { name: 'Case Level Judge One' },
-      appealJudge2: { name: 'Case Level Judge Two' },
-      appealJudge3: { name: 'Case Level Judge Three' },
+      appealJudges: [
+        { displayOrder: 0, user: { name: 'Case Level Judge One' } },
+        { displayOrder: 1, user: { name: 'Case Level Judge Two' } },
+        { displayOrder: 2, user: { name: 'Case Level Judge Three' } },
+      ],
     }
 
     const rulingOrderAppeal = {
       id: 'ruling-order-appeal',
       appealCaseNumber: 'L-200/2026',
       appealAssistant: { name: 'Ruling Order Assistant' },
-      appealJudge1: { name: 'Ruling Order Judge One' },
-      appealJudge2: { name: 'Ruling Order Judge Two' },
-      appealJudge3: { name: 'Ruling Order Judge Three' },
+      appealJudges: [
+        { displayOrder: 0, user: { name: 'Ruling Order Judge One' } },
+        { displayOrder: 1, user: { name: 'Ruling Order Judge Two' } },
+        { displayOrder: 2, user: { name: 'Ruling Order Judge Three' } },
+      ],
     }
 
     const caseWithBothAppeals = () =>
@@ -249,9 +259,20 @@ describe('InfoCardClosedIndictment', () => {
           id: 'verdict-appeal',
           appealCaseNumber: 'L-300/2026',
           appealAssistant: { id: 'assistant', name: 'Verdict Assistant' },
-          appealJudge1: { id: 'judge-1', name: 'Verdict Judge One' },
-          appealJudge2: { id: 'judge-2', name: 'Verdict Judge Two' },
-          appealJudge3: { id: 'judge-3', name: 'Verdict Judge Three' },
+          appealJudges: [
+            {
+              displayOrder: 0,
+              user: { id: 'judge-1', name: 'Verdict Judge One' },
+            },
+            {
+              displayOrder: 1,
+              user: { id: 'judge-2', name: 'Verdict Judge Two' },
+            },
+            {
+              displayOrder: 2,
+              user: { id: 'judge-3', name: 'Verdict Judge Three' },
+            },
+          ],
         },
       } as unknown as WorkingCase)
 
@@ -298,6 +319,150 @@ describe('InfoCardClosedIndictment', () => {
       } as unknown as WorkingCase)
 
       await screen.findByText('L-200/2026')
+    })
+
+    describe('the outcome of a verdict appeal', () => {
+      const verdictAppeal = {
+        id: 'verdict-appeal',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.COMPLETED,
+        appealCaseNumber: 'L-300/2026',
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      }
+
+      const caseWithAppeal = (appeal: Record<string, unknown>) =>
+        ({
+          ...mockCase(CaseType.INDICTMENT),
+          verdictAppealCase: appeal,
+        } as unknown as WorkingCase)
+
+      it('shows the outcome to the Court of Appeals', async () => {
+        mockAppealCaseIdQuery = 'verdict-appeal'
+
+        renderClosedIndictment(
+          caseWithAppeal(verdictAppeal),
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        )
+
+        await screen.findByText('L-300/2026')
+        expect(screen.getByText('Lyktir')).toBeInTheDocument()
+        expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+      })
+
+      it('does not show the outcome to a prosecutor', async () => {
+        mockAppealCaseIdQuery = 'verdict-appeal'
+
+        renderClosedIndictment(caseWithAppeal(verdictAppeal))
+
+        await screen.findByText('L-300/2026')
+        expect(screen.queryByText('Lyktir')).toBeNull()
+        expect(screen.queryByText('Staðfesting')).toBeNull()
+      })
+
+      // The card is also on the overview, where the court can have picked an
+      // outcome without having confirmed the appeal.
+      it('shows no outcome before the court confirms the appeal', async () => {
+        mockAppealCaseIdQuery = 'verdict-appeal'
+
+        renderClosedIndictment(
+          caseWithAppeal({
+            ...verdictAppeal,
+            appealState: AppealCaseState.APPEALED,
+          }),
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        )
+
+        await screen.findByText('L-300/2026')
+        expect(screen.queryByText('Lyktir')).toBeNull()
+        expect(screen.queryByText('Staðfesting')).toBeNull()
+      })
+
+      it('shows no outcome before one is recorded', async () => {
+        mockAppealCaseIdQuery = 'verdict-appeal'
+
+        renderClosedIndictment(
+          caseWithAppeal({ ...verdictAppeal, appealRulingDecision: null }),
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        )
+
+        await screen.findByText('L-300/2026')
+        expect(screen.queryByText('Lyktir')).toBeNull()
+      })
+
+      // A page that is only about the verdict appeal hands the card that
+      // appeal, so a URL naming no appeal does not fall back to the ruling
+      // appeal on the same case.
+      describe('given the appeal directly', () => {
+        const caseWithRulingAndVerdictAppeal = () =>
+          ({
+            ...caseWithAppeal(verdictAppeal),
+            appealCase: caseLevelAppeal,
+          } as unknown as WorkingCase)
+
+        it('shows the given appeal when the query string names none', async () => {
+          const theCase = caseWithRulingAndVerdictAppeal()
+
+          renderClosedIndictment(
+            theCase,
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            undefined,
+            { appealCase: theCase.verdictAppealCase },
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.queryByText('L-100/2026')).toBeNull()
+          expect(screen.queryByText('Case Level Assistant')).toBeNull()
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+        })
+
+        it('shows no section when given no appeal', async () => {
+          renderClosedIndictment(
+            caseWithRulingAndVerdictAppeal(),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            undefined,
+            { appealCase: null },
+          )
+
+          await screen.findByText('007-2021-202000')
+          expect(screen.queryByText('L-100/2026')).toBeNull()
+          expect(screen.queryByText('L-300/2026')).toBeNull()
+        })
+
+        it('falls back to the case level appeal without it', async () => {
+          renderClosedIndictment(
+            caseWithRulingAndVerdictAppeal(),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+          )
+
+          await screen.findByText('L-100/2026')
+          expect(screen.queryByText('L-300/2026')).toBeNull()
+          expect(screen.queryByText('Lyktir')).toBeNull()
+        })
+      })
+
+      it('shows no outcome for an appeal of a ruling', async () => {
+        mockAppealCaseIdQuery = 'ruling-order-appeal'
+
+        renderClosedIndictment(
+          {
+            ...caseWithAppeal(verdictAppeal),
+            rulingOrderAppealCases: [
+              {
+                ...rulingOrderAppeal,
+                appealType: AppealCaseType.RULING,
+                appealState: AppealCaseState.COMPLETED,
+                appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+              },
+            ],
+          } as unknown as WorkingCase,
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        )
+
+        await screen.findByText('L-200/2026')
+        expect(screen.queryByText('Lyktir')).toBeNull()
+        expect(screen.queryByText('Staðfesting')).toBeNull()
+      })
     })
   })
 

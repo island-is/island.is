@@ -1,4 +1,4 @@
-import { ApolloLink } from '@apollo/client'
+import { ApolloLink, InMemoryCache } from '@apollo/client'
 import {
   MockedProvider,
   MockedResponse,
@@ -8,10 +8,13 @@ import { FormSystemField } from '@island.is/api/schema'
 import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { InputHTMLAttributes, ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
 import { ApplicationState } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
+import { previewMockData } from '../../../lib/previewMockData'
 import { Banknumber } from './Banknumber'
 
 jest.mock('@island.is/localization', () => ({
@@ -73,6 +76,12 @@ const renderField = (
   mocks: MockedResponse[],
   bankAccount?: string,
   applicantType?: string,
+  state?: Partial<ApplicationState>,
+  fieldSettings: FormSystemField['fieldSettings'] = {
+    fetchBankAccountFromMyPages: true,
+  },
+  isPreview = false,
+  cache?: InMemoryCache,
 ) => {
   const dispatch = jest.fn()
   const profileRequest = jest.fn()
@@ -85,25 +94,27 @@ const renderField = (
     return (
       <FormProvider {...methods}>
         <Banknumber
-          item={
-            bankAccount
-              ? { ...item, values: [{ json: { bankAccount } }] }
-              : item
-          }
+          item={{
+            ...item,
+            fieldSettings,
+            ...(bankAccount ? { values: [{ json: { bankAccount } }] } : {}),
+          }}
           dispatch={dispatch}
+          isPreview={isPreview}
           state={
-            applicantType
+            state ??
+            (applicantType
               ? ({
                   screens: [{ fields: [{ fieldSettings: { applicantType } }] }],
                 } as unknown as ApplicationState)
-              : undefined
+              : undefined)
           }
         />
       </FormProvider>
     )
   }
   render(
-    <MockedProvider link={link} addTypename={false}>
+    <MockedProvider link={link} addTypename={false} cache={cache}>
       <IntlProvider locale="is" defaultLocale="is" messages={{}}>
         <Form />
       </IntlProvider>
@@ -111,6 +122,172 @@ const renderField = (
   )
   return { dispatch, profileRequest }
 }
+
+it.each([false])(
+  'does not fetch bank info when fetching is %s and permits manual entry',
+  (fetchBankAccountFromMyPages) => {
+    const { profileRequest, dispatch } = renderField(
+      [{ ...profileMock('1234-12-123456'), delay: Infinity }],
+      undefined,
+      undefined,
+      undefined,
+      { fetchBankAccountFromMyPages },
+    )
+
+    expect(profileRequest).not.toHaveBeenCalled()
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: '4321' },
+    })
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { id: item.id, valueIndex: 0, value: '4321--' },
+    })
+    expect(profileRequest).not.toHaveBeenCalled()
+  },
+)
+
+it.each([0, 1, 2])(
+  'fills all bank-account fields when a full number is pasted into field %s',
+  async (index) => {
+    const user = userEvent.setup()
+    const { dispatch } = renderField([], '4321-21-654321')
+    const inputs = screen.getAllByRole('textbox')
+
+    await user.click(inputs[index])
+    await user.paste('1111-11-111111')
+
+    expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+      '1111',
+      '11',
+      '111111',
+    ])
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { id: item.id, valueIndex: 0, value: '1111-11-111111' },
+    })
+  },
+)
+
+it('preserves leading zeros and trims surrounding whitespace when pasting a full account', async () => {
+  const user = userEvent.setup()
+  const { dispatch } = renderField([], undefined, undefined, undefined, {
+    fetchBankAccountFromMyPages: false,
+  })
+  const inputs = screen.getAllByRole('textbox')
+
+  await user.click(inputs[0])
+  await user.paste(' 0011-01-000111\n')
+
+  expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+    '0011',
+    '01',
+    '000111',
+  ])
+  expect(dispatch).toHaveBeenLastCalledWith({
+    type: 'SET_BANK_ACCOUNT',
+    payload: { id: item.id, valueIndex: 0, value: '0011-01-000111' },
+  })
+})
+
+it('keeps single-part pasting limited to the selected field', async () => {
+  const user = userEvent.setup()
+  renderField([], '4321-21-654321')
+  const inputs = screen.getAllByRole('textbox')
+
+  await user.clear(inputs[1])
+  await user.paste('12')
+
+  expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+    '4321',
+    '12',
+    '654321',
+  ])
+})
+
+it.each([true, undefined, null])(
+  'prefills bank info when fetching is %s',
+  async (fetchBankAccountFromMyPages) => {
+    renderField(
+      [profileMock('1234-12-123456')],
+      undefined,
+      undefined,
+      undefined,
+      { fetchBankAccountFromMyPages },
+    )
+
+    await screen.findByDisplayValue('123456')
+    expect(screen.getByDisplayValue('1234')).toBeTruthy()
+    expect(screen.getByDisplayValue('12')).toBeTruthy()
+  },
+)
+
+it.each([false, true])(
+  'prefills only mock bank info in preview with cached profile: %s',
+  async (cached) => {
+    const cache = new InMemoryCache({ addTypename: false })
+    if (cached) {
+      cache.writeQuery({
+        query: USER_PROFILE,
+        data: profileData('1234-12-123456'),
+      })
+    }
+    const { profileRequest, dispatch } = renderField(
+      [{ ...profileMock('1234-12-123456'), delay: Infinity }],
+      undefined,
+      undefined,
+      { currentScreen: undefined },
+      { fetchBankAccountFromMyPages: true },
+      true,
+      cache,
+    )
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(profileRequest).not.toHaveBeenCalled()
+    expect(
+      screen
+        .getAllByRole('textbox')
+        .map((input) => input.getAttribute('value')),
+    ).toEqual(
+      previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount.split('-'),
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: {
+        id: item.id,
+        valueIndex: 0,
+        value: previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount,
+      },
+    })
+
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: '4321' },
+    })
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { id: item.id, valueIndex: 0, value: '4321-00-000000' },
+    })
+    expect(profileRequest).not.toHaveBeenCalled()
+  },
+)
+
+it('leaves preview inputs empty when profile prefilling is disabled', () => {
+  const { profileRequest } = renderField(
+    [],
+    undefined,
+    undefined,
+    undefined,
+    { fetchBankAccountFromMyPages: false },
+    true,
+  )
+
+  expect(
+    screen.getAllByRole('textbox').map((input) => input.getAttribute('value')),
+  ).toEqual(['', '', ''])
+  expect(profileRequest).not.toHaveBeenCalled()
+})
 
 it.each(
   Object.values(ApplicantTypesEnum).filter(
@@ -170,13 +347,24 @@ it('prefills all three inputs and dispatches the profile bank account', async ()
   )
 })
 
-it('preserves a saved bank account without fetching the profile', () => {
-  renderField([], '4321-21-654321')
+it.each([false, true])(
+  'preserves a saved bank account without fetching the profile in preview: %s',
+  (isPreview) => {
+    const { profileRequest } = renderField(
+      [],
+      '4321-21-654321',
+      undefined,
+      undefined,
+      undefined,
+      isPreview,
+    )
 
-  expect(screen.getByDisplayValue('4321')).toBeTruthy()
-  expect(screen.getByDisplayValue('21')).toBeTruthy()
-  expect(screen.getByDisplayValue('654321')).toBeTruthy()
-})
+    expect(screen.getByDisplayValue('4321')).toBeTruthy()
+    expect(screen.getByDisplayValue('21')).toBeTruthy()
+    expect(screen.getByDisplayValue('654321')).toBeTruthy()
+    expect(profileRequest).not.toHaveBeenCalled()
+  },
+)
 
 it('prefills profile data when the saved bank account is the empty sentinel', async () => {
   renderField([profileMock('1234-12-123456')], '--')
@@ -214,18 +402,34 @@ it('preserves user edits made before the profile arrives', async () => {
   ).toEqual(['9', '', ''])
 })
 
-it('does not refill the inputs after the user clears the prefilled account', async () => {
-  renderField([profileMock('1234-12-123456')])
-  await screen.findByDisplayValue('123456')
+it.each([false, true])(
+  'does not refill cleared inputs in preview: %s',
+  async (isPreview) => {
+    renderField(
+      [profileMock('1234-12-123456')],
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      isPreview,
+    )
+    await screen.findByDisplayValue(
+      isPreview
+        ? previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount.split('-')[2]
+        : '123456',
+    )
 
-  for (const input of screen.getAllByRole('textbox')) {
-    fireEvent.change(input, { target: { value: '' } })
-  }
+    for (const input of screen.getAllByRole('textbox')) {
+      fireEvent.change(input, { target: { value: '' } })
+    }
 
-  expect(
-    screen.getAllByRole('textbox').map((input) => input.getAttribute('value')),
-  ).toEqual(['', '', ''])
-})
+    expect(
+      screen
+        .getAllByRole('textbox')
+        .map((input) => input.getAttribute('value')),
+    ).toEqual(['', '', ''])
+  },
+)
 
 it.each([null, '123456-12-1234'])(
   'leaves inputs empty for bankInfo %s',

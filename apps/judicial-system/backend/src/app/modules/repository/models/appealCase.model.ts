@@ -17,7 +17,9 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
+  AppealRulingType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealCaseJudge } from './appealCaseJudge.model'
@@ -109,11 +111,33 @@ export class AppealCase extends Model {
   appealState!: AppealCaseState
 
   /**********
+   * How far the court of appeals has come with a verdict appeal, as the court
+   * records it - null until it has recorded one, and always null for a ruling
+   * appeal
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(VerdictAppealStatus),
+  })
+  @ApiPropertyOptional({ enum: VerdictAppealStatus })
+  verdictAppealStatus?: VerdictAppealStatus
+
+  /**********
    * The appeal case number assigned in the court of appeals
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   appealCaseNumber?: string
+
+  /**********
+   * Style-of-cause for the appeal ("Ákæruvaldið gegn …"), entered when the
+   * appeal summons is issued and reused in later documents and CoA headers.
+   * Nullable so older summonses keep working via a computed fallback.
+   **********/
+  @Column({ type: DataType.TEXT, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  caseName?: string
 
   /**********
    * The time and date that the court marked an appeal as received
@@ -162,6 +186,18 @@ export class AppealCase extends Model {
   })
   @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
   appealRulingDecision?: AppealCaseRulingDecision
+
+  /**********
+   * Whether the court of appeals concludes a verdict appeal with a judgment or
+   * with a ruling - not set on a ruling appeal
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AppealRulingType),
+  })
+  @ApiPropertyOptional({ enum: AppealRulingType })
+  appealRulingType?: AppealRulingType
 
   /**********
    * The appeal conclusion

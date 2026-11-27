@@ -6,7 +6,7 @@ import {
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
 import { Option } from '@island.is/island-ui/core'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
 import { FormsContext, IFormsContext } from './FormsContext'
 
@@ -30,7 +30,12 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     fieldTypes,
     organizationDelegations,
   } = formsLoader
-  const [forms, setForms] = useState<FormSystemForm[]>(formsState)
+  const [forms, updateForms] = useState<FormSystemForm[]>(formsState)
+  const formsRevision = useRef(0)
+  const setForms = useCallback<IFormsContext['setForms']>((update) => {
+    formsRevision.current += 1
+    updateForms(update)
+  }, [])
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
   const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
   const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
@@ -49,8 +54,33 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
   const [selectedDelegations, setSelectedDelegations] = useState<string[]>(
     organizationDelegations ?? [],
   )
+  const organizationChangeRequest = useRef(0)
+  const getOrganizationGeneration = useCallback(
+    () => organizationChangeRequest.current,
+    [],
+  )
+
+  const refreshForms = useCallback<IFormsContext['refreshForms']>(
+    async (organizationGeneration) => {
+      while (organizationGeneration === organizationChangeRequest.current) {
+        const revision = formsRevision.current
+        const { data, error } = await getFormsQuery({
+          variables: { input: { nationalId: organizationNationalId } },
+        })
+        if (organizationGeneration !== organizationChangeRequest.current) return
+        if (revision !== formsRevision.current) continue
+        if (error) throw error
+        const refreshedForms = data?.formSystemForms?.forms
+        if (!refreshedForms) throw new Error('Missing forms list')
+        setForms(refreshedForms)
+        return refreshedForms
+      }
+    },
+    [getFormsQuery, organizationNationalId, setForms],
+  )
 
   const handleOrganizationChange = async (selected: { value: string }) => {
+    const requestId = ++organizationChangeRequest.current
     setOrganizationNationalId(selected.value)
     const updatedOrganizations = organizations.map((org) => ({
       ...org,
@@ -65,6 +95,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
         },
       },
     })
+    if (requestId !== organizationChangeRequest.current) {
+      return
+    }
     if (data?.formSystemForms?.forms) {
       setForms(data.formSystemForms.forms)
     }
@@ -77,6 +110,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       },
     })
 
+    if (requestId !== organizationChangeRequest.current) {
+      return
+    }
     const admin = permissionsData?.formSystemOrganizationAdmin
     const {
       organizationId,
@@ -113,6 +149,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     () => ({
       forms,
       setForms,
+      getOrganizationGeneration,
+      refreshForms,
       organizations,
       setOrganizations,
       organizationId,
@@ -137,6 +175,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     }),
     [
       forms,
+      setForms,
+      getOrganizationGeneration,
+      refreshForms,
       organizations,
       organizationId,
       organizationNationalId,

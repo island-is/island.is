@@ -1,3 +1,9 @@
+import {
+  type AppealStatementEvent,
+  type AppealStatementParty,
+  hasFiledAppealStatement,
+} from './appealStatementDeadline'
+
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
   STORED_IN_COURT = 'STORED_IN_COURT',
@@ -15,8 +21,8 @@ export enum CaseFileCategory {
   CASE_FILE_RECORD = 'CASE_FILE_RECORD',
   PROSECUTOR_CASE_FILE = 'PROSECUTOR_CASE_FILE',
   DEFENDANT_CASE_FILE = 'DEFENDANT_CASE_FILE',
-  PROSECUTOR_APPEAL_BRIEF = 'PROSECUTOR_APPEAL_BRIEF', // Sækjandi:  Kæruskjal til Landsréttar
-  DEFENDANT_APPEAL_BRIEF = 'DEFENDANT_APPEAL_BRIEF', // Verjandi:  Kæruskjal til Landsréttar
+  PROSECUTOR_APPEAL_BRIEF = 'PROSECUTOR_APPEAL_BRIEF', // Sækjandi: Kæruskjal til Landsréttar
+  DEFENDANT_APPEAL_BRIEF = 'DEFENDANT_APPEAL_BRIEF', // Verjandi: Kæruskjal til Landsréttar
   PROSECUTOR_APPEAL_BRIEF_CASE_FILE = 'PROSECUTOR_APPEAL_BRIEF_CASE_FILE', // Sækjandi: Fylgigögn kæruskjals til Landsréttar
   DEFENDANT_APPEAL_BRIEF_CASE_FILE = 'DEFENDANT_APPEAL_BRIEF_CASE_FILE', // Verjandi: Fylgigögn kæruskjals til Landsréttar
   PROSECUTOR_APPEAL_STATEMENT = 'PROSECUTOR_APPEAL_STATEMENT', // Sækjandi: Greinargerð
@@ -31,16 +37,28 @@ export enum CaseFileCategory {
   DEFENDANT_VERDICT_APPEAL_STATEMENT = 'DEFENDANT_VERDICT_APPEAL_STATEMENT', // Verjandi / réttargæslumaður: Greinargerð í áfrýjun til Landsréttar
   PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Ákærandi: Fylgigögn greinargerðar í áfrýjun
   DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Verjandi / réttargæslumaður: Fylgigögn greinargerðar í áfrýjun
-  INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómssal
-  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómssal
-  CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómssal
+  INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómsal
+  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómsal
+  CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómsal
+  COURT_CASE_FILE = 'COURT_CASE_FILE', // Dómari: Viðbótargögn í dómsal
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
+  VERDICT_APPEAL_RULING = 'VERDICT_APPEAL_RULING', // Landsréttur: Dómur eða úrskurður í áfrýjun
   CIVIL_CLAIM = 'CIVIL_CLAIM',
   SENT_TO_PRISON_ADMIN_FILE = 'SENT_TO_PRISON_ADMIN_FILE',
   COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls
   DEFENDANT_RULING = 'DEFENDANT_RULING', // dómari: dómur (vísað frá eða niðurfelling) á einstakling
 }
+
+// Viðbótargögn filed in indictment court sessions (party or court).
+export const indictmentAdditionalCaseFileCategories = [
+  CaseFileCategory.PROSECUTOR_CASE_FILE,
+  CaseFileCategory.DEFENDANT_CASE_FILE,
+  CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.COURT_CASE_FILE,
+]
 
 // Appeal files submitted by the parties (kærugögn) - as opposed to the court of
 // appeals' own documents (APPEAL_RULING, APPEAL_COURT_RECORD)
@@ -100,30 +118,63 @@ export const verdictAppealFileCategories = [
 
 // Kæra files are delivered to the court of appeals as soon as it registers its
 // case number, so from that point on they can no longer be deleted. A verdict
-// appeal statement follows the same rule.
+// appeal statement follows the same rule, and also locks once that party has
+// recorded APPEAL_STATEMENT_SENT — otherwise a delete after filing leaves the
+// party marked filed with no PDF and no way to file again.
 //
 // An áfrýjunaryfirlýsing locks earlier, and for a different reason: the
 // declaration is the appeal itself, not a document filed in support of one, and
 // it is filed long before Landsréttur has a case number to register. Taking it
 // back means withdrawing the appeal.
-export const isAppealFileDeletionLocked = (
+export type AppealFileDeletionLockReason =
+  | 'declaration'
+  | 'statement_filed'
+  | 'case_number'
+
+export const getAppealFileDeletionLockReason = (
   category?: string | null,
-  appealCase?: { appealCaseNumber?: string | null } | null,
-): boolean => {
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: AppealStatementEvent[] | null
+  } | null,
+  party?: AppealStatementParty,
+): AppealFileDeletionLockReason | null => {
   if (!appealCase) {
-    return false
+    return null
   }
 
   if (isVerdictAppealDeclarationCategory(category)) {
-    return true
+    return 'declaration'
   }
 
-  return (
+  if (
+    isVerdictAppealStatementCategory(category) &&
+    party &&
+    hasFiledAppealStatement(appealCase.appealEventLogs, party)
+  ) {
+    return 'statement_filed'
+  }
+
+  if (
     (isPartyAppealFileCategory(category) ||
       isVerdictAppealStatementCategory(category)) &&
     Boolean(appealCase.appealCaseNumber)
-  )
+  ) {
+    return 'case_number'
+  }
+
+  return null
 }
+
+export const isAppealFileDeletionLocked = (
+  category?: string | null,
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: AppealStatementEvent[] | null
+  } | null,
+  party?: AppealStatementParty,
+): boolean =>
+  getAppealFileDeletionLockReason(category, appealCase, party) !== null
 
 // A ruling order pronounced during the course of a case is usually delivered
 // orally in the court session, and only written up as a document if a party
@@ -144,6 +195,18 @@ export const isRulingOrderWithoutDocument = (file: {
   Boolean(file.isPronouncedOrally) &&
   !file.key
 
+// The Court of Appeals' document that a verdict appeal can be completed with:
+// a stored PDF. The document is stamped when it is opened, which only a PDF
+// can be.
+export const isStoredVerdictAppealRulingPdf = (file: {
+  category?: CaseFileCategory | null
+  type?: string | null
+  key?: string | null
+}): boolean =>
+  file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+  file.type === 'application/pdf' &&
+  Boolean(file.key)
+
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
 // of hash collision between files in our system. Since we still store MD5 alg types with each file hash
 // in the db for historical purposes, we support both types here.
@@ -155,4 +218,5 @@ export enum HashAlgorithm {
 export enum PoliceFileTypeCode {
   SUBPOENA = 'BRTNG',
   VERDICT = 'BRTNG_DOMUR',
+  APPEAL_SUMMONS = 'BRTNG_AFRYJUN',
 }

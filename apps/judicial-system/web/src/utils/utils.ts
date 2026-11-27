@@ -6,6 +6,9 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  findAppealStatementDeadline,
+  hasAllAppealJudges,
+  hasFiledAppealStatement,
   isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
@@ -174,9 +177,7 @@ export const shouldUseAppealWithdrawnRoutes = (
     appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     (!appealCase.appealAssistant ||
       !appealCase.appealCaseNumber ||
-      !appealCase.appealJudge1 ||
-      !appealCase.appealJudge2 ||
-      !appealCase.appealJudge3)
+      !hasAllAppealJudges(appealCase))
   )
 }
 
@@ -188,22 +189,34 @@ export const shouldDisplayGeneratedPdfFiles = (
     isProsecutionUser(user) ||
       theCase.defendants?.some(
         (defendant) =>
-          defendant.isDefenderChoiceConfirmed &&
-          defendant.caseFilesSharedWithDefender &&
-          defendant.defenderNationalId &&
-          normalizeAndFormatNationalId(user?.nationalId).includes(
-            defendant.defenderNationalId,
-          ),
+          (defendant.isDefenderChoiceConfirmed &&
+            defendant.caseFilesSharedWithDefender &&
+            defendant.defenderNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              defendant.defenderNationalId,
+            )) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              defendant.appealDefenderNationalId,
+            )),
       ) ||
       theCase.civilClaimants?.some(
         (civilClaimant) =>
-          civilClaimant.hasSpokesperson &&
-          civilClaimant.isSpokespersonConfirmed &&
-          civilClaimant.caseFilesSharedWithSpokesperson &&
-          civilClaimant.spokespersonNationalId &&
-          normalizeAndFormatNationalId(user?.nationalId).includes(
-            civilClaimant.spokespersonNationalId,
-          ),
+          (civilClaimant.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.caseFilesSharedWithSpokesperson &&
+            civilClaimant.spokespersonNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              civilClaimant.spokespersonNationalId,
+            )) ||
+          (civilClaimant.hasAppealSpokesperson !== false &&
+            civilClaimant.isAppealSpokespersonConfirmed &&
+            civilClaimant.appealSpokespersonNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              civilClaimant.appealSpokespersonNationalId,
+            )),
       ),
   )
 
@@ -244,52 +257,174 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       civilClaimant.spokespersonIsLawyer,
   )
 
+export type DefenceUserPartyIds = {
+  defendantId?: string
+  civilClaimantId?: string
+}
+
+/**
+ * Every defendant / civil claimant the defence user is confirmed for
+ * (district or appeal). Used when a lawyer may represent more than one
+ * party and a single `.find()` would pick the wrong one.
+ */
+export const getDefenceUserMatchingPartyIds = (
+  workingCase: Pick<WorkingCase, 'type' | 'defendants' | 'civilClaimants'>,
+  user: User | undefined,
+): DefenceUserPartyIds[] => {
+  if (!user || !isIndictmentCase(workingCase.type)) {
+    return []
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+  const defendants =
+    workingCase.defendants
+      ?.filter(
+        (d) =>
+          (d.isDefenderChoiceConfirmed &&
+            d.defenderNationalId &&
+            normalizedId.includes(d.defenderNationalId)) ||
+          (d.isAppealDefenderConfirmed &&
+            !d.isAppealDefenderWaived &&
+            d.appealDefenderNationalId &&
+            normalizedId.includes(d.appealDefenderNationalId)),
+      )
+      .map((d) => ({ defendantId: d.id })) ?? []
+
+  // Match district spokesperson confirmation the same way the backend and
+  // CivilClaimant model do (hasSpokesperson + confirmed + national id).
+  const civilClaimants =
+    workingCase.civilClaimants
+      ?.filter(
+        (cc) =>
+          (cc.hasSpokesperson &&
+            cc.isSpokespersonConfirmed &&
+            cc.spokespersonNationalId &&
+            normalizedId.includes(cc.spokespersonNationalId)) ||
+          (cc.hasAppealSpokesperson !== false &&
+            cc.isAppealSpokespersonConfirmed &&
+            cc.appealSpokespersonNationalId &&
+            normalizedId.includes(cc.appealSpokespersonNationalId)),
+      )
+      .map((cc) => ({ civilClaimantId: cc.id })) ?? []
+
+  return [...defendants, ...civilClaimants]
+}
+
 /**
  * For indictment cases, returns the defendant ID or civil claimant ID
  * that the current defence user represents. Used to associate uploaded
  * appeal files with the correct party.
  *
  * Only confirmed defenders / spokespersons are resolved — an unconfirmed
- * pick has no authority to act on behalf of the party.
+ * pick has no authority to act on behalf of the party. Confirmation may be
+ * the district court's or the court of appeals' on the same party.
  *
  * Resolution order:
- * 1. First matching confirmed defendant (by defenderNationalId)
- * 2. First matching confirmed civil claimant (by spokespersonNationalId)
+ * 1. First matching confirmed defendant (district or appeal)
+ * 2. First matching confirmed civil claimant (district or appeal)
  * 3. Empty object (prosecutor or no match)
+ *
+ * When the user represents several parties, prefer
+ * `getDefenceUserMatchingPartyIds` and pick among them explicitly.
  */
 export const getDefenceUserPartyIds = (
   workingCase: WorkingCase,
   user: User | undefined,
-): { defendantId?: string; civilClaimantId?: string } => {
+): DefenceUserPartyIds =>
+  getDefenceUserMatchingPartyIds(workingCase, user)[0] ?? {}
+
+/**
+ * Parties the defence user may file a verdict-appeal greinargerð for:
+ * Landsréttur confirmation only (not district-court confirmation).
+ */
+export const getDefenceUserAppealConfirmedPartyIds = (
+  workingCase: Pick<WorkingCase, 'type' | 'defendants' | 'civilClaimants'>,
+  user: User | undefined,
+): DefenceUserPartyIds[] => {
   if (!user || !isIndictmentCase(workingCase.type)) {
-    return {}
+    return []
   }
 
   const normalizedId = normalizeAndFormatNationalId(user.nationalId)
 
-  const defendant = workingCase.defendants?.find(
-    (d) =>
-      d.isDefenderChoiceConfirmed &&
-      d.defenderNationalId &&
-      normalizedId.includes(d.defenderNationalId),
-  )
+  const defendants =
+    workingCase.defendants
+      ?.filter(
+        (d) =>
+          d.isAppealDefenderConfirmed &&
+          !d.isAppealDefenderWaived &&
+          d.appealDefenderNationalId &&
+          normalizedId.includes(d.appealDefenderNationalId),
+      )
+      .map((d) => ({ defendantId: d.id })) ?? []
 
-  if (defendant) {
-    return { defendantId: defendant.id }
+  const civilClaimants =
+    workingCase.civilClaimants
+      ?.filter(
+        (cc) =>
+          cc.hasAppealSpokesperson !== false &&
+          cc.isAppealSpokespersonConfirmed &&
+          cc.appealSpokespersonNationalId &&
+          normalizedId.includes(cc.appealSpokespersonNationalId),
+      )
+      .map((cc) => ({ civilClaimantId: cc.id })) ?? []
+
+  return [...defendants, ...civilClaimants]
+}
+
+/**
+ * Party an appeal-confirmed advocate should file a verdict-appeal statement
+ * for: the one with the earliest statement deadline among their
+ * Landsréttur-confirmed parties who have not already filed (expired deadlines
+ * still count — late filing is allowed). Used only when no party is named in
+ * the URL — an explicit party link is resolved separately and must not fall
+ * back here.
+ */
+export const getVerdictAppealStatementParty = (
+  workingCase: Pick<
+    WorkingCase,
+    'type' | 'defendants' | 'civilClaimants' | 'verdictAppealCase'
+  >,
+  user: User | undefined,
+): DefenceUserPartyIds | undefined => {
+  const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
+
+  if (appealParties.length === 0) {
+    return undefined
   }
 
-  const civilClaimant = workingCase.civilClaimants?.find(
-    (cc) =>
-      cc.isSpokespersonConfirmed &&
-      cc.spokespersonNationalId &&
-      normalizedId.includes(cc.spokespersonNationalId),
-  )
+  let earliest: { party: DefenceUserPartyIds; deadline: string } | undefined
 
-  if (civilClaimant) {
-    return { civilClaimantId: civilClaimant.id }
+  for (const party of appealParties) {
+    if (
+      hasFiledAppealStatement(
+        workingCase.verdictAppealCase?.appealEventLogs,
+        party,
+      )
+    ) {
+      continue
+    }
+
+    const statementDeadline = findAppealStatementDeadline(
+      workingCase.verdictAppealCase?.statementDeadlines,
+      party,
+    )
+
+    if (!statementDeadline?.deadline) {
+      continue
+    }
+
+    if (
+      !earliest ||
+      new Date(statementDeadline.deadline).getTime() <
+        new Date(earliest.deadline).getTime()
+    ) {
+      earliest = { party, deadline: statementDeadline.deadline }
+    }
   }
 
-  return {}
+  return earliest?.party
 }
 
 /**
@@ -1059,15 +1194,19 @@ export const isMatchingAppealCaseFile = (
     return false
   }
 
+  const ownIds = normalizeAndFormatNationalId(user.nationalId)
+
   if (file.defendantId && workingCase.defendants) {
     return workingCase.defendants.some(
       (defendant) =>
         defendant.id === file.defendantId &&
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(user.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        ((defendant.isDefenderChoiceConfirmed &&
+          defendant.defenderNationalId &&
+          ownIds.includes(defendant.defenderNationalId)) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId &&
+            ownIds.includes(defendant.appealDefenderNationalId))),
     )
   }
 
@@ -1075,12 +1214,14 @@ export const isMatchingAppealCaseFile = (
     return workingCase.civilClaimants.some(
       (cc) =>
         cc.id === file.civilClaimantId &&
-        cc.hasSpokesperson &&
-        cc.isSpokespersonConfirmed &&
-        cc.spokespersonNationalId &&
-        normalizeAndFormatNationalId(user.nationalId).includes(
-          cc.spokespersonNationalId,
-        ),
+        ((cc.hasSpokesperson &&
+          cc.isSpokespersonConfirmed &&
+          cc.spokespersonNationalId &&
+          ownIds.includes(cc.spokespersonNationalId)) ||
+          (cc.hasAppealSpokesperson !== false &&
+            cc.isAppealSpokespersonConfirmed &&
+            cc.appealSpokespersonNationalId &&
+            ownIds.includes(cc.appealSpokespersonNationalId))),
     )
   }
 
@@ -1151,8 +1292,8 @@ export const appendAppealCaseIdQuery = (
 
 // Returns a new WorkingCase with `update` merged into the appeal-case slot that
 // matches `targetAppealCaseId`. For optimistic `setWorkingCase` updates from
-// COA detail pages — ruling-order rows need their updates routed into
-// `rulingOrderAppealCases[i]` rather than the case-level `appealCase`.
+// COA detail pages — the verdict appeal and the ruling-order rows need their
+// updates routed into their own slots rather than the case-level `appealCase`.
 export const applyAppealCaseUpdate = (
   workingCase: WorkingCase,
   targetAppealCaseId: string,
@@ -1162,6 +1303,13 @@ export const applyAppealCaseUpdate = (
     return {
       ...workingCase,
       appealCase: { ...workingCase.appealCase, ...update },
+    }
+  }
+
+  if (workingCase.verdictAppealCase?.id === targetAppealCaseId) {
+    return {
+      ...workingCase,
+      verdictAppealCase: { ...workingCase.verdictAppealCase, ...update },
     }
   }
 

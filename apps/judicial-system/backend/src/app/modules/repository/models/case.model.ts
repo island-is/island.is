@@ -30,7 +30,6 @@ import {
   CourtDocument as TCourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -145,46 +144,6 @@ export class Case extends Model {
   @HasMany(() => Defendant, 'caseId')
   @ApiPropertyOptional({ type: () => Defendant, isArray: true })
   defendants?: Defendant[]
-
-  /**********
-   * The name of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderName?: string
-
-  /**********
-   * The national of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderNationalId?: string
-
-  /**********
-   * The email address of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderEmail?: string
-
-  /**********
-   * The phone number of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderPhoneNumber?: string
-
-  /**********
-   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
-   * defender - optional
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(RequestSharedWithDefender),
-  })
-  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
-  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the security level of the case has been heightened -
@@ -679,6 +638,14 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   @ApiPropertyOptional({ type: Boolean })
   isArchived?: boolean
+
+  /**********
+   * A request case is not archived before this date, even if its regular
+   * lifetime has run out - optional, set by a super admin
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  archiveNotBefore?: Date
 
   /**********
    * The date and time of when the defender in a case opened the case

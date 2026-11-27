@@ -3,8 +3,6 @@ import os from 'os'
 import path from 'path'
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib'
 
-import { createTestIntl } from '@island.is/cms-translations/test'
-
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 import {
@@ -48,11 +46,6 @@ describe('FormatDefendant', () => {
 })
 
 describe('createCaseFilesRecord - table of contents', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is-IS',
-    onError: jest.fn,
-  }).formatMessage
-
   const policeCaseNumber = '007-2024-000001'
 
   const theCase = {
@@ -100,7 +93,6 @@ describe('createCaseFilesRecord - table of contents', () => {
       policeCaseNumber,
       caseFiles,
       policeDigitalCaseFiles,
-      formatMessage,
     )
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord.pdf')
@@ -141,7 +133,6 @@ describe('createCaseFilesRecord - table of contents', () => {
       policeCaseNumber,
       caseFiles,
       digitalCaseFiles,
-      formatMessage,
     )
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord-digital.pdf')
@@ -168,11 +159,6 @@ describe('createCaseFilesRecord - table of contents', () => {
 })
 
 describe('createCaseFilesRecord - unreadable files', () => {
-  const formatMessage = createTestIntl({
-    locale: 'is-IS',
-    onError: jest.fn,
-  }).formatMessage
-
   const policeCaseNumber = '007-2024-000001'
 
   const theCase = {
@@ -227,7 +213,6 @@ describe('createCaseFilesRecord - unreadable files', () => {
       policeCaseNumber,
       caseFiles,
       [],
-      formatMessage,
       onUnreadableFile,
     )
 

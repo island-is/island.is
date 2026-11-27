@@ -1,9 +1,30 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  previewWithRestrictions: {
+    id: 'form.system:preview-with-restrictions',
+    defaultMessage: 'Skoða með tengingum',
+    description: 'Preview with dependencies enabled',
+  },
+  exactNumberLength: {
+    id: 'form.system:exact-number-length',
+    defaultMessage: 'Talan verður að innihalda {length} tölustafi',
+    description: 'Exact number of digits validation message',
+  },
+  minNumberLength: {
+    id: 'form.system:min-number-length',
+    defaultMessage:
+      'Talan verður að innihalda að minnsta kosti {minLength} tölustafi',
+    description: 'Minimum number of digits validation message',
+  },
+  maxNumberLength: {
+    id: 'form.system:max-number-length',
+    defaultMessage: 'Talan má að hámarki innihalda {maxLength} tölustafi',
+    description: 'Maximum number of digits validation message',
+  },
   rootName: {
     id: 'form.system:application-builder',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
     description: 'Form builder',
   },
   showSidebar: {
@@ -662,8 +683,13 @@ export const m = defineMessages({
   },
   preview: {
     id: 'form.system:preview',
-    defaultMessage: 'Skoða',
+    defaultMessage: 'Skoða skjá',
     description: 'Preview',
+  },
+  mobilePreview: {
+    id: 'form.system:mobile-preview',
+    defaultMessage: 'Farsímasýn',
+    description: 'Toggle the form preview between desktop and mobile viewports',
   },
   lastModified: {
     id: 'form.system:last-modified',
@@ -1155,6 +1181,20 @@ export const m = defineMessages({
       'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
     description: 'Are you sure you want to unpublish the form: {formName}',
   },
+  unpublishFormWithRevisionWarning: {
+    id: 'form.system:unpublish-form-with-revision-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}? Öllum tengdum eyðublöðum í stöðunni „Útgefið í breytingu“, ef einhver eru, verður einnig eytt.',
+    description:
+      'Are you sure you want to unpublish the form: {formName}? Any derived forms in the Published being changed state will also be deleted.',
+  },
+  publishedFormRevisionCreatedWarning: {
+    id: 'form.system:published-form-revision-created-warning',
+    defaultMessage:
+      'Eyðublað í stöðunni „Útgefið í breytingu“ hefur verið búið til. Ef upprunalega eyðublaðið er tekið úr útgáfu verður nýja eyðublaðinu eytt.',
+    description:
+      'A form in the Published being changed state has been created. If the original form is unpublished, the new form will be deleted.',
+  },
   previewField: {
     id: 'form.system:preview-field',
     defaultMessage: 'Sýnishorn',
@@ -1221,10 +1261,35 @@ export const m = defineMessages({
     defaultMessage: 'Hámarksfjöldi stafa',
     description: 'Maximum text length',
   },
-  hasDescription: {
-    id: 'form.system:has-description',
-    defaultMessage: 'Hefur lýsingu',
-    description: 'Has description',
+  informationText: {
+    id: 'form.system:information-text',
+    defaultMessage: 'Upplýsingatexti',
+    description: 'Information displayed above a field, or the message body',
+  },
+  informationTextEnglish: {
+    id: 'form.system:information-text-english',
+    defaultMessage: 'Upplýsingatexti á ensku',
+    description: 'Information text in English',
+  },
+  tooltip: {
+    id: 'form.system:tooltip',
+    defaultMessage: 'Hjálpartexti',
+    description: 'Field tooltip text',
+  },
+  tooltipEnglish: {
+    id: 'form.system:tooltip-english',
+    defaultMessage: 'Hjálpartexti á ensku',
+    description: 'Field tooltip text in English',
+  },
+  subLabel: {
+    id: 'form.system:sub-label',
+    defaultMessage: 'Undirtexti',
+    description: 'Checkbox sublabel',
+  },
+  subLabelEnglish: {
+    id: 'form.system:sub-label-english',
+    defaultMessage: 'Undirtexti á ensku',
+    description: 'Checkbox sublabel in English',
   },
   inProgress: {
     id: 'form.system:in-progress',
@@ -1344,6 +1409,11 @@ export const m = defineMessages({
       'Þetta form er í þróun og hefur ekki verið útgefið. Innsending mun ekki skila sér til afgreiðslu.',
     description:
       'This form is in development and has not been published. Submissions will not be processed.',
+  },
+  previewApplicationBanner: {
+    id: 'form.system:preview-application-banner',
+    defaultMessage: 'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
+    description: 'This is a preview. We do not connect to any web services.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',

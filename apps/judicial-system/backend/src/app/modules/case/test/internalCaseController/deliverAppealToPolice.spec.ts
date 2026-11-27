@@ -131,6 +131,7 @@ describe('InternalCaseController - Deliver appeal to police', () => {
             courtDocument: Base64.btoa(appealRulingPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

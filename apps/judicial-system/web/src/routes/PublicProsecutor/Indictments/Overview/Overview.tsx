@@ -1,9 +1,16 @@
-import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  type JSX,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import type { Option } from '@island.is/island-ui/core'
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   canDefendantAppealVerdict,
@@ -14,6 +21,7 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -32,6 +40,7 @@ import {
   VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
+import { getAppealSummonsServiceBanners } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   AppealCaseState,
@@ -44,7 +53,10 @@ import {
   isReviewerAssignedModal,
   REVIEWER_ASSIGNED,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealSummons,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { AppealProsecutorSelector } from './AppealProsecutorSelector'
@@ -58,7 +70,8 @@ export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { syncAppealSummonsServiceStatuses } = useAppealSummons()
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
@@ -73,6 +86,70 @@ export const Overview = () => {
   const assignMode = isPublicProsecutionOfficeUser(user)
     ? getPublicProsecutorOverviewAssignMode(workingCase)
     : 'none'
+
+  useEffect(() => {
+    if (isLoadingWorkingCase) {
+      return
+    }
+
+    const waitingServices = (
+      workingCase.verdictAppealCase?.appealSummonses ?? []
+    ).flatMap((summons) =>
+      (summons.services ?? []).filter(
+        (service) => service.externalPoliceDocumentId && !service.serviceStatus,
+      ),
+    )
+
+    if (waitingServices.length === 0) {
+      return
+    }
+
+    let cancelled = false
+
+    const sync = async () => {
+      const updatedSummonses = await syncAppealSummonsServiceStatuses(
+        workingCase.id,
+      )
+
+      if (cancelled || !updatedSummonses?.length) {
+        return
+      }
+
+      setWorkingCase((previous) => {
+        if (!previous.verdictAppealCase?.appealSummonses) {
+          return previous
+        }
+
+        const byId = new Map(
+          updatedSummonses.map((summons) => [summons.id, summons]),
+        )
+
+        return {
+          ...previous,
+          verdictAppealCase: {
+            ...previous.verdictAppealCase,
+            appealSummonses: previous.verdictAppealCase.appealSummonses.map(
+              (summons) => {
+                const updated = byId.get(summons.id)
+
+                return updated
+                  ? { ...summons, services: updated.services }
+                  : summons
+              },
+            ),
+          },
+        }
+      })
+    }
+
+    void sync()
+
+    return () => {
+      cancelled = true
+    }
+    // Sync once after the case query settles; later merges must not re-trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workingCase.id, isLoadingWorkingCase])
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -156,6 +233,9 @@ export const Overview = () => {
     )
   }, [workingCase.defendants])
 
+  const appealSummonsServiceBanners =
+    getAppealSummonsServiceBanners(workingCase)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -165,18 +245,37 @@ export const Overview = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader
-        title={fm(titles.shared.closedCaseOverview, {
-          courtCaseNumber: workingCase.courtCaseNumber,
-        })}
+        title={fm(
+          {
+            id: titles.shared.closedCaseOverview,
+            defaultMessage: titles.shared.closedCaseOverview,
+          },
+          {
+            courtCaseNumber: workingCase.courtCaseNumber,
+          },
+        )}
       />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={stack({ gap: 5 })}>
-          <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
+          <div className={stack({ gap: 2 })}>
+            {appealSummonsServiceBanners.map((banner) => (
+              <AlertMessage
+                key={banner.key}
+                type={banner.type}
+                title={banner.title}
+                message={banner.message}
+              />
+            ))}
+            {verdictStatusAlerts}
+          </div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />
+          <AppealCourtSessionScheduledCard
+            verdictAppealCase={workingCase.verdictAppealCase}
+          />
           <Box component="section">
             <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
           </Box>
@@ -232,7 +331,10 @@ export const Overview = () => {
               ? []
               : [
                   {
-                    text: fm(core.continue),
+                    text: fm({
+                      id: core.continue,
+                      defaultMessage: core.continue,
+                    }),
                     icon: 'arrowForward',
                     onClick:
                       assignMode === 'appealProsecutor'
@@ -269,7 +371,7 @@ export const Overview = () => {
           )}
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },
@@ -282,7 +384,7 @@ export const Overview = () => {
           text="Áfrýjunarmáli hefur verið úthlutað á saksóknara."
           buttons={[
             {
-              text: fm(core.back),
+              text: fm({ id: core.back, defaultMessage: core.back }),
               onClick: () => router.push(getStandardUserDashboardRoute(user)),
               variant: 'ghost',
             },

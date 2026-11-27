@@ -13,11 +13,9 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -66,22 +64,23 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
-import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocument,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   AppealCase,
-  AppealDecision,
   AppealDecisionRepositoryService,
   Case,
   CaseArchiveRepositoryService,
-  CaseFile,
   CaseRepositoryService,
-  CaseString,
   CaseStringRepositoryService,
   DateLog,
   Defendant,
   DefendantRepositoryService,
   EventLog,
-  IndictmentCount,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
@@ -93,82 +92,19 @@ import { ArchiveResponse } from './models/archive.response'
 import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
+import {
+  appealCaseEncryptionProperties,
+  appealDecisionEncryptionProperties,
+  caseEncryptionProperties,
+  caseFileEncryptionProperties,
+  caseStringEncryptionProperties,
+  collectEncryptionProperties,
+  defendantEncryptionProperties,
+  indictmentCountEncryptionProperties,
+  withArchivedRowId,
+} from './caseArchive'
 import { PdfService } from './pdf.service'
 import { wasVerdictServiceCertificateDeliveredToPolice } from './verdictServiceCertificateDelivery'
-
-const caseEncryptionProperties: (keyof Case)[] = [
-  'description',
-  'demands',
-  'requestedOtherRestrictions',
-  'caseFacts',
-  'legalArguments',
-  'prosecutorOnlySessionRequest',
-  'comments',
-  'caseFilesComments',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'sessionBookings',
-  'courtCaseFacts',
-  'introduction',
-  'courtLegalArguments',
-  'ruling',
-  'conclusion',
-  'endOfSessionBookings',
-  'caseModifiedExplanation',
-  'caseResentExplanation',
-  'crimeScenes',
-  'indictmentIntroduction',
-  'indictmentDeniedExplanation',
-]
-
-const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
-  'appealConclusion',
-  'appealRulingModifiedHistory',
-]
-
-const appealDecisionEncryptionProperties: (keyof AppealDecision)[] = [
-  'announcement',
-]
-
-const defendantEncryptionProperties: (keyof Defendant)[] = [
-  'nationalId',
-  'name',
-  'address',
-]
-
-const caseFileEncryptionProperties: (keyof CaseFile)[] = [
-  'name',
-  'key',
-  'userGeneratedFilename',
-]
-
-const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
-  'vehicleRegistrationNumber',
-  'incidentDescription',
-  'legalArguments',
-]
-
-const caseStringEncryptionProperties: (keyof CaseString)[] = ['value']
-
-const collectEncryptionProperties = (
-  properties: string[],
-  unknownSource: unknown,
-): [{ [key: string]: string | null }, { [key: string]: unknown }] => {
-  const source = unknownSource as { [key: string]: unknown }
-  return properties.reduce<
-    [{ [key: string]: string | null }, { [key: string]: unknown }]
-  >(
-    (data, property) => [
-      {
-        ...data[0],
-        [property]: typeof source[property] === 'string' ? '' : null,
-      },
-      { ...data[1], [property]: source[property] },
-    ],
-    [{}, {}],
-  )
-}
 
 @Injectable()
 export class InternalCaseService {
@@ -185,8 +121,6 @@ export class InternalCaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
-    @Inject(forwardRef(() => IntlService))
-    private readonly intlService: IntlService,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
@@ -211,21 +145,6 @@ export class InternalCaseService {
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
@@ -279,7 +198,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -316,7 +235,7 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
       .then((pdf) => {
         const fileName = formatIcuMessage(courtUpload.request, {
           caseType: formatCaseType(theCase.type),
@@ -367,7 +286,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -630,7 +549,7 @@ export class InternalCaseService {
           theCase.appealCase,
         )
 
-      appealCaseArchive = archive
+      appealCaseArchive = withArchivedRowId(theCase.appealCase, archive)
       Object.assign(clearedCaseProperties, clearedAppealCaseProperties)
     }
 
@@ -638,7 +557,7 @@ export class InternalCaseService {
     for (const defendant of theCase.defendants ?? []) {
       const [clearedDefendantProperties, defendantArchive] =
         collectEncryptionProperties(defendantEncryptionProperties, defendant)
-      defendantsArchive.push(defendantArchive)
+      defendantsArchive.push(withArchivedRowId(defendant, defendantArchive))
 
       await this.defendantService.updateDatabaseDefendant(
         theCase.id,
@@ -652,7 +571,7 @@ export class InternalCaseService {
     for (const caseFile of theCase.caseFiles ?? []) {
       const [clearedCaseFileProperties, caseFileArchive] =
         collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
-      caseFilesArchive.push(caseFileArchive)
+      caseFilesArchive.push(withArchivedRowId(caseFile, caseFileArchive))
 
       await this.fileService.updateCaseFile(
         theCase.id,
@@ -666,7 +585,9 @@ export class InternalCaseService {
     for (const count of theCase.indictmentCounts ?? []) {
       const [clearedIndictmentCountProperties, indictmentCountArchive] =
         collectEncryptionProperties(indictmentCountEncryptionProperties, count)
-      indictmentCountsArchive.push(indictmentCountArchive)
+      indictmentCountsArchive.push(
+        withArchivedRowId(count, indictmentCountArchive),
+      )
 
       await this.indictmentCountService.update(
         theCase.id,
@@ -680,7 +601,7 @@ export class InternalCaseService {
     for (const caseString of theCase.caseStrings ?? []) {
       const [clearedCaseStringProperties, caseStringArchive] =
         collectEncryptionProperties(caseStringEncryptionProperties, caseString)
-      caseStringsArchive.push(caseStringArchive)
+      caseStringsArchive.push(withArchivedRowId(caseString, caseStringArchive))
 
       await this.caseStringRepositoryService.updateByIdAndCase(
         caseString.id,
@@ -697,7 +618,9 @@ export class InternalCaseService {
           appealDecisionEncryptionProperties,
           appealDecision,
         )
-      appealDecisionsArchive.push(appealDecisionArchive)
+      appealDecisionsArchive.push(
+        withArchivedRowId(appealDecision, appealDecisionArchive),
+      )
 
       await this.appealDecisionRepositoryService.update(
         appealDecision.id,
@@ -817,8 +740,6 @@ export class InternalCaseService {
     return this.pdfService
       .getIndictmentPdf(theCase, transaction)
       .then(async (pdf) => {
-        await this.refreshFormatMessage()
-
         const fileName = formatIcuMessage(courtUpload.indictment, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
@@ -962,8 +883,6 @@ export class InternalCaseService {
     withCourtCaseNumber: boolean,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
     const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
 
@@ -1152,8 +1071,6 @@ export class InternalCaseService {
     return this.pdfService
       .getCaseFilesRecordPdf(theCase, policeCaseNumber)
       .then(async (pdf) => {
-        await this.refreshFormatMessage()
-
         const fileName = formatIcuMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
         })
@@ -1187,8 +1104,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
@@ -1199,8 +1114,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadCourtRecordPdfToCourt(theCase, user, transaction).then(
       (delivered) => ({ delivered }),
     )
@@ -1211,8 +1124,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadCourtRecordWorkingDocumentToCourt(
       theCase,
       user,
@@ -1224,8 +1135,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
@@ -1236,8 +1145,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.deliverSignedCourtRecordPdfToCourt(
       theCase,
       user,
@@ -1355,10 +1262,14 @@ export class InternalCaseService {
       })
   }
 
+  // Most callers run outside any transaction. The one that has opened one
+  // passes it, so the ancestor read does not take a second connection while
+  // that transaction is open.
   async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
     courtDocuments: PoliceDocument[],
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     // Never call UpdateRVCase for cases that did not originate in LOKE
     if (theCase.origin !== CaseOrigin.LOKE) {
@@ -1366,7 +1277,7 @@ export class InternalCaseService {
     }
 
     const policeCaseId =
-      await this.caseRepositoryService.findOriginalAncestorId(theCase)
+      await this.caseRepositoryService.findOriginalAncestorId(theCase, options)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1374,20 +1285,28 @@ export class InternalCaseService {
         theCase.validToDate) ||
       nowFactory() // The API requires a date so we send now as a dummy date
 
-    return this.policeService.updatePoliceCase(
-      user,
-      policeCaseId,
-      theCase.type,
-      theCase.state === CaseState.CORRECTING
-        ? CaseState.COMPLETED
-        : theCase.state,
-      theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
-      theCase.courtCaseNumber ?? '',
-      theCase.policeDefendantNationalId ?? '',
-      validToDate,
-      theCase.conclusion ?? '', // Indictments do not have a conclusion
-      courtDocuments,
-    )
+    try {
+      return await this.policeService.updatePoliceCase(
+        user,
+        policeCaseId,
+        theCase.type,
+        theCase.state === CaseState.CORRECTING
+          ? CaseState.COMPLETED
+          : theCase.state,
+        theCase.policeCaseNumbers.length > 0
+          ? theCase.policeCaseNumbers[0]
+          : '',
+        theCase.courtCaseNumber ?? '',
+        theCase.policeDefendantNationalId ?? '',
+        validToDate,
+        theCase.conclusion ?? '', // Indictments do not have a conclusion
+        courtDocuments,
+        theCase.id,
+      )
+    } catch (reason) {
+      // Do not retry an upload LÖKE will never accept
+      return isFileTooLargeForPolice(reason)
+    }
   }
 
   // Only updates the completed case in the police system.
@@ -1430,9 +1349,7 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      await this.refreshFormatMessage()
-
-      const request = await getRequestPdfAsString(theCase, this.formatMessage)
+      const request = await getRequestPdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {
@@ -1470,12 +1387,7 @@ export class InternalCaseService {
 
         courtRecord = pdf.toString('binary')
       } else {
-        await this.refreshFormatMessage()
-
-        courtRecord = await getCourtRecordPdfAsString(
-          theCase,
-          this.formatMessage,
-        )
+        courtRecord = await getCourtRecordPdfAsString(theCase)
       }
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
@@ -1502,12 +1414,7 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      await this.refreshFormatMessage()
-
-      const custodyNotice = await getCustodyNoticePdfAsString(
-        theCase,
-        this.formatMessage,
-      )
+      const custodyNotice = await getCustodyNoticePdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {
@@ -1547,6 +1454,7 @@ export class InternalCaseService {
         theCase,
         user,
         policeDocuments,
+        { transaction },
       )
 
       return { delivered }

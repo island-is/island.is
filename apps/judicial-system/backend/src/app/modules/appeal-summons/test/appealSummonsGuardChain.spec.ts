@@ -111,6 +111,15 @@ const verdictAppealedIndictmentCase = (caseId: string) =>
       id: uuid(),
       appealType: AppealCaseType.VERDICT,
       appealSummonses: [{ id: appealSummonsId, caseId } as AppealSummons],
+      // The court of appeals has no access to a verdict appeal until a
+      // summons has been sent to it.
+      sentAppealSummonses: [
+        {
+          id: appealSummonsId,
+          caseId,
+          sentToCourtOfAppealsDate: new Date(),
+        } as AppealSummons,
+      ],
     } as AppealCase,
   } as Case)
 
@@ -163,6 +172,7 @@ const routes: [string, boolean, boolean, AllowedRow[]][] = [
   ['update', true, true, [staffRow]],
   ['delete', true, true, [staffRow]],
   ['confirm', false, true, [unassignedProsecutorRow]],
+  ['sendToService', true, true, [staffRow]],
   ['sendToCourtOfAppeals', true, true, [staffRow]],
   [
     'getPdf',

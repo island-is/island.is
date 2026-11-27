@@ -35,6 +35,7 @@ export interface User {
   active: boolean
   canConfirmIndictment: boolean
   canManageMessageSuspension?: boolean
+  canManageServiceInterruptionBanner?: boolean
   latestLogin?: string
   loginCount?: number
 }

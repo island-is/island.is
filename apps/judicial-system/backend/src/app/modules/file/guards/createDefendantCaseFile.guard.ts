@@ -12,7 +12,9 @@ import {
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
-const allowedCaseFileCategories = [
+// The prosecution's files on a defendant. The route also admits the court of
+// appeals, which has no part in them.
+const prosecutionCaseFileCategories = [
   CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   CaseFileCategory.CRIMINAL_RECORD,
 ]
@@ -43,7 +45,10 @@ export class CreateDefendantCaseFileGuard implements CanActivate {
     const user: User | undefined = request.user?.currentUser
     const caseFileCategory: CaseFileCategory = request.body?.category
 
-    if (allowedCaseFileCategories.includes(caseFileCategory)) {
+    if (
+      !isCourtOfAppealsUser(user) &&
+      prosecutionCaseFileCategories.includes(caseFileCategory)
+    ) {
       return true
     }
 

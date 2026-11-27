@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -25,6 +24,7 @@ import {
   applyDativeCaseToCourtName,
   formatDate,
   getHumanReadableCaseIndictmentRulingDecision,
+  getVerdictAppealDecision,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -53,6 +53,7 @@ import {
   type User,
   UserDescriptor,
   UserRole,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -104,7 +105,6 @@ export class CaseNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -115,7 +115,6 @@ export class CaseNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -227,7 +226,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     smsText = smsText.match(/rettarvorslugatt.island.is/g)
       ? smsText
-      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
+      : `${smsText} ${notifications.smsTail}`
 
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
@@ -248,7 +247,6 @@ export class CaseNotificationService extends BaseNotificationService {
   //#region HEADS_UP notifications */
   private sendHeadsUpSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
-      this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.arrestDate,
@@ -276,7 +274,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtReadyForCourtSmsNotification(
-      this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.prosecutorsOffice?.name,
@@ -289,7 +286,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtResubmittedToCourtSmsNotification(
-      this.formatMessage,
       theCase.courtCaseNumber,
     )
 
@@ -309,7 +305,6 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderName?: string
   }): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
-      this.formatMessage,
       defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
@@ -337,7 +332,6 @@ export class CaseNotificationService extends BaseNotificationService {
     }/${id}`
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
-      this.formatMessage,
       policeCaseNumbers,
       type,
       court?.name,
@@ -357,7 +351,6 @@ export class CaseNotificationService extends BaseNotificationService {
   ): Promise<Recipient> {
     const { subject, body } =
       formatCourtIndictmentReadyForCourtEmailNotification(
-        this.formatMessage,
         theCase,
         `${this.config.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
       )
@@ -382,7 +375,6 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderNationalId?: string
   }): Promise<Recipient> {
     const { subject, body } = formatDefenderReadyForCourtEmailNotification({
-      formatMessage: this.formatMessage,
       policeCaseNumber: theCase.policeCaseNumbers[0],
       courtName: theCase.court?.name || 'Héraðsdómur',
       overviewUrl:
@@ -412,7 +404,6 @@ export class CaseNotificationService extends BaseNotificationService {
     lawyerNationalId?: string
   }): Promise<Recipient> {
     const { subject, body } = formatDefenderReadyForCourtEmailNotification({
-      formatMessage: this.formatMessage,
       policeCaseNumber: theCase.policeCaseNumbers[0],
       courtName: theCase.court?.name || 'Héraðsdómur',
       overviewUrl:
@@ -566,7 +557,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const smsText = formatProsecutorReceivedByCourtSmsNotification(
-      this.formatMessage,
       theCase.type,
       theCase.court?.name,
       theCase.courtCaseNumber,
@@ -599,7 +589,6 @@ export class CaseNotificationService extends BaseNotificationService {
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
-      this.formatMessage,
       theCase.type,
       theCase.courtCaseNumber,
       theCase.court?.name,
@@ -660,7 +649,6 @@ export class CaseNotificationService extends BaseNotificationService {
 
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
-      this.formatMessage,
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
@@ -681,7 +669,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html,
-      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientName: notifications.emailNames.prison,
       recipientEmail: this.config.email.prisonEmail,
     })
   }
@@ -709,7 +697,6 @@ export class CaseNotificationService extends BaseNotificationService {
 
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const body = formatDefenderCourtDateEmailNotification(
-      this.formatMessage,
       theCase.court?.name,
       theCase.courtCaseNumber,
       arraignmentDate?.date,
@@ -776,7 +763,6 @@ export class CaseNotificationService extends BaseNotificationService {
     }`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification({
-      formatMessage: this.formatMessage,
       overviewUrl:
         defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
@@ -809,7 +795,6 @@ export class CaseNotificationService extends BaseNotificationService {
     const linkSubject = `Krafa í máli ${theCase.courtCaseNumber}`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification({
-      formatMessage: this.formatMessage,
       overviewUrl:
         lawyerNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
@@ -1245,7 +1230,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html,
-      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientName: notifications.emailNames.prison,
       recipientEmail: this.config.email.prisonEmail,
     })
   }
@@ -1254,7 +1239,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const { subject, body } = formatPrisonAdministrationRulingNotification(
-      this.formatMessage,
       Boolean(theCase.rulingModifiedHistory),
       `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
       theCase.courtCaseNumber,
@@ -1264,7 +1248,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html: body,
-      recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
+      recipientName: notifications.emailNames.prisonAdmin,
       recipientEmail: this.config.email.prisonAdminEmail,
     })
   }
@@ -1289,7 +1273,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html: body,
-      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientName: notifications.emailNames.prison,
       recipientEmail: this.config.email.prisonEmail,
     })
   }
@@ -1535,7 +1519,7 @@ export class CaseNotificationService extends BaseNotificationService {
       this.sendEmail({
         subject,
         html,
-        recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
+        recipientName: notifications.emailNames.prisonAdmin,
         recipientEmail: this.config.email.prisonAdminEmail,
       }),
     ]
@@ -1548,7 +1532,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.sendEmail({
           subject,
           html,
-          recipientName: this.formatMessage(notifications.emailNames.prison),
+          recipientName: notifications.emailNames.prison,
           recipientEmail: this.config.email.prisonEmail,
         }),
       )
@@ -1613,7 +1597,6 @@ export class CaseNotificationService extends BaseNotificationService {
   //#region REVOKED notifications */
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
-      this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.requestedCourtDate,
@@ -1633,7 +1616,6 @@ export class CaseNotificationService extends BaseNotificationService {
 
     // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
-      this.formatMessage,
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
@@ -1646,7 +1628,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html,
-      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientName: notifications.emailNames.prison,
       recipientEmail: this.config.email.prisonEmail,
       skipTail: true,
     })
@@ -1937,7 +1919,6 @@ export class CaseNotificationService extends BaseNotificationService {
     advocateSubRole: DefenderSubRole
   }): Promise<Recipient> {
     const html = formatDefenderCourtDateLinkEmailNotification({
-      formatMessage: this.formatMessage,
       // No overview url - the advocate cannot access the case yet
       overviewUrl: undefined,
       court: theCase.court?.name,
@@ -2097,7 +2078,7 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendIndictmentDeniedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const subject = this.formatMessage(notifications.indictmentDenied.subject)
+    const subject = notifications.indictmentDenied.subject
     const html = formatIcuMessage(notifications.indictmentDenied.body, {
       caseNumber: theCase.policeCaseNumbers[0],
       linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
@@ -2329,6 +2310,48 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.recordNotification(
       theCase.id,
       TrackedNotificationType.INDICTMENT_VERDICT_APPEALED,
+      [recipient],
+    )
+  }
+  //#endregion
+
+  //#region INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER notifications
+  // The public prosecution is told when a defender registers that the defendant
+  // accepts the verdict. Sent every time, like the appeal notification: the
+  // position is per defendant, so a second defendant's is news of its own.
+  private async sendIndictmentVerdictAcceptedByDefenderNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? ''
+    const courtName = applyDativeCaseToCourtName(
+      theCase.court?.name ?? 'héraðsdómi',
+    )
+    const subject = `Afstaða í máli ${courtCaseNumber}`
+    const stance = getVerdictAppealDecision(VerdictAppealDecision.ACCEPT)
+    const link = `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+    const body = `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá ${courtName}.<br /><br />Afstaða: ${stance}.<br /><br />Sjá nánar á ${link}.`
+
+    const publicProsecutorEmail =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.publicProsecutorId,
+        IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      )
+
+    if (!publicProsecutorEmail) {
+      return { delivered: false }
+    }
+
+    const recipient = await this.sendEmail({
+      subject,
+      html: body,
+      recipientName: 'Ríkissaksóknari',
+      recipientEmail: publicProsecutorEmail,
+      skipTail: true,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
       [recipient],
     )
   }
@@ -2713,6 +2736,10 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendIndictmentReopenedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED:
         return this.sendIndictmentVerdictAppealedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER:
+        return this.sendIndictmentVerdictAcceptedByDefenderNotifications(
+          theCase,
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,
@@ -2726,8 +2753,6 @@ export class CaseNotificationService extends BaseNotificationService {
     user?: User,
     userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, theCase, user, userDescriptor)
     } catch (error) {
