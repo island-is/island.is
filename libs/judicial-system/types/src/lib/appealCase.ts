@@ -167,6 +167,11 @@ export const APPEAL_JUDGE_COUNT = 3
 // The most judges the court of appeals seats on one case.
 export const MAX_APPEAL_JUDGE_COUNT = 5
 
+// How many verdict appeals the court of appeals may complete in one request.
+// Each is read with its whole case under a lock held until the request
+// commits.
+export const MAX_COMPLETED_VERDICT_APPEALS = 100
+
 export interface AppealJudgeFields<U> {
   displayOrder?: number | null
   userId?: string | null

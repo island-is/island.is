@@ -53,6 +53,32 @@ export class AppealCaseRepositoryService {
     }
   }
 
+  // The appeal cases with the given ids that exist, ordered by id. With
+  // forUpdate their rows are locked for the rest of the transaction, and the
+  // order is what lets two callers lock overlapping sets without deadlocking
+  // on each other.
+  async findByIds(
+    ids: string[],
+    options: { transaction: Transaction; forUpdate?: boolean },
+  ): Promise<AppealCase[]> {
+    try {
+      this.logger.debug(
+        `Finding${options.forUpdate ? ' and locking' : ''} appeal cases ${ids}`,
+      )
+
+      return await this.appealCaseModel.findAll({
+        where: { id: ids },
+        order: [['id', 'ASC']],
+        transaction: options.transaction,
+        ...(options.forUpdate ? { lock: Transaction.LOCK.UPDATE } : {}),
+      })
+    } catch (error) {
+      this.logger.error(`Error finding appeal cases ${ids}:`, { error })
+
+      throw error
+    }
+  }
+
   // A case has at most one verdict appeal - every defendant who appeals joins
   // it - and the unique index on (case_id, ruling_file_id), NULLS NOT DISTINCT,
   // holds that, since a verdict appeal has no ruling file.

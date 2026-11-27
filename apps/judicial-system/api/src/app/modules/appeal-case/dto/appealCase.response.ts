@@ -92,6 +92,11 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly appealRulingDate?: string
 
+  // When the court of appeals released the outcome of a verdict appeal,
+  // completing it. Null for a ruling appeal.
+  @Field(() => String, { nullable: true })
+  readonly appealCompletedDate?: string
+
   @Field(() => String, { nullable: true })
   readonly prosecutorStatementDate?: string
 

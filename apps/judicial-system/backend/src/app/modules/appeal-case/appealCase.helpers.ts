@@ -5,11 +5,13 @@ import {
   AppealOrigin,
   type AppealStatementParty,
   CaseAppealDecision,
+  getAppealJudgeUserIds,
   isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
+  isSameAppealBench,
   prosecutionRoles,
   type User,
   UserRole,
@@ -66,6 +68,77 @@ export const getVerdictAppealOutcomeOverride = (
           ? { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
           : {}),
       }
+
+// What is frozen once a verdict appeal is completed: what the court of appeals
+// recorded about how it ended, and the court's case number, bench and
+// assistant under which it was decided.
+const lockedCompletedVerdictAppealFields = [
+  'appealRulingDecision',
+  'appealRulingType',
+  'appealConclusion',
+  'appealRulingDate',
+  'appealRulingModifiedHistory',
+  'verdictAppealStatus',
+  'appealCaseNumber',
+  'appealAssistantId',
+  'appealJudgeIds',
+] as const
+
+type LockedCompletedVerdictAppealField =
+  typeof lockedCompletedVerdictAppealFields[number]
+
+const toComparableLockedValue = (value: unknown): unknown =>
+  value instanceof Date ? value.getTime() : value ?? undefined
+
+// The locked fields an update to a completed verdict appeal would change. A
+// field the update leaves out changes nothing, nor does one sent with the
+// value already stored - a form that saves every field it shows sends those
+// back. Anything else is a change, an empty or null value included, since it
+// is written over what is stored:
+// - a note in the modification history is always a change: it is appended to
+//   what is there, and an empty or null history is written over it;
+// - the bench is a change when it differs from the stored one, in the same
+//   judges in the same order, as update replaces it; a null bench is not sent
+//   at all, and an empty one clears the bench.
+export const changedLockedCompletedVerdictAppealFields = (
+  appealCase: Pick<
+    AppealCase,
+    | Exclude<LockedCompletedVerdictAppealField, 'appealJudgeIds'>
+    | 'appealJudges'
+  >,
+  update: Partial<Record<LockedCompletedVerdictAppealField, unknown>>,
+): LockedCompletedVerdictAppealField[] =>
+  lockedCompletedVerdictAppealFields.filter((field) => {
+    if (field === 'appealJudgeIds') {
+      const appealJudgeIds = update.appealJudgeIds
+
+      return (
+        Array.isArray(appealJudgeIds) &&
+        !isSameAppealBench(appealJudgeIds, getAppealJudgeUserIds(appealCase))
+      )
+    }
+
+    const value = update[field]
+
+    if (value === undefined) {
+      return false
+    }
+
+    if (field === 'appealRulingModifiedHistory' && value) {
+      return true
+    }
+
+    // Dates arrive as dates or as the ISO strings they were sent as.
+    const next =
+      field === 'appealRulingDate' && typeof value === 'string'
+        ? new Date(value)
+        : value
+
+    return (
+      toComparableLockedValue(next) !==
+      toComparableLockedValue(appealCase[field])
+    )
+  })
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
 // carries in its rulingFileId, the verdict appeal for an appeal declaration or

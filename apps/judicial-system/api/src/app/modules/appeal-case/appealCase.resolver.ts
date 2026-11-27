@@ -24,6 +24,7 @@ import { AppealCase } from './dto/appealCase.response'
 import { AppealCourtSession } from './dto/appealCourtSession.response'
 import { AppealEventLog } from './dto/appealEventLog.response'
 import { AppealStatementDeadline } from './dto/appealStatementDeadline.response'
+import { CompleteVerdictAppealsInput } from './dto/completeVerdictAppeals.input'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealCourtSessionInput } from './dto/createAppealCourtSession.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
@@ -277,6 +278,28 @@ export class AppealCaseResolver {
         transitionAppealCase,
       ),
       caseId,
+    )
+  }
+
+  // The court of appeals completes many confirmed verdict appeals at once,
+  // all or none of them.
+  @Mutation(() => [AppealCase])
+  completeVerdictAppeals(
+    @Args('input', { type: () => CompleteVerdictAppealsInput })
+    input: CompleteVerdictAppealsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealCase[]> {
+    const { appealCaseIds } = input
+
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(`Completing verdict appeals ${appealCaseIds}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.TRANSITION_APPEAL_CASE,
+      this.backendService.completeVerdictAppeals(appealCaseIds),
+      (appealCases) => appealCases.map((appealCase) => appealCase.id),
     )
   }
 }
