@@ -14,6 +14,7 @@ import axios from 'axios'
 import PDFDocument from 'pdfkit'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Value } from './models/value.model'
+import { ApplicationMapper } from './models/application.mapper'
 
 describe('ApplicationsService.deleteApplication', () => {
   const setup = () => {
@@ -809,6 +810,223 @@ describe.each([
     },
   )
 })
+
+it.each([
+  {
+    children: [
+      { name: 'First child', nationalId: '0101202989' },
+      { name: 'Second child', nationalId: '0101212989' },
+    ],
+  },
+  { children: [{ name: 'Second child', nationalId: '0101212989' }] },
+  { children: [] },
+])(
+  'saves and reopens child selections, including an empty selection (case %#)',
+  async ({ children }) => {
+    const transaction = {}
+    const application = {
+      id: 'application',
+      formId: 'form',
+      save: jest.fn().mockResolvedValue(undefined),
+    }
+    const sections: SectionDto[] = [
+      {
+        id: 'section',
+        name: { is: '', en: '' },
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 0,
+        isHidden: false,
+        isCompleted: false,
+        screens: [
+          {
+            id: 'screen',
+            identifier: 'screen',
+            sectionId: 'section',
+            name: { is: '', en: '' },
+            displayOrder: 0,
+            isHidden: false,
+            isCompleted: false,
+            multiMax: 1,
+            isMulti: false,
+            shouldValidate: false,
+            fields: [
+              {
+                id: 'children',
+                identifier: 'children',
+                screenId: 'screen',
+                name: { is: 'Children', en: 'Children' },
+                informationText: { is: '', en: '' },
+                tooltip: { is: '', en: '' },
+                displayOrder: 0,
+                fieldType: FieldTypesEnum.FAMILY,
+                fieldSettings: {
+                  familyType: FamilyTypes.CHILD,
+                },
+                isHidden: false,
+                isPartOfMultiset: false,
+                isRequired: false,
+                values: children.map((json, order) => ({
+                  id: `child-${order}`,
+                  order,
+                  json,
+                })),
+              },
+            ],
+          },
+        ],
+      },
+    ]
+    let storedValues = [
+      {
+        id: 'previous-child',
+        order: 0,
+        json: { name: 'First child', nationalId: '0101202989' },
+      },
+    ]
+    const destroy = jest.fn(async () => {
+      const count = storedValues.length
+      storedValues = []
+      return count
+    })
+    const create = jest.fn(
+      async (value: {
+        order: number
+        json: { name: string; nationalId: string }
+      }) => {
+        storedValues.push({ id: `saved-${value.order}`, ...value })
+      },
+    )
+    const update = jest.fn()
+    const formModel = {
+      findByPk: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockImplementation(async () => ({
+        id: 'form',
+        slug: 'form-slug',
+        sections: sections.map((section) => ({
+          ...section,
+          screens: section.screens?.map((screen) => ({
+            ...screen,
+            fields: [
+              { ...screen.fields?.[0], values: storedValues },
+              {
+                id: 'empty-spouse',
+                fieldType: FieldTypesEnum.FAMILY,
+                fieldSettings: { familyType: FamilyTypes.SPOUSE },
+                values: [],
+              },
+              {
+                id: 'empty-text',
+                fieldType: FieldTypesEnum.TEXTBOX,
+                values: [],
+              },
+              {
+                id: 'saved-text',
+                fieldType: FieldTypesEnum.TEXTBOX,
+                values: [{ id: 'text-value', json: { text: 'Saved' } }],
+              },
+            ],
+          })),
+        })),
+      })),
+    }
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        applicationModel: {
+          findByPk: jest.fn().mockResolvedValue(application),
+          findOne: jest.fn().mockResolvedValue(application),
+        },
+        formModel,
+        applicationMapper: new ApplicationMapper(),
+        getAllowedLoginTypes: jest.fn().mockResolvedValue([]),
+        getLoginTypes: jest.fn().mockResolvedValue([]),
+        hasDelegation: jest.fn().mockReturnValue(true),
+        doesUserMatchApplication: jest.fn().mockReturnValue(true),
+        valueModel: { destroy, create, update },
+        sequelize: {
+          transaction: jest.fn(async (callback) => callback(transaction)),
+        },
+      },
+    ) as ApplicationsService
+    const user: User = {
+      nationalId: '0101307789',
+      scope: [],
+      authorization: '',
+      client: 'test',
+    }
+
+    await service.saveScreen(
+      {
+        applicationId: application.id,
+        screenId: 'screen',
+        sectionId: 'section',
+        sections,
+      },
+      user,
+    )
+
+    expect(destroy).toHaveBeenCalledWith({
+      where: { fieldId: 'children', applicationId: application.id },
+      transaction,
+    })
+    expect(create).toHaveBeenCalledTimes(children.length)
+    children.forEach((json, order) => {
+      expect(create).toHaveBeenNthCalledWith(
+        order + 1,
+        {
+          fieldId: 'children',
+          fieldType: FieldTypesEnum.FAMILY,
+          applicationId: application.id,
+          order,
+          json,
+        },
+        { transaction },
+      )
+      expect(destroy.mock.invocationCallOrder[0]).toBeLessThan(
+        create.mock.invocationCallOrder[order],
+      )
+    })
+    expect(update).not.toHaveBeenCalled()
+
+    const reopened = await service.getApplication(
+      application.id,
+      'form-slug',
+      null,
+    )
+    const fields = reopened.application?.sections?.[0].screens?.[0].fields
+
+    expect(fields?.map((field) => field.id)).toEqual(['children', 'saved-text'])
+    expect(fields?.[0].values?.map((value) => value.json)).toEqual(children)
+    expect(fields?.[1].values).toEqual([
+      { id: 'text-value', json: { text: 'Saved' } },
+    ])
+    expect(formModel.findOne.mock.calls[0]).toMatchObject([
+      {
+        include: [
+          {
+            include: [
+              {
+                include: [
+                  {
+                    include: [
+                      {},
+                      {
+                        model: Value,
+                        required: false,
+                        where: { applicationId: application.id },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {},
+        ],
+      },
+    ])
+  },
+)
 
 describe('ApplicationsService.calculateDraftTotalSteps', () => {
   it.each([

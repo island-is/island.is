@@ -1,9 +1,9 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import {
   COPY_FORM,
   EXPORT_FORM,
+  FormListItem,
   GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
   GET_FORMS,
@@ -52,10 +52,8 @@ interface Props {
   lastModified?: Date
   options?: string
   isHeader: boolean
-  translated?: boolean
   slug?: string
-  beenPublished?: boolean
-  setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
+  setFormsState: Dispatch<SetStateAction<FormListItem[]>>
   status?: string
   url?: string
   lastModifiedBy?: string
@@ -331,8 +329,9 @@ export const TableRow = ({
           const { data: formsData } = await getForms({
             variables: { input: { nationalId: organizationNationalId } },
           })
-          const refreshedForms: FormSystemForm[] | undefined =
-            formsData?.formSystemForms?.forms
+          const refreshedForms = formsData?.formSystemForms?.forms?.filter(
+            (form): form is FormListItem => form !== null,
+          )
           if (!refreshedForms) throw new Error('Missing forms list')
           setFormsState(refreshedForms)
 

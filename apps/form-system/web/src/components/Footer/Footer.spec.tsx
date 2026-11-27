@@ -234,9 +234,11 @@ const renderFooter = (
   {
     allowProceedOnValidationFail = true,
     sectionType = SectionTypes.INPUT,
+    loadingFieldIds,
   }: {
     allowProceedOnValidationFail?: boolean
     sectionType?: string
+    loadingFieldIds?: string[]
   } = {},
 ) => {
   const inputScreen: FormSystemScreen = {
@@ -263,6 +265,7 @@ const renderFooter = (
   }
   const initialState: ApplicationState = {
     pendingUploads,
+    loadingFieldIds,
     currentScreen: { index: 0, data: inputScreen },
     currentSection: { index: 1, data: section },
     sections: [
@@ -335,6 +338,50 @@ it.each([1, 2])(
     fireEvent.click(back)
     expect(mutate).not.toHaveBeenCalled()
     expect(dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it.each(['Continue', 'Submit'])(
+  'blocks %s until every child lookup finishes, even when validation bypass is enabled',
+  async (button) => {
+    if (button === 'Submit') {
+      jest.mocked(getPaymentFlow).mockReturnValue({
+        shouldShowPay: false,
+        onSubmit: true,
+      })
+    }
+    renderFooter('FAMILY', false, 0, '123', {
+      loadingFieldIds: ['children-1', 'children-2'],
+    })
+    const next = screen.getByRole('button', { name: button })
+    expect(next.hasAttribute('disabled')).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'Back' }).hasAttribute('disabled'),
+    ).toBe(false)
+    fireEvent.click(next)
+    expect(mutate).not.toHaveBeenCalled()
+    expect(submitApplication).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+
+    act(() => {
+      dispatch({
+        type: 'SET_FIELD_LOADING',
+        payload: { id: 'children-1', loading: false },
+      })
+    })
+    expect(next.hasAttribute('disabled')).toBe(true)
+
+    act(() => {
+      dispatch({
+        type: 'SET_FIELD_LOADING',
+        payload: { id: 'children-2', loading: false },
+      })
+    })
+    expect(next.hasAttribute('disabled')).toBe(false)
+    fireEvent.click(next)
+    await waitFor(() =>
+      expect(dispatch).toHaveBeenCalledWith({ type: 'INCREMENT' }),
+    )
   },
 )
 

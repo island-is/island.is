@@ -1,7 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { FamilyTypes } from '@island.is/form-system/enums'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import { ControlContext } from '../../../../../../../context/ControlContext'
 
@@ -20,6 +20,25 @@ export const FamilySettings = () => {
     familyTypeOptions.find(
       (option) => option.value === currentItem.fieldSettings?.familyType,
     ) ?? null
+
+  useEffect(() => {
+    if (
+      !control.isReadOnly &&
+      currentItem.isPartOfMultiset &&
+      selected?.value === FamilyTypes.CHILD
+    ) {
+      controlDispatch({
+        type: 'CHANGE_IS_PART_OF_MULTI',
+        payload: { update: updateActiveItem },
+      })
+    }
+  }, [
+    control.isReadOnly,
+    controlDispatch,
+    currentItem.isPartOfMultiset,
+    selected?.value,
+    updateActiveItem,
+  ])
 
   return (
     <Box width="half">

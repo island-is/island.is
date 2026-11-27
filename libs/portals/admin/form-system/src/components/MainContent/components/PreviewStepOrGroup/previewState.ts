@@ -43,6 +43,7 @@ export const updatePreviewFields = (
 
   if (
     !updates &&
+    action.type !== 'SET_FIELD_VALUES' &&
     action.type !== 'SET_FIELD_LIST' &&
     action.type !== 'REMOVE_MULTISET_ITEM'
   )
@@ -50,6 +51,9 @@ export const updatePreviewFields = (
 
   return fields.map((field) => {
     if (field.id !== id) return field
+    if (action.type === 'SET_FIELD_VALUES') {
+      return { ...field, values: details.values }
+    }
     if (action.type === 'REMOVE_MULTISET_ITEM') {
       if (
         field.isPartOfMultiset === false ||

@@ -5,6 +5,16 @@ import zipObject from 'lodash/zipObject'
 import { FieldSettings } from './fieldSettings.model'
 
 export class FieldSettingsFactory {
+  static getDefaultSettings(type: string) {
+    const settings = new FieldSettings()
+    if (type === FieldTypesEnum.FILE) {
+      settings.maxFiles = 1
+      settings.fileTypes = '.pdf'
+      settings.fileMaxSize = 10485760
+    }
+    return this.getClass(type, settings)
+  }
+
   static getClass(type: string, fieldSettings: FieldSettings | undefined) {
     if (!fieldSettings) {
       return undefined
