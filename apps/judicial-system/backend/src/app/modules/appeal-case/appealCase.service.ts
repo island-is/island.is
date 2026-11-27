@@ -1171,17 +1171,11 @@ export class AppealCaseService {
       })
     }
 
-    // The confirmed copy of a confirmed verdict appeal's ruling document is
-    // stamped with this date, so a new date has it stamped again. An appeal
-    // whose confirmation is taken back is no longer confirmed, so its stamped
-    // copy is not trusted either.
-    const rulingDateChanged =
-      isVerdictAppealConfirmed(appealCase) &&
-      update.appealRulingDate &&
-      update.appealRulingDate.getTime() !==
-        appealCase.appealRulingDate?.getTime()
-
-    if (takesConfirmationBack || rulingDateChanged) {
+    // An appeal whose confirmation is taken back is no longer confirmed, so
+    // the stamped copy of its ruling document is not trusted either. That
+    // covers a new date of conclusion, which the copy is stamped with. A
+    // completed appeal keeps its copy: its outcome cannot change.
+    if (takesConfirmationBack) {
       await this.fileService.invalidateVerdictAppealRulingConfirmation(
         theCase.id,
         transaction,
