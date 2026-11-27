@@ -262,6 +262,54 @@ describe('FileController - Delete case file', () => {
       expect(then.result).toEqual({ success: true })
     })
 
+    it('should keep the file in S3 without looking the key up', () => {
+      expect(
+        mockCaseFileRepositoryService.existsLiveByKey,
+      ).not.toHaveBeenCalled()
+      expect(mockDeleteObject).not.toHaveBeenCalled()
+    })
+  })
+
+  // The object goes with the last case file that points at it.
+  describe('another case file still points at the same key', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const fileId = uuid()
+    const key = `${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      mockUpdate.mockResolvedValueOnce(1)
+      const mockExists =
+        mockCaseFileRepositoryService.existsLiveByKey as jest.Mock
+      mockExists.mockResolvedValueOnce(true)
+
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
+    })
+
+    it('should delete the case file', () => {
+      expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+        fileId,
+        { state: CaseFileState.DELETED, isKeyAccessible: false },
+        { transaction },
+      )
+      expect(mockCommit).toHaveBeenCalledTimes(1)
+      expect(then.result).toEqual({ success: true })
+    })
+
+    it('should look the key up after the delete, in the same transaction', () => {
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      const mockExists =
+        mockCaseFileRepositoryService.existsLiveByKey as jest.Mock
+
+      expect(mockExists).toHaveBeenCalledWith(key, { transaction })
+      expect(mockUpdate.mock.invocationCallOrder[0]).toBeLessThan(
+        mockExists.mock.invocationCallOrder[0],
+      )
+    })
+
     it('should keep the file in S3', () => {
       expect(mockDeleteObject).not.toHaveBeenCalled()
     })

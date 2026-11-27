@@ -65,6 +65,7 @@ export const createTestingFileModule = async () => {
         provide: CaseFileRepositoryService,
         useValue: {
           findLiveByIdAndCase: jest.fn(),
+          existsLiveByKey: jest.fn().mockResolvedValue(false),
           findByCaseAndPoliceFileId: jest.fn(),
           getNextOrderWithinChapterForUpdate: jest.fn().mockResolvedValue(null),
           create: jest.fn(),

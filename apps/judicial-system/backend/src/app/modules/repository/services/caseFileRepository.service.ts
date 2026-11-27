@@ -124,6 +124,35 @@ export class CaseFileRepositoryService {
     }
   }
 
+  // Whether any live case file, of any case, points at the S3 key. A key is
+  // normally the business of one file, but the files of a split indictment
+  // share theirs with the case they were split from, so the lookup is not
+  // scoped to a case. Deleted files are soft-deleted and stay in the table, so
+  // they are excluded: they no longer hold the key.
+  async existsLiveByKey(
+    key: string,
+    options?: { transaction?: Transaction },
+  ): Promise<boolean> {
+    try {
+      this.logger.debug('Checking whether a live case file holds a given key')
+
+      const result = await this.caseFileModel.findOne({
+        where: { key, state: { [Op.not]: CaseFileState.DELETED } },
+        attributes: ['id'],
+        transaction: options?.transaction,
+      })
+
+      return result !== null
+    } catch (error) {
+      this.logger.error(
+        'Error checking whether a live case file holds a given key:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async findByCaseAndPoliceFileId(
     caseId: string,
     policeFileId: string,
