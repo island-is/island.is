@@ -64,32 +64,101 @@ export const useEnsureEqualityDraft = (application: Application) => {
 /**
  * The plan being pushed, in whichever representation the applicant uploaded.
  *
- * A discriminated union rather than three loose optional strings, so a caller
- * cannot express "PDF with no filename" or "both kinds at once" — the two
- * states DMR rejects. The wire shape stays flat; this is only about making the
- * invalid combinations unrepresentable at the call site.
+ * A discriminated union rather than loose optional strings, so a caller cannot
+ * express "PDF with no filename" or "both kinds at once" — the states DMR
+ * rejects. The wire shape stays flat; this is only about making the invalid
+ * combinations unrepresentable at the call site.
+ *
+ * A PDF is always sent by presigned key (see `uploadPlanPdf`). The API still
+ * takes an inline base64 PDF, for tabs opened before the presigned path.
  */
 export type EqualityContentPayload =
   | { kind: 'html'; base64: string }
-  | { kind: 'pdf'; base64: string; filename: string }
+  | { kind: 'pdfKey'; key: string; filename: string }
 
 const toVariables = (
   applicationId: string,
   content: EqualityContentPayload,
 ) => ({
   input:
-    content.kind === 'pdf'
+    content.kind === 'pdfKey'
       ? {
           applicationId,
-          equalityReportPdf: content.base64,
+          equalityReportPdfKey: content.key,
           equalityReportPdfFilename: content.filename,
         }
       : { applicationId, equalityReportContent: content.base64 },
 })
 
+const PRESIGN_EQUALITY_PLAN = gql`
+  mutation PresignDirectorateOfEqualityEqualityPlan(
+    $input: DirectorateOfEqualityPresignEqualityPlanInput!
+  ) {
+    presignDirectorateOfEqualityEqualityPlan(input: $input) {
+      url
+      key
+    }
+  }
+`
+
+// Cap the presigned PUT so a stalled upload can't leave the screen busy. A
+// 4 MB plan needs about 0.3 Mbit/s to finish in time, which a weak mobile
+// connection still manages; the presigned URL itself lasts an hour.
+const PLAN_UPLOAD_TIMEOUT_MS = 120_000
+
+/** The presigned PUT to S3 failed; DMR never saw the file. */
+export class PlanUploadError extends Error {}
+
 export const useEqualityContentPush = () => {
   const [updateDraftContent] = useMutation(UPDATE_EQUALITY_DRAFT_CONTENT)
   const [editContent] = useMutation(EDIT_EQUALITY_CONTENT)
+  const [presignPlan] = useMutation<{
+    presignDirectorateOfEqualityEqualityPlan: { url: string; key: string }
+  }>(PRESIGN_EQUALITY_PLAN)
+
+  /**
+   * Puts the plan PDF on S3 and returns the key to push. The bytes never pass
+   * through GraphQL, so the API's request-size limit doesn't apply. The key is
+   * single use: push it once, and presign again for any later attempt.
+   */
+  const uploadPlanPdf = useCallback(
+    async (applicationId: string, file: File): Promise<string> => {
+      const { data } = await presignPlan({
+        variables: { input: { applicationId } },
+      })
+      const presign = data?.presignDirectorateOfEqualityEqualityPlan
+      if (!presign?.url || !presign.key) {
+        throw new PlanUploadError('No presigned URL for the plan')
+      }
+
+      // No auth header: the presigned URL is the capability.
+      const controller = new AbortController()
+      const timeout = setTimeout(
+        () => controller.abort(),
+        PLAN_UPLOAD_TIMEOUT_MS,
+      )
+      try {
+        const response = await fetch(presign.url, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': 'application/pdf' },
+          signal: controller.signal,
+        })
+        if (!response.ok) {
+          throw new PlanUploadError(`Plan upload failed: ${response.status}`)
+        }
+      } catch (error) {
+        throw error instanceof PlanUploadError
+          ? error
+          : new PlanUploadError('Plan upload failed')
+      } finally {
+        clearTimeout(timeout)
+      }
+
+      return presign.key
+    },
+    [presignPlan],
+  )
 
   const pushDraftContent = useCallback(
     async (applicationId: string, content: EqualityContentPayload) => {
@@ -107,5 +176,5 @@ export const useEqualityContentPush = () => {
     [editContent],
   )
 
-  return { pushDraftContent, pushRetryContent }
+  return { uploadPlanPdf, pushDraftContent, pushRetryContent }
 }
