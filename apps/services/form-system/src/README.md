@@ -96,6 +96,14 @@ PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
 Children are displayed without numbering, with a blank line between each child.
 
+## Multiset output
+
+PDFs and Zendesk tickets follow the summary screen's multiset grouping: standalone
+fields before the multiset appear first, followed by each row's fields together,
+then the remaining standalone fields. Multiple groups are numbered once per
+group, not separately for each field. Hidden dependent rows are omitted, and
+standalone fields and attachments are not duplicated across groups.
+
 ## File upload defaults
 
 New FILE fields default to one `.pdf` file with a maximum size of 10485760 bytes

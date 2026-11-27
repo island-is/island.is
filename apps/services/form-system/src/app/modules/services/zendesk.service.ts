@@ -22,6 +22,7 @@ import {
   normalizeZendeskInstance,
 } from '../../../utils/zendeskPartiesCustomFieldIds'
 import { FileService } from '../file/file.service'
+import { getApplicationFieldGroups } from '../../../utils/applicationFieldGroups'
 
 @Injectable()
 export class ZendeskService {
@@ -519,149 +520,169 @@ export class ZendeskService {
             )
           }
 
-          for (const field of screen.fields ?? []) {
-            if (field.isHidden) continue
-            if (field.fieldType === FieldTypesEnum.MESSAGE) continue
-
-            if (section.sectionType !== SectionTypes.PARTIES) {
-              const requiredMark = field.isRequired ? '*' : ''
+          for (const group of getApplicationFieldGroups(
+            {
+              ...screen,
+              fields: screen.fields?.filter(
+                (field) => field.fieldType !== FieldTypesEnum.MESSAGE,
+              ),
+            },
+            applicationDto.dependencies,
+          )) {
+            if (group.number !== undefined) {
               parts.push(
-                h(
-                  5,
-                  `${field.name.is}${requiredMark}`,
-                  `margin:0;${indent(20)}`,
-                ),
+                '<br />',
+                h(5, `${group.number}.`, `margin:0;${indent(20)}`),
               )
             }
-
-            const values = field.values ?? []
-            const isMulti = values.length > 1
-
-            for (let valueIndex = 0; valueIndex < values.length; valueIndex++) {
-              const value = values[valueIndex]
-              const itemNo = valueIndex + 1
-
-              const rawJson = value?.json
-              const json =
-                rawJson && typeof rawJson === 'object'
-                  ? (rawJson as Record<string, unknown>)
-                  : {}
-
-              if (field.fieldType === FieldTypesEnum.FILE) {
-                const keys = this.normalizeS3Keys(
-                  (json as Record<string, unknown>)['s3Key'],
+            for (const field of group.fields) {
+              if (section.sectionType !== SectionTypes.PARTIES) {
+                const requiredMark = field.isRequired ? '*' : ''
+                parts.push(
+                  h(
+                    5,
+                    `${field.name.is}${requiredMark}`,
+                    `margin:0;${indent(20)}`,
+                  ),
                 )
-
-                for (const k of keys) {
-                  if (!seenKeys.has(k)) {
-                    seenKeys.add(k)
-                    attachmentKeys.push(k)
-                  }
-                }
-
-                const lines = keys.map(
-                  (k) => `• ${this.displayNameFromS3Key(k)}`,
-                )
-
-                const prefixHtml = isMulti ? `<strong>${itemNo}.</strong> ` : ''
-                const valHtml = lines.length
-                  ? this.escapeHtml(lines.join('\n')).replace(
-                      /\r\n|\n|\r/g,
-                      '<br />',
-                    )
-                  : ''
-
-                parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
-                continue
               }
 
-              const assetAttributeKeys =
-                field.fieldType === FieldTypesEnum.ASSETS
-                  ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
-                    ? ['color', 'model', 'registrationNumber']
-                    : field.fieldSettings?.assetType === AssetTypes.REAL_ESTATE
-                    ? [
-                        'address',
-                        'postalCode',
-                        'municipality',
-                        'propertyNumber',
-                      ]
-                    : undefined
-                  : undefined
-              const entries = Object.entries(json).filter(
-                ([key]) =>
-                  !assetAttributeKeys || assetAttributeKeys.includes(key),
-              )
-              const isMultiAttribute = entries.length > 1
+              const values = field.values ?? []
+              const isMulti = values.length > 1
 
-              // If multi and json is empty -> just write the itemNo (bold)
-              if (isMulti && entries.length === 0) {
-                parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
-                continue
-              }
+              for (
+                let valueIndex = 0;
+                valueIndex < values.length;
+                valueIndex++
+              ) {
+                const value = values[valueIndex]
+                const itemNo = valueIndex + 1
 
-              // Multi + multi-attribute: number once above all attributes (bold)
-              if (isMulti && isMultiAttribute) {
-                parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
-              }
+                const rawJson = value?.json
+                const json =
+                  rawJson && typeof rawJson === 'object'
+                    ? (rawJson as Record<string, unknown>)
+                    : {}
 
-              for (const [key, raw] of entries) {
-                if (
-                  field.fieldType === FieldTypesEnum.APPLICANT &&
-                  (key === 'delegationType' ||
-                    key === 'isLoggedInUser' ||
-                    key === 'applicantType' ||
-                    ((key === 'address' || key === 'postalCode') &&
-                      field.fieldSettings?.isAddressRequired !== true) ||
-                    key === 'municipality')
-                ) {
-                  continue
-                } else if (
-                  (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
-                    field.fieldType === FieldTypesEnum.RADIO_BUTTONS) &&
-                  key === 'value'
-                ) {
-                  continue
-                }
-
-                const val = this.formatValue(raw, field.fieldType)
-                if (
-                  (field.fieldType === FieldTypesEnum.APPLICANT ||
-                    isMultiAttribute) &&
-                  val.trim().length === 0
-                ) {
-                  continue
-                }
-
-                const valHtml = this.escapeHtml(val).replace(
-                  /\r\n|\n|\r/g,
-                  '<br />',
-                )
-
-                if (isMultiAttribute) {
-                  const attribute = getLanguageTypeForValueTypeAttribute(key)
-                  const attrIndent = isMulti ? 40 : 30
-
-                  parts.push(
-                    h(
-                      6,
-                      `${this.escapeHtml(attribute.is)}:`,
-                      `display:inline-block;${indent(
-                        attrIndent,
-                      )};margin-right:4px`,
-                    ),
-                    `<p style="display:inline-block;margin:0">${valHtml}</p><br />`,
+                if (field.fieldType === FieldTypesEnum.FILE) {
+                  const keys = this.normalizeS3Keys(
+                    (json as Record<string, unknown>)['s3Key'],
                   )
-                } else {
+
+                  for (const k of keys) {
+                    if (!seenKeys.has(k)) {
+                      seenKeys.add(k)
+                      attachmentKeys.push(k)
+                    }
+                  }
+
+                  const lines = keys.map(
+                    (k) => `• ${this.displayNameFromS3Key(k)}`,
+                  )
+
                   const prefixHtml = isMulti
                     ? `<strong>${itemNo}.</strong> `
                     : ''
-                  parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
-                }
-              }
+                  const valHtml = lines.length
+                    ? this.escapeHtml(lines.join('\n')).replace(
+                        /\r\n|\n|\r/g,
+                        '<br />',
+                      )
+                    : ''
 
-              if (field.fieldType === FieldTypesEnum.APPLICANT) {
-                parts.push('<br />')
+                  parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
+                  continue
+                }
+
+                const assetAttributeKeys =
+                  field.fieldType === FieldTypesEnum.ASSETS
+                    ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
+                      ? ['color', 'model', 'registrationNumber']
+                      : field.fieldSettings?.assetType ===
+                        AssetTypes.REAL_ESTATE
+                      ? [
+                          'address',
+                          'postalCode',
+                          'municipality',
+                          'propertyNumber',
+                        ]
+                      : undefined
+                    : undefined
+                const entries = Object.entries(json).filter(
+                  ([key]) =>
+                    !assetAttributeKeys || assetAttributeKeys.includes(key),
+                )
+                const isMultiAttribute = entries.length > 1
+
+                // If multi and json is empty -> just write the itemNo (bold)
+                if (isMulti && entries.length === 0) {
+                  parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
+                  continue
+                }
+
+                // Multi + multi-attribute: number once above all attributes (bold)
+                if (isMulti && isMultiAttribute) {
+                  parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
+                }
+
+                for (const [key, raw] of entries) {
+                  if (
+                    field.fieldType === FieldTypesEnum.APPLICANT &&
+                    (key === 'delegationType' ||
+                      key === 'isLoggedInUser' ||
+                      key === 'applicantType' ||
+                      ((key === 'address' || key === 'postalCode') &&
+                        field.fieldSettings?.isAddressRequired !== true) ||
+                      key === 'municipality')
+                  ) {
+                    continue
+                  } else if (
+                    (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+                      field.fieldType === FieldTypesEnum.RADIO_BUTTONS) &&
+                    key === 'value'
+                  ) {
+                    continue
+                  }
+
+                  const val = this.formatValue(raw, field.fieldType)
+                  if (
+                    (field.fieldType === FieldTypesEnum.APPLICANT ||
+                      isMultiAttribute) &&
+                    val.trim().length === 0
+                  ) {
+                    continue
+                  }
+
+                  const valHtml = this.escapeHtml(val).replace(
+                    /\r\n|\n|\r/g,
+                    '<br />',
+                  )
+
+                  if (isMultiAttribute) {
+                    const attribute = getLanguageTypeForValueTypeAttribute(key)
+                    const attrIndent = isMulti ? 40 : 30
+
+                    parts.push(
+                      h(
+                        6,
+                        `${this.escapeHtml(attribute.is)}:`,
+                        `display:inline-block;${indent(
+                          attrIndent,
+                        )};margin-right:4px`,
+                      ),
+                      `<p style="display:inline-block;margin:0">${valHtml}</p><br />`,
+                    )
+                  } else {
+                    const prefixHtml = isMulti
+                      ? `<strong>${itemNo}.</strong> `
+                      : ''
+                    parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
+                  }
+                }
+
+                if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                  parts.push('<br />')
+                }
               }
             }
           }

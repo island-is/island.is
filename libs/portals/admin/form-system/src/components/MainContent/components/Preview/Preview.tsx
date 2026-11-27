@@ -24,7 +24,7 @@ import {
   TextInput,
   TimeInput,
 } from '@island.is/form-system/ui'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, ElementType, useEffect, useReducer } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -35,6 +35,7 @@ interface Props {
   data: FormSystemField
   screenOrSection?: boolean
   valueIndex?: number
+  groupNumber?: number
   dispatch?: Dispatch<Action>
   state?: Pick<ApplicationState, 'currentScreen'>
 }
@@ -74,6 +75,7 @@ export const Preview = ({
   data,
   screenOrSection,
   valueIndex = 0,
+  groupNumber,
   dispatch,
   state,
 }: Props) => {
@@ -99,6 +101,11 @@ export const Preview = ({
     : undefined
   const fieldContent = FieldComponent ? (
     <>
+      {groupNumber !== undefined && (
+        <Box marginBottom={1}>
+          <Text variant="h4">{groupNumber}.</Text>
+        </Box>
+      )}
       <FieldInformation item={previewItem} />
       <FieldComponent
         item={previewItem}

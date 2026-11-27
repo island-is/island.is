@@ -23,6 +23,64 @@ describe('buildApplicationPdf layout', () => {
     ],
   })
 
+  it.each([1, 2])(
+    'renders %s multiset groups in summary order with one number per group',
+    async (itemCount) => {
+      const text = jest.spyOn(PDFDocument.prototype, 'text')
+      const field = (name: string, values: string[], repeated = false) =>
+        Object.assign(new FieldDto(), {
+          id: name,
+          name: { is: name },
+          fieldType: FieldTypesEnum.TEXTBOX,
+          isPartOfMultiset: repeated,
+          values: values.map((text) => ({ json: { text } })),
+        })
+      const firstAnswers = Array.from(
+        { length: itemCount },
+        (_, index) => `First answer ${index + 1}`,
+      )
+      const secondAnswers = Array.from(
+        { length: itemCount },
+        (_, index) => `Second answer ${index + 1}`,
+      )
+      const application = applicationWithFields([
+        field('Before', ['Before answer']),
+        field('First field', firstAnswers, true),
+        field('Standalone field', ['Only once']),
+        field('Second field', secondAnswers, true),
+        field('After', ['After answer']),
+      ])
+      const screen = application.sections?.[0]?.screens?.[0]
+      if (!screen) throw new Error('Missing screen fixture')
+      screen.isMulti = true
+
+      await buildApplicationPdf(application)
+
+      const expected = [
+        'Before',
+        'Before answer',
+        ...firstAnswers.flatMap((answer, index) => [
+          ...(itemCount > 1 ? [`${index + 1}.`] : []),
+          'First field',
+          answer,
+          'Second field',
+          secondAnswers[index],
+        ]),
+        'Standalone field',
+        'Only once',
+        'After',
+        'After answer',
+      ]
+      const relevant = new Set(expected)
+      expect(
+        text.mock.calls
+          .map(([value]) => value)
+          .filter((value) => typeof value === 'string' && relevant.has(value)),
+      ).toEqual(expected)
+      expect(text.mock.calls.map(([value]) => value)).not.toContain('1. ')
+    },
+  )
+
   it('omits hidden dependent multiset answers from the PDF', async () => {
     const text = jest.spyOn(PDFDocument.prototype, 'text')
     const application = applicationWithFields([

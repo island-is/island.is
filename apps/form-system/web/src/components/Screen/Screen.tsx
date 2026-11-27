@@ -200,29 +200,14 @@ export const Screen = () => {
       ).has(field.id)
     )
       return null
-    const showRowGutter =
-      isMulti && field.isPartOfMultiset !== false && numberOfItems > 1
+    const showGroupNumber = isMulti && fieldIndex === 0 && numberOfItems > 1
     return (
-      <Box
-        key={`${field.id}-${itemIndex}`}
-        display="flex"
-        alignItems="flexStart"
-      >
-        {showRowGutter && (
-          <Box
-            marginRight={2}
-            flexShrink={0}
-            marginTop={4}
-            style={{ width: '2ch' }}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            {fieldIndex === 0 && <Text variant="h4">{itemIndex + 1}.</Text>}
-          </Box>
-        )}
-        <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-          <Field field={field} valueIndex={itemIndex} />
-        </Box>
+      <Box key={`${field.id}-${itemIndex}`}>
+        <Field
+          field={field}
+          valueIndex={itemIndex}
+          groupNumber={showGroupNumber ? itemIndex + 1 : undefined}
+        />
       </Box>
     )
   }

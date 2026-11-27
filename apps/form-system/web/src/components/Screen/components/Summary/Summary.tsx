@@ -261,13 +261,7 @@ export const Summary = ({ state }: Props) => {
                                     />
                                   )
 
-                                  return numberOfItems > 1 ? (
-                                    <Box marginLeft={2} key={key}>
-                                      {content}
-                                    </Box>
-                                  ) : (
-                                    <Box key={key}>{content}</Box>
-                                  )
+                                  return <Box key={key}>{content}</Box>
                                 })}
                             </Box>
                           ),

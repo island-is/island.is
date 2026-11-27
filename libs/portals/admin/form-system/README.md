@@ -56,6 +56,9 @@ data migration also clears existing child-family multiset membership.
 
 ## Multiset dependencies
 
+Multiset group numbers appear directly above their fields, with normal field
+spacing before the number and no extra group indentation.
+
 Checkbox, radio-button, and dropdown fields can control dependencies while part
 of a multiset. Dependent fields in the same multiset follow the controlling
 value in their own row. Dependents outside that multiset are visible while any
