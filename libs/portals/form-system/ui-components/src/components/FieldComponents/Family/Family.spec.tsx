@@ -11,6 +11,7 @@ import {
   GET_FAMILY_MEMBERS,
 } from '@island.is/form-system/graphql'
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -696,6 +697,7 @@ it('renders only selected children using national-ID summary blocks', () => {
   const item: FormSystemField = {
     id: 'family',
     screenId: 'screen',
+    isRequired: false,
     name: { is: 'Children' },
     isPartOfMultiset: false,
     fieldType: FieldTypesEnum.FAMILY,
@@ -739,6 +741,8 @@ it.each([FieldTypesEnum.NATIONAL_ID, FieldTypesEnum.FAMILY])(
   (fieldType) => {
     const item: FormSystemField = {
       id: 'person',
+      screenId: 'screen',
+      isRequired: false,
       name: { is: 'Person' },
       fieldType,
       isPartOfMultiset: false,
@@ -798,6 +802,7 @@ it.each<{
   ({ isRequired, values }) => {
     const item: FormSystemField = {
       id: 'family',
+      screenId: 'screen',
       name: { is: 'Children' },
       fieldType: FieldTypesEnum.FAMILY,
       fieldSettings: { familyType: FamilyTypes.CHILD },
@@ -830,7 +835,7 @@ it.each<{
   },
 )
 
-it('updates the values when children are unchecked and rechecked, including clearing every selection', () => {
+it('updates the values when children are unchecked and rechecked, including clearing every selection', async () => {
   const { dispatch } = renderFamily(
     FamilyTypes.CHILD,
     false,
@@ -851,7 +856,9 @@ it('updates the values when children are unchecked and rechecked, including clea
     name: 'Second child (0101212989)',
   })
 
-  fireEvent.click(first)
+  await act(async () => {
+    fireEvent.click(first)
+  })
   expect(first).toHaveProperty('checked', false)
   expect(dispatch).toHaveBeenLastCalledWith({
     type: 'SET_FIELD_VALUES',
@@ -867,14 +874,18 @@ it('updates the values when children are unchecked and rechecked, including clea
     },
   })
 
-  fireEvent.click(second)
+  await act(async () => {
+    fireEvent.click(second)
+  })
   expect(second).toHaveProperty('checked', false)
   expect(dispatch).toHaveBeenLastCalledWith({
     type: 'SET_FIELD_VALUES',
     payload: { id: 'family', values: [] },
   })
 
-  fireEvent.click(first)
+  await act(async () => {
+    fireEvent.click(first)
+  })
   expect(first).toHaveProperty('checked', true)
   expect(dispatch).toHaveBeenLastCalledWith({
     type: 'SET_FIELD_VALUES',
@@ -932,6 +943,8 @@ it.each([
 it('preserves an explicitly empty child-table selection during application initialization', () => {
   const field: FormSystemField = {
     id: 'family',
+    screenId: 'screen',
+    isRequired: false,
     name: { is: 'Children' },
     isPartOfMultiset: false,
     fieldType: FieldTypesEnum.FAMILY,

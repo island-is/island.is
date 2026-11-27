@@ -25,6 +25,7 @@ import {
 import { AppealSummons } from '../appeal-summons'
 import {
   Case,
+  CaseLifetimeResponse,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
@@ -230,6 +231,13 @@ export class BackendService {
 
   updateUser(userId: string, updateUser: unknown): Promise<User> {
     return this.put(`user/${userId}`, updateUser)
+  }
+
+  extendCaseLifetime(
+    caseId: string,
+    days: number,
+  ): Promise<CaseLifetimeResponse> {
+    return this.patch(`case/${caseId}/lifetime`, { days })
   }
 
   getMessageSuspensions(): Promise<MessageSuspension[]> {

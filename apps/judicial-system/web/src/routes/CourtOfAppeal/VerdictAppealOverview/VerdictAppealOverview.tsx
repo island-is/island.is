@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,7 +6,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -21,9 +20,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
 import VerdictAppealConclusions from './VerdictAppealConclusions'
 import { getVerdictAppealOverviewHeaderLines } from './VerdictAppealOverview.logic'
@@ -52,7 +51,6 @@ const VerdictAppealOverview = () => {
   // When the URL does name the verdict appeal the resolver returns this very
   // object, so nothing is lost by reading it directly.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const handleNavigationTo = (destination: string) =>
@@ -64,6 +62,7 @@ const VerdictAppealOverview = () => {
     )
 
   const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
+  const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
 
   return (
     <PageLayout
@@ -72,7 +71,7 @@ const VerdictAppealOverview = () => {
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader title={titles.courtOfAppeal.verdictAppeal.overview} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
           {/* The court's own heading for the proceeding, rather than the case
@@ -80,12 +79,19 @@ const VerdictAppealOverview = () => {
               case is here the district court is finished with it, and what the
               page is about is the appeal. */}
           <Box>
-            <PageTitle marginBottom={1}>Yfirlit</PageTitle>
-            {headerLines.map((line) => (
-              <Text key={line} as="h5" variant="h5">
-                {line}
-              </Text>
-            ))}
+            <PageTitle marginBottom={caseNumber ? 5 : 1}>Yfirlit</PageTitle>
+            <div className={stack({ gap: 1 })}>
+              {caseNumber && (
+                <Text as="h2" variant="h2">
+                  {caseNumber}
+                </Text>
+              )}
+              {headerLines.map((line) => (
+                <Text key={line} as="h5" variant="h5">
+                  {line}
+                </Text>
+              ))}
+            </div>
           </Box>
           {/* One per defendant: each has their own verdict, their own service
               and their own deadline, so the court reads them side by side.
@@ -98,7 +104,7 @@ const VerdictAppealOverview = () => {
               defendant={defendant}
             />
           ))}
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment appealCase={verdictAppealCase ?? null} />
           {/* Both sets of operative words. This court's own is absent until
               the step that writes one is built. */}
           <VerdictAppealConclusions />

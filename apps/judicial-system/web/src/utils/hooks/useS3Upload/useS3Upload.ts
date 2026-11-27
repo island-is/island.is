@@ -42,6 +42,7 @@ import type { LimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.
 import { useLimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
 import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
+import { resolveUploadFileDefendantId } from './useS3Upload.logic'
 import { strings } from './useS3Upload.strings'
 
 // - rewrite upload from police
@@ -358,7 +359,10 @@ const useS3Upload = (
         rulingFileId: file.rulingFileId ?? rulingFileId,
       }
 
-      const fileDefendantId = file.defendantId ?? defendantId
+      // A civil-claimant stamp must not fall back to the hook's defendantId
+      // when the selected party changes without a page reset — otherwise the
+      // file uploads on the defendant path under the new defendant.
+      const fileDefendantId = resolveUploadFileDefendantId(file, defendantId)
       if (fileDefendantId) {
         return addDefendantFileToCaseState(baseInput, fileDefendantId)
       }

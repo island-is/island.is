@@ -492,6 +492,23 @@ export const messages = {
         id: 'doe.er.application:equalityReport.information.editorFileTooLarge',
         defaultMessage: 'Skráin er of stór. Hámarksstærð PDF skjals er 4 MB.',
       },
+      // DMR refused the PDF itself: empty, not really a PDF, or over the cap.
+      editorPdfRejected: {
+        id: 'doe.er.application:equalityReport.information.editorPdfRejected',
+        defaultMessage:
+          'Ekki var hægt að taka við skjalinu. Gakktu úr skugga um að það sé gilt PDF skjal, að hámarki 4 MB.',
+      },
+      // The converted text, not the file on disk, is what has to fit.
+      editorDocumentTooLarge: {
+        id: 'doe.er.application:equalityReport.information.editorDocumentTooLarge',
+        defaultMessage:
+          'Skjalið er of stórt til að hlaða því upp. Styttið skjalið eða hlaðið áætluninni upp sem PDF skjali.',
+      },
+      editorImagesNotIncluded: {
+        id: 'doe.er.application:equalityReport.information.editorImagesNotIncluded',
+        defaultMessage:
+          'Myndir í Word skjölum fylgja ekki með áætluninni. Ef myndir eða gröf skipta máli, hlaðið áætluninni upp sem PDF skjali.',
+      },
       editorUploadError: {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
         defaultMessage:
@@ -516,14 +533,19 @@ export const messages = {
         id: 'doe.er.application:equalityReport.attachments.title',
         defaultMessage: 'Fylgiskjöl',
       },
-      description: {
-        id: 'doe.er.application:equalityReport.attachments.description',
-        defaultMessage:
-          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Leyfileg snið eru PDF, Word (.docx) og Excel (.xlsx, .xls). Hámark 6 skjöl, hvert að hámarki 4 MB. Aðeins Jafnréttisstofa sér skjölin.',
+      // The plan screen's heading; the overview keeps the plain title.
+      optionalTitle: {
+        id: 'doe.er.application:equalityReport.attachments.optionalTitle',
+        defaultMessage: 'Fylgiskjöl (valkvætt)',
       },
-      uploadButton: {
-        id: 'doe.er.application:equalityReport.attachments.uploadButton',
-        defaultMessage: 'Velja skjöl til að hlaða upp',
+      intro: {
+        id: 'doe.er.application:equalityReport.attachments.intro',
+        defaultMessage:
+          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Samþykktar skráartegundir eru: .pdf, .docx, .xlsx, .xls. Hámark 6 skjöl, hvert að hámarki 4 MB.',
+      },
+      uploadFiles: {
+        id: 'doe.er.application:equalityReport.attachments.uploadFiles',
+        defaultMessage: 'Hlaða upp skjölum',
       },
       loadError: {
         id: 'doe.er.application:equalityReport.attachments.loadError',

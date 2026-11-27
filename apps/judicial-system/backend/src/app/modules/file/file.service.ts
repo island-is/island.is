@@ -67,7 +67,10 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
-interface CreateFile extends CreateFileDto {
+// Party ids are stamped by the defendant / civil-claimant create routes, not
+// by CreateFileDto (the case-level body). Callers and specs that pass a
+// party-scoped create use this shape.
+export interface CreateFile extends CreateFileDto {
   defendantId?: string
   civilClaimantId?: string
 }
@@ -307,6 +310,20 @@ export class FileService {
 
       return undefined
     }
+  }
+
+  // The confirmed copy of the court of appeals' judgment or ruling carries the
+  // date of its conclusion. Without a hash the copy is not trusted, so the
+  // next read stamps the document again with the date now on record.
+  async invalidateVerdictAppealRulingConfirmation(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.caseFileRepositoryService.clearHashesForCaseAndCategory(
+      caseId,
+      CaseFileCategory.VERDICT_APPEAL_RULING,
+      { transaction },
+    )
   }
 
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {

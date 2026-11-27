@@ -483,7 +483,8 @@ export const stepValidations = (
     // leaving it half done.
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () =>
       validations.isVerdictAppealStatusStepValid(appealCase),
-    // Nothing follows the summary, so nothing asks whether it is complete.
+    // The summary is only read: what finishes the appeal is the court
+    // confirming it there, not moving past it.
     [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }
 }

@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,7 +6,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AppealAppointmentLetterButtons,
   FormContentContainer,
@@ -19,7 +18,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import SelectAppealCivilClaimantAdvocate from './SelectAppealCivilClaimantAdvocate'
@@ -58,7 +56,6 @@ const VerdictAppealDefender = () => {
   // appeal when the URL names no appeal, and this page is never about that
   // one.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const previousUrl = appendAppealCaseIdQuery(
@@ -87,7 +84,7 @@ const VerdictAppealDefender = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader title={titles.courtOfAppeal.verdictAppeal.defender} />
       <FormContentContainer>
         {/* Which appeal this is, and which district court case it came from.
             The overview leads with the district court because the appeal has
