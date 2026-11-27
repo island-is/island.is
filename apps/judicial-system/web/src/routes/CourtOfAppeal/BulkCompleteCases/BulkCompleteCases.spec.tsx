@@ -15,7 +15,7 @@ const mockUseCaseTableQuery = jest.fn()
 const mockRefetch = jest.fn()
 const mockCompleteVerdictAppeals = jest.fn()
 const mockToastError = jest.fn()
-let mockAsPath = '/landsrettur/malalistar/afryjud-mal-i-domsuppkvadningu'
+let mockAsPath = '/malalistar/afryjud-mal-i-domsuppkvadningu'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -129,7 +129,7 @@ describe('BulkCompleteCases', () => {
     modalRoot.id = 'modal'
     document.body.appendChild(modalRoot)
     user = userEvent.setup()
-    mockAsPath = '/landsrettur/malalistar/afryjud-mal-i-domsuppkvadningu'
+    mockAsPath = '/malalistar/afryjud-mal-i-domsuppkvadningu'
     mockUseCaseTableQuery.mockReset()
     mockUseCaseTableQuery.mockReturnValue(loaded())
     mockRefetch.mockReset()
@@ -224,7 +224,7 @@ describe('BulkCompleteCases', () => {
   it.each([
     '/malalistar/afryjud-mal-i-domsuppkvadningu?x=1',
     '/malalistar/afryjud-mal-i-domsuppkvadningu#efst',
-    '/landsrettur/malalistar/afryjud-mal-i-domsuppkvadningu?x=1#efst',
+    '/malalistar/afryjud-mal-i-domsuppkvadningu?x=1#efst',
   ])('finds the list at %s', (asPath) => {
     mockAsPath = asPath
 
@@ -234,14 +234,6 @@ describe('BulkCompleteCases', () => {
     expect(
       screen.queryByText('Þú hefur ekki aðgang að þessum málalista'),
     ).not.toBeInTheDocument()
-  })
-
-  it('serves the same list under the general case list path', () => {
-    mockAsPath = '/malalistar/afryjud-mal-i-domsuppkvadningu'
-
-    renderPage()
-
-    expect(screen.getByText('S-1/2026')).toBeInTheDocument()
   })
 
   it('shows the rows under the title and columns of the table', () => {
