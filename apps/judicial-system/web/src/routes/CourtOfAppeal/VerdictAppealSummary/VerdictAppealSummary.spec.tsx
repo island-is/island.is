@@ -431,7 +431,7 @@ describe('VerdictAppealSummary', () => {
     renderPage()
 
     expect(
-      screen.getByRole('heading', { name: rulingDateHeading }),
+      screen.getByRole('heading', { name: rulingDateHeading, level: 3 }),
     ).toBeInTheDocument()
     expect(screen.getByText(rulingDateInstruction)).toBeInTheDocument()
     expect(screen.getByText(rulingDateConsequence)).toBeInTheDocument()
@@ -483,7 +483,7 @@ describe('VerdictAppealSummary', () => {
     renderPage(theCase, UserRole.PROSECUTOR)
 
     expect(
-      screen.queryByRole('heading', { name: rulingDateHeading }),
+      screen.queryByRole('heading', { name: rulingDateHeading, level: 3 }),
     ).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/Dagsetning lykta/)).not.toBeInTheDocument()
   })
@@ -581,7 +581,7 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
     // The date can still be corrected once the appeal is confirmed.
     expect(
-      screen.getByRole('heading', { name: rulingDateHeading }),
+      screen.getByRole('heading', { name: rulingDateHeading, level: 3 }),
     ).toBeInTheDocument()
     expect(screen.getByLabelText(/Dagsetning lykta/)).toBeEnabled()
     expect(mockPush).not.toHaveBeenCalled()

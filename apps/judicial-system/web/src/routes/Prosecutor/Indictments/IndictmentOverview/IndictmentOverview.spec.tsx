@@ -622,5 +622,38 @@ describe('Prosecutor IndictmentOverview', () => {
         expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
       })
     })
+
+    describe('the concluding words of the court of appeals', () => {
+      const conclusion = 'Hinn áfrýjaði dómur skal vera óraskaður.'
+
+      const withConclusion = (appealState: AppealCaseState) =>
+        appealCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState,
+            appealEventLogs: [],
+            appealConclusion: conclusion,
+          },
+        })
+
+      it('shows them once the verdict appeal is completed', async () => {
+        renderCase(withConclusion(AppealCaseState.COMPLETED))
+
+        expect(
+          await screen.findByText('Dómsorð Landsréttar'),
+        ).toBeInTheDocument()
+        expect(screen.getByText(conclusion)).toBeInTheDocument()
+      })
+
+      it('does not show them before the verdict appeal is completed', async () => {
+        renderCase(withConclusion(AppealCaseState.READY_TO_COMPLETE))
+
+        await screen.findByText('• Afstaða dómfellda: Unir dómi')
+        expect(
+          screen.queryByText('Dómsorð Landsréttar'),
+        ).not.toBeInTheDocument()
+        expect(screen.queryByText(conclusion)).not.toBeInTheDocument()
+      })
+    })
   })
 })

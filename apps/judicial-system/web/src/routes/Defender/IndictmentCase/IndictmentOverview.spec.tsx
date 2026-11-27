@@ -13,6 +13,7 @@ import {
   AppealCaseState,
   AppealCourtSessionType,
   AppealEventType,
+  AppealRulingType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -649,6 +650,45 @@ describe('Defender IndictmentOverview', () => {
       expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
       expect(
         screen.queryByText('Niðurstaða Landsréttar'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('titles the conclusion úrskurðarorð when Landsréttur ruled by úrskurður', async () => {
+      const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.COMPLETED,
+          appealRulingType: AppealRulingType.RULING,
+          appealConclusion: 'Málinu er vísað frá Landsrétti.',
+        },
+      })
+
+      renderOverview({ ...theCase, appealCase: undefined })
+
+      expect(
+        await screen.findByText('Úrskurðarorð Landsréttar'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Málinu er vísað frá Landsrétti.'),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+    })
+
+    it('does not show Landsréttur’s dómsorð before the verdict appeal is completed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        }),
+      )
+
+      await screen.findAllByText('Eigin sakborningur')
+      expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
       ).not.toBeInTheDocument()
     })
   })
