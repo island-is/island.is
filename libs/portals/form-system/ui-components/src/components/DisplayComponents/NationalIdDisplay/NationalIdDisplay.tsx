@@ -9,7 +9,7 @@ import { DefaultDisplay } from '../DefaultDisplay/DefaultDisplay'
 
 interface Props {
   item: FormSystemField
-  valueIndex: number
+  valueIndex?: number
   requiredMissing?: boolean
 }
 
@@ -24,11 +24,16 @@ export const NationalIdDisplay = (props: Props) => {
   }
 
   const selectedIndexes = (item.values ?? []).flatMap((value, index) =>
-    value?.json?.nationalId ? [index] : [],
+    value?.json?.nationalId &&
+    (!item.isPartOfMultiset ||
+      props.valueIndex === undefined ||
+      index === props.valueIndex)
+      ? [index]
+      : [],
   )
 
   if (selectedIndexes.length === 0 && props.requiredMissing) {
-    return <DefaultDisplay {...props} />
+    return <DefaultDisplay {...props} valueIndex={props.valueIndex ?? 0} />
   }
 
   return (
@@ -59,7 +64,7 @@ export const NationalIdDisplay = (props: Props) => {
 
 const NationalIdValueDisplay = ({
   item,
-  valueIndex,
+  valueIndex = 0,
   requiredMissing = false,
   showLabel = true,
 }: Props & { showLabel?: boolean }) => {

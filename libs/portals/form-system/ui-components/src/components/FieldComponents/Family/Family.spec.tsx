@@ -728,48 +728,84 @@ it.each([false, true])(
   },
 )
 
-it('renders only selected children using national-ID summary blocks', () => {
-  const item: FormSystemField = {
-    id: 'family',
-    screenId: 'screen',
-    isRequired: false,
-    name: { is: 'Children' },
-    isPartOfMultiset: false,
-    fieldType: FieldTypesEnum.FAMILY,
-    fieldSettings: { familyType: FamilyTypes.CHILD },
-    values: [
-      { json: { name: 'First selected child', nationalId: '0101232989' } },
-      { json: { name: 'Second selected child', nationalId: '0101212989' } },
-    ],
-    list: [
-      {
-        id: 'unselected',
-        label: { is: 'Unselected child' },
-        value: '0101252989',
-      },
-    ],
-  }
+it.each([
+  { isPartOfMultiset: false, valueIndex: undefined },
+  { isPartOfMultiset: false, valueIndex: 0 },
+  { isPartOfMultiset: true, valueIndex: undefined },
+])(
+  'renders all selected children outside a multiset group (case %#)',
+  ({ isPartOfMultiset, valueIndex }) => {
+    const item: FormSystemField = {
+      id: 'family',
+      screenId: 'screen',
+      isRequired: false,
+      name: { is: 'Children' },
+      isPartOfMultiset,
+      fieldType: FieldTypesEnum.FAMILY,
+      fieldSettings: { familyType: FamilyTypes.CHILD },
+      values: [
+        { json: { name: 'First selected child', nationalId: '0101232989' } },
+        { json: { name: 'Second selected child', nationalId: '0101212989' } },
+      ],
+      list: [
+        {
+          id: 'unselected',
+          label: { is: 'Unselected child' },
+          value: '0101252989',
+        },
+      ],
+    }
 
-  render(<NationalIdDisplay item={item} valueIndex={0} />)
+    render(<NationalIdDisplay item={item} valueIndex={valueIndex} />)
 
-  expect(screen.queryByRole('table')).toBeNull()
-  expect(screen.getAllByText('Nafn:')).toHaveLength(2)
-  expect(screen.getAllByText('Kennitala:')).toHaveLength(2)
-  screen.getAllByText('Nafn:').forEach((name, index) => {
-    expect(
-      name.compareDocumentPosition(screen.getAllByText('Kennitala:')[index]) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
-  })
-  expect(screen.getAllByText('Children')).toHaveLength(1)
-  expect(screen.getByText('First selected child')).toBeTruthy()
-  expect(screen.getByText('Second selected child')).toBeTruthy()
-  expect(screen.getByText('0101232989')).toBeTruthy()
-  expect(screen.getByText('0101212989')).toBeTruthy()
-  expect(screen.queryByText('Unselected child')).toBeNull()
-  expect(screen.queryByText('0101252989')).toBeNull()
-  expect(screen.queryAllByRole('checkbox')).toHaveLength(0)
-})
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.getAllByText('Nafn:')).toHaveLength(2)
+    expect(screen.getAllByText('Kennitala:')).toHaveLength(2)
+    screen.getAllByText('Nafn:').forEach((name, index) => {
+      expect(
+        name.compareDocumentPosition(screen.getAllByText('Kennitala:')[index]) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    })
+    expect(screen.getAllByText('Children')).toHaveLength(1)
+    expect(screen.getByText('First selected child')).toBeTruthy()
+    expect(screen.getByText('Second selected child')).toBeTruthy()
+    expect(screen.getByText('0101232989')).toBeTruthy()
+    expect(screen.getByText('0101212989')).toBeTruthy()
+    expect(screen.queryByText('Unselected child')).toBeNull()
+    expect(screen.queryByText('0101252989')).toBeNull()
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0)
+  },
+)
+
+it.each([0, 1])(
+  'renders only the child at multiset group index %s',
+  (valueIndex) => {
+    const children = [
+      { name: 'First child', nationalId: '0101232989' },
+      { name: 'Second child', nationalId: '0101212989' },
+    ]
+    const item: FormSystemField = {
+      id: 'family',
+      screenId: 'screen',
+      isRequired: false,
+      name: { is: 'Children' },
+      isPartOfMultiset: true,
+      fieldType: FieldTypesEnum.FAMILY,
+      fieldSettings: { familyType: FamilyTypes.CHILD },
+      values: children.map((json) => ({ json })),
+    }
+
+    render(<NationalIdDisplay item={item} valueIndex={valueIndex} />)
+
+    expect(screen.getAllByText('Nafn:')).toHaveLength(1)
+    expect(screen.getAllByText('Kennitala:')).toHaveLength(1)
+    expect(screen.getByText(children[valueIndex].name)).toBeTruthy()
+    expect(screen.getByText(children[valueIndex].nationalId)).toBeTruthy()
+    expect(screen.queryByText(children[1 - valueIndex].name)).toBeNull()
+    expect(screen.queryByText(children[1 - valueIndex].nationalId)).toBeNull()
+  },
+)
 
 it.each([FieldTypesEnum.NATIONAL_ID, FieldTypesEnum.FAMILY])(
   'retains a single national-ID summary for %s',

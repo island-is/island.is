@@ -50,7 +50,9 @@ Child fields always display all custody children in a table with names, national
 checkbox at the end of each row. Children are selected by default; saved
 selections are restored, including an empty selection. Saving the screen
 replaces the field's values with one name/national-ID value per selected child,
-removing values for unchecked children. The summary shows only saved selected
+removing values for unchecked children. Reopening an application preserves the
+child field with an empty value list when all children were unchecked; other
+field types still require stored values to appear. The summary shows only saved selected
 children, with a separate name/national-ID block for each child using the
 national-ID field layout rather than a table. It does not rely on the cached
 registry list.
@@ -76,6 +78,9 @@ navigation remains available.
 
 National-ID, family, and applicant summaries display the name above the national
 ID, including each selected child.
+Multiset child-family summary groups show only the child at that group's value
+index. Non-multiset summaries and displays without an index retain the full
+selected child list.
 Selected children sit directly below the field heading, with spacing retained
 between children and no extra gap between each child's name and national ID.
 National-ID fields also use no extra gap between name and national ID, while

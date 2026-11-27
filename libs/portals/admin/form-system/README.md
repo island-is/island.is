@@ -48,6 +48,11 @@ display-mode options or child `isDropdown` setting. Asset and payment-quantity
 fields retain their own dropdown settings.
 Each table row ends with a checkbox, initially checked. Saved selections are
 restored when returning to the screen, including when every child was unchecked.
+Child fields cannot be part of a multiset and do not show the multiset option.
+Selecting the child family type clears multiset membership. Opening editable
+settings also clears any previously saved child multiset membership.
+These changes update both editor state and the saved field. The form-system
+data migration also clears existing child-family multiset membership.
 
 ## Forms list
 

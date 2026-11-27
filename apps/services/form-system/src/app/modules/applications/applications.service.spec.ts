@@ -14,6 +14,7 @@ import axios from 'axios'
 import PDFDocument from 'pdfkit'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Value } from './models/value.model'
+import { ApplicationMapper } from './models/application.mapper'
 
 describe('ApplicationsService.deleteApplication', () => {
   const setup = () => {
@@ -820,7 +821,7 @@ it.each([
   { children: [{ name: 'Second child', nationalId: '0101212989' }] },
   { children: [] },
 ])(
-  'replaces child-table values with only selected children when saving a screen (case %#)',
+  'saves and reopens child selections, including an empty selection (case %#)',
   async ({ children }) => {
     const transaction = {}
     const application = {
@@ -875,16 +876,69 @@ it.each([
         ],
       },
     ]
-    const destroy = jest.fn().mockResolvedValue(2)
-    const create = jest.fn().mockResolvedValue(undefined)
+    let storedValues = [
+      {
+        id: 'previous-child',
+        order: 0,
+        json: { name: 'First child', nationalId: '0101202989' },
+      },
+    ]
+    const destroy = jest.fn(async () => {
+      const count = storedValues.length
+      storedValues = []
+      return count
+    })
+    const create = jest.fn(
+      async (value: {
+        order: number
+        json: { name: string; nationalId: string }
+      }) => {
+        storedValues.push({ id: `saved-${value.order}`, ...value })
+      },
+    )
     const update = jest.fn()
+    const formModel = {
+      findByPk: jest.fn().mockResolvedValue({}),
+      findOne: jest.fn().mockImplementation(async () => ({
+        id: 'form',
+        slug: 'form-slug',
+        sections: sections.map((section) => ({
+          ...section,
+          screens: section.screens?.map((screen) => ({
+            ...screen,
+            fields: [
+              { ...screen.fields?.[0], values: storedValues },
+              {
+                id: 'empty-spouse',
+                fieldType: FieldTypesEnum.FAMILY,
+                fieldSettings: { familyType: FamilyTypes.SPOUSE },
+                values: [],
+              },
+              {
+                id: 'empty-text',
+                fieldType: FieldTypesEnum.TEXTBOX,
+                values: [],
+              },
+              {
+                id: 'saved-text',
+                fieldType: FieldTypesEnum.TEXTBOX,
+                values: [{ id: 'text-value', json: { text: 'Saved' } }],
+              },
+            ],
+          })),
+        })),
+      })),
+    }
     const service = Object.assign(
       Object.create(ApplicationsService.prototype),
       {
         applicationModel: {
           findByPk: jest.fn().mockResolvedValue(application),
+          findOne: jest.fn().mockResolvedValue(application),
         },
-        formModel: { findByPk: jest.fn().mockResolvedValue({}) },
+        formModel,
+        applicationMapper: new ApplicationMapper(),
+        getAllowedLoginTypes: jest.fn().mockResolvedValue([]),
         getLoginTypes: jest.fn().mockResolvedValue([]),
         hasDelegation: jest.fn().mockReturnValue(true),
         doesUserMatchApplication: jest.fn().mockReturnValue(true),
@@ -933,6 +987,44 @@ it.each([
       )
     })
     expect(update).not.toHaveBeenCalled()
+
+    const reopened = await service.getApplication(
+      application.id,
+      'form-slug',
+      null,
+    )
+    const fields = reopened.application?.sections?.[0].screens?.[0].fields
+
+    expect(fields?.map((field) => field.id)).toEqual(['children', 'saved-text'])
+    expect(fields?.[0].values?.map((value) => value.json)).toEqual(children)
+    expect(fields?.[1].values).toEqual([
+      { id: 'text-value', json: { text: 'Saved' } },
+    ])
+    expect(formModel.findOne.mock.calls[0]).toMatchObject([
+      {
+        include: [
+          {
+            include: [
+              {
+                include: [
+                  {
+                    include: [
+                      {},
+                      {
+                        model: Value,
+                        required: false,
+                        where: { applicationId: application.id },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {},
+        ],
+      },
+    ])
   },
 )
 
