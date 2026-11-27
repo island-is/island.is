@@ -1,5 +1,9 @@
 import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/enums'
 import { describe, expect, it, jest } from '@jest/globals'
 import { ControlState, controlReducer } from './controlReducer'
 
@@ -186,6 +190,66 @@ describe('CHANGE_FIELD_TYPE', () => {
       expect(result.form.fields?.[0]).toBe(result.activeItem.data)
       expect(result.form.fields?.[1]).toBe(otherField)
       expect(field.isPartOfMultiset).toBe(true)
+      expect(update).toHaveBeenCalledWith(result.activeItem)
+    },
+  )
+})
+
+describe('child multiset membership', () => {
+  const field: FormSystemField = {
+    id: 'family',
+    name: { is: 'Family' },
+    screenId: 'screen',
+    isRequired: false,
+    isPartOfMultiset: true,
+    fieldType: FieldTypesEnum.FAMILY,
+    fieldSettings: { familyType: FamilyTypes.SPOUSE },
+  }
+
+  it.each([FamilyTypes.CHILD, FamilyTypes.SPOUSE])(
+    'clears multiset membership only when selecting %s',
+    (familyType) => {
+      const state = createState()
+      state.activeItem = { type: 'Field', data: field }
+      state.form.fields = [field]
+      const update = jest.fn()
+
+      const result = controlReducer(state, {
+        type: 'SET_ANY_FIELD_SETTING',
+        payload: { property: 'familyType', value: familyType, update },
+      })
+
+      expect(result.form.fields?.[0]?.isPartOfMultiset).toBe(
+        familyType !== FamilyTypes.CHILD,
+      )
+      expect(result.form.fields?.[0]?.fieldSettings?.familyType).toBe(
+        familyType,
+      )
+      expect(result.activeItem.data).toBe(result.form.fields?.[0])
+      expect(update).toHaveBeenCalledWith(result.activeItem)
+    },
+  )
+
+  it.each([false, true])(
+    'keeps child multiset membership disabled when toggled from %s',
+    (isPartOfMultiset) => {
+      const child = {
+        ...field,
+        isPartOfMultiset,
+        fieldSettings: { familyType: FamilyTypes.CHILD },
+      }
+      const state = createState()
+      state.activeItem = { type: 'Field', data: child }
+      state.form.fields = [child]
+      const update = jest.fn()
+
+      const result = controlReducer(state, {
+        type: 'CHANGE_IS_PART_OF_MULTI',
+        payload: { update },
+      })
+
+      expect(result.form.fields?.[0]?.isPartOfMultiset).toBe(false)
+      expect(result.activeItem.data).toBe(result.form.fields?.[0])
       expect(update).toHaveBeenCalledWith(result.activeItem)
     },
   )

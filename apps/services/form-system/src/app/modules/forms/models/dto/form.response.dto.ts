@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { FormDto } from './form.dto'
+import { FormDto, FormListItemDto } from './form.dto'
 import { ApplicantType } from '../../../../dataTypes/applicantTypes/applicantType.model'
 import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'
@@ -29,8 +29,8 @@ export class FormResponseDto {
   @ApiPropertyOptional({ type: [String] })
   organizationDelegations?: string[]
 
-  @ApiPropertyOptional({ type: [FormDto] })
-  forms?: FormDto[]
+  @ApiPropertyOptional({ type: [FormListItemDto] })
+  forms?: FormListItemDto[]
 
   @ApiPropertyOptional({ type: [String] })
   organizationNationalIds?: string[]

@@ -250,6 +250,33 @@ describe('VerdictAppealOutcomeInterceptor', () => {
     },
   )
 
+  // The route that completes many verdict appeals returns them as a list.
+  it('presents each appeal case of a list', async () => {
+    const confirmed = makeAppealCase(
+      AppealCaseType.VERDICT,
+      AppealCaseState.READY_TO_COMPLETE,
+    )
+    const completed = makeAppealCase(
+      AppealCaseType.VERDICT,
+      AppealCaseState.COMPLETED,
+    )
+
+    const result = (await intercept(
+      [confirmed, completed],
+      nonCourtOfAppealsUsers[0][1],
+    )) as unknown as Record<string, unknown>[]
+
+    expect(result).toHaveLength(2)
+    expect(result[0]).toMatchObject({
+      ...withheldOutcome,
+      appealState: AppealCaseState.APPEALED,
+    })
+    expect(result[1]).toMatchObject({
+      ...outcome,
+      appealState: AppealCaseState.COMPLETED,
+    })
+  })
+
   it('passes an empty result through', async () => {
     const result = await intercept(undefined, nonCourtOfAppealsUsers[0][1])
 

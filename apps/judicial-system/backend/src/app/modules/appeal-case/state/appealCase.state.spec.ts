@@ -71,6 +71,20 @@ describe('transitionAppealCase', () => {
         appealRulingDate: now,
       })
     })
+
+    // Only a verdict appeal's release is dated apart from how it ended.
+    it.each([AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN])(
+      'gives a ruling appeal completed from %s no completion date',
+      (appealState) => {
+        const { appealCaseUpdate } = transitionAppealCase(
+          AppealCaseTransition.COMPLETE_APPEAL,
+          { type: CaseType.CUSTODY } as Case,
+          { appealType: AppealCaseType.RULING, appealState } as AppealCase,
+        )
+
+        expect(appealCaseUpdate).not.toHaveProperty('appealCompletedDate')
+      },
+    )
   })
 
   describe('a verdict appeal', () => {
@@ -110,7 +124,7 @@ describe('transitionAppealCase', () => {
       ).toThrow(ForbiddenException)
     })
 
-    it('is completed once confirmed and keeps the date the court entered', () => {
+    it('is completed once confirmed, keeps the date the court entered and dates the release', () => {
       const enteredDate = new Date('2024-01-10T00:00:00Z')
 
       const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
@@ -125,6 +139,7 @@ describe('transitionAppealCase', () => {
       expect(caseUpdate).toEqual({})
       expect(appealCaseUpdate).toEqual({
         appealState: AppealCaseState.COMPLETED,
+        appealCompletedDate: now,
       })
     })
 
@@ -167,8 +182,10 @@ describe('transitionAppealCase', () => {
       } as AppealCase
 
       expect(confirmed.appealState).toBe(AppealCaseState.READY_TO_COMPLETE)
+      expect(confirmed.appealCompletedDate).toBeUndefined()
       expect(completed.appealState).toBe(AppealCaseState.COMPLETED)
       expect(completed.appealRulingDate).toBe(enteredDate)
+      expect(completed.appealCompletedDate).toBe(now)
     })
 
     it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(

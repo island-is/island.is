@@ -569,6 +569,16 @@ export class FileService {
       )
     }
 
+    // Once its outcome has been released, the court's document is part of it.
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+    ) {
+      throw new ForbiddenException(
+        `The verdict appeal of case ${theCase.id} has been completed and its ruling can no longer be replaced`,
+      )
+    }
+
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {

@@ -27,6 +27,7 @@ export interface ApplicationState {
   isValid?: boolean
   submitted?: boolean
   pendingUploads?: number
+  loadingFieldIds?: string[]
   isNavigating?: boolean
 }
 

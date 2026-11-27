@@ -10,6 +10,13 @@ export const hasFieldValueError = (
   valueIndex = 0,
 ): boolean => {
   const { fieldType } = field
+  if (
+    fieldType === FieldTypesEnum.FAMILY &&
+    field.fieldSettings?.familyType === FamilyTypes.CHILD
+  ) {
+    return !field.values?.some((value) => value?.json?.nationalId)
+  }
+
   const value = field?.values?.[valueIndex]?.json as FormSystemValue
   if (!value) return true
 

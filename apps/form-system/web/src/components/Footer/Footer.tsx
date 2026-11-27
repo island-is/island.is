@@ -102,6 +102,7 @@ export const Footer = ({
   const { currentSection } = state
   const currentSectionType = currentSection?.data?.sectionType
   const isUploading = (state.pendingUploads ?? 0) > 0
+  const isFieldLoading = (state.loadingFieldIds?.length ?? 0) > 0
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
@@ -443,7 +444,7 @@ export const Footer = ({
   }
 
   const handleIncrement = async () => {
-    if (isPaymentLoading || isUploading) return
+    if (isPaymentLoading || isUploading || isFieldLoading) return
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
       return
@@ -494,6 +495,7 @@ export const Footer = ({
               onClick={handleIncrement}
               disabled={
                 isUploading ||
+                isFieldLoading ||
                 state.isNavigating ||
                 !enableContinueButton ||
                 isValidateEligibilityError ||

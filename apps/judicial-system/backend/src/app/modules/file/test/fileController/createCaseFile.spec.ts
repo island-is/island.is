@@ -551,7 +551,7 @@ describe('FileController - Create case file', () => {
       })
     })
 
-    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+    describe.each([AppealCaseState.APPEALED])(
       'created when the verdict appeal is %s',
       (appealState) => {
         let then: Then
@@ -626,6 +626,31 @@ describe('FileController - Create case file', () => {
         expect(
           mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
         ).not.toHaveBeenCalled()
+      })
+    })
+
+    // Once the outcome has been released, the court's document is part of it.
+    describe('created once the verdict appeal is completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealState: AppealCaseState.COMPLETED,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should refuse creation', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
       })
     })
 
