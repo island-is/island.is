@@ -2106,6 +2106,10 @@ export const messages = defineMessages({
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },
+  healthConversationReplySent: {
+    defaultMessage: 'Skilaboð send',
+    id: 'sp.health:health-message-reply-sent',
+  },
   healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
