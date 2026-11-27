@@ -9,11 +9,7 @@ import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 
-interface Props {
-  isPartOfMultiset: boolean
-}
-
-export const ToggleConnection = ({ isPartOfMultiset }: Props) => {
+export const ToggleConnection = () => {
   const { selectStatus, setSelectStatus, control } = useContext(ControlContext)
   const { isReadOnly } = control
 
@@ -25,7 +21,7 @@ export const ToggleConnection = ({ isPartOfMultiset }: Props) => {
           name="connect"
           label={formatMessage(m.connect)}
           checked={selectStatus === NavbarSelectStatus.NORMAL}
-          disabled={isReadOnly || isPartOfMultiset}
+          disabled={isReadOnly}
           onChange={(e) =>
             setSelectStatus(
               e ? NavbarSelectStatus.NORMAL : NavbarSelectStatus.OFF,

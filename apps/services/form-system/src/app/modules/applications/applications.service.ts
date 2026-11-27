@@ -1676,6 +1676,7 @@ export class ApplicationsService {
       notificationDto.fields =
         this.applicationMapper.mapScreenToApplicationJsonFields(
           notificationDto.screenDto,
+          application.dependencies,
         )
       notificationDto.screenDto = undefined
     }

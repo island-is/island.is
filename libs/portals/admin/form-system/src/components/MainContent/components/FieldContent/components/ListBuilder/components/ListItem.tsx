@@ -126,7 +126,7 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.connect)}
             checked={connecting}
-            disabled={isReadOnly || currentItem.isPartOfMultiset}
+            disabled={isReadOnly}
             onChange={(e) => {
               setSelectStatus(
                 e

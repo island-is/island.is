@@ -72,6 +72,47 @@ const field = (
   values: Array.from({ length: count }, () => ({ json: { text: 'value' } })),
 })
 
+it('omits hidden dependent multiset rows and their required errors from the preview summary', () => {
+  const sections: FormSystemSection[] = [
+    {
+      id: 'section',
+      sectionType: SectionTypes.INPUT,
+      screens: [
+        {
+          id: 'screen',
+          sectionId: 'section',
+          isMulti: true,
+          fields: [
+            {
+              ...field('parent', true, 2),
+              fieldType: FieldTypesEnum.DROPDOWN_LIST,
+              list: [{ id: 'yes', label: { is: 'Yes' } }],
+              values: [{ json: { label: { is: 'Yes' } } }, { json: {} }],
+            },
+            {
+              ...field('child', true, 2),
+              isRequired: true,
+              values: [{ json: { text: 'Present' } }, { json: {} }],
+            },
+          ],
+        },
+      ],
+    },
+  ]
+  render(
+    <PreviewSummary
+      sections={sections}
+      dependencies={[
+        { parentProp: 'yes', childProps: ['child'], isSelected: true },
+      ]}
+      onNavigate={jest.fn()}
+    />,
+  )
+  expect(screen.getByText('child:0')).toBeTruthy()
+  expect(screen.queryByText('child:1')).toBeNull()
+  expect(screen.queryByText('Vantar gildi')).toBeNull()
+})
+
 it.each([
   { applicantType: ApplicantTypesEnum.INDIVIDUAL, isPhoneRequired: true },
   { applicantType: ApplicantTypesEnum.INDIVIDUAL, isPhoneRequired: false },

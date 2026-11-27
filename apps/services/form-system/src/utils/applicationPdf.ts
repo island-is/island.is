@@ -8,6 +8,7 @@ import PDFDocument from 'pdfkit'
 import sanitizeHtml from 'sanitize-html'
 import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
+import { getApplicationFieldGroups } from './applicationFieldGroups'
 
 const colors = {
   ink: '#00003C',
@@ -624,15 +625,29 @@ export const buildApplicationPdf = (
         if (screen.isHidden) continue
         drawScreenHeading(document, textFor(screen.name, locale))
 
-        for (const field of screen.fields ?? []) {
-          if (field.isHidden) continue
-
-          drawField(
-            document,
-            field,
-            section.sectionType !== SectionTypes.PARTIES,
-            locale,
-          )
+        for (const group of getApplicationFieldGroups(
+          screen,
+          application.dependencies,
+        )) {
+          if (group.number !== undefined) {
+            ensureSpace(document, screenContentReservation)
+            document
+              .fillColor(colors.ink)
+              .font('Helvetica-Bold')
+              .fontSize(11)
+              .text(`${group.number}.`, pageMargin + fieldIndent, document.y, {
+                width: contentWidth - fieldIndent,
+              })
+            document.y += 8
+          }
+          for (const field of group.fields) {
+            drawField(
+              document,
+              field,
+              section.sectionType !== SectionTypes.PARTIES,
+              locale,
+            )
+          }
         }
       }
     }

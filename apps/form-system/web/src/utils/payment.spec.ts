@@ -12,6 +12,9 @@ import {
 } from './payment'
 
 jest.mock('@island.is/form-system/ui', () => ({
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../libs/portals/form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
   FieldTypesEnum: {
     PAYMENT: 'PAYMENT',
     PAYMENT_QUANTITY: 'PAYMENT_QUANTITY',

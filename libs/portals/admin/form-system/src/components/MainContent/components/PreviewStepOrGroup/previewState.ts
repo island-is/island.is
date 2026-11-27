@@ -5,8 +5,8 @@ import type {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
-import type { Action } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
+import { Action, applyDependencyVisibility } from '@island.is/form-system/ui'
 
 export const PREVIEW_APPLICANT_SCREEN_ID = 'preview-applicant-login'
 
@@ -171,71 +171,23 @@ export const updateRestrictedPreview = (
   state: PreviewState,
   action: Action,
 ): PreviewState => {
-  let fields = updatePreviewFields(state.fields, action)
-  let dependencies = state.dependencies
-  let changed = true
-
-  while (changed) {
-    dependencies = dependencies.map((dependency) => {
-      const controller = fields.find((field) =>
-        field.fieldType === FieldTypesEnum.CHECKBOX
-          ? field.id === dependency.parentProp
-          : (field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-              field.fieldType === FieldTypesEnum.DROPDOWN_LIST) &&
-            field.list?.some((option) => option?.id === dependency.parentProp),
-      )
-      if (!controller) return dependency
-      const option = controller.list?.find(
-        (item) => item?.id === dependency.parentProp,
-      )
-      const isSelected =
-        controller.values?.some((value) =>
-          controller.fieldType === FieldTypesEnum.CHECKBOX
-            ? value?.json?.checkboxValue === true
-            : !!option &&
-              !!value?.json?.label &&
-              value.json.label.is === option.label?.is,
-        ) ?? false
-      return { ...dependency, isSelected }
-    })
-
-    const visibleFields = getPreviewSections(
-      { ...state, fields, dependencies },
-      true,
-    )
+  const updatedFields = updatePreviewFields(state.fields, action)
+  const result = applyDependencyVisibility(
+    getPreviewSections({ ...state, fields: updatedFields }, true),
+    state.dependencies,
+  )
+  const fieldsById = new Map(
+    result.sections
       .flatMap((section) => section.screens ?? [])
       .flatMap((screen) => screen?.fields ?? [])
-    changed = false
-    fields = fields.map((field) => {
-      const isController =
-        field.fieldType === FieldTypesEnum.CHECKBOX ||
-        field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-        field.fieldType === FieldTypesEnum.DROPDOWN_LIST
-      if (
-        !isController ||
-        !visibleFields.find((item) => item?.id === field.id)?.isHidden
-      ) {
-        return field
-      }
-      const values = field.values?.map((value) =>
-        value
-          ? {
-              ...value,
-              json: {
-                ...value.json,
-                ...(field.fieldType === FieldTypesEnum.CHECKBOX
-                  ? { checkboxValue: false }
-                  : { label: null, value: null }),
-              },
-            }
-          : value,
-      )
-      if (JSON.stringify(values) === JSON.stringify(field.values)) return field
-      changed = true
-      return { ...field, values }
-    })
+      .filter((field): field is FormSystemField => !!field)
+      .map((field) => [field.id, field]),
+  )
+  return {
+    ...state,
+    fields: updatedFields.map((field) => fieldsById.get(field.id) ?? field),
+    dependencies: result.dependencies,
   }
-  return { ...state, fields, dependencies }
 }
 
 export const getRestrictedPreviewStart = (steps: PreviewStep[]): number => {

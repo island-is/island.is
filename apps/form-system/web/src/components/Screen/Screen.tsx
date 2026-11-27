@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import {
   NOTIFY_EXTERNAL_SERVICE,
   removeTypename,
@@ -185,34 +186,26 @@ export const Screen = () => {
     }
   }
 
-  const renderMultisetField = (
-    field: FormSystemField,
-    fieldIndex: number,
-    itemIndex: number,
-  ) => {
-    const showRowGutter =
-      isMulti && field.isPartOfMultiset !== false && numberOfItems > 1
+  const renderMultisetField = (field: FormSystemField, itemIndex: number) => {
+    const hiddenFields = currentScreen?.data
+      ? getHiddenMultisetFieldIds(
+          currentScreen.data,
+          state.application.dependencies,
+          itemIndex,
+        )
+      : undefined
+    if (hiddenFields?.has(field.id)) return null
+    const showGroupNumber =
+      isMulti &&
+      numberOfItems > 1 &&
+      field === multisetFields.find((item) => !hiddenFields?.has(item.id))
     return (
-      <Box
-        key={`${field.id}-${itemIndex}`}
-        display="flex"
-        alignItems="flexStart"
-      >
-        {showRowGutter && (
-          <Box
-            marginRight={2}
-            flexShrink={0}
-            marginTop={4}
-            style={{ width: '2ch' }}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            {fieldIndex === 0 && <Text variant="h4">{itemIndex + 1}.</Text>}
-          </Box>
-        )}
-        <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-          <Field field={field} valueIndex={itemIndex} />
-        </Box>
+      <Box key={`${field.id}-${itemIndex}`}>
+        <Field
+          field={field}
+          valueIndex={itemIndex}
+          groupNumber={showGroupNumber ? itemIndex + 1 : undefined}
+        />
       </Box>
     )
   }
@@ -251,17 +244,13 @@ export const Screen = () => {
     <Box>
       {orderedFields.map((field, fieldIndex) => (
         <Fragment key={field.id}>
-          {renderMultisetField(field, multisetFields.indexOf(field), 0)}
+          {renderMultisetField(field, 0)}
           {fieldIndex === lastMultisetFieldIndex && (
             <>
               {Array.from({ length: numberOfItems - 1 }).map((_, index) => (
                 <Box key={`multiset-item-${index + 1}`} marginBottom={3}>
-                  {multisetFields.map((repeatedField, repeatedIndex) =>
-                    renderMultisetField(
-                      repeatedField,
-                      repeatedIndex,
-                      index + 1,
-                    ),
+                  {multisetFields.map((repeatedField) =>
+                    renderMultisetField(repeatedField, index + 1),
                   )}
                 </Box>
               ))}

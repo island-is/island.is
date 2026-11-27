@@ -381,6 +381,11 @@ const PreviewStepOrGroupContent = ({
                             {sectionType === SectionTypes.SUMMARY && (
                               <PreviewSummary
                                 sections={summarySections}
+                                dependencies={
+                                  enforceRestrictions
+                                    ? previewData.dependencies
+                                    : undefined
+                                }
                                 hasValidationError={(field, valueIndex) =>
                                   validationErrors[
                                     `${field.id}.${valueIndex}`
@@ -437,6 +442,11 @@ const PreviewStepOrGroupContent = ({
                                 <MultiSet
                                   key={currentScreen.id}
                                   screen={currentScreen}
+                                  dependencies={
+                                    enforceRestrictions
+                                      ? previewData.dependencies
+                                      : undefined
+                                  }
                                   dispatch={previewDispatch}
                                   state={previewState}
                                 />
