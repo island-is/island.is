@@ -246,6 +246,52 @@ describe('FileController - Attach ruling order document', () => {
     })
   })
 
+  describe('key segment after the case id is not a uuid', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(makeCase(), pronouncedOrally, {
+        key: `${caseId}/${'x'.repeat(36)}/urskurdur.pdf`,
+      })
+    })
+
+    it('should be rejected', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('key already belongs to a case file', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockExists =
+        mockCaseFileRepositoryService.existsLiveByKey as jest.Mock
+      mockExists.mockResolvedValueOnce(true)
+
+      then = await givenWhenThen(makeCase(), pronouncedOrally)
+    })
+
+    it('should look the key up in the transaction the guard opened', () => {
+      expect(
+        mockCaseFileRepositoryService.existsLiveByKey,
+      ).toHaveBeenCalledWith(key, { transaction })
+    })
+
+    it('should be rejected without delivering anything', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `${key} already belongs to a case file and cannot be registered again`,
+      )
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).not.toHaveBeenCalled()
+      expect(queuedMessagesAfterCommit).toHaveLength(0)
+    })
+  })
+
   describe('key belongs to another case', () => {
     let then: Then
 

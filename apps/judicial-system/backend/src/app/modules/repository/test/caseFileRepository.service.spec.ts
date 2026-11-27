@@ -93,6 +93,37 @@ describe('CaseFileRepositoryService', () => {
     })
   })
 
+  describe('existsLiveByKey', () => {
+    const key = 'some-case-id/some-upload-id/some-file.pdf'
+
+    it('looks for a live file holding the key in any case, within the transaction', async () => {
+      model.findOne.mockResolvedValueOnce({ id: fileId })
+
+      const result = await service.existsLiveByKey(key, { transaction })
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { key, state: { [Op.not]: CaseFileState.DELETED } },
+        attributes: ['id'],
+        transaction,
+      })
+      expect(result).toBe(true)
+    })
+
+    it('reports false when no live file holds the key', async () => {
+      expect(await service.existsLiveByKey(key)).toBe(false)
+      expect(model.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({ transaction: undefined }),
+      )
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.existsLiveByKey(key)).rejects.toThrow(error)
+    })
+  })
+
   describe('findByCaseAndPoliceFileId', () => {
     const policeFileId = 'some-police-file-id'
 

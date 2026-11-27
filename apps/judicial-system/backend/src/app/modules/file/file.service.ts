@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64'
 import { Transaction } from 'sequelize'
-import { v4 as uuid } from 'uuid'
+import { v4 as uuid, validate as isUuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -79,6 +79,7 @@ export interface CreateFile extends CreateFileDto {
 // <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
 const NAME_BEGINS_INDEX = 74
+const UUID_LENGTH = 36
 
 // There is one court of appeals, and no judge or institution is recorded on a
 // verdict appeal's conclusion to read its name from.
@@ -121,6 +122,37 @@ export class FileService {
     }
 
     return numberOfAffectedRows > 0
+  }
+
+  // The key of a file being registered names an object the client has just
+  // uploaded for this case: the case id, a uuid of its own and the file name
+  // (see createPresignedPost). A key belongs to the one file it was issued
+  // for, so a key that a live case file already holds is refused.
+  private async verifyKeyForNewCaseFile(
+    theCase: Case,
+    key: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const prefix = `${theCase.id}/`
+    const uploadId = key.slice(prefix.length, prefix.length + UUID_LENGTH)
+
+    if (
+      !key.startsWith(prefix) ||
+      !isUuid(uploadId) ||
+      key[prefix.length + UUID_LENGTH] !== '/'
+    ) {
+      throw new BadRequestException(
+        `${key} is not a valid key for case ${theCase.id}`,
+      )
+    }
+
+    if (
+      await this.caseFileRepositoryService.existsLiveByKey(key, { transaction })
+    ) {
+      throw new BadRequestException(
+        `${key} already belongs to a case file and cannot be registered again`,
+      )
+    }
   }
 
   private async tryDeleteFileFromS3(
@@ -507,13 +539,7 @@ export class FileService {
       )
     }
 
-    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
-
-    if (!regExp.test(key)) {
-      throw new BadRequestException(
-        `${key} is not a valid key for case ${theCase.id}`,
-      )
-    }
+    await this.verifyKeyForNewCaseFile(theCase, key, transaction)
 
     const isVerdictAppealStatementCategory =
       createFile.category !== undefined &&
@@ -882,7 +908,19 @@ export class FileService {
   ): Promise<DeleteFileResponse> {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
-    if (success && isRequestCase(theCase.type)) {
+    if (!success || !isRequestCase(theCase.type)) {
+      return { success }
+    }
+
+    // The object is only removed with the last case file that points at it.
+    // Read after the delete above and in the same transaction, so the file
+    // being deleted no longer counts.
+    const isObjectStillInUse =
+      await this.caseFileRepositoryService.existsLiveByKey(file.key, {
+        transaction,
+      })
+
+    if (!isObjectStillInUse) {
       if (transaction) {
         // Delete only once the request's work is durable, so a rolled-back
         // delete cannot leave a live case file whose object S3 has already
@@ -1027,13 +1065,7 @@ export class FileService {
 
     const { key, size, type, userGeneratedFilename } = attachDocument
 
-    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
-
-    if (!regExp.test(key)) {
-      throw new BadRequestException(
-        `${key} is not a valid key for case ${theCase.id}`,
-      )
-    }
+    await this.verifyKeyForNewCaseFile(theCase, key, transaction)
 
     // Two uploads racing each other both pass the check above, each holding its
     // own copy of a ruling that had no document when it was read. The update is
