@@ -483,6 +483,17 @@ describe('AppealCaseController - Update', () => {
       await givenWhenThen(theCase, appealCase, update)
     })
 
+    it('should stamp the received date when the appeal has none yet', () => {
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        {
+          appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+          appealReceivedByCourtDate: now,
+        },
+        { transaction },
+      )
+    })
+
     it('should queue delivery of the accessible appeal statement file', () => {
       expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -505,6 +516,57 @@ describe('AppealCaseController - Update', () => {
 
     it('should queue nothing else before the roles are assigned', () => {
       expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('a new appeal case number on a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const update = { appealCaseNumber: '585/2026' }
+
+    it('should stamp the received date so the robot móttaka mail includes it', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
+      await givenWhenThen(theCase, appealCase, update)
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        {
+          appealCaseNumber: '585/2026',
+          appealReceivedByCourtDate: now,
+        },
+        { transaction },
+      )
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
+          caseId,
+          elementId: appealCaseId,
+        }),
+      )
+    })
+
+    it('should leave an existing received date alone', async () => {
+      const existingReceivedDate = new Date('2026-03-01T12:00:00Z')
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+        appealReceivedByCourtDate: existingReceivedDate,
+      } as AppealCase
+
+      await givenWhenThen(theCase, appealCase, update)
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealCaseNumber: '585/2026' },
+        { transaction },
+      )
     })
   })
 
