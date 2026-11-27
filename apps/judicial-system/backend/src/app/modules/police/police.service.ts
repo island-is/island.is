@@ -43,6 +43,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { getRequestTransaction } from '../../middleware'
 import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
@@ -120,6 +121,11 @@ interface CreateDocumentResponse {
 
 const tokenUrlResponseStructure = z.object({ url: z.string().min(1) })
 
+// How long the document list of a case is remembered. A batch of uploads is
+// checked against one list instead of asking the police system once per
+// document.
+const POLICE_CASE_FILE_LIST_TTL_MS = 5 * 60 * 1000
+
 const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
@@ -161,6 +167,10 @@ export class PoliceService {
   private xRoadPath: string
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+  private readonly listedPoliceCaseFileIds = new Map<
+    string,
+    { ids: Set<string>; expires: number }
+  >()
 
   private policeCaseFileType = z.object({
     kodi: z.string().nullish(),
@@ -442,18 +452,80 @@ export class PoliceService {
     }
   }
 
+  private rememberListedPoliceCaseFileIds(
+    policeCaseId: string,
+    ids: string[],
+  ): void {
+    const now = Date.now()
+
+    for (const [key, entry] of this.listedPoliceCaseFileIds) {
+      if (entry.expires <= now) {
+        this.listedPoliceCaseFileIds.delete(key)
+      }
+    }
+
+    this.listedPoliceCaseFileIds.set(policeCaseId, {
+      ids: new Set(ids),
+      expires: now + POLICE_CASE_FILE_LIST_TTL_MS,
+    })
+  }
+
+  // A document can only be uploaded to a case when the police system lists it
+  // for that case. The list is the one getAllPoliceCaseFiles returns, and it
+  // lives under the original ancestor of the case.
+  private async isListedPoliceCaseFile(
+    policeCaseId: string,
+    policeCaseFileId: string,
+    user: User,
+  ): Promise<boolean> {
+    const remembered = this.listedPoliceCaseFileIds.get(policeCaseId)
+
+    if (
+      remembered &&
+      remembered.expires > Date.now() &&
+      remembered.ids.has(policeCaseFileId)
+    ) {
+      return true
+    }
+
+    // Not remembered, or the document may have been added since - ask again
+    const policeCaseFiles = await this.getAllPoliceCaseFiles(policeCaseId, user)
+
+    return policeCaseFiles.some((file) => file.id === policeCaseFileId)
+  }
+
   private async throttleUploadPoliceCaseFile(
-    caseId: string,
-    caseType: CaseType,
+    theCase: Case,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
+    const { id: caseId, type: caseType } = theCase
+
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
     })
 
+    const policeCaseId =
+      await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+        transaction: await getRequestTransaction(),
+      })
+
+    const isListed = await this.isListedPoliceCaseFile(
+      policeCaseId,
+      uploadPoliceCaseFile.id,
+      user,
+    )
+
+    if (!isListed) {
+      throw new NotFoundException(
+        `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+      )
+    }
+
     const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      `${this.xRoadPath}/V2/GetPDFDocumentByID/${encodeURIComponent(
+        uploadPoliceCaseFile.id,
+      )}`,
     )
       .then(async (res) => {
         if (res.ok) {
@@ -515,7 +587,7 @@ export class PoliceService {
 
     try {
       const res = await this.fetchPoliceDocumentApi(
-        `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+        `${this.xRoadPath}/V2/GetDocumentListById/${encodeURIComponent(caseId)}`,
       )
 
       if (res.ok) {
@@ -579,7 +651,9 @@ export class PoliceService {
     },
   ) {
     const startTime = nowFactory()
-    const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
+    const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${encodeURIComponent(
+      caseId,
+    )}`
 
     try {
       const res = await this.fetchPoliceDocumentApi(url)
@@ -762,6 +836,11 @@ export class PoliceService {
       }
     })
 
+    this.rememberListedPoliceCaseFileIds(
+      caseId,
+      files.map((file) => file.id),
+    )
+
     return files
   }
 
@@ -809,7 +888,7 @@ export class PoliceService {
     const startTime = nowFactory()
     try {
       const res = await this.fetchPoliceDocumentApi(
-        `${this.xRoadPath}/V4/GetRVAdilarMals/${caseId}`,
+        `${this.xRoadPath}/V4/GetRVAdilarMals/${encodeURIComponent(caseId)}`,
       )
 
       if (!res.ok) {
@@ -872,7 +951,9 @@ export class PoliceService {
     nationalId: string,
   ): Promise<{ nationalId: string; caseUnits: CaseUnit[] }> {
     const res = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V4/GetRVMalseiningar/${caseId}/${nationalId}`,
+      `${this.xRoadPath}/V4/GetRVMalseiningar/${encodeURIComponent(
+        caseId,
+      )}/${encodeURIComponent(nationalId)}`,
     )
 
     if (!res.ok) {
@@ -1023,7 +1104,9 @@ export class PoliceService {
     user?: User,
   ): Promise<SubpoenaPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${encodeURIComponent(
+        policeSubpoenaId,
+      )}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -1251,14 +1334,12 @@ export class PoliceService {
   }
 
   async uploadPoliceCaseFile(
-    caseId: string,
-    caseType: CaseType,
+    theCase: Case,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
-      caseId,
-      caseType,
+      theCase,
       uploadPoliceCaseFile,
       user,
     )
@@ -1281,8 +1362,8 @@ export class PoliceService {
   ): Promise<boolean> {
     const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
     const url = usesLegacyPoliceCaseUpdate
-      ? `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`
-      : `${this.xRoadPath}/V4/case/${caseId}`
+      ? `${this.xRoadPath}/V2/UpdateRVCase/${encodeURIComponent(caseId)}`
+      : `${this.xRoadPath}/V4/case/${encodeURIComponent(caseId)}`
 
     const body = {
       rvMal_ID: caseId,
@@ -1471,7 +1552,9 @@ export class PoliceService {
     user?: User,
   ): Promise<VerdictPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
+      `${this.xRoadPath}/GetDeliveryStatus?id=${encodeURIComponent(
+        policeDocumentId,
+      )}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -1659,7 +1742,9 @@ export class PoliceService {
 
     try {
       const res = await this.fetchPoliceCaseApi(
-        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${policeSubpoenaId}`,
+        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${encodeURIComponent(
+          policeSubpoenaId,
+        )}`,
         {
           method: 'POST',
           headers: {

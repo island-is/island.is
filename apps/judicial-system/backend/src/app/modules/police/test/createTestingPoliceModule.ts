@@ -100,6 +100,9 @@ export const createTestingPoliceModule = async () => {
         provide: CaseRepositoryService,
         useValue: {
           findById: jest.fn().mockResolvedValue({}),
+          findOriginalAncestorId: jest.fn(
+            async (theCase: { id: string }) => theCase.id,
+          ),
           findByIdWithProsecutor: jest.fn().mockResolvedValue(null),
           update: jest.fn().mockResolvedValue({}),
         },

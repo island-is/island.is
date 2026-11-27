@@ -2,7 +2,7 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -262,6 +262,22 @@ export class PoliceDigitalCaseFileService {
       policeCaseNumbers?: string[]
     },
   ): Promise<string> {
+    // A token URL is only issued for a file that is synced to the case
+    const policeDigitalCaseFiles =
+      await this.policeDigitalCaseFileRepositoryService.findByCaseId(caseId)
+    const isFileOfCase = policeDigitalCaseFiles.some(
+      (file) =>
+        file.policeDigitalFileId === policeDigitalFileId &&
+        (!caseNumbers?.policeCaseNumbers ||
+          caseNumbers.policeCaseNumbers.includes(file.policeCaseNumber)),
+    )
+
+    if (!isFileOfCase) {
+      throw new NotFoundException(
+        `Police digital case file ${policeDigitalFileId} of case ${caseId} not found`,
+      )
+    }
+
     return this.policeService.getTokenUrl(
       caseId,
       user.nationalId,
