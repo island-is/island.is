@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDebounce } from 'react-use'
 
+import { LocaleEnum } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -28,7 +29,7 @@ import { useEstateFilesQuery } from './EstateFiles.generated'
 
 export const EstateFiles = () => {
   useNamespaces('sp.estates')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams<{ id: string }>()
   const [search, setSearch] = useState('')
   const [announcement, setAnnouncement] = useState('')
@@ -39,7 +40,12 @@ export const EstateFiles = () => {
   const searchTouched = useRef(false)
 
   const { data, loading, error } = useEstateFilesQuery({
-    variables: { input: { caseId: id ?? '' } },
+    variables: {
+      input: {
+        caseId: id ?? '',
+        locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+      },
+    },
     skip: !id,
   })
 

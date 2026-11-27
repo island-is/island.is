@@ -68,11 +68,10 @@ const mapAction = (
 
 export const mapToEstatesCase = (
   c: EstateCase,
+  caseId: string,
   locale: LocaleEnum,
   downloadServiceBaseUrl: string,
 ): EstateCaseModel => {
-  const caseId = c.caseId?.value ?? undefined
-
   const deceased = (() => {
     const d = c.deceased
     if (!d?.name?.value) return undefined
@@ -105,7 +104,7 @@ export const mapToEstatesCase = (
   })()
 
   return {
-    id: caseId ? `${caseId}-${locale}` : undefined,
+    id: `${caseId}-${locale}`,
     caseId: mapFieldValue(c.caseId, locale),
     deceased,
     representative,

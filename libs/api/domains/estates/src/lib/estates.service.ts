@@ -37,6 +37,11 @@ export class EstatesDomainService {
   ): Promise<EstateCase | null> {
     const data = await this.estatesClientService.getEstateCase(user, caseId)
     if (!data) return null
-    return mapToEstatesCase(data, locale, this.downloadServiceConfig.baseUrl)
+    return mapToEstatesCase(
+      data,
+      caseId,
+      locale,
+      this.downloadServiceConfig.baseUrl,
+    )
   }
 }

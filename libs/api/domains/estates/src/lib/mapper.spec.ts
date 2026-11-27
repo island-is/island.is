@@ -22,12 +22,8 @@ describe('mapToEstateCollection', () => {
 })
 
 describe('mapToEstatesCase', () => {
-  it('suffixes id with locale', () => {
-    const result = mapToEstatesCase(
-      { caseId: { value: 'c1' } },
-      LocaleEnum.En,
-      BASE_URL,
-    )
+  it('builds id from the requested caseId and locale', () => {
+    const result = mapToEstatesCase({}, 'c1', LocaleEnum.En, BASE_URL)
 
     expect(result.id).toBe('c1-en')
   })
@@ -38,7 +34,12 @@ describe('mapToEstatesCase', () => {
     [LocaleEnum.Is, { icelandic: 'Opið', english: 'Open' }, 'Opið'],
     [LocaleEnum.Is, { icelandic: '', english: '' }, undefined],
   ])('resolves %s text %o to %s', (locale, text, expected) => {
-    const result = mapToEstatesCase({ status: { text } }, locale, BASE_URL)
+    const result = mapToEstatesCase(
+      { status: { text } },
+      'c1',
+      locale,
+      BASE_URL,
+    )
 
     expect(result.status?.text).toBe(expected)
   })
@@ -53,6 +54,7 @@ describe('mapToEstatesCase', () => {
           ],
         },
       },
+      'c1',
       LocaleEnum.Is,
       BASE_URL,
     )

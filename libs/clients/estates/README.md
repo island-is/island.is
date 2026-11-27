@@ -49,7 +49,7 @@ Register `EstatesClientConfig` in `apps/api/src/app/app.module.ts` under `Config
 
 | Env var | Default (dev) |
 |---------|--------------|
-| `XROAD_ESTATES_PATH` | `IS-DEV/GOV/10016/Syslumenn-Protected/islandisestatepages` |
+| `XROAD_ESTATES_PATH` | `IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur` |
 
 ## Notes
 

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { CaseStatus } from './caseStatus.model'
 import { Deadline } from './deadline.model'
@@ -13,8 +13,8 @@ import { Progress } from './progress.model'
 
 @ObjectType('EstatesCase')
 export class EstateCase {
-  @Field({ nullable: true })
-  id?: string
+  @Field(() => ID)
+  id!: string
 
   @Field(() => EstatesFieldValue, { nullable: true })
   caseId?: EstatesFieldValue

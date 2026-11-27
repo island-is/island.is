@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { LocaleEnum } from '@island.is/api/schema'
 import {
   AccordionItem,
   ActionCard,
@@ -54,7 +55,7 @@ const DetailField = ({
 
 export const EstateDetail = () => {
   useNamespaces('sp.estates')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams<{ id: string }>()
   const [activePdf, setActivePdf] = useState<{
     url: string
@@ -62,7 +63,12 @@ export const EstateDetail = () => {
   } | null>(null)
 
   const { data, loading, error } = useEstateDetailQuery({
-    variables: { input: { caseId: id ?? '' } },
+    variables: {
+      input: {
+        caseId: id ?? '',
+        locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+      },
+    },
     skip: !id,
   })
 
