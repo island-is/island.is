@@ -51,6 +51,25 @@ export const courtOfAppealsVerdictAppealsInProgress: CaseTable = {
   columns: pickColumns(courtOfAppealsVerdictAppealsInProgressColumnKeys),
 }
 
+// Appeals the court has confirmed and has still to complete, which it does in
+// bulk from this list.
+const courtOfAppealsVerdictAppealsReadyToCompleteColumnKeys: CaseTableColumnKey[] =
+  [
+    'verdictAppealCaseNumber',
+    'defendants',
+    'caseType',
+    'verdictAppealRulingDate',
+    'verdictAppealRulingType',
+    'verdictAppealHead',
+  ]
+
+export const courtOfAppealsVerdictAppealsReadyToComplete: CaseTable = {
+  title: 'Mál í dómsuppkvaðningu',
+  hasMyCasesFilter: false,
+  columnKeys: courtOfAppealsVerdictAppealsReadyToCompleteColumnKeys,
+  columns: pickColumns(courtOfAppealsVerdictAppealsReadyToCompleteColumnKeys),
+}
+
 const courtOfAppealsVerdictAppealsCompletedColumnKeys: CaseTableColumnKey[] = [
   'verdictAppealCaseNumber',
   'defendants',

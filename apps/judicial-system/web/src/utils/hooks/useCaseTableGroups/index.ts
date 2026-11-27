@@ -22,6 +22,8 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 const tableFeatures: Partial<Record<CaseTableType, Feature>> = {
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS]:
     Feature.INDICTMENT_APPEAL,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE]:
+    Feature.INDICTMENT_APPEAL,
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]:
     Feature.INDICTMENT_APPEAL,
   [CaseTableType.DEFENCE_INDICTMENTS_VERDICT_APPEALED]:

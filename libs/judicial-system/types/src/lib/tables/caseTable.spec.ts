@@ -124,6 +124,7 @@ describe('court of appeals verdict appeal tables', () => {
       CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
       CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     ])
   })
@@ -142,6 +143,9 @@ describe('court of appeals verdict appeal tables', () => {
     expect(getCaseTableType(courtOfAppealsUser, 'afryjud-afgreidd-mal')).toBe(
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     )
+    expect(
+      getCaseTableType(courtOfAppealsUser, 'afryjud-mal-i-domsuppkvadningu'),
+    ).toBe(CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE)
     expect(getCaseTableType(courtOfAppealsUser, 'mal-i-vinnslu')).toBe(
       CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
     )
@@ -193,6 +197,7 @@ describe('court of appeals verdict appeal tables', () => {
       group.tables.map((t) => [t.title, t.description, t.includeCounter]),
     ).toEqual([
       ['Mál í vinnslu', 'Áfrýjuð sakamál.', true],
+      ['Mál í dómsuppkvaðningu', 'Áfrýjuð sakamál sem á eftir að ljúka.', true],
       ['Afgreidd mál', 'Mál sem búið er að ljúka.', undefined],
     ])
   })
@@ -223,6 +228,52 @@ describe('court of appeals verdict appeal tables', () => {
       'Máli lokið',
       'Niðurstaða',
     ])
+  })
+
+  // The appeals the court has confirmed and has still to complete. The columns
+  // read the verdict appeal, for the same reason as on the other two lists.
+  it('lists the appeals to complete with the columns the design asks for', () => {
+    const readyToComplete =
+      caseTables[
+        CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE
+      ]
+
+    expect(readyToComplete.title).toBe('Mál í dómsuppkvaðningu')
+    expect(readyToComplete.hasMyCasesFilter).toBe(false)
+    expect(readyToComplete.columnKeys).toEqual([
+      'verdictAppealCaseNumber',
+      'defendants',
+      'caseType',
+      'verdictAppealRulingDate',
+      'verdictAppealRulingType',
+      'verdictAppealHead',
+    ])
+    expect(readyToComplete.columns.map((c) => c.title)).toEqual([
+      'Málsnúmer',
+      'Varnaraðili',
+      'Tegund',
+      'Dómsuppkvaðning',
+      'Staða',
+      'Dómsformaður',
+    ])
+  })
+
+  it('offers the list to complete only to the court of appeals', () => {
+    const districtCourtJudge = {
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as InstitutionUser
+
+    expect(
+      getCaseTableGroups(districtCourtJudge).flatMap((g) =>
+        g.tables.map((t) => t.type),
+      ),
+    ).not.toContain(
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
+    )
+    expect(
+      getCaseTableType(districtCourtJudge, 'afryjud-mal-i-domsuppkvadningu'),
+    ).toBeUndefined()
   })
 })
 
