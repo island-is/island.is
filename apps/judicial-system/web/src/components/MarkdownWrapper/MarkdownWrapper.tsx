@@ -67,6 +67,8 @@ const DescriptionText = ({ markdown, textProps }: Props) => {
     <Markdown
       options={{
         forceBlock: true,
+        // The input is markdown only, markup in it is shown as written
+        disableParsingRawHTML: true,
         overrides: {
           p: {
             component: TextComponent,

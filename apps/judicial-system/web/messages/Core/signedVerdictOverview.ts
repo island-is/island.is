@@ -33,7 +33,7 @@ export const signedVerdictOverview = {
       title:
         'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}} uppfærð',
       explanation:
-        '{date} kl. {time} - {userName} {userTitle}, {institutionName}<br/>Ástæða: {explanation}',
+        '{date} kl. {time} - {userName} {userTitle}, {institutionName}\nÁstæða: {explanation}',
     },
     shareCase: {
       title: 'Opna mál fyrir öðru embætti',

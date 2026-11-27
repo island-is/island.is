@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 
 import { AlertMessage } from '@island.is/island-ui/core'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import ExplanationText from '@island.is/judicial-system-web/src/components/ExplanationText/ExplanationText'
 
 import { caseResentExplanation as strings } from './CaseResentExplanation.strings'
 
@@ -14,12 +14,7 @@ const CaseResentExplanation: FC<Props> = (props) => {
   return (
     <AlertMessage
       title={strings.title}
-      message={
-        <MarkdownWrapper
-          markdown={explanation}
-          textProps={{ variant: 'small' }}
-        />
-      }
+      message={<ExplanationText explanation={explanation} variant="small" />}
       type="warning"
     />
   )

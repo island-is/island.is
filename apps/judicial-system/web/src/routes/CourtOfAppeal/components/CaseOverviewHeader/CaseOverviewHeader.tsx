@@ -10,8 +10,8 @@ import {
   AppealRulingModifiedAlert,
   CaseDates,
   CaseTitleInfoAndTags,
+  ExplanationText,
   FormContext,
-  MarkdownWrapper,
   RulingModifiedAlert,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -144,9 +144,9 @@ const CaseOverviewHeader: FC<Props> = (props) => {
             },
           )}
           message={
-            <MarkdownWrapper
-              markdown={workingCase.caseModifiedExplanation}
-              textProps={{ variant: 'small' }}
+            <ExplanationText
+              explanation={workingCase.caseModifiedExplanation}
+              variant="small"
             />
           }
         />

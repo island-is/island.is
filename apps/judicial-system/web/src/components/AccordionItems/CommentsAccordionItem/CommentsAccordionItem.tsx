@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import ExplanationText from '@island.is/judicial-system-web/src/components/ExplanationText/ExplanationText'
 
 import { strings } from './CommentsAccordionItem.strings'
 
@@ -58,7 +58,7 @@ const CommentsAccordionItem: FC<Props> = (props) => {
               {strings.caseResentExplanation}
             </Text>
           </Box>
-          <MarkdownWrapper markdown={workingCase.caseResentExplanation} />
+          <ExplanationText explanation={workingCase.caseResentExplanation} />
         </>
       )}
     </AccordionItem>

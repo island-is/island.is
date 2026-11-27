@@ -40,6 +40,7 @@ import {
   Conclusion,
   conclusion,
   CourtRecordAccordionItem,
+  ExplanationText,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -475,9 +476,9 @@ export const SignedVerdictOverview: FC = () => {
                   },
                 )}
                 message={
-                  <MarkdownWrapper
-                    markdown={workingCase.caseModifiedExplanation}
-                    textProps={{ variant: 'small' }}
+                  <ExplanationText
+                    explanation={workingCase.caseModifiedExplanation}
+                    variant="small"
                   />
                 }
               />
