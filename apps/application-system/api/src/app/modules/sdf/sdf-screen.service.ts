@@ -204,11 +204,13 @@ export class SdfScreenService {
   private async requireApplicationForUser(
     applicationId: string,
     user: User,
+    config?: { shouldThrowIfPruned?: boolean },
   ): Promise<ApplicationWithAttachments> {
     const application =
       await this.applicationAccessService.findOneByIdAndNationalId(
         applicationId,
         user,
+        config,
       )
     return application as ApplicationWithAttachments
   }
@@ -851,9 +853,11 @@ export class SdfScreenService {
     user: User,
     claimedScreenId: string,
   ): Promise<ScreenDto> {
+    // A pruned application is read-only, as in legacy `update`.
     const application = await this.requireApplicationForUser(
       applicationId,
       user,
+      { shouldThrowIfPruned: true },
     )
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
@@ -1279,7 +1283,12 @@ export class SdfScreenService {
     user: User,
     claimedScreenId: string,
   ): Promise<ScreenDto> {
-    let application = await this.requireApplicationForUser(applicationId, user)
+    // A pruned application is read-only, as in legacy `submitApplication`.
+    let application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+      { shouldThrowIfPruned: true },
+    )
     const checkedState = application.state
     const template = await getApplicationTemplateByTypeId(application.typeId)
 
