@@ -480,6 +480,33 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
+    it('should sanitize path traversal out of zip entry names before uniqueness', async () => {
+      const traversalName = makeAccessibleFile({
+        name: 'stored.pdf',
+        userGeneratedFilename: 'folder/../../outside',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [traversalName],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'folder_outside.pdf' },
+        ]),
+      )
+      expect(zipFilesSpy).not.toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            data: pdfBuffer,
+            name: 'folder/../../outside.pdf',
+          },
+        ]),
+      )
+    })
+
     it('should include case files from cases merged into this case', async () => {
       const mergedFile = makeAccessibleFile({
         name: 'merged-case-file.pdf',

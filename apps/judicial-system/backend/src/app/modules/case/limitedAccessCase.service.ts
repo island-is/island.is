@@ -7,7 +7,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { caseFileDownloadName } from '@island.is/judicial-system/formatters'
+import {
+  caseFileDownloadName,
+  sanitizeZipEntryName,
+} from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
@@ -219,7 +222,8 @@ export class LimitedAccessCaseService {
     const used = new Set<string>()
 
     return files.map((file) => {
-      let name = file.name
+      // Sanitize before uniqueness so suffixes apply to the final entry name.
+      let name = sanitizeZipEntryName(file.name)
 
       if (used.has(name)) {
         const extensionMatch = /\.[^.]+$/.exec(name)

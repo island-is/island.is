@@ -30,6 +30,7 @@ import {
   readableIndictmentSubtypes,
   resolveAppealCaseName,
   sanitize,
+  sanitizeZipEntryName,
   splitStringByComma,
   stripPdfExtension,
   trimOrUndefined,
@@ -56,6 +57,23 @@ describe('caseFileDownloadName', () => {
   it('prefers the display name and restores a missing extension', () => {
     expect(caseFileDownloadName('kkslsls.pdf', 'Gagn')).toBe('Gagn.pdf')
     expect(caseFileDownloadName('kkslsls.pdf', 'Gagn.pdf')).toBe('Gagn.pdf')
+  })
+})
+
+describe('sanitizeZipEntryName', () => {
+  it('leaves ordinary names unchanged', () => {
+    expect(sanitizeZipEntryName('Gagn.pdf')).toBe('Gagn.pdf')
+  })
+
+  it('removes traversal segments and directory separators', () => {
+    expect(sanitizeZipEntryName('folder/../../outside.pdf')).toBe(
+      'folder_outside.pdf',
+    )
+    expect(sanitizeZipEntryName('a\\b.pdf')).toBe('a_b.pdf')
+  })
+
+  it('falls back when the name is only traversal', () => {
+    expect(sanitizeZipEntryName('../..')).toBe('file')
   })
 })
 

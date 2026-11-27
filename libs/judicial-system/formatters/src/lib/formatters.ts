@@ -84,6 +84,20 @@ export const caseFileDownloadName = (
   return `${display}${extension}`
 }
 
+/**
+ * Keep a zip entry as a single path segment so unzip cannot write outside the
+ * extraction directory via `/`, `\` or `..` in a renamed display name.
+ */
+export const sanitizeZipEntryName = (name: string): string => {
+  const flattened = name
+    .replace(/\\/g, '/')
+    .split('/')
+    .filter((segment) => segment !== '' && segment !== '.' && segment !== '..')
+    .join('_')
+
+  return flattened || 'file'
+}
+
 /** S3 ResponseContentDisposition value so Save-as uses the display filename. */
 export const buildInlineContentDisposition = (filename: string): string => {
   // Quoted-string fallback: escape \ then " so \" cannot end the token early.
