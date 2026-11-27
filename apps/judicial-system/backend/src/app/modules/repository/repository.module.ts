@@ -10,6 +10,7 @@ import { AppealDecisionRepositoryService } from './services/appealDecisionReposi
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { AppealStatementDeadlineRepositoryService } from './services/appealStatementDeadlineRepository.service'
 import { AppealSummonsRepositoryService } from './services/appealSummonsRepository.service'
+import { AppealVerdictRepositoryService } from './services/appealVerdictRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseFileRepositoryService } from './services/caseFileRepository.service'
@@ -54,6 +55,7 @@ import { repositoryModels } from './repositoryModels'
     AppealCourtSessionRepositoryService,
     AppealStatementDeadlineRepositoryService,
     AppealSummonsRepositoryService,
+    AppealVerdictRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseFileRepositoryService,
@@ -91,6 +93,7 @@ import { repositoryModels } from './repositoryModels'
     AppealCourtSessionRepositoryService,
     AppealStatementDeadlineRepositoryService,
     AppealSummonsRepositoryService,
+    AppealVerdictRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseFileRepositoryService,

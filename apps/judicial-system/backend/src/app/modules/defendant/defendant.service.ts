@@ -39,6 +39,7 @@ import {
   AppealCase,
   AppealEventLogRepositoryService,
   AppealStatementDeadlineRepositoryService,
+  AppealVerdictRepositoryService,
   Case,
   CaseFileRepositoryService,
   Defendant,
@@ -60,6 +61,7 @@ export class DefendantService {
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly appealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService,
+    private readonly appealVerdictRepositoryService: AppealVerdictRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => AppealCaseService))
@@ -772,9 +774,15 @@ export class DefendantService {
       { transaction },
     )
 
-    // The deadlines reference the defendant without a cascade, so they go
-    // before the row they point at.
+    // The deadlines and appeal verdicts reference the defendant without a
+    // cascade, so they go before the row they point at.
     await this.appealStatementDeadlineRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
+    await this.appealVerdictRepositoryService.deleteAllForDefendant(
       theCase.id,
       defendantId,
       { transaction },
