@@ -40,13 +40,14 @@ For a small diff (under ~300 changed lines, excluding generated files), do the p
 
 1. **Correctness.** Logic errors, null handling, async and race issues, wrong Sequelize/GraphQL usage, broken contracts between API and client, missing error and empty states, missing tests for changed behaviour. Ignore what lint and tsc catch.
 2. **Deploy and data safety.** Migrations that break old pods still running, aren't transactional, add non-null columns without defaults, or lock large tables. Breaking API or schema changes. Query count and indexes on hot paths.
-3. **Policy compliance.** Check each rule in the loaded references and team files. Note when the violation was copied from existing code.
-4. **Security and privacy.**
+3. **Policy compliance.** Check each rule in the loaded references and team files. For a non-security style rule (response shape, naming, structure), follow the code around it: if the service or module consistently does it differently, drop the finding. Security and privacy rules apply regardless.
+4. **What the user sees.** For each new limit, error case, empty state, or ordering the change introduces, ask what the user experiences when they hit it. Draft it as a question when the answer is a product decision ("What does the user see when they hit the cap?", "Should the order be something they can rely on?").
+5. **Security and privacy.**
    - Personal data or secrets in logs (`LOG-1..4`); national IDs in URLs (`SEC-2`).
    - Missing guards or scopes, wrong delegation subject/actor (`AUTH-1..3`); identity from input instead of the token (`SEC-5`).
    - Injection or string-built SQL (`SEC-6`), SSRF (`SEC-7`), XSS or client-side secrets (`SEC-8`).
    - Missing audit logging (`AUTH-6`); new personal data stored without purpose or retention (`SEC-1`); committed secrets or real kennitölur (`SEC-3`, `SEC-4`).
-5. **Agent files.** Only if the diff touches `AGENTS.md`, `CLAUDE.md`, `**/.claude/**`, `SKILL.md`, `.cursor/`, or `.github/copilot-instructions.md`. Flag any instruction that:
+6. **Agent files.** Only if the diff touches `AGENTS.md`, `CLAUDE.md`, `**/.claude/**`, `SKILL.md`, `.cursor/`, or `.github/copilot-instructions.md`. Flag any instruction that:
    - runs migrations, seeds, `dev-init`, `psql`, or other DB writes without the local-DB proof from the root `AGENTS.md` Databases rule;
    - runs `kubectl`, `helm`, `aws`, or SSM mutations, edits prod values, writes to Contentful, or changes ConfigCat flags;
    - pushes, force-pushes, merges, or rewrites history without asking;
