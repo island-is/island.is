@@ -417,8 +417,8 @@ export const Estates = new XroadConf({
   env: {
     XROAD_ESTATES_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
-      staging: 'TODO',
-      prod: 'TODO',
+      staging: 'IS-TEST/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
     },
   },
 })

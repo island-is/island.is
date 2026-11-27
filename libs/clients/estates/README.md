@@ -16,9 +16,9 @@ This client exposes estate-related endpoints from the Syslumenn X-Road service. 
 
 | Environment | Path |
 |-------------|------|
-| dev | `IS-DEV/GOV/10016/Syslumenn-Protected/islandisestatepages` |
-| staging | TODO |
-| prod | TODO |
+| dev | `IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur` |
+| staging | `IS-TEST/GOV/10016/Syslumenn-Protected/IslandMinarSidur` |
+| prod | `IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur` |
 
 ## Generating the API client
 
