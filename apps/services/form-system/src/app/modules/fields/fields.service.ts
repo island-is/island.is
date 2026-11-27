@@ -15,7 +15,6 @@ import {
   filterOnlyParents,
 } from '../../../utils/dependenciesHelper'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { Form } from '../forms/models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Screen } from '../screens/models/screen.model'
@@ -81,10 +80,7 @@ export class FieldsService {
       screenId: screenId,
       fieldType: fieldType,
       displayOrder: displayOrder,
-      fieldSettings: FieldSettingsFactory.getClass(
-        fieldType,
-        new FieldSettings(),
-      ),
+      fieldSettings: FieldSettingsFactory.getDefaultSettings(fieldType),
     } as Field)
 
     const keys = [

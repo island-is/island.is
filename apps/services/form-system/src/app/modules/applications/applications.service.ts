@@ -1073,6 +1073,7 @@ export class ApplicationsService {
                     {
                       model: Value,
                       as: 'values',
+                      required: false,
                       where: {
                         applicationId: applicationId,
                       },
@@ -1130,6 +1131,17 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with slug '${slug}' not found for application '${applicationId}'`,
       )
+    }
+
+    for (const section of form.sections ?? []) {
+      for (const screen of section.screens ?? []) {
+        screen.fields = screen.fields?.filter(
+          (field) =>
+            (field.values?.length ?? 0) > 0 ||
+            (field.fieldType === FieldTypesEnum.FAMILY &&
+              field.fieldSettings?.familyType === FamilyTypes.CHILD),
+        )
+      }
     }
 
     return form
@@ -1371,7 +1383,11 @@ export class ApplicationsService {
           (filteredScreenDto.fields ?? [])
             .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
             .map(async (field) => {
-              if (field.isPartOfMultiset) {
+              if (
+                field.isPartOfMultiset ||
+                (field.fieldType === FieldTypesEnum.FAMILY &&
+                  field.fieldSettings?.familyType === FamilyTypes.CHILD)
+              ) {
                 await this.valueModel.destroy({
                   where: {
                     fieldId: field.id,

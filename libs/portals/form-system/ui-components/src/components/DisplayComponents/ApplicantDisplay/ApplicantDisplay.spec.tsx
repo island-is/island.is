@@ -62,8 +62,8 @@ it.each(Object.values(ApplicantTypesEnum))(
     }
     const { container } = render(<ApplicantDisplay item={item} labelsOnly />)
     const expectedLabels = hideContactDetails
-      ? 'KennitalaNafnHeimilisfangPóstnúmer'
-      : 'KennitalaNafnNetfangSímanúmerHeimilisfangPóstnúmer'
+      ? 'NafnKennitalaHeimilisfangPóstnúmer'
+      : 'NafnKennitalaNetfangSímanúmerHeimilisfangPóstnúmer'
     expect(container.textContent).toBe(expectedLabels)
   },
 )
@@ -78,7 +78,7 @@ it('shows property names without any values while respecting disabled phone and 
     values: [],
   }
   const { container } = render(<ApplicantDisplay item={item} labelsOnly />)
-  expect(container.textContent).toBe('KennitalaNafnNetfang')
+  expect(container.textContent).toBe('NafnKennitalaNetfang')
 })
 
 it.each(Object.values(ApplicantTypesEnum))(
@@ -104,6 +104,7 @@ it.each(Object.values(ApplicantTypesEnum))(
         {
           json: {
             name: 'Applicant Name',
+            nationalId: '0101232989',
             email: 'applicant@example.com',
             phoneNumber: '+3546111111',
             address: 'Applicant Address',
@@ -115,6 +116,12 @@ it.each(Object.values(ApplicantTypesEnum))(
     render(<ApplicantDisplay item={item} />)
 
     expect(screen.getByText('Applicant Name')).toBeTruthy()
+    expect(
+      screen
+        .getByText('Applicant Name')
+        .compareDocumentPosition(screen.getByText('0101232989')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
     expect(screen.getByText('Applicant Address')).toBeTruthy()
     if (hideContactDetails) {
       expect(screen.queryByText('Netfang')).toBeNull()

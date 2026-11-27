@@ -5,18 +5,69 @@ import { useLocale } from '@island.is/localization'
 import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { DefaultDisplay } from '../DefaultDisplay/DefaultDisplay'
 
 interface Props {
   item: FormSystemField
-  valueIndex: number
+  valueIndex?: number
   requiredMissing?: boolean
 }
 
-export const NationalIdDisplay = ({
+export const NationalIdDisplay = (props: Props) => {
+  const { item } = props
+  const { lang, formatMessage } = useLocale()
+  if (
+    item.fieldType !== FieldTypesEnum.FAMILY ||
+    item.fieldSettings?.familyType !== FamilyTypes.CHILD
+  ) {
+    return <NationalIdValueDisplay {...props} />
+  }
+
+  const selectedIndexes = (item.values ?? []).flatMap((value, index) =>
+    value?.json?.nationalId &&
+    (!item.isPartOfMultiset ||
+      props.valueIndex === undefined ||
+      index === props.valueIndex)
+      ? [index]
+      : [],
+  )
+
+  if (selectedIndexes.length === 0 && props.requiredMissing) {
+    return <DefaultDisplay {...props} valueIndex={props.valueIndex ?? 0} />
+  }
+
+  return (
+    <Stack space={0}>
+      <Text as="p" fontWeight="semiBold" lineHeight="sm">
+        {item.name?.[lang]}
+      </Text>
+      {selectedIndexes.length === 0 ? (
+        <Box marginLeft={2}>
+          <Text>{formatMessage(m.noChildrenSelected)}</Text>
+        </Box>
+      ) : (
+        <Stack space={2}>
+          {selectedIndexes.map((index) => (
+            <NationalIdValueDisplay
+              key={item.values?.[index]?.id ?? index}
+              item={item}
+              valueIndex={index}
+              requiredMissing={false}
+              showLabel={false}
+            />
+          ))}
+        </Stack>
+      )}
+    </Stack>
+  )
+}
+
+const NationalIdValueDisplay = ({
   item,
-  valueIndex,
+  valueIndex = 0,
   requiredMissing = false,
-}: Props) => {
+  showLabel = true,
+}: Props & { showLabel?: boolean }) => {
   const { lang, formatMessage } = useLocale()
 
   const value = item.values?.[valueIndex]
@@ -26,7 +77,10 @@ export const NationalIdDisplay = ({
     item.fieldType === FieldTypesEnum.FAMILY &&
     item.fieldSettings?.familyType === FamilyTypes.SPOUSE
   const maritalStatus = getValue(item, 'maritalStatus', valueIndex)
-  const showAddress = item.fieldSettings?.showAddress ?? false
+  const isChild =
+    item.fieldType === FieldTypesEnum.FAMILY &&
+    item.fieldSettings?.familyType === FamilyTypes.CHILD
+  const showAddress = !isChild && (item.fieldSettings?.showAddress ?? false)
   const address = value?.json?.address ?? undefined
   const postalCode = value?.json?.postalCode ?? undefined
   const municipality = value?.json?.municipality ?? undefined
@@ -39,67 +93,75 @@ export const NationalIdDisplay = ({
       height="full"
     >
       <Stack space={0}>
-        <Text as="p" fontWeight="semiBold" lineHeight="sm">
-          {item.name?.[lang]}
-          {requiredMissing && (
-            <>
-              {' '}
-              <Text as="span" fontWeight="medium" color="red600">
-                *
-              </Text>
-            </>
-          )}
-        </Text>
+        {showLabel && (
+          <Text as="p" fontWeight="semiBold" lineHeight="sm">
+            {item.name?.[lang]}
+            {requiredMissing && (
+              <>
+                {' '}
+                <Text as="span" fontWeight="medium" color="red600">
+                  *
+                </Text>
+              </>
+            )}
+          </Text>
+        )}
         <Box marginLeft={2}>
           <Stack space={1}>
-            <Text fontWeight="medium" lineHeight="sm">
-              {`${formatMessage(m.nationalId)}:`}
-              {'\u00A0\u00A0\u00A0'}
-              {!nationalId && requiredMissing && (
-                <Text
-                  as="span"
-                  fontWeight="light"
-                  color="red600"
-                  lineHeight="sm"
-                >
-                  {formatMessage(m.missingValue)}
-                </Text>
-              )}
-              {nationalId && (
-                <Text
-                  as="span"
-                  fontWeight="light"
-                  color="dark400"
-                  lineHeight="sm"
-                >
-                  {nationalId}
-                </Text>
-              )}
-            </Text>
-            <Text fontWeight="medium" lineHeight="sm">
-              {`${formatMessage(m.individualName)}:`}
-              {'\u00A0\u00A0\u00A0'}
-              {!name && requiredMissing && (
-                <Text
-                  as="span"
-                  fontWeight="light"
-                  color="red600"
-                  lineHeight="sm"
-                >
-                  {formatMessage(m.missingValue)}
-                </Text>
-              )}
-              {name && (
-                <Text
-                  as="span"
-                  fontWeight="light"
-                  color="dark400"
-                  lineHeight="sm"
-                >
-                  {name}
-                </Text>
-              )}
-            </Text>
+            <Stack
+              space={
+                isChild || item.fieldType === FieldTypesEnum.NATIONAL_ID ? 0 : 1
+              }
+            >
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.individualName)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                {!name && requiredMissing && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="red600"
+                    lineHeight="sm"
+                  >
+                    {formatMessage(m.missingValue)}
+                  </Text>
+                )}
+                {name && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="dark400"
+                    lineHeight="sm"
+                  >
+                    {name}
+                  </Text>
+                )}
+              </Text>
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.nationalId)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                {!nationalId && requiredMissing && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="red600"
+                    lineHeight="sm"
+                  >
+                    {formatMessage(m.missingValue)}
+                  </Text>
+                )}
+                {nationalId && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="dark400"
+                    lineHeight="sm"
+                  >
+                    {nationalId}
+                  </Text>
+                )}
+              </Text>
+            </Stack>
             {showMaritalStatus && (
               <Text fontWeight="medium" lineHeight="sm">
                 {`${formatMessage(m.maritalStatus)}:`}

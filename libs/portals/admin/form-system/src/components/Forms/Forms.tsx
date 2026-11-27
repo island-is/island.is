@@ -1,7 +1,10 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
-import { CREATE_FORM, IMPORT_FORM } from '@island.is/form-system/graphql'
+import {
+  CREATE_FORM,
+  FormListItem,
+  IMPORT_FORM,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -21,6 +24,7 @@ import { useNavigate } from 'react-router-dom'
 import { FormsContext } from '../../context/FormsContext'
 import { FormSystemPaths } from '../../lib/paths'
 import { OrganizationSelect } from '../OrganizationSelect'
+import { StatusTag } from '../StatusTag/StatusTag'
 import * as tableStyles from '../tableHeader.css'
 import {
   SortColumn,
@@ -28,6 +32,7 @@ import {
   TableHeader,
 } from './components/Table/TableHeader'
 import { TableRow } from './components/Table/TableRow'
+import * as styles from './Forms.css'
 
 const defaultFormState = [
   FormStatus.IN_DEVELOPMENT,
@@ -56,6 +61,7 @@ export const Forms = () => {
   const [sort, setSort] = useState<{
     column: SortColumn | null
     direction: SortDirection
+    statusFirst?: FormListItem['status']
   }>({
     column: null,
     direction: 'asc',
@@ -201,7 +207,7 @@ export const Forms = () => {
     }
   }, [])
 
-  const formFilter = (form: FormSystemForm) => {
+  const formFilter = (form: FormListItem) => {
     const matchesStatus =
       filter.formState.length === 0 || filter.formState.includes(form.status)
 
@@ -212,6 +218,45 @@ export const Forms = () => {
 
     return matchesStatus && matchesName
   }
+
+  const statusSummary = (
+    <Box
+      className={styles.statusSummary}
+      display="flex"
+      columnGap={2}
+      rowGap={1}
+      flexWrap="wrap"
+    >
+      {[
+        FormStatus.PUBLISHED,
+        FormStatus.IN_DEVELOPMENT,
+        FormStatus.PUBLISHED_BEING_CHANGED,
+      ].map((status) => (
+        <Box
+          key={status}
+          className={styles.status[status]}
+          display="flex"
+          alignItems="center"
+          columnGap={1}
+        >
+          <StatusTag
+            status={status}
+            active={sort.statusFirst === status}
+            onClick={() =>
+              setSort({
+                column: 'status',
+                direction: 'asc',
+                statusFirst: status,
+              })
+            }
+          />
+          <Text fontWeight="semiBold">
+            {forms.filter((form) => form.status === status).length}
+          </Text>
+        </Box>
+      ))}
+    </Box>
+  )
 
   return (
     <>
@@ -269,8 +314,8 @@ export const Forms = () => {
         display="flex"
         width="full"
         marginBottom={2}
-        justifyContent="flexEnd"
-        alignItems="baseline"
+        justifyContent="spaceBetween"
+        alignItems="flexEnd"
       >
         <Box display={['none', 'none', 'flex']} columnGap={2}>
           <Box display="flex" style={{ minWidth: 144 }}>
@@ -285,64 +330,69 @@ export const Forms = () => {
           </Box>
           {importButton}
         </Box>
-        <Filter
-          labelClearAll="Hreinsa allar síur"
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía API Vörulista"
-          labelResult="Sýna niðurstöður"
-          align="right"
-          onFilterClear={() =>
-            setFilter({
-              name: '',
-              formState: defaultFormState,
-            })
-          }
-          variant="popover"
-          filterInput={
-            <FilterInput
-              name="filter-input"
-              placeholder="Sía eftir leitarorði"
-              value={filter.name}
-              onChange={(value) => setFilter({ ...filter, name: value })}
-              button={{
-                label: 'Search',
-                onClick: () => undefined,
-              }}
-            />
-          }
-        >
-          <Box
-            paddingX={3}
-            paddingY={1}
-            borderRadius="large"
-            background="white"
+        <Box display="flex" flexDirection="column" rowGap={2}>
+          {statusSummary}
+          <Filter
+            labelClearAll="Hreinsa allar síur"
+            labelClear="Hreinsa síu"
+            labelOpen="Opna síu"
+            labelClose="Loka síu"
+            labelTitle="Sía API Vörulista"
+            labelResult="Sýna niðurstöður"
+            align="right"
+            onFilterClear={() =>
+              setFilter({
+                name: '',
+                formState: defaultFormState,
+              })
+            }
+            variant="popover"
+            filterInput={
+              <FilterInput
+                name="filter-input"
+                placeholder="Sía eftir leitarorði"
+                value={filter.name}
+                onChange={(value) => setFilter({ ...filter, name: value })}
+                button={{
+                  label: 'Search',
+                  onClick: () => undefined,
+                }}
+              />
+            }
           >
-            <Stack space={2}>
-              <Text variant="h4">Staða</Text>
-              {categories[0].filters.map((category) => (
-                <Checkbox
-                  key={category.value}
-                  name={category.value}
-                  label={category.label}
-                  value={category.value}
-                  checked={filter.formState.includes(category.value)}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    let newSelected = [...filter.formState]
-                    if (newSelected.includes(value)) {
-                      newSelected = newSelected.filter((item) => item !== value)
-                    } else {
-                      newSelected.push(value)
-                    }
-                    setFilter({ ...filter, formState: newSelected })
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Filter>
+            <Box
+              paddingX={3}
+              paddingY={1}
+              borderRadius="large"
+              background="white"
+            >
+              <Stack space={2}>
+                <Text variant="h4">Staða</Text>
+                {categories[0].filters.map((category) => (
+                  <Checkbox
+                    key={category.value}
+                    name={category.value}
+                    label={category.label}
+                    value={category.value}
+                    checked={filter.formState.includes(category.value)}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      let newSelected = [...filter.formState]
+                      if (newSelected.includes(value)) {
+                        newSelected = newSelected.filter(
+                          (item) => item !== value,
+                        )
+                      } else {
+                        newSelected.push(value)
+                      }
+                      setFilter({ ...filter, formState: newSelected })
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </Filter>
+        </Box>
       </Box>
       <Box className={tableStyles.tableWrapper}>
         <TableHeader
@@ -366,6 +416,12 @@ export const Forms = () => {
                 )
               }
               if (sort.column === 'status') {
+                if (sort.statusFirst) {
+                  const priority =
+                    Number(b.status === sort.statusFirst) -
+                    Number(a.status === sort.statusFirst)
+                  if (priority !== 0) return priority
+                }
                 return dir * (a.status ?? '').localeCompare(b.status ?? '')
               }
               return 0
@@ -376,10 +432,8 @@ export const Forms = () => {
                 id={f?.id}
                 name={f?.name?.is ?? ''}
                 isHeader={false}
-                translated={f?.isTranslated ?? false}
                 isInaccessible={f?.isInaccessible ?? false}
                 slug={f?.slug ?? ''}
-                beenPublished={f?.beenPublished ?? false}
                 setFormsState={setForms}
                 status={f?.status}
                 lastModified={f?.modified}

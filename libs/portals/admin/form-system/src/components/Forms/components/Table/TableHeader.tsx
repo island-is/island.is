@@ -88,21 +88,10 @@ export const TableHeader = ({ sortColumn, sortDirection, onSort }: Props) => {
         </Column>
 
         <Column span={['2/12', '2/12', '2/12', '1/12']}>
-          <Box
-            display="flex"
-            justifyContent="flexStart"
-            alignItems="center"
-            cursor="pointer"
-            onClick={() => onSort('status')}
-          >
+          <Box display="flex" justifyContent="flexStart" alignItems="center">
             <Text variant="medium" fontWeight="semiBold">
               {formatMessage(m.state)}
             </Text>
-            <SortIndicator
-              column="status"
-              sortColumn={sortColumn}
-              sortDirection={sortDirection}
-            />
           </Box>
         </Column>
 

@@ -41,7 +41,6 @@ import {
 } from '../../dataTypes/certificationTypes/certificationType.model'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
   FieldType,
   FieldTypes,
@@ -65,7 +64,7 @@ import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { FormDto } from './models/dto/form.dto'
+import { FormDto, FormListItemDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { CopyFormDto } from './models/dto/copyForm.dto'
@@ -136,7 +135,19 @@ export class FormsService {
       } as Organization)
     }
 
+    const attributes: Array<keyof FormListItemDto> = [
+      'id',
+      'name',
+      'slug',
+      'modified',
+      'status',
+      'submissionServiceUrl',
+      'isInaccessible',
+      'lastModifiedBy',
+      'derivedFrom',
+    ]
     const forms = await this.formModel.findAll({
+      attributes,
       where: {
         organizationId: organization.id,
         status: { [Op.ne]: FormStatus.ARCHIVED },
@@ -144,56 +155,8 @@ export class FormsService {
       order: [['modified', 'DESC']],
     })
 
-    const keys = [
-      'id',
-      'name',
-      'slug',
-      'organizationNationalId',
-      'organizationDisplayName',
-      'invalidationDate',
-      'created',
-      'modified',
-      'zendeskInternal',
-      'useValidate',
-      'submissionServiceUrl',
-      'zendeskBrandId',
-      'isTranslated',
-      'hasPayment',
-      'beenPublished',
-      'status',
-      'draftDaysToLive',
-      'submissionDaysToLive',
-      'derivedFrom',
-      'allowProceedOnValidationFail',
-      'isInaccessible',
-      'validateEligibility',
-      'enableApplicationPdfDownload',
-      'hasSummaryScreen',
-      'sectionInfo',
-      'lastModifiedBy',
-      'delegations',
-    ]
-
     const formResponseDto: FormResponseDto = {
-      forms: forms.map((form) => {
-        const dto = defaults(
-          pick(form, keys),
-          zipObject(keys, Array(keys.length).fill(null)),
-        ) as FormDto
-
-        if (dto.sectionInfo) {
-          const cs = dto.sectionInfo
-
-          cs.title ??= { is: '', en: '' }
-          cs.confirmationHeader ??= { is: '', en: '' }
-          cs.confirmationText ??= { is: '', en: '' }
-
-          cs.additionalInfo ??= []
-          cs.additionalPremises ??= []
-        }
-
-        return dto
-      }),
+      forms: forms.map((form) => pick(form, attributes)),
       organizationNationalIds: await this.organizationModel
         .findAll({
           attributes: ['nationalId'],
@@ -1369,9 +1332,8 @@ export class FormsService {
     const organizationFieldTypes = commonFieldTypes.concat(uncommonFieldTypes)
 
     organizationFieldTypes.map((fieldType) => {
-      ;(fieldType.fieldSettings = FieldSettingsFactory.getClass(
+      ;(fieldType.fieldSettings = FieldSettingsFactory.getDefaultSettings(
         fieldType.id,
-        new FieldSettings(),
       )),
         (fieldType.values = [
           {
