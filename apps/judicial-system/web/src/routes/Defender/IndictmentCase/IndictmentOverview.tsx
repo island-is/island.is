@@ -14,6 +14,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Feature,
+  findAppealStatementDeadline,
   hasFiledAppealStatement,
   isCompletedCase,
   isRulingOrDismissalCase,
@@ -63,6 +64,7 @@ import {
 import {
   useAppealCase,
   useAppealCaseBanner,
+  useAppealCaseModals,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -140,6 +142,13 @@ const IndictmentOverview: FC = () => {
   // The defendant whose verdict the user is about to accept, while the
   // confirmation is open.
   const [acceptingVerdictFor, setAcceptingVerdictFor] = useState<Defendant>()
+  // Per-defendant statement route for the after-deadline confirm modal
+  // (same copy as R-mál / useAppealCaseBanner).
+  const [confirmStatementRoute, setConfirmStatementRoute] = useState<string>()
+  const {
+    appealCaseModals: verdictAppealStatementModals,
+    openConfirmStatementAfterDeadline,
+  } = useAppealCaseModals({ confirmStatementRoute })
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -277,12 +286,22 @@ const IndictmentOverview: FC = () => {
     }
 
     if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      const statementHref = `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`
+      const statementDeadline = findAppealStatementDeadline(
+        workingCase.verdictAppealCase?.statementDeadlines,
+        { defendantId: defendant.id },
+      )
+
       items.push({
         title: 'Senda greinargerð',
-        onClick: () =>
-          router.push(
-            `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
-          ),
+        ...(statementDeadline?.isExpired
+          ? {
+              onClick: () => {
+                setConfirmStatementRoute(statementHref)
+                openConfirmStatementAfterDeadline()
+              },
+            }
+          : { onClick: () => router.push(statementHref) }),
       })
     }
 
@@ -524,6 +543,7 @@ const IndictmentOverview: FC = () => {
           <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
+        {verdictAppealStatementModals}
         <AnimatePresence>
           {acceptingVerdictFor && (
             <Modal
