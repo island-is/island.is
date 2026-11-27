@@ -54,7 +54,7 @@ The full rule set, with IDs and sources, is the `policies` skill (`.claude/skill
 - PR titles follow Conventional Commits and must pass `.github/workflows/pullrequest-lint.yml`: `type(scope): description` with type one of `feat infra fix docs style refactor perf test build ci chore revert`; the scope is the app or domain (`j-s`, `my-pages`, `ids-admin`, …).
 - Use `.github/pull_request_template.md`. Keep **What**/**Why** short: bullets plus one or two plain sentences. Tick the "AI tools were used" box and name the tool; that is the disclosure, so don't add AI attribution lines or co-author trailers.
 - Comments that explain a change belong in the PR, not the code. Keep code comments minimal and timeless.
-- PRs are squash-merged into `main`; `hotfix/*` branches against `release/*` handle out-of-cycle fixes.
+- PRs are squash-merged into `main`. Releases go out weekly, on Tuesdays, from a `release/*` branch; `hotfix/*` branches against it handle out-of-cycle fixes.
 - A CODEOWNER approves every change, AI-assisted included. Resolve review comments in the PR rather than deferring them to unspecified follow-ups.
 - Reviewing: agents draft comments for the developer to post; they don't post them. See the `pr-review` skill.
 

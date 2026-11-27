@@ -2,16 +2,16 @@
 
 Shared configuration for AI coding agents in this repo. Owned by `@island-is/core`, and changes are reviewed like any other code.
 
-| Path                             | Read by                                   | Purpose                                                                                                         |
-| -------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `/AGENTS.md`                     | Claude Code, Codex, Cursor, Copilot, …    | Repo-wide baseline: commands, safety rules, conventions, PR rules                                               |
-| `/CLAUDE.md`                     | Claude Code                               | Imports `AGENTS.md`, plus Claude-specific notes                                                                 |
-| `.claude/settings.json`          | Claude Code                               | Team permissions: denies secret reads and cluster mutations; asks before pushes, PRs, migrations and DB proxies |
-| `.claude/skills/policies/`       | Claude Code (any tool can read the files) | island.is policies as rules with IDs (`LOG-1`, `SEC-2`, …) and links to docs.devland.is                         |
-| `.claude/skills/pr-review/`      | Claude Code                               | `/pr-review [pr\|branch]`: drafts review comments in the house style for you to post; checks agent-file changes |
-| `.claude/skills/pr-create/`      | Claude Code                               | `/pr-create`: verify, title that passes PR lint, body from the PR template                                      |
-| `.claude/skills/hotfix-release/` | Claude Code                               | `/hotfix-release <release> <sha>`: cherry-pick onto a release branch and open the PR                            |
-| `.claude/skills/application-review/` | Claude Code                          | `/application-review`: review for application-system changes (owned by the application-system team)            |
+| Path                                 | Read by                                   | Purpose                                                                                                         |
+| ------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `/AGENTS.md`                         | Claude Code, Codex, Cursor, Copilot, …    | Repo-wide baseline: commands, safety rules, conventions, PR rules                                               |
+| `/CLAUDE.md`                         | Claude Code                               | Imports `AGENTS.md`, plus Claude-specific notes                                                                 |
+| `.claude/settings.json`              | Claude Code                               | Team permissions: denies secret reads and cluster mutations; asks before pushes, PRs, migrations and DB proxies |
+| `.claude/skills/policies/`           | Claude Code (any tool can read the files) | island.is policies as rules with IDs (`LOG-1`, `SEC-2`, …) and links to docs.devland.is                         |
+| `.claude/skills/pr-review/`          | Claude Code                               | `/pr-review [pr\|branch]`: drafts review comments in the house style for you to post; checks agent-file changes |
+| `.claude/skills/pr-create/`          | Claude Code                               | `/pr-create`: verify, title that passes PR lint, body from the PR template                                      |
+| `.claude/skills/hotfix-release/`     | Claude Code                               | `/hotfix-release <release> <sha>`: cherry-pick onto a release branch and open the PR                            |
+| `.claude/skills/application-review/` | Claude Code                               | `/application-review`: review for application-system changes (owned by the application-system team)             |
 
 ## Personal setup
 
