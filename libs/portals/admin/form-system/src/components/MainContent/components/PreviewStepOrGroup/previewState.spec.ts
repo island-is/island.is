@@ -5,8 +5,33 @@ import {
   getPreviewSections,
   getPreviewSteps,
   getRestrictedPreviewStart,
+  updatePreviewFields,
   updateRestrictedPreview,
 } from './previewState'
+
+it.each([
+  {
+    values: [
+      {
+        id: 'value',
+        order: 0,
+        json: { name: 'Selected child', nationalId: '0101202989' },
+      },
+    ],
+  },
+  { values: [] },
+])('updates selected child values in preview (case %#)', ({ values }) => {
+  const { fields } = createPreviewState(form)
+
+  const updated = updatePreviewFields(fields, {
+    type: 'SET_FIELD_VALUES',
+    payload: { id: 'child', values },
+  })
+
+  expect(updated.find((field) => field.id === 'child')?.values).toEqual(values)
+  expect(updated[0]).toBe(fields[0])
+  expect(fields.find((field) => field.id === 'child')?.values).toBeUndefined()
+})
 
 const form = {
   sections: [

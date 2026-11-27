@@ -126,7 +126,8 @@ export class ApplicationMapper {
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
-                  description: field.description,
+                  informationText: field.informationText,
+                  tooltip: field.tooltip,
                   isPartOfMultiset: field.isPartOfMultiset,
                   fieldType: field.fieldType,
                   isRequired: field.isRequired,
@@ -204,6 +205,7 @@ export class ApplicationMapper {
     jsonDto.id = applicationDto.id ?? ''
     jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
     jsonDto.slug = applicationDto.slug ?? ''
+    jsonDto.formName = applicationDto.formName
     jsonDto.isTest = applicationDto.isTest ?? false
     jsonDto.status = applicationDto.status ?? ''
     jsonDto.submittedAt = applicationDto.submittedAt ?? null

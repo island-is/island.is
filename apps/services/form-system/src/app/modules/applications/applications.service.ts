@@ -71,6 +71,8 @@ import { Payment } from '../payment/payment.model'
 import { buildApplicationPdf } from '../../../utils/applicationPdf'
 import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
+import { FileService } from '../file/file.service'
+import { getApplicationFiles } from '../../../utils/applicationFiles'
 
 @Injectable()
 export class ApplicationsService {
@@ -94,6 +96,7 @@ export class ApplicationsService {
     private readonly serviceManager: ServiceManager,
     private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
+    private readonly fileService: FileService,
   ) {}
 
   private isFakeUserAllowed(form: Form, user: User | null): boolean {
@@ -1070,6 +1073,7 @@ export class ApplicationsService {
                     {
                       model: Value,
                       as: 'values',
+                      required: false,
                       where: {
                         applicationId: applicationId,
                       },
@@ -1127,6 +1131,17 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with slug '${slug}' not found for application '${applicationId}'`,
       )
+    }
+
+    for (const section of form.sections ?? []) {
+      for (const screen of section.screens ?? []) {
+        screen.fields = screen.fields?.filter(
+          (field) =>
+            (field.values?.length ?? 0) > 0 ||
+            (field.fieldType === FieldTypesEnum.FAMILY &&
+              field.fieldSettings?.familyType === FamilyTypes.CHILD),
+        )
+      }
     }
 
     return form
@@ -1368,7 +1383,11 @@ export class ApplicationsService {
           (filteredScreenDto.fields ?? [])
             .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
             .map(async (field) => {
-              if (field.isPartOfMultiset) {
+              if (
+                field.isPartOfMultiset ||
+                (field.fieldType === FieldTypesEnum.FAMILY &&
+                  field.fieldSettings?.familyType === FamilyTypes.CHILD)
+              ) {
                 await this.valueModel.destroy({
                   where: {
                     fieldId: field.id,
@@ -1425,34 +1444,41 @@ export class ApplicationsService {
   }
 
   async deleteApplication(id: string, user: User): Promise<void> {
-    const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
-    })
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      const application = await this.applicationModel.findByPk(id, {
+        include: [{ model: Value, as: 'values', separate: true }],
+        transaction,
+        lock: Transaction.LOCK.UPDATE,
+      })
 
-    if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
-    }
+      if (!application) {
+        throw new NotFoundException(`Application with id '${id}' not found`)
+      }
 
-    const form = await this.formModel.findByPk(application.formId)
+      const form = await this.formModel.findByPk(application.formId, {
+        transaction,
+      })
 
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${application.formId}' not found`,
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete application '${id}'`,
+        )
+      }
+
+      const keys = getApplicationFiles(application, this.logger).map(
+        ({ key }) => key,
       )
-    }
-
-    const loginTypes = await this.getLoginTypes(user)
-    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
-    if (
-      !this.doesUserMatchApplication(application, user) ||
-      !hasRequiredDelegation
-    ) {
-      throw new ForbiddenException(
-        `User does not have permission to delete application '${id}'`,
-      )
-    }
-
-    await this.sequelize.transaction(async (transaction) => {
       await this.applicationEventModel.destroy({
         where: { applicationId: id },
         transaction,
@@ -1464,7 +1490,12 @@ export class ApplicationsService {
       })
 
       await application.destroy({ transaction })
+      return keys
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
   }
 
   async getDataFromUrl(

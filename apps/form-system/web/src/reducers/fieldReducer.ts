@@ -4,6 +4,7 @@ import { setError } from './reducerUtils'
 import {
   FormSystemListItem,
   FormSystemLanguageType,
+  FormSystemValueDto,
 } from '@island.is/api/schema'
 
 export const fieldReducer = (
@@ -11,6 +12,10 @@ export const fieldReducer = (
   action: Action,
 ): ApplicationState => {
   switch (action.type) {
+    case 'SET_FIELD_VALUES': {
+      const { id, values } = action.payload
+      return setFieldValues(state, id, values)
+    }
     case 'SET_LIST_VALUE': {
       const { id, value, valueIndex } = action.payload
       const values = {
@@ -129,6 +134,39 @@ export const fieldReducer = (
     }
     default:
       return state
+  }
+}
+
+const setFieldValues = (
+  state: ApplicationState,
+  fieldId: string,
+  values: FormSystemValueDto[],
+): ApplicationState => {
+  const currentScreen = state.currentScreen
+  if (!currentScreen?.data) return state
+
+  const updatedScreen = {
+    ...currentScreen.data,
+    fields: currentScreen.data.fields?.map((field) =>
+      field?.id === fieldId ? { ...field, values } : field,
+    ),
+  }
+  const sections = state.sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen?.id === updatedScreen.id ? updatedScreen : screen,
+    ),
+  }))
+
+  return {
+    ...state,
+    sections,
+    application: { ...state.application, sections },
+    currentSection: {
+      ...state.currentSection,
+      data: sections[state.currentSection.index],
+    },
+    currentScreen: { ...currentScreen, data: updatedScreen },
   }
 }
 

@@ -28,11 +28,13 @@ type AppealTransition = (
   appealCase: AppealCase,
 ) => AppealTransitionResult
 
-// A verdict appeal moves through fewer states than a ruling appeal: it is
-// never received, so it is concluded from the state it is filed in, and it is
-// neither received nor reopened. Each rule therefore names the states it
-// applies from for a verdict appeal separately; an empty list refuses the
-// transition for verdict appeals altogether.
+// A verdict appeal takes its own route: it is never received nor reopened.
+// The court of appeals confirms how it ended from the state it is filed in
+// (APPEALED -> READY_TO_COMPLETE), goes back when the court changes what it
+// confirmed (READY_TO_COMPLETE -> APPEALED), and it is completed when the
+// outcome is released (READY_TO_COMPLETE -> COMPLETED). Each rule therefore names the
+// states it applies from for a verdict appeal separately; an empty list refuses
+// the transition for that kind of appeal altogether.
 interface AppealCaseRule {
   fromAppealStates: AppealCaseState[]
   fromVerdictAppealStates: AppealCaseState[]
@@ -56,10 +58,35 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       },
     ],
     [
+      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      {
+        fromAppealStates: [],
+        fromVerdictAppealStates: [AppealCaseState.APPEALED],
+        // The date the court entered for the appeal's end is kept.
+        transition: (): AppealTransitionResult => ({
+          caseUpdate: {},
+          appealCaseUpdate: { appealState: AppealCaseState.READY_TO_COMPLETE },
+        }),
+      },
+    ],
+    [
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+      {
+        fromAppealStates: [],
+        fromVerdictAppealStates: [AppealCaseState.READY_TO_COMPLETE],
+        // The court changed what it confirmed, so it has to confirm the
+        // appeal again. Everything it recorded is kept.
+        transition: (): AppealTransitionResult => ({
+          caseUpdate: {},
+          appealCaseUpdate: { appealState: AppealCaseState.APPEALED },
+        }),
+      },
+    ],
+    [
       AppealCaseTransition.COMPLETE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
-        fromVerdictAppealStates: [AppealCaseState.APPEALED],
+        fromVerdictAppealStates: [AppealCaseState.READY_TO_COMPLETE],
         transition: (
           theCase: Case,
           appealCase: AppealCase,
@@ -89,6 +116,20 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
               currentAppealRulingDecision === AppealCaseRulingDecision.REPEAL
             ) {
               caseUpdate.validToDate = nowFactory()
+            }
+          }
+
+          // The court of appeals enters the date a verdict appeal ended
+          // itself, so it is kept, and the release is dated on its own; any
+          // other appeal is dated by its completion, also when it is completed
+          // again after being reopened.
+          if (appealCase.appealType === AppealCaseType.VERDICT) {
+            return {
+              caseUpdate,
+              appealCaseUpdate: {
+                appealState: AppealCaseState.COMPLETED,
+                appealCompletedDate: nowFactory(),
+              },
             }
           }
 

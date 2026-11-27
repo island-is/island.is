@@ -38,9 +38,9 @@ export const FieldSettingsFragment = gql`
     applicantType
     assetType
     familyType
-    showBiologicalChildren
-    showChildrenInCustody
-    hasDescription
+    subLabel {
+      ...LanguageFields
+    }
     isAddressRequired
     isPhoneRequired
     isEmailRequired

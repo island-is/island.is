@@ -183,7 +183,17 @@ export const applicationReducer = (
     case 'START_FILE_UPLOAD':
     case 'FINISH_FILE_UPLOAD':
       return uploadNavigationReducer(state, action)
+    case 'SET_FIELD_LOADING': {
+      const { id, loading } = action.payload
+      const loadingFieldIds = (state.loadingFieldIds ?? []).filter(
+        (fieldId) => fieldId !== id,
+      )
+      if (loading) loadingFieldIds.push(id)
+      return { ...state, loadingFieldIds }
+    }
     case 'INCREMENT': {
+      if (state.loadingFieldIds?.length) return state
+
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
       if (hasScreens(currentSectionData)) {

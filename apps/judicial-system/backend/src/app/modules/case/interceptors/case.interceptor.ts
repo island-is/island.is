@@ -38,12 +38,17 @@ import {
   ServiceRequirement,
   User,
   UserRole,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
 import {
   getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
+  // Whole-day rule for midnight verdict-appeal statement deadlines. Distinct
+  // from the local `isStatementDeadlineExpired` in getAppealCaseInfo, which
+  // uses an exact-instant comparison for ruling-appeal statement deadlines.
+  isStatementDeadlineExpired as isMidnightStatementDeadlineExpired,
   resolveDefenceParties,
 } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
@@ -734,20 +739,55 @@ const isProsecutionVerdictAppealTimelineEvent = (
   )
 }
 
+// Greinargerð overview lists every party's filed statement for defence users
+// who can download appeal files. Deadlines stay own-party only; these SENT
+// rows are the restricted filing-status signal that list needs (including
+// co-defendants and unscoped prosecution filings). Legacy defender backfill
+// names no party and must not count as the prosecution's.
+const isVerdictAppealStatementFilingStatusEvent = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+): boolean => {
+  if (eventLog.eventType !== AppealEventType.APPEAL_STATEMENT_SENT) {
+    return false
+  }
+
+  if (!eventLog.defendantId && !eventLog.civilClaimantId) {
+    return eventLog.userRole !== UserRole.DEFENDER
+  }
+
+  if (
+    eventLog.defendantId &&
+    theCase.defendants?.some(
+      (defendant) => defendant.id === eventLog.defendantId,
+    )
+  ) {
+    return true
+  }
+
+  return Boolean(
+    eventLog.civilClaimantId &&
+      theCase.civilClaimants?.some(
+        (civilClaimant) => civilClaimant.id === eventLog.civilClaimantId,
+      ),
+  )
+}
+
 const shouldKeepVerdictAppealEventLogForDefenceUser = (
   eventLog: AppealEventLog,
   theCase: Case,
   partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
 ): boolean =>
   isVerdictAppealPartyRow(eventLog, partyIds) ||
-  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase) ||
+  isVerdictAppealStatementFilingStatusEvent(eventLog, theCase)
 
 const serializeVerdictAppealStatementDeadline = (
   deadline: NonNullable<AppealCase['statementDeadlines']>[number],
 ) => ({
   ...deadline.toJSON(),
-  // Same clock as isStatementDeadlineExpired on kæra appealCase rows.
-  isExpired: Date.now() >= new Date(deadline.deadline).getTime(),
+  // Whole-day rule: midnight rows stay open through the deadline date.
+  isExpired: isMidnightStatementDeadlineExpired(new Date(deadline.deadline)),
 })
 
 const transformVerdictAppealCaseForUser = (
@@ -765,13 +805,30 @@ const transformVerdictAppealCaseForUser = (
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
-    appealEventLogs: appealCase.appealEventLogs?.filter((eventLog) =>
-      shouldKeepVerdictAppealEventLogForDefenceUser(
-        eventLog,
-        theCase,
-        partyIds,
+    // Own-party and prosecution timeline rows stay full. Co-party /
+    // unscoped prosecution SENT rows are filing-status only — enough for
+    // the overview list, without filer name/title/institution.
+    appealEventLogs: appealCase.appealEventLogs
+      ?.filter((eventLog) =>
+        shouldKeepVerdictAppealEventLogForDefenceUser(
+          eventLog,
+          theCase,
+          partyIds,
+        ),
+      )
+      .map((eventLog) =>
+        isVerdictAppealPartyRow(eventLog, partyIds) ||
+        isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+          ? eventLog
+          : {
+              id: eventLog.id,
+              eventType: eventLog.eventType,
+              created: eventLog.created,
+              userRole: eventLog.userRole,
+              defendantId: eventLog.defendantId,
+              civilClaimantId: eventLog.civilClaimantId,
+            },
       ),
-    ),
   }
 }
 
@@ -949,6 +1006,9 @@ const transformCase = (
   // Defence users only see their own parties' verdict-appeal deadlines and
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
+  // Non-defence keeps every deadline, but still gets server `isExpired` so
+  // the web does not fall back to the browser clock. Outcome masking spreads
+  // last and leaves the statement deadlines as they are.
   const verdictAppealCaseOverride = theCase.verdictAppealCase
     ? {
         verdictAppealCase: {
@@ -958,13 +1018,23 @@ const transformCase = (
                 theCase,
                 user,
               )
-            : theCase.verdictAppealCase.toJSON()),
+            : {
+                ...theCase.verdictAppealCase.toJSON(),
+                statementDeadlines:
+                  theCase.verdictAppealCase.statementDeadlines?.map(
+                    serializeVerdictAppealStatementDeadline,
+                  ),
+              }),
           ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
         },
       }
     : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
+  const defenceVerdictAppealPartyIds =
+    isDefence && user
+      ? getDefenceUserVerdictAppealPartyIds(theCase, user.nationalId)
+      : undefined
 
   return {
     ...theCase.toJSON(),
@@ -1050,10 +1120,30 @@ const transformCase = (
           isDistrictCourtUser(user) ||
           isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
       )
-      .map((file) => ({
-        ...file.toJSON(),
-        ...getRulingOrderAppealInfo(file, theCase),
-      })),
+      .map((file) => {
+        const json = {
+          ...file.toJSON(),
+          ...getRulingOrderAppealInfo(file, theCase),
+        }
+
+        // Co-party / prosecution greinargerð rows are listed for defence users
+        // who can download appeal files. Drop filer identity so the overview
+        // label cannot leak who uploaded another party's statement.
+        if (
+          defenceVerdictAppealPartyIds &&
+          file.category &&
+          verdictAppealStatementFileCategories.includes(file.category) &&
+          !isVerdictAppealPartyRow(file, defenceVerdictAppealPartyIds)
+        ) {
+          return {
+            ...json,
+            submittedBy: undefined,
+            fileRepresentative: undefined,
+          }
+        }
+
+        return json
+      }),
     caseRepresentatives: transformCaseRepresentatives(theCase, user),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),

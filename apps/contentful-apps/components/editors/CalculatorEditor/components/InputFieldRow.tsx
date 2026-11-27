@@ -175,6 +175,8 @@ export const InputFieldRow = ({
             label="Field label"
             value={field.label}
             isDisabled={isDisabled}
+            isRequired
+            isInvalid={!field.label?.is?.trim()}
             onChange={(next) => onChange({ label: next })}
             clearWhenEmpty
           />

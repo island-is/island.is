@@ -151,8 +151,8 @@ describe('AppealCaseController - Transition', () => {
     }
   })
 
-  // A verdict appeal is withdrawn or completed; the transitions that carry a
-  // ruling appeal through the court of appeals are refused on one.
+  // A verdict appeal is withdrawn, confirmed or completed; the transitions that
+  // carry a ruling appeal through the court of appeals are refused on one.
   describe('a verdict appeal', () => {
     const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
     const verdictAppealCase = {
@@ -175,7 +175,33 @@ describe('AppealCaseController - Transition', () => {
     })
   })
 
-  describe('complete a verdict appeal', () => {
+  // The backend takes a confirmation back itself when the court changes what
+  // it confirmed; no user can ask for it.
+  describe('take back the confirmation of a verdict appeal', () => {
+    it.each([
+      [AppealCaseType.VERDICT, AppealCaseState.READY_TO_COMPLETE],
+      [AppealCaseType.VERDICT, AppealCaseState.APPEALED],
+      [AppealCaseType.RULING, AppealCaseState.RECEIVED],
+    ])(
+      'should refuse it on a %s appeal in state %s',
+      async (appealType, appealState) => {
+        const then = await givenWhenThen(
+          { id: caseId, type: CaseType.INDICTMENT } as Case,
+          { id: appealCaseId, appealType, appealState } as AppealCase,
+          AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+        expect(mockEventService.postEvent).not.toHaveBeenCalled()
+        expect(transactionContext?.afterCommit).toHaveLength(0)
+      },
+    )
+  })
+
+  describe('confirm a verdict appeal', () => {
+    const concludedDate = new Date('2024-01-10T00:00:00Z')
     const rulingFile = {
       id: uuid(),
       key: `${caseId}/${uuid()}/domur.pdf`,
@@ -203,6 +229,7 @@ describe('AppealCaseController - Transition', () => {
       appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
       appealRulingType: AppealRulingType.VERDICT,
       appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      appealRulingDate: concludedDate,
     } as AppealCase
 
     describe('with everything on record', () => {
@@ -212,16 +239,18 @@ describe('AppealCaseController - Transition', () => {
         then = await givenWhenThen(
           theCase,
           recorded,
-          AppealCaseTransition.COMPLETE_APPEAL,
+          AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
         )
       })
 
-      it('should complete the appeal, dated now, in the transaction the guard opened', () => {
+      // The date is the one the court entered, not the day it confirmed.
+      it('should mark the appeal ready to complete, keeping its date, in the transaction the guard opened', () => {
         expect(then.error).toBeUndefined()
         expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
         expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
           appealCaseId,
-          { appealState: AppealCaseState.COMPLETED, appealRulingDate: now },
+          { appealState: AppealCaseState.READY_TO_COMPLETE },
           { transaction },
         )
       })
@@ -230,12 +259,18 @@ describe('AppealCaseController - Transition', () => {
       it('should notify nobody and deliver nothing', () => {
         expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       })
+
+      it('should not announce the confirmation', () => {
+        expect(mockEventService.postEvent).not.toHaveBeenCalled()
+        expect(transactionContext?.afterCommit).toHaveLength(0)
+      })
     })
 
     it.each([
       ['an outcome', { appealRulingDecision: undefined }, theCase],
       ['a ruling type', { appealRulingType: undefined }, theCase],
       ['a conclusion', { appealConclusion: '  ' }, theCase],
+      ['a date of conclusion', { appealRulingDate: undefined }, theCase],
       ['a ruling document', {}, { ...theCase, caseFiles: [] } as Case],
       [
         'a ruling document that is a PDF',
@@ -260,12 +295,13 @@ describe('AppealCaseController - Transition', () => {
       const then = await givenWhenThen(
         c as Case,
         { ...recorded, ...missing } as AppealCase,
-        AppealCaseTransition.COMPLETE_APPEAL,
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
       )
 
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
 
     // The court can reach the case through a ruling appeal of it while the
@@ -279,7 +315,7 @@ describe('AppealCaseController - Transition', () => {
         const then = await givenWhenThen(
           theCase,
           { ...recorded, sentAppealSummonses } as AppealCase,
-          AppealCaseTransition.COMPLETE_APPEAL,
+          AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
         )
 
         expect(then.error).toBeInstanceOf(ForbiddenException)
@@ -288,19 +324,213 @@ describe('AppealCaseController - Transition', () => {
       },
     )
 
-    it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-      'should refuse an appeal that is %s',
-      async (appealState) => {
+    it.each([
+      AppealCaseState.READY_TO_COMPLETE,
+      AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
+    ])('should refuse an appeal that is %s', async (appealState) => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...recorded, appealState } as AppealCase,
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      )
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+
+    it('should be refused on a ruling appeal', async () => {
+      const then = await givenWhenThen(
+        { id: caseId, type: CaseType.CUSTODY } as Case,
+        {
+          id: appealCaseId,
+          appealType: AppealCaseType.RULING,
+          appealState: AppealCaseState.RECEIVED,
+        } as AppealCase,
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      )
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+  })
+
+  describe('complete a verdict appeal', () => {
+    const concludedDate = new Date('2024-01-10T00:00:00Z')
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      origin: CaseOrigin.LOKE,
+      courtCaseNumber: 'S-1/2024',
+      caseFiles: [
+        {
+          id: uuid(),
+          key: `${caseId}/${uuid()}/domur.pdf`,
+          type: 'application/pdf',
+          category: CaseFileCategory.VERDICT_APPEAL_RULING,
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+        },
+      ],
+    } as unknown as Case
+    const confirmed = {
+      id: appealCaseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.READY_TO_COMPLETE,
+      appealCaseNumber: '1/2024',
+      sentAppealSummonses: [{ id: uuid() }],
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      appealRulingType: AppealRulingType.VERDICT,
+      appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      appealRulingDate: concludedDate,
+    } as AppealCase
+
+    describe('once confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          theCase,
+          confirmed,
+          AppealCaseTransition.COMPLETE_APPEAL,
+        )
+      })
+
+      it('should complete the appeal, keeping its date and dating the release', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          appealCaseId,
+          { appealState: AppealCaseState.COMPLETED, appealCompletedDate: now },
+          { transaction },
+        )
+      })
+
+      // The release is an act of the court, naming no party.
+      it('should record the release, with the court user as its actor', () => {
+        expect(
+          mockAppealEventLogRepositoryService.create,
+        ).toHaveBeenCalledTimes(1)
+        expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+          {
+            caseId,
+            appealCaseId,
+            eventType: AppealEventType.APPEAL_COMPLETED,
+            appealOrigin: undefined,
+            userRole: user.role,
+            userId: user.id,
+            nationalId: user.nationalId,
+            userName: user.name,
+            userTitle: user.title,
+            institutionName: user.institution?.name,
+          },
+          { transaction },
+        )
+      })
+
+      // The court's ruling document stays with the court, so nothing goes
+      // out with the release.
+      it('should queue nothing and deliver nothing', () => {
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      })
+
+      // A verdict appeal is an áfrýjun, so its completion is not announced
+      // as a completed kæra.
+      it('should announce the completion of the verdict appeal once the transaction has committed', async () => {
+        expect(transactionContext?.afterCommit).toHaveLength(1)
+
+        await Promise.all(
+          (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+        )
+
+        expect(mockEventService.postEvent).toHaveBeenCalledTimes(1)
+        expect(mockEventService.postEvent).toHaveBeenCalledWith(
+          'COMPLETE_VERDICT_APPEAL',
+          theCase,
+        )
+      })
+    })
+
+    // The court can still edit the record after confirming, so the release
+    // checks it again rather than publish an incomplete outcome.
+    it.each([
+      ['an outcome', { appealRulingDecision: undefined }, theCase],
+      ['a ruling type', { appealRulingType: undefined }, theCase],
+      ['a conclusion', { appealConclusion: '  ' }, theCase],
+      ['a date of conclusion', { appealRulingDate: undefined }, theCase],
+      ['a ruling document', {}, { ...theCase, caseFiles: [] } as Case],
+      [
+        'a ruling document that is a PDF',
+        {},
+        {
+          ...theCase,
+          caseFiles: (theCase.caseFiles ?? []).map((file) => ({
+            ...file,
+            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          })),
+        } as unknown as Case,
+      ],
+      [
+        'a status of completed',
+        { verdictAppealStatus: VerdictAppealStatus.POSTPONED },
+        theCase,
+      ],
+      ['a status', { verdictAppealStatus: undefined }, theCase],
+    ])('should refuse without %s', async (_, missing, c) => {
+      const then = await givenWhenThen(
+        c as Case,
+        { ...confirmed, ...missing } as AppealCase,
+        AppealCaseTransition.COMPLETE_APPEAL,
+      )
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+
+    it.each([
+      ['no summons', undefined],
+      ['an empty list of summonses', []],
+    ])(
+      'should refuse an appeal that has not been sent to the court, with %s',
+      async (_, sentAppealSummonses) => {
         const then = await givenWhenThen(
           theCase,
-          { ...recorded, appealState } as AppealCase,
+          { ...confirmed, sentAppealSummonses } as AppealCase,
           AppealCaseTransition.COMPLETE_APPEAL,
         )
 
         expect(then.error).toBeInstanceOf(ForbiddenException)
         expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+        expect(transactionContext?.afterCommit).toHaveLength(0)
       },
     )
+
+    it.each([
+      AppealCaseState.APPEALED,
+      AppealCaseState.RECEIVED,
+      AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
+    ])('should refuse an appeal that is %s', async (appealState) => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...confirmed, appealState } as AppealCase,
+        AppealCaseTransition.COMPLETE_APPEAL,
+      )
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
   })
 
   describe('receive appeal', () => {
@@ -380,6 +610,7 @@ describe('AppealCaseController - Transition', () => {
     } as unknown as Case
     const appealCase = {
       id: appealCaseId,
+      appealType: AppealCaseType.RULING,
       appealState: AppealCaseState.RECEIVED,
     } as AppealCase
 
@@ -391,12 +622,31 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
-    it('should move the appeal case to completed', () => {
+    it('should announce the completed appeal once the transaction has committed', async () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledTimes(1)
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        AppealCaseTransition.COMPLETE_APPEAL,
+        theCase,
+      )
+    })
+
+    it('should move the appeal case to completed, dated now', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
-        expect.objectContaining({ appealState: AppealCaseState.COMPLETED }),
+        { appealState: AppealCaseState.COMPLETED, appealRulingDate: now },
         { transaction },
       )
+    })
+
+    it('should record no appeal event', () => {
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
 
     it('should queue delivery of the appeal ruling file', () => {

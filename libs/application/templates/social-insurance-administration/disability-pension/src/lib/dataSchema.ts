@@ -18,6 +18,10 @@ import {
   OTHER_RESIDENCE_STATUS_VALUE,
   OTHER_STATUS_VALUE,
 } from '../types/constants'
+import { generateYearsAndMonths } from '../utils/generateYearsAndMonths'
+
+const emptyToUndefined = (value: unknown) =>
+  value === null || value === '' ? undefined : value
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -56,10 +60,21 @@ export const dataSchema = z.object({
     spouseNationalId: z.string().min(4).max(10).optional().or(z.literal('')),
   }),
   disabilityAppliedBefore: z.enum([YES, NO]),
-  disabilityPeriod: z.object({
-    year: z.coerce.number().int().min(1000),
-    month: z.coerce.number().int().min(0).max(11),
-  }),
+  disabilityPeriod: z
+    .object({
+      // A cleared select stores null / '' – treat both as missing instead of
+      // letting z.coerce turn them into 0, which would pass validation.
+      year: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1000)),
+      month: z.preprocess(
+        emptyToUndefined,
+        z.coerce.number().int().min(0).max(11),
+      ),
+    })
+    .refine(
+      ({ year, month }) =>
+        generateYearsAndMonths()[year]?.includes(month) ?? false,
+      { path: ['month'] },
+    ),
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
       if (hasLivedAbroad === NO || (list && list.length > 0)) {

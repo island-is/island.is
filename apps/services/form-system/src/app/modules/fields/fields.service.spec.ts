@@ -1,5 +1,7 @@
 import { User } from '@island.is/auth-nest-tools'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
+import { plainToInstance } from 'class-transformer'
+import { validateSync } from 'class-validator'
 
 import { Form } from '../forms/models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
@@ -7,6 +9,51 @@ import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { FieldsService } from './fields.service'
 import { Field } from './models/field.model'
+import { UpdateFieldDto } from './models/dto/updateField.dto'
+
+describe('FieldsService.create', () => {
+  it('persists and returns the default upload settings for new FILE fields', async () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const create = jest.fn(async (field: Partial<Field>) => ({
+      ...field,
+      id: 'field-id',
+    }))
+    const service = Object.assign(Object.create(FieldsService.prototype), {
+      fieldModel: { create },
+      screenModel: {
+        findByPk: jest.fn().mockResolvedValue({ sectionId: 'section-id' }),
+      },
+      sectionModel: {
+        findByPk: jest.fn().mockResolvedValue({ formId: 'form-id' }),
+      },
+      formModel: {
+        findByPk: jest.fn().mockResolvedValue({
+          organizationNationalId: user.nationalId,
+        }),
+      },
+    }) as FieldsService
+    const input = {
+      screenId: 'screen-id',
+      fieldType: FieldTypesEnum.FILE,
+      displayOrder: 0,
+    }
+    const fileSettings = {
+      maxFiles: 1,
+      fileTypes: '.pdf',
+      fileMaxSize: 10485760,
+    }
+
+    const result = await service.create(user, input)
+
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...input,
+        fieldSettings: expect.objectContaining(fileSettings),
+      }),
+    )
+    expect(result.fieldSettings).toMatchObject(fileSettings)
+  })
+})
 
 describe('FieldsService.update', () => {
   const user = { nationalId: 'owner', scope: [] } as unknown as User
@@ -53,6 +100,73 @@ describe('FieldsService.update', () => {
 
     return { service, field, form, dependencies, destroy }
   }
+
+  it('rejects the removed description property in field updates', () => {
+    const input = plainToInstance(UpdateFieldDto, {
+      description: { is: 'Legacy description', en: '' },
+    })
+
+    expect(
+      validateSync(input, { whitelist: true, forbidNonWhitelisted: true }),
+    ).toEqual([
+      expect.objectContaining({
+        property: 'description',
+        constraints: { whitelistValidation: expect.any(String) },
+      }),
+    ])
+  })
+
+  it('rejects the removed hasDescription setting in field updates', () => {
+    const input = plainToInstance(UpdateFieldDto, {
+      fieldSettings: { hasDescription: true },
+    })
+
+    expect(
+      validateSync(input, { whitelist: true, forbidNonWhitelisted: true }),
+    ).toMatchObject([
+      {
+        property: 'fieldSettings',
+        children: [
+          {
+            property: 'hasDescription',
+            constraints: { whitelistValidation: expect.any(String) },
+          },
+        ],
+      },
+    ])
+  })
+
+  it('updates independent information and tooltip content', async () => {
+    const { service, field } = setup(FieldTypesEnum.TEXTBOX)
+    const informationText = { is: 'Instructions', en: '' }
+    const tooltip = { is: 'Help', en: '' }
+
+    await service.update(user, field.id, {
+      informationText,
+      tooltip,
+      fieldSettings: { isLarge: true },
+    })
+
+    expect(field).toMatchObject({
+      informationText,
+      tooltip,
+      fieldSettings: { isLarge: true },
+    })
+  })
+
+  it('updates localized checkbox sublabels directly', async () => {
+    const { service, field } = setup(FieldTypesEnum.CHECKBOX)
+    const subLabel = { is: 'Checkbox help', en: '' }
+
+    await service.update(user, field.id, {
+      fieldSettings: { isLarge: true, subLabel },
+    })
+
+    expect(field).toMatchObject({
+      fieldSettings: { isLarge: true, subLabel },
+    })
+    expect(field).not.toHaveProperty('description')
+  })
 
   describe.each(fieldTypes)('%s', (fieldType) => {
     it.each([false, true])(

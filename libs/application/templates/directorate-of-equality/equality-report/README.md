@@ -45,6 +45,24 @@ Directorate of Equality (Jafnréttisstofa).
 The template-api module is in
 `libs/application/template-api-modules/src/lib/modules/templates/directorate-of-equality`.
 
+## Decisions
+
+- **A plan PDF goes to S3 by presigned URL**, like fylgiskjöl. The browser
+  PUTs the file and sends only the key (`equalityReportPdfKey`); DMR copies it
+  into the report and deletes the object. Keys are single use, so every
+  attempt presigns a fresh one. The cap is 4 MB, checked here and again by
+  DMR. The API still accepts an inline base64 PDF for tabs opened before this
+  path existed.
+- **Word and .txt plans still travel inside the GraphQL request** as HTML,
+  which the island.is API caps at 350kb per request. The converted HTML may be
+  at most about 340 KB of base64 (`src/utils/planUpload.ts`); past that the
+  applicant is pointed to PDF.
+- **Word plans are sent as text only.** The admin shows them as HTML in a
+  read-only box, and the API's sanitiser has always removed `<img>`, so images
+  are left out of the conversion instead of being sent and discarded. The
+  applicant is told when a document had images, and pointed to PDF if they
+  matter.
+
 ## Running unit tests
 
 Run `nx test equality-report` to execute the unit tests via [Jest](https://jestjs.io).

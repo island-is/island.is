@@ -379,6 +379,44 @@ describe('CaseFileRepositoryService', () => {
     })
   })
 
+  describe('clearHashesForCaseAndCategory', () => {
+    it('clears the hashes of the hashed files of the category in the case and returns the count', async () => {
+      model.update.mockResolvedValueOnce([1, []])
+
+      const result = await service.clearHashesForCaseAndCategory(
+        caseId,
+        CaseFileCategory.VERDICT_APPEAL_RULING,
+        { transaction },
+      )
+
+      expect(model.update).toHaveBeenCalledWith(
+        { hash: null, hashAlgorithm: null },
+        {
+          where: {
+            caseId,
+            category: CaseFileCategory.VERDICT_APPEAL_RULING,
+            hash: { [Op.ne]: null },
+          },
+          transaction,
+        },
+      )
+      expect(result).toBe(1)
+    })
+
+    it('rethrows when the update fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.clearHashesForCaseAndCategory(
+          caseId,
+          CaseFileCategory.VERDICT_APPEAL_RULING,
+          { transaction },
+        ),
+      ).rejects.toThrow(error)
+    })
+  })
+
   describe('findAllByCaseAndCategories', () => {
     const categories = [
       CaseFileCategory.CASE_FILE,

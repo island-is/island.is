@@ -1,15 +1,16 @@
-import { FormSystemForm, FormSystemPermissionType } from '@island.is/api/schema'
+import { FormSystemPermissionType } from '@island.is/api/schema'
+import { FormListItem } from '@island.is/form-system/graphql'
 import { Option } from '@island.is/island-ui/core'
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
 
 export interface IFormsContext {
-  forms: FormSystemForm[]
-  setForms: Dispatch<SetStateAction<FormSystemForm[]>>
+  forms: FormListItem[]
+  setForms: Dispatch<SetStateAction<FormListItem[]>>
   getOrganizationGeneration: () => number
   refreshForms: (
     organizationGeneration: number,
-  ) => Promise<FormSystemForm[] | undefined>
+  ) => Promise<FormListItem[] | undefined>
   organizations: Option<string>[]
   setOrganizations: Dispatch<SetStateAction<Option<string>[]>>
   isAdmin: boolean
@@ -35,7 +36,7 @@ export interface IFormsContext {
 
 export const FormsContext = createContext<IFormsContext>({
   forms: [],
-  setForms: function (_value: SetStateAction<FormSystemForm[]>): void {
+  setForms: function (_value: SetStateAction<FormListItem[]>): void {
     throw new Error('setForms function not implemented')
   },
   getOrganizationGeneration: () => {

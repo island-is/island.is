@@ -1,5 +1,6 @@
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
   AppealEventType,
   UserRole,
   VerdictAppealDecision,
@@ -129,5 +130,64 @@ describe('getReviewerVerdictTimelineItems', () => {
     expect(getReviewerVerdictTimelineItems({ defendant: defendant() })).toEqual(
       [],
     )
+  })
+
+  it('should show the prosecution statement deadline once the court of appeals has set one', () => {
+    expect(
+      getReviewerVerdictTimelineItems({
+        defendant: defendant({
+          appealDecision: VerdictAppealDecision.ACCEPT,
+        }),
+        verdictAppealCase: {
+          ...prosecutionAppealed,
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'prosecution_deadline',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+        },
+        indictmentAppealDeadline,
+      }),
+    ).toEqual([
+      { text: 'Afstaða dómfellda: Unir dómi' },
+      { text: 'Ákæruvaldið áfrýjaði 25.05.2026' },
+      { text: 'Frestur til að skila greinargerð er til 14.09.2026' },
+    ])
+  })
+
+  it('should not show the prosecution statement deadline for a defendant outside the appeal', () => {
+    expect(
+      getReviewerVerdictTimelineItems({
+        defendant: defendant({
+          appealDecision: VerdictAppealDecision.ACCEPT,
+        }),
+        verdictAppealCase: {
+          appealState: AppealCaseState.RECEIVED,
+          appealEventLogs: [
+            {
+              id: 'event_id',
+              created: '2026-05-25T10:00:00.000Z',
+              eventType: AppealEventType.APPEALED,
+              defendantId: 'other_defendant',
+              userRole: UserRole.PROSECUTOR,
+            },
+          ],
+          statementDeadlines: [
+            {
+              id: 'prosecution_deadline',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+        },
+        indictmentAppealDeadline,
+      }),
+    ).toEqual([
+      { text: 'Afstaða dómfellda: Unir dómi' },
+      { text: 'Áfrýjunarfrestur ákæruvalds: 14.06.2026' },
+    ])
   })
 })

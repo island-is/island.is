@@ -1,6 +1,11 @@
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
 import PDFDocument from 'pdfkit'
+import sanitizeHtml from 'sanitize-html'
 import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 
@@ -66,6 +71,18 @@ const textFor = (
   value: { is?: string; en?: string } | undefined,
   locale: Locale,
 ) => (locale === 'en' ? value?.en || value?.is : value?.is || value?.en) ?? ''
+
+const informationTextFor = (
+  value: { is?: string; en?: string } | undefined,
+  locale: Locale,
+) =>
+  sanitizeHtml(value?.[locale] ?? '', {
+    allowedTags: [],
+    allowedAttributes: {},
+  })
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
 
 const formatDate = (
   value: Date | string | null | undefined,
@@ -190,15 +207,19 @@ type ValueLine = { prefix: string; text: string }
 const fieldLines = (
   field: {
     fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
+    fieldSettings?: { isAddressRequired?: boolean; familyType?: string }
     values?: Array<{ json?: unknown }>
   },
   locale: Locale,
 ): ValueLine[] => {
   const values = field.values ?? []
+  const isChild =
+    field.fieldType === FieldTypesEnum.CHILD ||
+    (field.fieldType === FieldTypesEnum.FAMILY &&
+      field.fieldSettings?.familyType === FamilyTypes.CHILD)
 
-  return values.flatMap((value, index) => {
-    const prefix = values.length > 1 ? `${index + 1}. ` : ''
+  const valueLines = values.map((value, index): ValueLine[] => {
+    const prefix = !isChild && values.length > 1 ? `${index + 1}. ` : ''
     const json = value?.json
     if (field.fieldType === FieldTypesEnum.FILE) {
       return fileNames(json).map((fileName, lineIndex) => ({
@@ -255,6 +276,12 @@ const fieldLines = (
         : [{ prefix: itemPrefix, text: formatted }]
     })
   })
+
+  return valueLines
+    .filter((lines) => lines.length > 0)
+    .flatMap((lines, index) =>
+      isChild && index > 0 ? [{ prefix: '', text: '' }, ...lines] : lines,
+    )
 }
 
 const drawValue = (
@@ -389,10 +416,14 @@ const drawField = (
   document: PDFKit.PDFDocument,
   field: {
     name: { is: string }
-    description?: { is?: string; en?: string }
+    informationText?: { is?: string; en?: string }
     isRequired?: boolean
     fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
+    fieldSettings?: {
+      isAddressRequired?: boolean
+      familyType?: string
+      subLabel?: { is?: string; en?: string }
+    }
     values?: Array<{ json?: unknown }>
   },
   showLabel: boolean,
@@ -402,15 +433,24 @@ const drawField = (
     drawMessage(
       document,
       textFor(field.name, locale),
-      textFor(field.description, locale),
+      informationTextFor(field.informationText, locale),
     )
     return
   }
 
+  const informationText = informationTextFor(field.informationText, locale)
+  if (field.fieldType !== FieldTypesEnum.APPLICANT && informationText.trim()) {
+    drawMessage(document, '', informationText)
+  }
   const lines = fieldLines(field, locale)
+  const label = `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`
+  const subLabel =
+    field.fieldType === FieldTypesEnum.CHECKBOX
+      ? field.fieldSettings?.subLabel?.[locale] ?? ''
+      : ''
   drawValue(
     document,
-    `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`,
+    subLabel.trim() ? `${label}\n${subLabel}` : label,
     lines.map((line) => `${line.prefix}${line.text}`).join('\n') ||
       textFor(translations.noAnswer, locale),
     showLabel,

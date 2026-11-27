@@ -585,7 +585,7 @@ export const RealEstate = ({
       }}
       render={({ field, fieldState }) => (
         <GridRow>
-          <GridColumn span="6/10">
+          <GridColumn span={['1/1', '1/1', '6/10']}>
             <Input
               label={item.name?.[lang] ?? ''}
               name="propertySearch"
@@ -627,12 +627,12 @@ export const RealEstate = ({
   )
 
   return (
-    <Stack space={2}>
+    <Stack space={[1, 1, 2]}>
       {propertyNumberInput}
 
       {searchLoading && <LoadingDots />}
 
-      <GridRow>
+      <GridRow rowGap={1}>
         <GridColumn span={['1/1', '1/1', '1/1', '7/10']}>
           <Controller
             key={`${item.id}-${valueIndex}_address`}

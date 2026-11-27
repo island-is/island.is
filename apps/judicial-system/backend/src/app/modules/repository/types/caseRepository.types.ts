@@ -18,6 +18,8 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   investigationCases,
+  isInvestigationCase,
+  isRestrictionCase,
   PunishmentType,
   RequestSharedWithDefender,
   restrictionCases,
@@ -670,7 +672,8 @@ export const caseInclude: Includeable[] = [
 // A case is archivable ninety days after it stopped being worked on - the
 // window is measured by the database's own clock, so it does not depend on
 // when the archiving job happens to run.
-const archiveLifetime = literal('current_date - 90')
+const archiveLifetimeDays = 90
+const archiveLifetime = literal(`current_date - ${archiveLifetimeDays}`)
 
 // Which cases have outlived their retention window: request and investigation
 // cases that were deleted, ones that never got past the court, and ones whose
@@ -678,6 +681,14 @@ const archiveLifetime = literal('current_date - 90')
 export const archivableCaseWhere: WhereOptions = {
   [Op.and]: [
     { isArchived: false },
+    // A super admin can keep a case alive past its regular lifetime. The date
+    // only ever postpones archiving - the regular window below still applies.
+    {
+      [Op.or]: [
+        { archiveNotBefore: null },
+        { archiveNotBefore: { [Op.lt]: literal('current_timestamp') } },
+      ],
+    },
     {
       [Op.or]: [
         {
@@ -732,6 +743,60 @@ export const archivableCaseWhere: WhereOptions = {
   ],
 }
 
+// When the regular lifetime of a request case runs out, by the same rules as
+// archivableCaseWhere - keep the two in step. Those rules compare against
+// whole days, so a case is first archived at the start of the day that follows
+// the last day of its window. Undefined when those rules never
+// archive the case: an indictment, a deleted case (archived at once rather
+// than after a window) or a completed case missing the date its window is
+// measured from.
+export const getRegularArchiveDate = (
+  theCase: Pick<
+    Case,
+    'type' | 'state' | 'created' | 'rulingDate' | 'validToDate'
+  >,
+): Date | undefined => {
+  const isRestriction = isRestrictionCase(theCase.type)
+
+  if (!isRestriction && !isInvestigationCase(theCase.type)) {
+    return undefined
+  }
+
+  let windowStart: Date | undefined
+
+  switch (theCase.state) {
+    case CaseState.NEW:
+    case CaseState.DRAFT:
+    case CaseState.SUBMITTED:
+    case CaseState.RECEIVED:
+      windowStart = theCase.created
+      break
+    case CaseState.REJECTED:
+    case CaseState.DISMISSED:
+      windowStart = theCase.rulingDate
+      break
+    case CaseState.ACCEPTED:
+      windowStart = isRestriction ? theCase.validToDate : theCase.rulingDate
+      break
+    default:
+      windowStart = undefined
+  }
+
+  if (!windowStart) {
+    return undefined
+  }
+
+  const start = new Date(windowStart)
+
+  return new Date(
+    Date.UTC(
+      start.getUTCFullYear(),
+      start.getUTCMonth(),
+      start.getUTCDate() + archiveLifetimeDays + 1,
+    ),
+  )
+}
+
 // Everything the archive is built from: every model that carries an encrypted
 // property is read here, because the same transaction writes the archive and
 // clears those properties off the live rows.
@@ -753,10 +818,10 @@ export const archivableCaseInclude: Includeable[] = [
   { model: AppealDecision, as: 'appealDecisions' },
 ]
 
-// The archived children are stored as arrays of property values carrying no ids
-// of their own, so a child's position is its only identity - this order is the
-// order they are written to the archive in, and the order any future restore
-// would have to assume. Nothing in this codebase reads the archive back.
+// Archives written before row ids were added store the children as arrays of
+// property values carrying no ids of their own, so a child's position is its
+// only identity - this order is the order they are written to the archive in,
+// and the order a restore has to read them back in.
 export const archivableCaseOrder: Order = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'displayOrder', 'ASC'],
@@ -1713,6 +1778,7 @@ export interface UpdateCase
     | 'hasCivilClaims'
     | 'isArchived'
   > {
+  archiveNotBefore?: Case['archiveNotBefore'] | null
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
@@ -1750,6 +1816,7 @@ export interface UpdateAppealCase
     | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
+    | 'appealCompletedDate'
     | 'appealAssistantId'
     | 'appealRulingDecision'
     | 'appealConclusion'

@@ -30,6 +30,7 @@ const configWithField = (extra = {}) =>
             kind: 'field',
             key: 'status',
             size: 'large',
+            label: { is: 'Hjúskaparstaða' },
             ...extra,
           },
         ],
@@ -40,6 +41,39 @@ const configWithField = (extra = {}) =>
   } as never)
 
 describe('hasMetadataValidationError', () => {
+  it.each([undefined, { is: '' }, { is: '   ' }, { en: 'Status' }])(
+    'fails when a selected input has no Icelandic label: %p',
+    (label) => {
+      expect(
+        hasMetadataValidationError(
+          configWithField({ label }),
+          inputContract,
+          outputContract,
+        ),
+      ).toBe(true)
+    },
+  )
+
+  it('passes with an Icelandic label and no English translation', () => {
+    expect(
+      hasMetadataValidationError(
+        configWithField(),
+        inputContract,
+        outputContract,
+      ),
+    ).toBe(false)
+  })
+
+  it('ignores an unselected draft input with no label', () => {
+    expect(
+      hasMetadataValidationError(
+        configWithField({ key: '', label: undefined }),
+        inputContract,
+        outputContract,
+      ),
+    ).toBe(false)
+  })
+
   it('passes when every option has an Icelandic label', () => {
     expect(
       hasMetadataValidationError(

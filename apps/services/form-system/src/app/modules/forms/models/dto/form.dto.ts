@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional, PickType } from '@nestjs/swagger'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
@@ -116,4 +116,18 @@ export class FormDto {
 
   @ApiPropertyOptional()
   delegations?: string[]
+}
+
+export class FormListItemDto extends PickType(FormDto, [
+  'id',
+  'name',
+  'slug',
+  'modified',
+  'status',
+  'submissionServiceUrl',
+  'isInaccessible',
+  'lastModifiedBy',
+] as const) {
+  @ApiPropertyOptional({ type: String, nullable: true })
+  derivedFrom?: string | null
 }

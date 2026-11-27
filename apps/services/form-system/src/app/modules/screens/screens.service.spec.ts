@@ -36,6 +36,52 @@ describe('ScreensService.update', () => {
   }
 
   it.each([null, undefined])(
+    'preserves the name when the update contains %s',
+    async (name) => {
+      const { service, screen } = setup()
+      screen.name = { is: 'Existing screen', en: 'Existing screen' }
+      const update = Object.assign(new UpdateScreenDto(), {
+        name,
+        isMulti: false,
+        multiMax: 0,
+      })
+
+      await service.update(user, screen.id, update)
+
+      expect(screen.name).toEqual({
+        is: 'Existing screen',
+        en: 'Existing screen',
+      })
+      expect(screen).toMatchObject({ isMulti: false, multiMax: 0 })
+      expect(screen.save).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  it('preserves the name when it is omitted', async () => {
+    const { service, screen } = setup()
+    screen.name = { is: 'Existing screen', en: 'Existing screen' }
+
+    await service.update(user, screen.id, { identifier: 'new-identifier' })
+
+    expect(screen.name).toEqual({
+      is: 'Existing screen',
+      en: 'Existing screen',
+    })
+    expect(screen.identifier).toBe('new-identifier')
+    expect(screen.save).toHaveBeenCalledTimes(1)
+  })
+
+  it('allows clearing both name translations', async () => {
+    const { service, screen } = setup()
+    screen.name = { is: 'Existing screen', en: 'Existing screen' }
+
+    await service.update(user, screen.id, { name: { is: '', en: '' } })
+
+    expect(screen.name).toEqual({ is: '', en: '' })
+    expect(screen.save).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([null, undefined])(
     'preserves the identifier when the update contains %s',
     async (identifier) => {
       const { service, screen } = setup()

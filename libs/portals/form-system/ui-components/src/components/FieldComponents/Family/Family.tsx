@@ -34,14 +34,7 @@ export const Family = ({
         />
       )
     case FamilyTypes.CHILD:
-      return (
-        <Child
-          item={item}
-          valueIndex={valueIndex}
-          dispatch={dispatch}
-          isPreview={isPreview}
-        />
-      )
+      return <Child item={item} dispatch={dispatch} isPreview={isPreview} />
     case FamilyTypes.SPOUSE:
       return (
         <Spouse

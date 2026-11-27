@@ -9,6 +9,7 @@ import {
 import { ApolloError } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
+import { FormListItem } from '@island.is/form-system/graphql'
 import { toast } from '@island.is/island-ui/core'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ReactNode, useContext, useEffect } from 'react'
@@ -234,7 +235,7 @@ describe('publishing a form', () => {
     otherForms: FormSystemForm[] = [],
   ) => {
     const forms = [form, ...otherForms]
-    const formsUpdated = jest.fn<(forms: FormSystemForm[]) => void>()
+    const formsUpdated = jest.fn<(forms: FormListItem[]) => void>()
     let latestContext: IFormsContext
     const Rows = () => {
       const context = useContext(FormsContext)
@@ -627,6 +628,62 @@ describe('publishing a form', () => {
     expect(screen.queryByTestId('icon-lockClosed')).toBeNull()
     expect(toast.error).not.toHaveBeenCalled()
     expect(toast.warning).not.toHaveBeenCalled()
+  })
+
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED])(
+    'reconciles a failed development publish with persisted status %s',
+    async (status) => {
+      const form = createForm({ status: FormStatus.IN_DEVELOPMENT })
+      const persistedForm = createForm({
+        status,
+        isInaccessible: status !== FormStatus.PUBLISHED,
+      })
+      const error = new Error('Publish request failed')
+      mockGetForm.mockResolvedValue({
+        data: { formSystemForm: { form } },
+      })
+      mockUpdateFormStatus.mockRejectedValue(error)
+      mockGetForms.mockResolvedValue({
+        data: { formSystemForms: { forms: [persistedForm] } },
+      })
+      const { formsUpdated, getContext } = renderChangedForm(form)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+
+      await waitFor(() =>
+        expect(formsUpdated).toHaveBeenCalledWith([persistedForm]),
+      )
+      expect(getContext().forms).toEqual([persistedForm])
+      expect(console.error).toHaveBeenCalledWith(
+        'Error publishing form:',
+        error,
+      )
+      expect(toast.warning).not.toHaveBeenCalled()
+      expect(toast.error).not.toHaveBeenCalled()
+    },
+  )
+
+  it('asks the operator to reload when development publishing and its status refresh fail', async () => {
+    const form = createForm({ status: FormStatus.IN_DEVELOPMENT })
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form } },
+    })
+    mockUpdateFormStatus.mockRejectedValue(new Error('File cleanup failed'))
+    mockGetForms.mockRejectedValue(new Error('Refresh failed'))
+    const { formsUpdated } = renderChangedForm(form)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+
+    await waitFor(() =>
+      expect(toast.warning).toHaveBeenCalledWith(
+        'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
+      ),
+    )
+    expect(formsUpdated).not.toHaveBeenCalled()
+    expect(console.error).toHaveBeenCalledWith(
+      'Error refreshing forms after publishing:',
+      expect.any(Error),
+    )
   })
 
   it('warns about an unknown outcome when the refreshed revision is still being changed', async () => {

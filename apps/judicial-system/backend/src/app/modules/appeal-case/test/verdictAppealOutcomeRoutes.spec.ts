@@ -70,7 +70,7 @@ describe.each([
   const appealCase = {
     id: uuid(),
     appealType: AppealCaseType.VERDICT,
-    appealState: AppealCaseState.COMPLETED,
+    appealState: AppealCaseState.READY_TO_COMPLETE,
     appealCaseNumber: '2/2024',
     ...outcome,
   }
@@ -132,5 +132,15 @@ describe.each([
     expect(interceptorsOf(handlerOf(controller, method))).not.toContain(
       VerdictAppealOutcomeInterceptor,
     )
+  })
+})
+
+// Completing many verdict appeals returns them as a list, which the
+// interceptor presents one by one.
+describe('AppealCaseController completeVerdictAppeals - verdict appeal outcome', () => {
+  it('carries the verdict appeal outcome interceptor', () => {
+    expect(
+      interceptorsOf(handlerOf(AppealCaseController, 'completeVerdictAppeals')),
+    ).toContain(VerdictAppealOutcomeInterceptor)
   })
 })

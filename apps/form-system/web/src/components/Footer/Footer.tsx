@@ -98,10 +98,11 @@ export const Footer = ({
 }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
-  const { trigger, getFieldState } = useFormContext()
+  const { trigger } = useFormContext()
   const { currentSection } = state
   const currentSectionType = currentSection?.data?.sectionType
   const isUploading = (state.pendingUploads ?? 0) > 0
+  const isFieldLoading = (state.loadingFieldIds?.length ?? 0) > 0
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
@@ -234,15 +235,6 @@ export const Footer = ({
 
     const allowProceed = Boolean(state.application.allowProceedOnValidationFail)
     const isParties = currentSectionType === SectionTypes.PARTIES
-    const hasInvalidNumber = state.currentScreen?.data?.fields?.some(
-      (field) =>
-        field?.fieldType === FieldTypesEnum.NUMBERBOX &&
-        field.isHidden !== true &&
-        field.id != null &&
-        getFieldState(field.id).invalid,
-    )
-
-    if (hasInvalidNumber) return
     if (!isValid && (isParties || !allowProceed)) return
     if ((state.errors?.length ?? 0) > 0) return
 
@@ -452,7 +444,7 @@ export const Footer = ({
   }
 
   const handleIncrement = async () => {
-    if (isPaymentLoading || isUploading) return
+    if (isPaymentLoading || isUploading || isFieldLoading) return
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
       return
@@ -503,6 +495,7 @@ export const Footer = ({
               onClick={handleIncrement}
               disabled={
                 isUploading ||
+                isFieldLoading ||
                 state.isNavigating ||
                 !enableContinueButton ||
                 isValidateEligibilityError ||

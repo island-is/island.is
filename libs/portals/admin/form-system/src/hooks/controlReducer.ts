@@ -12,7 +12,11 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/enums'
 import {
   removeAllDependencies,
   removeParentDependency,
@@ -77,8 +81,13 @@ type FieldActions =
       }
     }
   | {
-      type: 'CHANGE_DESCRIPTION'
-      payload: { lang: 'en' | 'is'; newValue: string }
+      type: 'CHANGE_FIELD_TEXT'
+      payload: {
+        property: 'informationText' | 'tooltip' | 'subLabel'
+        fieldId?: string
+        lang: 'en' | 'is'
+        newValue: string
+      }
     }
   | {
       type: 'CHANGE_IS_REQUIRED'
@@ -287,7 +296,7 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge' | 'hasDescription' | 'fetchBankAccountFromMyPages'
+        property: 'isLarge' | 'fetchBankAccountFromMyPages'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -747,22 +756,37 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DESCRIPTION': {
-      const { lang, newValue } = action.payload
-      const currentData = activeItem.data as FormSystemField
+    case 'CHANGE_FIELD_TEXT': {
+      const { property, lang, newValue, fieldId } = action.payload
+      const currentData = fieldId
+        ? fields?.find((field) => field?.id === fieldId)
+        : (activeItem.data as FormSystemField)
+      if (!currentData) {
+        throw new Error(`Cannot update text for missing field '${fieldId}'`)
+      }
+      const text =
+        property === 'subLabel'
+          ? currentData.fieldSettings?.subLabel
+          : currentData[property]
+      const updatedText = { ...text, [lang]: newValue }
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          description: {
-            ...currentData?.description,
-            [lang]: newValue,
-          },
+          ...(property === 'subLabel'
+            ? {
+                fieldSettings: {
+                  ...currentData.fieldSettings,
+                  subLabel: updatedText,
+                },
+              }
+            : { [property]: updatedText }),
         },
       }
       return {
         ...state,
-        activeItem: newActive,
+        activeItem:
+          fieldId && activeItem.data?.id !== fieldId ? activeItem : newActive,
         form: {
           ...form,
           fields: fields?.map((i) =>
@@ -800,7 +824,11 @@ export const controlReducer = (
         ...activeItem,
         data: {
           ...currentData,
-          isPartOfMultiset: !currentData?.isPartOfMultiset,
+          isPartOfMultiset:
+            currentData.fieldType === FieldTypesEnum.FAMILY &&
+            currentData.fieldSettings?.familyType === FamilyTypes.CHILD
+              ? false
+              : !currentData?.isPartOfMultiset,
         },
       }
       action.payload.update(newActive)
@@ -1516,6 +1544,12 @@ export const controlReducer = (
       const { property, value, update } = action.payload
       const newField = {
         ...field,
+        isPartOfMultiset:
+          field.fieldType === FieldTypesEnum.FAMILY &&
+          property === 'familyType' &&
+          value === FamilyTypes.CHILD
+            ? false
+            : field.isPartOfMultiset,
         fieldSettings: {
           ...field.fieldSettings,
           [property]: value,

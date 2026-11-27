@@ -23,7 +23,9 @@ import {
   buildEventLogExistsCondition,
   buildHasAppealedVerdictCondition,
   buildHasSentAppealSummonsCondition,
+  buildIsConfirmedVerdictAppealAdvocateCondition,
   buildIsSentToPrisonAdminExistsCondition,
+  sanitizeNationalId,
 } from './conditions'
 
 // Court of appeals access
@@ -283,12 +285,6 @@ export const prosecutorRepresentativeCasesAccessWhereOptions = (
 
 // Defence access
 
-// The defence queries embed the user's national id in raw SQL literals, so
-// reduce it to digits only to rule out SQL injection. National ids are stored
-// dash-free in the database, so this also normalizes the comparison value.
-const sanitizeNationalId = (nationalId?: string): string =>
-  nationalId?.replace(/\D/g, '') ?? ''
-
 export const defenceRequestCasesAccessWhereOptions = (user: User) => {
   const userNationalId = sanitizeNationalId(user.nationalId)
 
@@ -407,30 +403,8 @@ export const defenceIndictmentsAccessWhereOptions = (user: User) => {
           `),
         },
       },
-      {
-        // confirmed appeal defender on a verdict appeal
-        id: {
-          [Op.in]: literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE appeal_defender_national_id = '${userNationalId}'
-                AND is_appeal_defender_confirmed = true
-                AND is_appeal_defender_waived IS DISTINCT FROM true)
-          `),
-        },
-      },
-      {
-        // confirmed appeal spokesperson on a verdict appeal
-        id: {
-          [Op.in]: literal(`
-            (SELECT case_id
-              FROM civil_claimant
-              WHERE appeal_spokesperson_national_id = '${userNationalId}'
-                AND is_appeal_spokesperson_confirmed = true
-                AND has_appeal_spokesperson IS DISTINCT FROM false)
-          `),
-        },
-      },
+      // confirmed appeal defender or appeal spokesperson on a verdict appeal
+      buildIsConfirmedVerdictAppealAdvocateCondition(user.nationalId),
     ],
   }
 }

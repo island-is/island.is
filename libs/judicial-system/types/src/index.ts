@@ -97,12 +97,14 @@ export {
   VerdictAppealStatus,
   APPEAL_JUDGE_COUNT,
   MAX_APPEAL_JUDGE_COUNT,
+  MAX_COMPLETED_VERDICT_APPEALS,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
   isSameAppealBench,
+  isVerdictAppealConfirmed,
 } from './lib/appealCase'
 export type {
   AppealCorrectionLock,
@@ -116,10 +118,14 @@ export {
 } from './lib/appealCourtSession'
 export {
   findAppealStatementDeadline,
+  findFiledAppealStatementEvent,
   hasFiledAppealStatement,
   isSameAppealStatementParty,
 } from './lib/appealStatementDeadline'
-export type { AppealStatementParty } from './lib/appealStatementDeadline'
+export type {
+  AppealStatementEvent,
+  AppealStatementParty,
+} from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -136,10 +142,13 @@ export {
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
   verdictAppealFileCategories,
+  getAppealFileDeletionLockReason,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
   PoliceFileTypeCode,
 } from './lib/file'
+export type { AppealFileDeletionLockReason } from './lib/file'
 
 export { sortCaseFiles } from './lib/sortCaseFiles'
 export type { CaseFileOrderFields } from './lib/sortCaseFiles'

@@ -1,9 +1,9 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import {
   COPY_FORM,
   EXPORT_FORM,
+  FormListItem,
   GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
   GET_FORMS,
@@ -52,10 +52,8 @@ interface Props {
   lastModified?: Date
   options?: string
   isHeader: boolean
-  translated?: boolean
   slug?: string
-  beenPublished?: boolean
-  setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
+  setFormsState: Dispatch<SetStateAction<FormListItem[]>>
   status?: string
   url?: string
   lastModifiedBy?: string
@@ -331,8 +329,9 @@ export const TableRow = ({
           const { data: formsData } = await getForms({
             variables: { input: { nationalId: organizationNationalId } },
           })
-          const refreshedForms: FormSystemForm[] | undefined =
-            formsData?.formSystemForms?.forms
+          const refreshedForms = formsData?.formSystemForms?.forms?.filter(
+            (form): form is FormListItem => form !== null,
+          )
           if (!refreshedForms) throw new Error('Missing forms list')
           setFormsState(refreshedForms)
 
@@ -380,11 +379,21 @@ export const TableRow = ({
       },
     }
 
+    const showUnknownOutcome = () =>
+      toast.warning(
+        formatMessage({
+          id: 'publishChangedFormOutcomeUnknown',
+          defaultMessage:
+            'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
+        }),
+      )
+
     const publish = {
       title: formatMessage(m.publish),
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        const organizationGeneration = getOrganizationGeneration()
         const { data: formData } = await getForm({
           variables: { input: { id } },
         })
@@ -419,6 +428,17 @@ export const TableRow = ({
           )
         } catch (error) {
           console.error('Error publishing form:', error)
+          if (organizationGeneration !== getOrganizationGeneration()) return
+          try {
+            await refreshForms(organizationGeneration)
+          } catch (refreshError) {
+            if (organizationGeneration !== getOrganizationGeneration()) return
+            console.error(
+              'Error refreshing forms after publishing:',
+              refreshError,
+            )
+            showUnknownOutcome()
+          }
         }
       },
     }
@@ -429,14 +449,6 @@ export const TableRow = ({
       iconType: 'outline' as const,
       onClick: async () => {
         const organizationGeneration = getOrganizationGeneration()
-        const showUnknownOutcome = () =>
-          toast.warning(
-            formatMessage({
-              id: 'publishChangedFormOutcomeUnknown',
-              defaultMessage:
-                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
-            }),
-          )
         let publishAttempted = false
         try {
           const { data: formData, error: loadError } = await getForm({

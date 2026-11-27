@@ -5,6 +5,16 @@ import zipObject from 'lodash/zipObject'
 import { FieldSettings } from './fieldSettings.model'
 
 export class FieldSettingsFactory {
+  static getDefaultSettings(type: string) {
+    const settings = new FieldSettings()
+    if (type === FieldTypesEnum.FILE) {
+      settings.maxFiles = 1
+      settings.fileTypes = '.pdf'
+      settings.fileMaxSize = 10485760
+    }
+    return this.getClass(type, settings)
+  }
+
   static getClass(type: string, fieldSettings: FieldSettings | undefined) {
     if (!fieldSettings) {
       return undefined
@@ -12,7 +22,7 @@ export class FieldSettingsFactory {
     let keys: string[] = ['zendeskIsCustomField', 'zendeskCustomFieldId']
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
-        keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
+        keys = ['minLength', 'maxLength', 'isLarge', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
         keys = [
@@ -20,7 +30,6 @@ export class FieldSettingsFactory {
           'maxValue',
           'minLength',
           'maxLength',
-          'hasDescription',
           'isDecimal',
           ...keys,
         ]
@@ -85,7 +94,7 @@ export class FieldSettingsFactory {
         ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.CHECKBOX:
-        keys = ['isLarge', 'hasDescription', ...keys]
+        keys = ['isLarge', 'subLabel', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NATIONAL_ID: {
         keys = ['showAddress', ...keys]
@@ -109,21 +118,8 @@ export class FieldSettingsFactory {
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.FAMILY:
       case FieldTypesEnum.CHILD:
-        keys = [
-          'familyType',
-          'showBiologicalChildren',
-          'showChildrenInCustody',
-          ...keys,
-        ]
-        return this.pickSettings(
-          {
-            ...fieldSettings,
-            showBiologicalChildren:
-              fieldSettings.showBiologicalChildren ?? true,
-            showChildrenInCustody: fieldSettings.showChildrenInCustody ?? true,
-          },
-          keys,
-        )
+        keys = ['familyType', ...keys]
+        return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)
     }

@@ -6,6 +6,8 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
+  AppealCaseType,
+  AppealEventType,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -21,8 +23,14 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { getOrCreateTransaction } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
-import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
+import {
+  AppealCaseRepositoryService,
+  Case,
+  CaseFile,
+  CaseFileRepositoryService,
+} from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
+import { CreateFile } from '../../file.service'
 
 interface Then {
   result: CaseFile
@@ -31,7 +39,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  createCaseFile: CreateFileDto,
+  createCaseFile: CreateFile,
   theCase: Case,
 ) => Promise<Then>
 
@@ -40,11 +48,19 @@ describe('FileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let createCaseFileAs: (
     caseId: string,
+    createCaseFile: CreateFile,
+    theCase: Case,
+    actingUser: User,
+  ) => Promise<Then>
+  let createDefendantCaseFileAs: (
+    caseId: string,
+    defendantId: string,
     createCaseFile: CreateFileDto,
     theCase: Case,
     actingUser: User,
@@ -55,11 +71,13 @@ describe('FileController - Create case file', () => {
       queuedMessagesAfterCommit,
       sequelize,
       caseFileRepositoryService,
+      appealCaseRepositoryService,
       fileController,
     } = await createTestingFileModule()
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
 
     mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -72,7 +90,7 @@ describe('FileController - Create case file', () => {
     // instead.
     createCaseFileAs = async (
       caseId: string,
-      createCaseFile: CreateFileDto,
+      createCaseFile: CreateFile,
       theCase: Case,
       actingUser: User,
     ): Promise<Then> => {
@@ -84,6 +102,34 @@ describe('FileController - Create case file', () => {
 
           return fileController.createCaseFile(
             caseId,
+            actingUser,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
+
+    createDefendantCaseFileAs = async (
+      caseId: string,
+      defendantId: string,
+      createCaseFile: CreateFileDto,
+      theCase: Case,
+      actingUser: User,
+    ): Promise<Then> => {
+      const then = {} as Then
+
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.createDefendantCaseFile(
+            caseId,
+            defendantId,
             actingUser,
             theCase,
             createCaseFile,
@@ -455,7 +501,8 @@ describe('FileController - Create case file', () => {
       })
     })
 
-    describe('created once the verdict appeal has been completed', () => {
+    describe('created once the verdict appeal is confirmed', () => {
+      const verdictAppealCaseId = uuid()
       let then: Then
 
       beforeEach(async () => {
@@ -473,6 +520,126 @@ describe('FileController - Create case file', () => {
           {
             ...theCase,
             verdictAppealCase: {
+              id: verdictAppealCaseId,
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      // The court can still replace its document after confirming the appeal,
+      // and then has to confirm the appeal again.
+      it('should create the case file and take the confirmation back', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          verdictAppealCaseId,
+          { appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
+          transaction,
+        })
+      })
+
+      it('should not queue any messages', () => {
+        expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
+    describe.each([AppealCaseState.APPEALED])(
+      'created when the verdict appeal is %s',
+      (appealState) => {
+        let then: Then
+
+        beforeEach(async () => {
+          const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+          mockCreate.mockResolvedValueOnce({
+            ...createCaseFile,
+            id: uuid(),
+            name: 'test.pdf',
+            state: CaseFileState.STORED_IN_RVG,
+          })
+
+          then = await createCaseFileAs(
+            caseId,
+            createCaseFile,
+            {
+              ...theCase,
+              verdictAppealCase: {
+                id: uuid(),
+                appealType: AppealCaseType.VERDICT,
+                appealState,
+              },
+            } as Case,
+            courtOfAppealsUser,
+          )
+        })
+
+        it('should create the case file and leave the appeal in its state', () => {
+          expect(then.error).toBeUndefined()
+          expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+          expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+          expect(
+            mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+          ).not.toHaveBeenCalled()
+        })
+      },
+    )
+
+    describe('another category created once the verdict appeal is confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          id: uuid(),
+          category: CaseFileCategory.COURT_CASE_FILE,
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          {
+            ...createCaseFile,
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+          },
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should leave the appeal confirmed', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    // Once the outcome has been released, the court's document is part of it.
+    describe('created once the verdict appeal is completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
               id: uuid(),
               appealState: AppealCaseState.COMPLETED,
             },
@@ -481,11 +648,9 @@ describe('FileController - Create case file', () => {
         )
       })
 
-      // The court can still replace its document: the outcome stays with it
-      // until it is released.
-      it('should create the case file', () => {
-        expect(then.error).toBeUndefined()
-        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+      it('should refuse creation', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
       })
     })
 
@@ -552,6 +717,207 @@ describe('FileController - Create case file', () => {
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('verdict appeal statement with rulingFileId', () => {
+    const caseId = uuid()
+    const rulingFileId = uuid()
+    const defendantId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [{ defendantId, deadline: openDeadline }],
+        appealEventLogs: [],
+      },
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFile = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuId}/statement.pdf`,
+      size: 99,
+      rulingFileId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
+    })
+
+    it('should reject the ruling order reference', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Verdict appeal file ${createCaseFile.key} cannot reference a ruling order`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement on a completed verdict appeal', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.COMPLETED,
+      },
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuId}/statement.pdf`,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement when the verdict appeal of case ${caseId} is missing, completed, or withdrawn`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement after the party has filed', () => {
+    const caseId = uuid()
+    const defendantId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [{ defendantId, deadline: openDeadline }],
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            defendantId,
+          },
+        ],
+      },
+    } as Case
+    const createCaseFile: CreateFile = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement after case ${caseId} party has already filed`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement after the deadline has expired', () => {
+    const caseId = uuid()
+    const defendantId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [{ defendantId, deadline: new Date('2020-01-01') }],
+        appealEventLogs: [],
+      },
+    } as Case
+    const createCaseFile: CreateFile = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
+    }
+    const caseFile = {
+      ...createCaseFile,
+      id: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      defendantId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(caseFile)
+
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
+    })
+
+    it('should allow the upload', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+    })
+  })
+
+  describe('verdict appeal defence statement without a party id', () => {
+    const caseId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [{ deadline: openDeadline }],
+        appealEventLogs: [],
+      },
+    } as Case
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the unscoped defence upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Verdict appeal defence statement files for case ${caseId} require exactly one of defendantId or civilClaimantId`,
+      )
     })
   })
 })

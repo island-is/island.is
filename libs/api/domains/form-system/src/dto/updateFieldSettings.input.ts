@@ -91,14 +91,8 @@ export class UpdateFieldSettingsInput {
   @Field(() => String, { nullable: true })
   familyType?: string
 
-  @Field(() => Boolean, { nullable: true })
-  showBiologicalChildren?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  showChildrenInCustody?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  hasDescription?: boolean
+  @Field(() => LanguageTypeInput, { nullable: true })
+  subLabel?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   isAddressRequired?: boolean

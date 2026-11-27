@@ -1,6 +1,27 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  atLeastOneChildRequired: {
+    id: 'form.system:at-least-one-child-required',
+    defaultMessage: 'Veldu að minnsta kosti eitt barn.',
+    description:
+      'Validation message when a required child field has no selection',
+  },
+  noChildrenSelected: {
+    id: 'form.system:no-children-selected',
+    defaultMessage: 'Engin börn valin.',
+    description: 'Empty state when no children were selected',
+  },
+  custodyChildren: {
+    id: 'form.system:custody-children',
+    defaultMessage: 'Börn í forsjá',
+    description: 'Custody children table label',
+  },
+  noCustodyChildren: {
+    id: 'form.system:no-custody-children',
+    defaultMessage: 'Engin börn í forsjá fundust.',
+    description: 'Empty state for the custody children table',
+  },
   previewWithRestrictions: {
     id: 'form.system:preview-with-restrictions',
     defaultMessage: 'Skoða með tengingum',
@@ -686,6 +707,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða skjá',
     description: 'Preview',
   },
+  mobilePreview: {
+    id: 'form.system:mobile-preview',
+    defaultMessage: 'Farsímasýn',
+    description: 'Toggle the form preview between desktop and mobile viewports',
+  },
   lastModified: {
     id: 'form.system:last-modified',
     defaultMessage: 'Síðast breytt',
@@ -1256,10 +1282,35 @@ export const m = defineMessages({
     defaultMessage: 'Hámarksfjöldi stafa',
     description: 'Maximum text length',
   },
-  hasDescription: {
-    id: 'form.system:has-description',
-    defaultMessage: 'Hefur lýsingu',
-    description: 'Has description',
+  informationText: {
+    id: 'form.system:information-text',
+    defaultMessage: 'Upplýsingatexti',
+    description: 'Information displayed above a field, or the message body',
+  },
+  informationTextEnglish: {
+    id: 'form.system:information-text-english',
+    defaultMessage: 'Upplýsingatexti á ensku',
+    description: 'Information text in English',
+  },
+  tooltip: {
+    id: 'form.system:tooltip',
+    defaultMessage: 'Hjálpartexti',
+    description: 'Field tooltip text',
+  },
+  tooltipEnglish: {
+    id: 'form.system:tooltip-english',
+    defaultMessage: 'Hjálpartexti á ensku',
+    description: 'Field tooltip text in English',
+  },
+  subLabel: {
+    id: 'form.system:sub-label',
+    defaultMessage: 'Undirtexti',
+    description: 'Checkbox sublabel',
+  },
+  subLabelEnglish: {
+    id: 'form.system:sub-label-english',
+    defaultMessage: 'Undirtexti á ensku',
+    description: 'Checkbox sublabel in English',
   },
   inProgress: {
     id: 'form.system:in-progress',

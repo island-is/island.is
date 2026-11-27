@@ -509,7 +509,7 @@ export const Vehicle = ({
   }
 
   return (
-    <Stack space={2}>
+    <Stack space={[1, 1, 2]}>
       <Controller
         key={`${item.id}-${valueIndex}_registrationNumber`}
         name={registrationNumberField}
@@ -523,11 +523,12 @@ export const Vehicle = ({
         }}
         render={({ field, fieldState }) => (
           <GridRow>
-            <GridColumn span="6/10">
+            <GridColumn span={['1/1', '1/1', '6/10']}>
               <Input
                 label={item.name?.[lang] ?? ''}
                 name="vehicleSearch"
                 value={field.value}
+                backgroundColor="blue"
                 onChange={(e) => {
                   const upper = e.target.value.toUpperCase()
                   field.onChange(upper)
@@ -557,7 +558,7 @@ export const Vehicle = ({
 
       {searchLoading && <LoadingDots />}
 
-      <GridRow>
+      <GridRow rowGap={1}>
         <GridColumn span={['1/1', '1/1', '1/1', '7/10']}>
           <Controller
             key={`${item.id}-${valueIndex}_model`}

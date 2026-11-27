@@ -3,51 +3,83 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
-it.each([
-  { showBiologicalChildren: true, showChildrenInCustody: true },
-  { showBiologicalChildren: true, showChildrenInCustody: false },
-  { showBiologicalChildren: false, showChildrenInCustody: true },
-  { showBiologicalChildren: false, showChildrenInCustody: false },
-])('preserves child source settings: %j', (sources) => {
-  const settings = Object.assign(new FieldSettings(), sources)
-
-  for (const type of [FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD]) {
-    expect(FieldSettingsFactory.getClass(type, settings)).toMatchObject(sources)
-  }
-  expect(validateSync(settings)).toEqual([])
+it('defaults new FILE fields to one PDF with a ten MiB size limit', () => {
+  expect(FieldSettingsFactory.getDefaultSettings(FieldTypesEnum.FILE)).toEqual({
+    maxFiles: 1,
+    fileTypes: '.pdf',
+    fileMaxSize: 10485760,
+    zendeskIsCustomField: null,
+    zendeskCustomFieldId: null,
+  })
   expect(
-    FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
-  ).not.toHaveProperty('showBiologicalChildren')
+    FieldSettingsFactory.getDefaultSettings(FieldTypesEnum.TEXTBOX),
+  ).not.toHaveProperty('maxFiles')
 })
 
-it.each([undefined, null])(
-  'defaults unset child source settings to true: %s',
-  (value) => {
+it.each([
+  { maxFiles: 3, fileTypes: '.png,.jpg', fileMaxSize: 1048576 },
+  { maxFiles: null, fileTypes: null, fileMaxSize: null },
+])('does not replace existing FILE settings: %j', (fileSettings) => {
+  const settings = Object.assign(new FieldSettings(), fileSettings)
+
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.FILE, settings),
+  ).toMatchObject(fileSettings)
+})
+
+it('preserves localized checkbox sublabels and removes the obsolete visibility flag', () => {
+  const subLabel = { is: 'Undirtexti', en: 'Sublabel' }
+  const settings = Object.assign(new FieldSettings(), {
+    isLarge: true,
+    subLabel,
+    hasDescription: false,
+  })
+
+  const checkbox = FieldSettingsFactory.getClass(
+    FieldTypesEnum.CHECKBOX,
+    settings,
+  )
+  expect(checkbox).toMatchObject({ isLarge: true, subLabel })
+  expect(checkbox).not.toHaveProperty('hasDescription')
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
+  ).not.toHaveProperty('subLabel')
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.NUMBERBOX, settings),
+  ).not.toHaveProperty('hasDescription')
+})
+
+it.each([
+  [FieldTypesEnum.FAMILY, true],
+  [FieldTypesEnum.FAMILY, false],
+  [FieldTypesEnum.CHILD, true],
+  [FieldTypesEnum.CHILD, false],
+])(
+  'drops obsolete child-source and dropdown settings for %s with isDropdown=%s',
+  (type, isDropdown) => {
     const settings = Object.assign(new FieldSettings(), {
-      showBiologicalChildren: value,
-      showChildrenInCustody: value,
+      familyType: 'CHILD',
+      isDropdown,
+      showBiologicalChildren: true,
+      showChildrenInCustody: false,
+      zendeskIsCustomField: true,
+      zendeskCustomFieldId: 'custom-field',
     })
 
-    expect(
-      FieldSettingsFactory.getClass(FieldTypesEnum.FAMILY, settings),
-    ).toMatchObject({
-      showBiologicalChildren: true,
-      showChildrenInCustody: true,
+    expect(FieldSettingsFactory.getClass(type, settings)).toEqual({
+      familyType: 'CHILD',
+      zendeskIsCustomField: true,
+      zendeskCustomFieldId: 'custom-field',
     })
   },
 )
 
-it.each(['showBiologicalChildren', 'showChildrenInCustody'])(
-  'rejects non-boolean %s',
-  (property) => {
-    const settings = Object.assign(new FieldSettings(), { [property]: 'true' })
+it.each([FieldTypesEnum.ASSETS, FieldTypesEnum.PAYMENT_QUANTITY])(
+  'retains the dropdown setting for %s',
+  (type) => {
+    const settings = Object.assign(new FieldSettings(), { isDropdown: true })
 
-    expect(validateSync(settings)).toEqual([
-      expect.objectContaining({
-        property,
-        constraints: { isBoolean: expect.any(String) },
-      }),
-    ])
+    expect(FieldSettingsFactory.getClass(type, settings)?.isDropdown).toBe(true)
   },
 )
 
