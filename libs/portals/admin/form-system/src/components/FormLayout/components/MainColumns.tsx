@@ -69,6 +69,11 @@ export const MainContentColumn = () => {
     !staticScreen &&
     !inListBuilder
 
+  const openScreenPreview = () => {
+    setEnforcePreviewRestrictions(false)
+    setOpenPreview(true)
+  }
+
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
       return (
@@ -139,10 +144,7 @@ export const MainContentColumn = () => {
                 <Button
                   variant="ghost"
                   size="small"
-                  onClick={() => {
-                    setEnforcePreviewRestrictions(false)
-                    setOpenPreview(true)
-                  }}
+                  onClick={openScreenPreview}
                 >
                   {formatMessage(m.preview)}
                 </Button>
@@ -192,6 +194,7 @@ export const MainContentColumn = () => {
         }}
       >
         <MainContent
+          onPreviewScreen={openScreenPreview}
           openPreview={openPreview}
           setOpenPreview={setOpenPreview}
           enforcePreviewRestrictions={enforcePreviewRestrictions}

@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from 'react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -78,6 +79,13 @@ jest.mock('next/router', () => ({
       push: mockPush,
     }
   },
+}))
+
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
 }))
 
 const theCase = {
@@ -391,5 +399,11 @@ describe('VerdictAppealStatementUpload', () => {
       screen.queryByRole('heading', { name: 'Hlaða upp greinargerð' }),
     ).not.toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('Mál fannst ekki')
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Hlaða upp greinargerð - Réttarvörslugátt')
   })
 })

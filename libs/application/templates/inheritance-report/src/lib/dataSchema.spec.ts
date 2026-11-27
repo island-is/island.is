@@ -1,3 +1,6 @@
+import { inheritanceReportSchema } from './dataSchema'
+import { DebtTypes } from '../types'
+
 /**
  * Tests for the share validation logic in dataSchema.
  *
@@ -53,5 +56,54 @@ describe('asset share validation logic', () => {
     expect(validateShareBroken('0.74')).toBe(false) // parseInt('0.74') => 0
     expect(validateShareBroken('0.5')).toBe(false) // parseInt('0.5') => 0
     expect(validateShareBroken('50.5')).toBe(true) // parseInt('50.5') => 50 (works by accident)
+  })
+})
+
+describe('domestic and foreign debts validation', () => {
+  const debtsSchema = inheritanceReportSchema.shape.debts
+
+  const parseDebt = (debt: Record<string, string>) =>
+    debtsSchema.safeParse({
+      domesticAndForeignDebts: {
+        data: [
+          {
+            description: '',
+            nationalId: '',
+            assetNumber: '',
+            propertyValuation: '',
+            debtType: '',
+            ...debt,
+          },
+        ],
+      },
+    })
+
+  it('does not require a loan number for a debt to Tryggingastofnun', () => {
+    const result = parseDebt({
+      description: 'Skuld við Tryggingastofnun',
+      debtType: DebtTypes.InsuranceInstitute,
+      propertyValuation: '42602',
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('requires a loan number for other debt types', () => {
+    const result = parseDebt({
+      description: 'Lán',
+      debtType: DebtTypes.Loan,
+      propertyValuation: '1000000',
+    })
+
+    expect(result.success).toBe(false)
+    expect(
+      result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.')),
+    ).toContain('domesticAndForeignDebts.data.0.assetNumber')
+  })
+
+  it('accepts an empty debt row', () => {
+    expect(parseDebt({}).success).toBe(true)
   })
 })

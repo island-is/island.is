@@ -20,18 +20,47 @@ const prosecutor: InstitutionUser = {
 
 const verdictAppeal = {
   appealType: AppealCaseType.VERDICT,
-  appealState: AppealCaseState.COMPLETED,
+  appealState: AppealCaseState.READY_TO_COMPLETE,
   appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
 }
 
 describe('shouldShowVerdictAppealOutcome', () => {
-  it('is true for the Court of Appeals on a verdict appeal with an outcome', () => {
-    expect(
-      shouldShowVerdictAppealOutcome(verdictAppeal, courtOfAppealsJudge),
-    ).toBe(true)
+  it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+    'is true for the Court of Appeals on a verdict appeal with an outcome in state %s',
+    (appealState) => {
+      expect(
+        shouldShowVerdictAppealOutcome(
+          { ...verdictAppeal, appealState },
+          courtOfAppealsJudge,
+        ),
+      ).toBe(true)
+    },
+  )
+
+  it('is true for anyone once the appeal is completed', () => {
+    const completed = {
+      ...verdictAppeal,
+      appealState: AppealCaseState.COMPLETED,
+    }
+
+    expect(shouldShowVerdictAppealOutcome(completed, prosecutor)).toBe(true)
+    expect(shouldShowVerdictAppealOutcome(completed, undefined)).toBe(true)
   })
 
-  it('is false for anyone outside the Court of Appeals', () => {
+  it.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.READY_TO_COMPLETE,
+    AppealCaseState.WITHDRAWN,
+  ])('is false outside the Court of Appeals in state %s', (appealState) => {
+    expect(
+      shouldShowVerdictAppealOutcome(
+        { ...verdictAppeal, appealState },
+        prosecutor,
+      ),
+    ).toBe(false)
+  })
+
+  it('is false outside the Court of Appeals before the appeal is completed', () => {
     expect(shouldShowVerdictAppealOutcome(verdictAppeal, prosecutor)).toBe(
       false,
     )

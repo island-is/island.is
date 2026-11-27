@@ -22,11 +22,9 @@ export const Deadline = () => {
 
   return (
     <>
-      <Row>
-        <Box marginLeft={1}>
-          <Text variant="h3">Umsóknarfrestur og aðgengi að umsóknarformi</Text>
-        </Box>
-      </Row>
+      <Box display="flex" justifyContent="flexStart">
+        <Text variant="h3">Umsóknarfrestur og aðgengi að umsóknarformi</Text>
+      </Box>
       <Box marginTop={2} />
       <Row>
         <Column span="6/10">

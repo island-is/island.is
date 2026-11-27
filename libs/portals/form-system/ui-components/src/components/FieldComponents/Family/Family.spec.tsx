@@ -6,8 +6,11 @@ import {
   FamilyTypes,
   FieldTypesEnum,
 } from '@island.is/form-system/enums'
-import { GET_FAMILY_MEMBERS } from '@island.is/form-system/graphql'
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  GET_CUSTODY_CHILDREN,
+  GET_FAMILY_MEMBERS,
+} from '@island.is/form-system/graphql'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
@@ -15,7 +18,11 @@ import { ApplicationState } from '../../../lib'
 import { Family } from './Family'
 
 jest.mock('@island.is/localization', () => ({
-  useLocale: () => ({ lang: 'is', formatMessage: () => 'Required' }),
+  useLocale: () => ({
+    lang: 'is',
+    formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
+      defaultMessage,
+  }),
 }))
 
 jest.mock('@island.is/island-ui/core', () => ({
@@ -34,17 +41,35 @@ jest.mock('@island.is/island-ui/core', () => ({
   Select: ({
     label,
     options,
+    onChange,
+    hasError,
+    errorMessage,
   }: {
     label: string
-    options: { label: string; value: { nationalId: string } }[]
+    options: { label: string; value: { nationalId: string; name: string } }[]
+    onChange: (option: typeof options[number] | undefined) => void
+    hasError: boolean
+    errorMessage?: string
   }) => (
-    <select aria-label={label}>
-      {options.map((option) => (
-        <option key={option.value.nationalId} value={option.value.nationalId}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <>
+      <select
+        aria-label={label}
+        onChange={(event) =>
+          onChange(
+            options.find(
+              (option) => option.value.nationalId === event.target.value,
+            ),
+          )
+        }
+      >
+        {options.map((option) => (
+          <option key={option.value.nationalId} value={option.value.nationalId}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {hasError && <span role="alert">{errorMessage}</span>}
+    </>
   ),
   Input: ({
     label,
@@ -65,6 +90,7 @@ const renderFamily = (
   registryData?: Record<string, unknown>,
   fieldSettings?: FormSystemField['fieldSettings'],
   list?: FormSystemField['list'],
+  registryError?: Error,
 ) => {
   const dispatch = jest.fn()
   const registryRequest = jest.fn()
@@ -75,11 +101,21 @@ const renderFamily = (
     new MockLink(
       [
         {
-          request: { query: GET_FAMILY_MEMBERS },
-          result: {
-            data: registryData ?? { nationalRegistryPerson: null },
+          request: {
+            query:
+              familyType === FamilyTypes.CHILD
+                ? GET_CUSTODY_CHILDREN
+                : GET_FAMILY_MEMBERS,
           },
-          delay: registryData ? 0 : Infinity,
+          result: {
+            data:
+              registryData ??
+              (familyType === FamilyTypes.CHILD
+                ? { formSystemCustodyChildren: [] }
+                : { nationalRegistryPerson: null }),
+          },
+          error: registryError,
+          delay: 0,
         },
       ],
       false,
@@ -158,155 +194,42 @@ it.each([FamilyTypes.APPLICANT_INFO, FamilyTypes.CHILD, FamilyTypes.SPOUSE])(
 
 it.each([FamilyTypes.CHILD, FamilyTypes.SPOUSE])(
   'still fetches registry data for %s outside preview',
-  (familyType) => {
-    const { registryRequest } = renderFamily(familyType)
+  async (familyType) => {
+    const { registryRequest, dispatch } = renderFamily(familyType)
 
     expect(registryRequest).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(dispatch).toHaveBeenCalled())
   },
 )
 
 it.each([
   {
-    biologicalChildren: [
-      { nationalId: '0101202989', fullName: 'Biological child' },
-      { nationalId: '0101212989', fullName: 'Shared child' },
-    ],
-    childCustody: [
-      { nationalId: '0101212989', fullName: 'Shared child' },
-      {
-        nationalId: '0101222989',
-        fullName: null,
-        details: { name: { fullName: 'Custody child' } },
-      },
-    ],
-    expected: [
-      { nationalId: '0101202989', name: 'Biological child' },
-      { nationalId: '0101212989', name: 'Shared child' },
-      { nationalId: '0101222989', name: 'Custody child' },
+    children: [
+      { nationalId: '0101202989', fullName: 'First custody child' },
+      { nationalId: '0101212989', fullName: 'Second custody child' },
+      { nationalId: '0101222989', fullName: null },
     ],
   },
-  {
-    biologicalChildren: null,
-    childCustody: [{ nationalId: '0101222989', fullName: 'Custody child' }],
-    expected: [{ nationalId: '0101222989', name: 'Custody child' }],
-  },
-  {
-    biologicalChildren: [
-      { nationalId: '0101202989', fullName: 'Biological child' },
-    ],
-    childCustody: null,
-    expected: [{ nationalId: '0101202989', name: 'Biological child' }],
-  },
+  { children: [] },
 ])(
-  'displays and caches the combined children without duplicates (case $#)',
-  async ({ biologicalChildren, childCustody, expected }) => {
+  'displays and caches the MidlunUmsoknir custody list (case $#)',
+  async ({ children }) => {
     const { dispatch } = renderFamily(FamilyTypes.CHILD, false, undefined, 0, {
-      nationalRegistryPerson: {
-        biologicalChildren:
-          biologicalChildren?.map((child) => ({ details: null, ...child })) ??
-          null,
-        childCustody:
-          childCustody?.map((child) => ({ details: null, ...child })) ?? null,
-        spouse: null,
-      },
+      formSystemCustodyChildren: children,
     })
-
-    await waitFor(() => {
-      expect(
-        screen.getAllByRole('option').map((option) => option.textContent),
-      ).toEqual(expected.map((child) => child.name))
-    })
-    expect(
-      screen
-        .getAllByRole('option')
-        .map((option) => (option as HTMLOptionElement).value),
-    ).toEqual(expected.map((child) => child.nationalId))
-    expect(dispatch).toHaveBeenCalledWith({
-      type: 'SET_FIELD_LIST',
-      payload: {
-        id: 'family',
-        list: expected.map(({ nationalId, name }) => ({
-          id: nationalId,
-          label: { is: name, en: name },
-          value: nationalId,
-          isSelected: false,
-        })),
-        placeholder: null,
-      },
-    })
-  },
-)
-
-it.each([
-  {
-    showBiologicalChildren: true,
-    showChildrenInCustody: true,
-    expected: ['Biological child', 'Shared child', 'Custody child'],
-  },
-  {
-    showBiologicalChildren: true,
-    showChildrenInCustody: false,
-    expected: ['Biological child', 'Shared child'],
-  },
-  {
-    showBiologicalChildren: false,
-    showChildrenInCustody: true,
-    expected: ['Shared child', 'Custody child'],
-  },
-  {
-    showBiologicalChildren: false,
-    showChildrenInCustody: false,
-    expected: [],
-  },
-])(
-  'displays and caches only enabled child sources: %j',
-  async ({ expected, ...fieldSettings }) => {
-    const { dispatch } = renderFamily(
-      FamilyTypes.CHILD,
-      false,
-      undefined,
-      0,
-      {
-        nationalRegistryPerson: {
-          biologicalChildren: [
-            {
-              nationalId: '0101202989',
-              fullName: 'Biological child',
-              details: null,
-            },
-            {
-              nationalId: '0101212989',
-              fullName: 'Shared child',
-              details: null,
-            },
-          ],
-          childCustody: [
-            {
-              nationalId: '0101212989',
-              fullName: 'Shared child',
-              details: null,
-            },
-            {
-              nationalId: '0101222989',
-              fullName: 'Custody child',
-              details: null,
-            },
-          ],
-          spouse: null,
-        },
-      },
-      fieldSettings,
-    )
 
     await waitFor(() => {
       expect(dispatch).toHaveBeenCalledWith({
         type: 'SET_FIELD_LIST',
         payload: {
           id: 'family',
-          list: expected.map((name) => ({
-            id: expect.any(String),
-            label: { is: name, en: name },
-            value: expect.any(String),
+          list: children.map(({ nationalId, fullName }) => ({
+            id: nationalId,
+            label: {
+              is: fullName ?? nationalId,
+              en: fullName ?? nationalId,
+            },
+            value: nationalId,
             isSelected: false,
           })),
           placeholder: null,
@@ -315,65 +238,78 @@ it.each([
     })
     expect(
       screen.queryAllByRole('option').map((option) => option.textContent),
-    ).toEqual(expected)
-  },
-)
-
-it.each([
-  {
-    settings: undefined,
-    expected: [
-      'Kynbarn (mock)',
-      'Kynbarn í forsjá (mock)',
-      'Barn í forsjá (mock)',
-    ],
-  },
-  {
-    settings: { showBiologicalChildren: true, showChildrenInCustody: true },
-    expected: [
-      'Kynbarn (mock)',
-      'Kynbarn í forsjá (mock)',
-      'Barn í forsjá (mock)',
-    ],
-  },
-  {
-    settings: { showBiologicalChildren: true, showChildrenInCustody: false },
-    expected: ['Kynbarn (mock)', 'Kynbarn í forsjá (mock)'],
-  },
-  {
-    settings: { showBiologicalChildren: false, showChildrenInCustody: true },
-    expected: ['Kynbarn í forsjá (mock)', 'Barn í forsjá (mock)'],
-  },
-  {
-    settings: { showBiologicalChildren: false, showChildrenInCustody: false },
-    expected: [],
-  },
-])(
-  'uses mock children for the enabled preview sources without fetching or caching: %j',
-  ({ settings, expected }) => {
-    const { registryRequest, dispatch } = renderFamily(
-      FamilyTypes.CHILD,
-      true,
-      undefined,
-      0,
-      undefined,
-      settings,
-      [
-        {
-          id: 'existing-child',
-          label: { is: 'Existing child' },
-          value: '0101232989',
-        },
-      ],
-    )
-
+    ).toEqual(children.map((child) => child.fullName ?? child.nationalId))
     expect(
-      screen.queryAllByRole('option').map((option) => option.textContent),
-    ).toEqual(expected)
-    expect(registryRequest).not.toHaveBeenCalled()
-    expect(dispatch).not.toHaveBeenCalled()
+      screen
+        .queryAllByRole('option')
+        .map((option) => (option as HTMLOptionElement).value),
+    ).toEqual(children.map((child) => child.nationalId))
   },
 )
+
+it('persists the selected custody child name and national ID', async () => {
+  const { dispatch } = renderFamily(FamilyTypes.CHILD, false, undefined, 1, {
+    formSystemCustodyChildren: [
+      { nationalId: '0101202989', fullName: 'First custody child' },
+      { nationalId: '0101212989', fullName: 'Second custody child' },
+    ],
+  })
+
+  await screen.findByRole('option', { name: 'Second custody child' })
+  await act(async () => {
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: '0101212989' },
+    })
+  })
+  expect(dispatch).toHaveBeenCalledWith({
+    type: 'SET_NATIONAL_ID',
+    payload: { id: 'family', value: '0101212989', valueIndex: 1 },
+  })
+  expect(dispatch).toHaveBeenCalledWith({
+    type: 'SET_NAME',
+    payload: { id: 'family', value: 'Second custody child', valueIndex: 1 },
+  })
+})
+
+it('shows lookup errors without caching an empty result', async () => {
+  const { dispatch } = renderFamily(
+    FamilyTypes.CHILD,
+    false,
+    undefined,
+    0,
+    undefined,
+    undefined,
+    undefined,
+    new Error('Registry unavailable'),
+  )
+
+  expect((await screen.findByRole('alert')).textContent).toBe('Villa kom upp')
+  expect(dispatch).not.toHaveBeenCalled()
+})
+
+it('uses mock custody children in preview without fetching or caching', () => {
+  const { registryRequest, dispatch } = renderFamily(
+    FamilyTypes.CHILD,
+    true,
+    undefined,
+    0,
+    undefined,
+    undefined,
+    [
+      {
+        id: 'existing-child',
+        label: { is: 'Existing child' },
+        value: '0101232989',
+      },
+    ],
+  )
+
+  expect(
+    screen.queryAllByRole('option').map((option) => option.textContent),
+  ).toEqual(['Barn í forsjá 1 (mock)', 'Barn í forsjá 2 (mock)'])
+  expect(registryRequest).not.toHaveBeenCalled()
+  expect(dispatch).not.toHaveBeenCalled()
+})
 
 it('keeps using cached real children outside preview', () => {
   const { registryRequest, dispatch } = renderFamily(

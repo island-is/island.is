@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -122,7 +123,10 @@ describe('FileController - Get case file signed url', () => {
       const theCase = {
         id: caseId,
         type: CaseType.INDICTMENT,
-        verdictAppealCase: { appealState: AppealCaseState.APPEALED },
+        verdictAppealCase: {
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        },
       } as Case
       const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
       mockGetSignedUrl.mockResolvedValueOnce(url)
@@ -135,12 +139,16 @@ describe('FileController - Get case file signed url', () => {
       ).not.toHaveBeenCalled()
     })
 
-    describe('once the appeal is completed', () => {
+    describe.each([
+      AppealCaseState.READY_TO_COMPLETE,
+      AppealCaseState.COMPLETED,
+    ])('once the court has confirmed the appeal (%s)', (appealState) => {
       const theCase = {
         id: caseId,
         type: CaseType.INDICTMENT,
         verdictAppealCase: {
-          appealState: AppealCaseState.COMPLETED,
+          appealType: AppealCaseType.VERDICT,
+          appealState,
           appealRulingDate: new Date('2026-11-20T10:00:00Z'),
         },
       } as Case
@@ -209,6 +217,7 @@ describe('FileController - Get case file signed url', () => {
         id: caseId,
         type: CaseType.INDICTMENT,
         verdictAppealCase: {
+          appealType: AppealCaseType.VERDICT,
           appealState: AppealCaseState.COMPLETED,
           appealRulingDate: new Date('2026-11-20T10:00:00Z'),
         },
@@ -242,6 +251,7 @@ describe('FileController - Get case file signed url', () => {
         id: caseId,
         type: CaseType.INDICTMENT,
         verdictAppealCase: {
+          appealType: AppealCaseType.VERDICT,
           appealState: AppealCaseState.COMPLETED,
           appealRulingDate: new Date('2026-11-21T10:00:00Z'),
         },

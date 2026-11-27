@@ -94,12 +94,6 @@ export class FieldSettings {
   @Field(() => String, { nullable: true })
   familyType?: string
 
-  @Field(() => Boolean, { nullable: true })
-  showBiologicalChildren?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  showChildrenInCustody?: boolean
-
   @Field(() => LanguageType, { nullable: true })
   subLabel?: LanguageType
 

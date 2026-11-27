@@ -1,4 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/utils'
 import { style } from '@vanilla-extract/css'
 
 export const footer = style({
@@ -14,14 +15,21 @@ export const footer = style({
 })
 
 export const previewModal = style({
-  width: 'calc(100vw - 32px)',
-  maxWidth: 1440,
-  maxHeight: 'calc(100vh - 32px)',
-  margin: `${theme.spacing[2]}px auto`,
+  display: 'flex',
+  flexDirection: 'column',
+  width: 'calc(100vw - 96px)',
+  maxWidth: 1200,
+  height: 'calc(100dvh - 144px)',
+  maxHeight: 'calc(100dvh - 144px)',
+  margin: `${theme.spacing[6]}px auto`,
   overflowY: 'auto',
   background: theme.color.white,
   borderRadius: theme.border.radius.standard,
   boxShadow: theme.shadows.large,
+})
+
+export const previewHeading = style({
+  outline: 'none',
 })
 
 export const application = style({
@@ -46,9 +54,47 @@ export const shellContainer = style({
 
 export const sidebarContainer = style({
   order: 1,
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 2,
+      position: 'relative',
+      zIndex: 'auto',
     },
   },
 })
+
+export const sidebarInner = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      ...escapeGrid(),
+    },
+  },
+})
+
+export const viewportContainer = style({
+  display: 'flex',
+  flex: 1,
+  minHeight: 0,
+  justifyContent: 'center',
+  background: theme.color.purple100,
+})
+
+export const viewport = style({
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  minHeight: 0,
+  border: 0,
+  background: theme.color.white,
+})
+
+export const mobileViewport = style([
+  viewport,
+  {
+    width: 390,
+    maxWidth: '100%',
+  },
+])
