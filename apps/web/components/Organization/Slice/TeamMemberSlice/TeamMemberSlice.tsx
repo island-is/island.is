@@ -1,6 +1,6 @@
 import {
-  TeamMemberProfile,
   type TeamListProps,
+  TeamMemberProfile,
 } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 
