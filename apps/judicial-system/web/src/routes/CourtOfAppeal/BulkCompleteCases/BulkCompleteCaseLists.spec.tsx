@@ -395,7 +395,7 @@ describe('BulkCompleteCaseLists', () => {
     await stage('S-2/2026, Gunna Gunnarsdóttir')
     await user.click(confirmButton())
 
-    const primary = screen.getByRole('button', { name: /Já, ljúka málum/ })
+    const primary = screen.getByRole('button', { name: /Já, ljúka máli/ })
     await user.click(primary)
     // The button is disabled by now; the second click is pressed through it.
     await userEvent
@@ -419,7 +419,7 @@ describe('BulkCompleteCaseLists', () => {
     await stage('S-1/2026, Jón Jónsson')
     await user.click(confirmButton())
 
-    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka máli' }))
 
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -465,7 +465,7 @@ describe('BulkCompleteCaseLists', () => {
     await stage('S-1/2026, Jón Jónsson')
     await user.click(confirmButton())
 
-    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka máli' }))
 
     expect(await screen.findByText('Málinu er lokið')).toBeInTheDocument()
     expect(screen.getAllByRole('dialog')).toHaveLength(1)
@@ -602,7 +602,7 @@ describe('BulkCompleteCaseLists', () => {
     ).toBeInTheDocument()
 
     await user.click(confirmButton())
-    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka máli' }))
 
     expect(onComplete).toHaveBeenCalledWith([sameCaseRows[1]])
   })
@@ -666,6 +666,9 @@ describe('BulkCompleteCaseLists', () => {
     await user.click(confirmButton())
 
     expect(screen.getByText('Viltu ljúka málunum?')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Já, ljúka málum' }),
+    ).toBeInTheDocument()
   })
 
   describe('when rows leave the list while staged', () => {
@@ -712,6 +715,9 @@ describe('BulkCompleteCaseLists', () => {
       await user.click(confirmButton())
 
       expect(screen.getByText('Viltu ljúka málinu?')).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Já, ljúka máli' }),
+      ).toBeInTheDocument()
       expect(
         screen.getByText('Áfrýjun verður lokið í 1 máli: S-1/2026.'),
       ).toBeInTheDocument()

@@ -21,6 +21,7 @@ import {
   getColumnIndex,
   getColumnWidth,
   getCompletedTitle,
+  getConfirmButtonText,
   getConfirmTitle,
   getFutureRulingDateWarning,
   getMoveAnnouncement,
@@ -614,11 +615,13 @@ describe('pruneStagedIds', () => {
 describe('modal titles', () => {
   it('speaks of a single case in the singular', () => {
     expect(getConfirmTitle(1)).toBe('Viltu ljúka málinu?')
+    expect(getConfirmButtonText(1)).toBe('Já, ljúka máli')
     expect(getCompletedTitle(1)).toBe('Málinu er lokið')
   })
 
   it.each([0, 2, 21])('speaks of %i cases in the plural', (count) => {
     expect(getConfirmTitle(count)).toBe('Viltu ljúka málunum?')
+    expect(getConfirmButtonText(count)).toBe('Já, ljúka málum')
     expect(getCompletedTitle(count)).toBe('Málunum er lokið')
   })
 })

@@ -170,6 +170,9 @@ export const formatCaseCountDative = (count: number): string =>
 export const getConfirmTitle = (count: number): string =>
   count === 1 ? 'Viltu ljúka málinu?' : 'Viltu ljúka málunum?'
 
+export const getConfirmButtonText = (count: number): string =>
+  count === 1 ? 'Já, ljúka máli' : 'Já, ljúka málum'
+
 export const getCompletedTitle = (count: number): string =>
   count === 1 ? 'Málinu er lokið' : 'Málunum er lokið'
 

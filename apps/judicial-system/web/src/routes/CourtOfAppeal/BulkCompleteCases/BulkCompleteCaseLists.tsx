@@ -32,6 +32,7 @@ import {
   formatCaseNumberList,
   getColumnWidth,
   getCompletedTitle,
+  getConfirmButtonText,
   getConfirmTitle,
   getFutureRulingDateWarning,
   getMoveAnnouncement,
@@ -370,7 +371,7 @@ const BulkCompleteCaseLists: FC<Props> = ({
                 variant: 'ghost',
               },
               {
-                text: 'Já, ljúka málum',
+                text: getConfirmButtonText(confirmRows.length),
                 onClick: handleConfirm,
               },
             ]}
