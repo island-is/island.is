@@ -37,11 +37,19 @@ jest.mock('../../Preview/Preview', () => {
     jest.requireActual<typeof import('react-hook-form')>('react-hook-form')
   return {
     Preview: jest.fn(
-      ({ data, valueIndex = 0 }: ComponentProps<typeof Preview>) => {
+      ({
+        data,
+        valueIndex = 0,
+        groupNumber,
+      }: ComponentProps<typeof Preview>) => {
         const { register } = useFormContext()
         return (
           <>
-            <output data-testid={data.id} data-value-index={valueIndex} />
+            <output
+              data-testid={data.id}
+              data-value-index={valueIndex}
+              data-group-number={groupNumber}
+            />
             {data.isRequired && (
               <input
                 aria-label={`${data.id}:${valueIndex}`}
@@ -67,6 +75,13 @@ it.each([true, false])(
       multiMax: 3,
       fields: [
         {
+          id: 'child',
+          screenId: 'screen',
+          name: { is: 'Child' },
+          isRequired: true,
+          isPartOfMultiset: true,
+        },
+        {
           id: 'parent',
           screenId: 'screen',
           name: { is: 'Parent' },
@@ -77,13 +92,6 @@ it.each([true, false])(
             { json: { checkboxValue: false } },
             { json: { checkboxValue: true } },
           ],
-        },
-        {
-          id: 'child',
-          screenId: 'screen',
-          name: { is: 'Child' },
-          isRequired: true,
-          isPartOfMultiset: true,
         },
       ],
     }
@@ -118,6 +126,19 @@ it.each([true, false])(
         .getAllByTestId('child')
         .map((item) => item.getAttribute('data-value-index')),
     ).toEqual(restricted ? ['1'] : ['0', '1'])
+    expect(
+      screen
+        .getAllByRole('status')
+        .filter((item) => item.hasAttribute('data-group-number'))
+        .map((item) => [
+          item.getAttribute('data-testid'),
+          item.getAttribute('data-value-index'),
+          item.getAttribute('data-group-number'),
+        ]),
+    ).toEqual([
+      [restricted ? 'parent' : 'child', '0', '1'],
+      ['child', '1', '2'],
+    ])
     fireEvent.change(screen.getByRole('textbox', { name: 'child:1' }), {
       target: { value: 'Visible answer' },
     })

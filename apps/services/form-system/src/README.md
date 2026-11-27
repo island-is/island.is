@@ -103,6 +103,9 @@ fields before the multiset appear first, followed by each row's fields together,
 then the remaining standalone fields. Multiple groups are numbered once per
 group, not separately for each field. Hidden dependent rows are omitted, and
 standalone fields and attachments are not duplicated across groups.
+Messages retain their content without affecting answer grouping or row counts.
+Zendesk custom fields also omit hidden row answers and retain the original row
+numbers for visible answers.
 
 ## File upload defaults
 

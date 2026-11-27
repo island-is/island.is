@@ -192,6 +192,10 @@ describe('ZendeskService', () => {
         name: { is: 'Child' },
         fieldType: FieldTypesEnum.TEXTBOX,
         isPartOfMultiset: true,
+        fieldSettings: {
+          zendeskIsCustomField: true,
+          zendeskCustomFieldId: '456',
+        },
         values: [
           { json: { text: 'Hidden answer' } },
           { json: { text: 'Visible <answer>' } },
@@ -218,6 +222,10 @@ describe('ZendeskService', () => {
     const ticket = JSON.parse(request[1].body).ticket
     expect(ticket.comment.html_body).toContain('Visible &lt;answer&gt;')
     expect(ticket.comment.html_body).not.toContain('Hidden answer')
+    expect(ticket.custom_fields).toContainEqual({
+      id: 456,
+      value: '2. Visible <answer>',
+    })
     expect(ticket.comment.html_body.match(/report\.pdf/g)).toHaveLength(1)
     expect(ticket.comment.uploads).toEqual(['attachment-token'])
     expect(fileService.getFile).toHaveBeenCalledTimes(1)

@@ -58,6 +58,9 @@ data migration also clears existing child-family multiset membership.
 
 Multiset group numbers appear directly above their fields, with normal field
 spacing before the number and no extra group indentation.
+Each number belongs to the first field visible in that row. When resuming an
+application, an incomplete section without a visible incomplete screen remains
+selected with no current screen.
 
 Checkbox, radio-button, and dropdown fields can control dependencies while part
 of a multiset. Dependent fields in the same multiset follow the controlling

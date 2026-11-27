@@ -186,21 +186,19 @@ export const Screen = () => {
     }
   }
 
-  const renderMultisetField = (
-    field: FormSystemField,
-    fieldIndex: number,
-    itemIndex: number,
-  ) => {
-    if (
-      currentScreen?.data &&
-      getHiddenMultisetFieldIds(
-        currentScreen.data,
-        state.application.dependencies,
-        itemIndex,
-      ).has(field.id)
-    )
-      return null
-    const showGroupNumber = isMulti && fieldIndex === 0 && numberOfItems > 1
+  const renderMultisetField = (field: FormSystemField, itemIndex: number) => {
+    const hiddenFields = currentScreen?.data
+      ? getHiddenMultisetFieldIds(
+          currentScreen.data,
+          state.application.dependencies,
+          itemIndex,
+        )
+      : undefined
+    if (hiddenFields?.has(field.id)) return null
+    const showGroupNumber =
+      isMulti &&
+      numberOfItems > 1 &&
+      field === multisetFields.find((item) => !hiddenFields?.has(item.id))
     return (
       <Box key={`${field.id}-${itemIndex}`}>
         <Field
@@ -246,17 +244,13 @@ export const Screen = () => {
     <Box>
       {orderedFields.map((field, fieldIndex) => (
         <Fragment key={field.id}>
-          {renderMultisetField(field, multisetFields.indexOf(field), 0)}
+          {renderMultisetField(field, 0)}
           {fieldIndex === lastMultisetFieldIndex && (
             <>
               {Array.from({ length: numberOfItems - 1 }).map((_, index) => (
                 <Box key={`multiset-item-${index + 1}`} marginBottom={3}>
-                  {multisetFields.map((repeatedField, repeatedIndex) =>
-                    renderMultisetField(
-                      repeatedField,
-                      repeatedIndex,
-                      index + 1,
-                    ),
+                  {multisetFields.map((repeatedField) =>
+                    renderMultisetField(repeatedField, index + 1),
                   )}
                 </Box>
               ))}

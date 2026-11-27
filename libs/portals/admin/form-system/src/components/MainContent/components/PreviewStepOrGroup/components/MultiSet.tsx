@@ -56,16 +56,16 @@ export const MultiSet = ({ screen, dispatch, state, dependencies }: Props) => {
       ? -1
       : firstMultisetFieldIndex + repeatedFields.length - 1
 
-  const renderPreviewField = (
-    field: FormSystemField,
-    fieldIndex: number,
-    itemIndex: number,
-  ) => {
-    if (
-      getHiddenMultisetFieldIds(screen, dependencies, itemIndex).has(field.id)
+  const renderPreviewField = (field: FormSystemField, itemIndex: number) => {
+    const hiddenFields = getHiddenMultisetFieldIds(
+      screen,
+      dependencies,
+      itemIndex,
     )
-      return null
-    const showGroupNumber = fieldIndex === 0 && numberOfItems > 1
+    if (hiddenFields.has(field.id)) return null
+    const showGroupNumber =
+      numberOfItems > 1 &&
+      field === repeatedFields.find((item) => !hiddenFields.has(item.id))
     return (
       <Box key={`${field.id}-${itemIndex}`}>
         <Preview
@@ -127,13 +127,13 @@ export const MultiSet = ({ screen, dispatch, state, dependencies }: Props) => {
     <Box>
       {orderedFields.map((field, fieldIndex) => (
         <Fragment key={field.id}>
-          {renderPreviewField(field, repeatedFields.indexOf(field), 0)}
+          {renderPreviewField(field, 0)}
           {fieldIndex === lastMultisetFieldIndex && (
             <>
               {Array.from({ length: numberOfItems - 1 }).map((_, index) => (
                 <Box key={index + 1} marginBottom={3}>
-                  {repeatedFields.map((repeatedField, repeatedIndex) =>
-                    renderPreviewField(repeatedField, repeatedIndex, index + 1),
+                  {repeatedFields.map((repeatedField) =>
+                    renderPreviewField(repeatedField, index + 1),
                   )}
                 </Box>
               ))}

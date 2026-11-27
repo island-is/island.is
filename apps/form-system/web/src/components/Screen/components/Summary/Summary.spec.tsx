@@ -147,6 +147,46 @@ it('omits hidden dependent rows from summaries and required-field validation', (
   })
 })
 
+it.each([
+  { isHidden: true, fieldType: FieldTypesEnum.TEXTBOX },
+  { isHidden: false, fieldType: FieldTypesEnum.MESSAGE },
+])(
+  'does not count non-rendered multiset values ($fieldType, hidden=$isHidden) as required rows',
+  (nonRenderedField) => {
+    jest.mocked(hasError).mockImplementation((_, index = 0) => index > 0)
+    const state: ApplicationState = {
+      application: { id: 'application', hasPayment: false },
+      sections: [
+        {
+          id: 'section',
+          sectionType: SectionTypes.INPUT,
+          screens: [
+            {
+              id: 'screen',
+              sectionId: 'section',
+              isMulti: true,
+              fields: [
+                { ...field('required', true), isRequired: true },
+                { ...field('not-rendered', true, 3), ...nonRenderedField },
+              ],
+            },
+          ],
+        },
+      ],
+      screens: [],
+      currentSection: { index: 0, data: { id: 'section' } },
+    }
+
+    render(<Summary state={state} />)
+
+    expect(screen.getAllByRole('status')).toHaveLength(1)
+    expect(mockDispatch).toHaveBeenLastCalledWith({
+      type: 'SET_VALIDITY',
+      payload: { isValid: true },
+    })
+  },
+)
+
 it.each([true, false])(
   'matches screen ordering with multiset=%s',
   (isMulti) => {

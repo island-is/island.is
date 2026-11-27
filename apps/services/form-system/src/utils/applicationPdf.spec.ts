@@ -44,6 +44,12 @@ describe('buildApplicationPdf layout', () => {
         (_, index) => `Second answer ${index + 1}`,
       )
       const application = applicationWithFields([
+        Object.assign(new FieldDto(), {
+          fieldType: FieldTypesEnum.MESSAGE,
+          isPartOfMultiset: true,
+          informationText: { is: 'Original message content' },
+          values: Array.from({ length: 3 }, () => ({ json: {} })),
+        }),
         field('Before', ['Before answer']),
         field('First field', firstAnswers, true),
         field('Standalone field', ['Only once']),
@@ -75,8 +81,17 @@ describe('buildApplicationPdf layout', () => {
       expect(
         text.mock.calls
           .map(([value]) => value)
-          .filter((value) => typeof value === 'string' && relevant.has(value)),
+          .filter(
+            (value) =>
+              typeof value === 'string' &&
+              (relevant.has(value) || /^\d+\.\s*$/.test(value)),
+          ),
       ).toEqual(expected)
+      expect(
+        text.mock.calls.filter(
+          ([value]) => value === 'Original message content',
+        ),
+      ).toHaveLength(1)
       expect(text.mock.calls.map(([value]) => value)).not.toContain('1. ')
     },
   )

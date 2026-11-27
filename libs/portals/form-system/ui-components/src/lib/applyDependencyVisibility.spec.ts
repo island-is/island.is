@@ -98,43 +98,46 @@ describe('multiset dependencies', () => {
     },
   )
 
-  it('clears only hidden row controllers and removes their downstream selection', () => {
-    const sections = sectionsFor([
-      field('parent', FieldTypesEnum.CHECKBOX, {
-        values: [
-          { json: { checkboxValue: true } },
-          { json: { checkboxValue: false } },
-        ],
-      }),
-      field('child', FieldTypesEnum.CHECKBOX, {
-        values: [
-          { id: 'visible', json: { checkboxValue: false } },
-          { id: 'hidden', json: { checkboxValue: true } },
-        ],
-      }),
-      field('nested', FieldTypesEnum.TEXTBOX),
-      field('external', FieldTypesEnum.TEXTBOX, { isPartOfMultiset: false }),
-    ])
-    const result = applyDependencyVisibility(sections, [
-      { parentProp: 'parent', childProps: ['child'], isSelected: true },
-      {
-        parentProp: 'child',
-        childProps: ['nested', 'external'],
-        isSelected: true,
-      },
-    ])
-    const fields = result.sections[0].screens?.[0]?.fields
-    expect(fields?.[1]?.values).toEqual([
-      { id: 'visible', json: { checkboxValue: false } },
-      { id: 'hidden', json: { checkboxValue: false } },
-    ])
-    expect(result.dependencies[1].isSelected).toBe(false)
-    expect(fields?.[2]?.isHidden).toBe(true)
-    expect(fields?.[3]?.isHidden).toBe(true)
-    expect(
-      sections[0].screens?.[0]?.fields?.[1]?.values?.[1]?.json?.checkboxValue,
-    ).toBe(true)
-  })
+  it.each([false, true])(
+    'clears only hidden row controllers when the visible controller starts checked=%s',
+    (visibleChecked) => {
+      const sections = sectionsFor([
+        field('parent', FieldTypesEnum.CHECKBOX, {
+          values: [
+            { json: { checkboxValue: true } },
+            { json: { checkboxValue: false } },
+          ],
+        }),
+        field('child', FieldTypesEnum.CHECKBOX, {
+          values: [
+            { id: 'visible', json: { checkboxValue: visibleChecked } },
+            { id: 'hidden', json: { checkboxValue: true } },
+          ],
+        }),
+        field('nested', FieldTypesEnum.TEXTBOX),
+        field('external', FieldTypesEnum.TEXTBOX, { isPartOfMultiset: false }),
+      ])
+      const result = applyDependencyVisibility(sections, [
+        { parentProp: 'parent', childProps: ['child'], isSelected: true },
+        {
+          parentProp: 'child',
+          childProps: ['nested', 'external'],
+          isSelected: true,
+        },
+      ])
+      const fields = result.sections[0].screens?.[0]?.fields
+      expect(fields?.[1]?.values).toEqual([
+        { id: 'visible', json: { checkboxValue: visibleChecked } },
+        { id: 'hidden', json: { checkboxValue: false } },
+      ])
+      expect(result.dependencies[1].isSelected).toBe(visibleChecked)
+      expect(fields?.[2]?.isHidden).toBe(!visibleChecked)
+      expect(fields?.[3]?.isHidden).toBe(!visibleChecked)
+      expect(
+        sections[0].screens?.[0]?.fields?.[1]?.values?.[1]?.json?.checkboxValue,
+      ).toBe(true)
+    },
+  )
 
   it('preserves index-zero behavior for non-repeated controllers with extra stored values', () => {
     const sections = sectionsFor([

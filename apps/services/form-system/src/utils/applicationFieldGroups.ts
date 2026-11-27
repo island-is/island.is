@@ -1,4 +1,7 @@
-import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
+import {
+  FieldTypesEnum,
+  getHiddenMultisetFieldIds,
+} from '@island.is/form-system/shared'
 import { Dependency } from '../app/dataTypes/dependency.model'
 import { FieldDto } from '../app/modules/fields/models/dto/field.dto'
 import { ScreenDto } from '../app/modules/screens/models/dto/screen.dto'
@@ -13,14 +16,15 @@ export const getApplicationFieldGroups = (
   dependencies?: Dependency[],
 ): ApplicationFieldGroup[] => {
   const fields = (screen.fields ?? []).filter((field) => !field.isHidden)
+  const isRepeatedAnswer = (field: FieldDto) =>
+    field.fieldType !== FieldTypesEnum.MESSAGE &&
+    field.isPartOfMultiset !== false
   const firstRepeatedIndex = screen.isMulti
-    ? fields.findIndex((field) => field.isPartOfMultiset !== false)
+    ? fields.findIndex(isRepeatedAnswer)
     : -1
   if (firstRepeatedIndex === -1) return [{ fields }]
 
-  const repeatedFields = fields.filter(
-    (field) => field.isPartOfMultiset !== false,
-  )
+  const repeatedFields = fields.filter(isRepeatedAnswer)
   const itemCount = Math.max(
     1,
     ...repeatedFields.map((field) => field.values?.length ?? 0),
@@ -47,7 +51,7 @@ export const getApplicationFieldGroups = (
 
   const trailingFields = fields
     .slice(firstRepeatedIndex)
-    .filter((field) => field.isPartOfMultiset === false)
+    .filter((field) => !isRepeatedAnswer(field))
   if (trailingFields.length) groups.push({ fields: trailingFields })
   return groups
 }

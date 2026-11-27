@@ -7,6 +7,7 @@ import {
 import {
   ApplicantTypesEnum,
   FieldTypesEnum,
+  getHiddenMultisetFieldIds,
   SectionTypes,
 } from '@island.is/form-system/shared'
 import { AssetTypes } from '@island.is/form-system/enums'
@@ -783,6 +784,14 @@ export class ZendeskService {
               valueIndex < (field.values?.length ?? 0);
               valueIndex++
             ) {
+              if (
+                getHiddenMultisetFieldIds(
+                  screen,
+                  applicationDto.dependencies,
+                  valueIndex,
+                ).has(field.id)
+              )
+                continue
               const fieldValue = field.values?.[valueIndex]
               const rawJson = fieldValue?.json
               const json =

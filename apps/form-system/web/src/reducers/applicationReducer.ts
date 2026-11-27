@@ -109,7 +109,7 @@ const getCurrentSectionAndScreen = (sections: FormSystemSection[]) => {
 
   let currentScreen = undefined
 
-  if (currentScreenIndex !== undefined) {
+  if (currentScreenIndex !== undefined && currentScreenIndex >= 0) {
     currentScreen = {
       index: currentScreenIndex,
       data: currentSection.data.screens?.[

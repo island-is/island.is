@@ -104,8 +104,14 @@ jest.mock('./components/Completed/Completed', () => ({ Completed: () => null }))
 jest.mock('./components/Payment/Payment', () => ({ Payment: () => null }))
 jest.mock('./components/Summary/Summary', () => ({ Summary: () => null }))
 jest.mock('./components/Field/Field', () => ({
-  Field: ({ field, valueIndex = 0 }: ComponentProps<typeof Field>) => (
-    <output>{`${field.id}:${valueIndex}`}</output>
+  Field: ({
+    field,
+    valueIndex = 0,
+    groupNumber,
+  }: ComponentProps<typeof Field>) => (
+    <output
+      data-group-number={groupNumber}
+    >{`${field.id}:${valueIndex}`}</output>
   ),
 }))
 
@@ -169,6 +175,7 @@ it('renders only the matching repeated dependent row while retaining standalone 
   renderScreen(
     true,
     [
+      field('child', true, 2),
       {
         ...field('parent', true, 2),
         fieldType: 'CHECKBOX',
@@ -177,7 +184,6 @@ it('renders only the matching repeated dependent row while retaining standalone 
           { json: { checkboxValue: true } },
         ],
       },
-      field('child', true, 2),
       field('external', false),
     ],
     [
@@ -192,6 +198,18 @@ it('renders only the matching repeated dependent row while retaining standalone 
   expect(screen.queryByText('child:0')).toBeNull()
   expect(screen.getByText('child:1')).toBeTruthy()
   expect(screen.getByText('external:0')).toBeTruthy()
+  expect(
+    screen
+      .getAllByRole('status')
+      .filter((item) => item.hasAttribute('data-group-number'))
+      .map((item) => [
+        item.textContent,
+        item.getAttribute('data-group-number'),
+      ]),
+  ).toEqual([
+    ['parent:0', '1'],
+    ['child:1', '2'],
+  ])
 })
 
 it('keeps leading fields above the multiset and moves interleaved standalone fields below its controls', () => {

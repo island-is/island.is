@@ -47,7 +47,12 @@ export const Summary = ({ state }: Props) => {
           ? Math.max(
               1,
               ...(screen.fields ?? [])
-                .filter((field) => field?.isPartOfMultiset !== false)
+                .filter(
+                  (field) =>
+                    field?.isPartOfMultiset !== false &&
+                    !field?.isHidden &&
+                    field?.fieldType !== FieldTypesEnum.MESSAGE,
+                )
                 .map((field) => field?.values?.length ?? 0),
             )
           : 1

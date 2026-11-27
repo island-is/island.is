@@ -89,6 +89,94 @@ it('recalculates dependencies on reopening and when the last selected multiset r
   expect(result.currentScreen?.data).toBe(result.sections[0].screens?.[1])
 })
 
+it.each([false, true])(
+  'stays on an incomplete section with no current screen when its screens are hidden, later section=%s',
+  (hasLaterSection) => {
+    const sections: FormSystemSection[] = [
+      {
+        id: 'completed',
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 0,
+        isCompleted: true,
+        isHidden: false,
+        screens: [
+          {
+            id: 'controller-screen',
+            sectionId: 'completed',
+            isCompleted: true,
+            isHidden: false,
+            fields: [
+              {
+                id: 'controller',
+                screenId: 'controller-screen',
+                name: { is: 'Controller' },
+                isRequired: false,
+                isPartOfMultiset: false,
+                fieldType: FieldTypesEnum.CHECKBOX,
+                values: [{ json: { checkboxValue: false } }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'hidden-only',
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 1,
+        isCompleted: false,
+        isHidden: false,
+        screens: [
+          {
+            id: 'dependent-screen',
+            sectionId: 'hidden-only',
+            isCompleted: false,
+            isHidden: false,
+          },
+        ],
+      },
+    ]
+    if (hasLaterSection) {
+      sections.push({
+        id: 'later',
+        sectionType: SectionTypes.INPUT,
+        displayOrder: 2,
+        isCompleted: false,
+        isHidden: false,
+        screens: [
+          {
+            id: 'later-screen',
+            sectionId: 'later',
+            isCompleted: false,
+            isHidden: false,
+          },
+        ],
+      })
+    }
+
+    const result = initialReducer({
+      ...createState(),
+      application: {
+        id: 'application',
+        sections,
+        dependencies: [
+          {
+            parentProp: 'controller',
+            childProps: ['dependent-screen'],
+            isSelected: true,
+          },
+        ],
+      },
+    })
+
+    expect(result.sections[1].screens?.[0]?.isHidden).toBe(true)
+    expect(result.currentSection).toEqual({
+      index: 1,
+      data: result.sections[1],
+    })
+    expect(result.currentScreen).toBeUndefined()
+  },
+)
+
 it.each([
   { type: 'INCREMENT', expectedIndex: 2 },
   { type: 'DECREMENT', expectedIndex: 0 },

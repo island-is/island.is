@@ -224,17 +224,26 @@ export class ApplicationMapper {
     screen: ScreenDto,
     dependencies?: Dependency[],
   ): ApplicationJsonFieldDto[] {
+    const hiddenFieldsByIndex = new Map<number, Set<string>>()
     return (screen.fields ?? [])
       .filter((field) => !field.isHidden)
       .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
       .map((field) => ({
         ...field,
-        values: field.values?.filter(
-          (_, index) =>
-            !getHiddenMultisetFieldIds(screen, dependencies, index).has(
-              field.id,
-            ),
-        ),
+        values: screen.isMulti
+          ? field.values?.filter((_, index) => {
+              let hiddenFields = hiddenFieldsByIndex.get(index)
+              if (!hiddenFields) {
+                hiddenFields = getHiddenMultisetFieldIds(
+                  screen,
+                  dependencies,
+                  index,
+                )
+                hiddenFieldsByIndex.set(index, hiddenFields)
+              }
+              return !hiddenFields.has(field.id)
+            })
+          : field.values,
       }))
       .filter((field) => (field.values?.length ?? 0) > 0)
       .map((field) =>
