@@ -11,11 +11,6 @@ import { Application, FormModes } from '@island.is/application/types'
 import { FjarsyslaRikisinsLogo } from '@island.is/application/assets/institution-logos'
 import { conclusion as m, sections } from '../../lib/messages'
 import { COMMENT_ANSWER, MY_PAGES_PATH } from '../../utils/constants'
-import {
-  employmentHistoryStubSection,
-  externalDataStubSection,
-  personalInformationStubSection,
-} from '../stubSections'
 import { buildWhatNextField } from '../whatNextField'
 
 const hasComment = (answers: Application['answers']) =>
@@ -26,9 +21,6 @@ export const ProcessingForm = buildForm({
   mode: FormModes.COMPLETED,
   logo: FjarsyslaRikisinsLogo,
   children: [
-    externalDataStubSection,
-    personalInformationStubSection,
-    employmentHistoryStubSection,
     buildSection({
       id: 'conclusion',
       title: sections.conclusion,

@@ -110,7 +110,7 @@ export const prerequisites = defineMessages({
   },
   employmentHistoryTitle: {
     id: 'fjs.ec.application:prerequisites.employmentHistoryTitle',
-    defaultMessage: 'Starfsaga hjá ríkinu',
+    defaultMessage: 'Starfssaga hjá ríkinu',
     description: 'Title of the employment history data provider',
   },
   employmentHistorySubTitle: {

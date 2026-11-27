@@ -13,11 +13,6 @@ import {
 import { FjarsyslaRikisinsLogo } from '@island.is/application/assets/institution-logos'
 import { conclusion as m, sections } from '../../lib/messages'
 import { submitFailedWithPreviewChanged } from '../../utils/submitResult'
-import {
-  employmentHistoryStubSection,
-  externalDataStubSection,
-  personalInformationStubSection,
-} from '../stubSections'
 import { buildWhatNextField } from '../whatNextField'
 
 const previewChanged = (_answers: unknown, externalData: ExternalData) =>
@@ -36,9 +31,6 @@ export const SubmissionFailedForm = buildForm({
   renderLastScreenButton: true,
   logo: FjarsyslaRikisinsLogo,
   children: [
-    externalDataStubSection,
-    personalInformationStubSection,
-    employmentHistoryStubSection,
     buildSection({
       id: 'conclusion',
       title: sections.conclusion,

@@ -9,11 +9,6 @@ import { FormModes } from '@island.is/application/types'
 import { FjarsyslaRikisinsLogo } from '@island.is/application/assets/institution-logos'
 import { conclusion as m, sections } from '../../lib/messages'
 import { SUPPORT_EMAIL_LINK } from '../../utils/constants'
-import {
-  employmentHistoryStubSection,
-  externalDataStubSection,
-  personalInformationStubSection,
-} from '../stubSections'
 import { buildWhatNextField } from '../whatNextField'
 
 /**
@@ -25,9 +20,6 @@ export const ClosedForm = buildForm({
   mode: FormModes.REJECTED,
   logo: FjarsyslaRikisinsLogo,
   children: [
-    externalDataStubSection,
-    personalInformationStubSection,
-    employmentHistoryStubSection,
     buildSection({
       id: 'conclusion',
       title: sections.conclusion,

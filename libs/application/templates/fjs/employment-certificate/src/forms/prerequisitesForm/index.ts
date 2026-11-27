@@ -13,11 +13,6 @@ import {
   UserProfileApi,
 } from '../../dataProviders'
 import { prerequisites as m, sections } from '../../lib/messages'
-import {
-  conclusionStubSection,
-  employmentHistoryStubSection,
-  personalInformationStubSection,
-} from '../stubSections'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -65,8 +60,5 @@ export const Prerequisites = buildForm({
         }),
       ],
     }),
-    personalInformationStubSection,
-    employmentHistoryStubSection,
-    conclusionStubSection,
   ],
 })
