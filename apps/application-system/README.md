@@ -149,10 +149,6 @@ The banner is shown on `/umsoknir/{slug}` and inside the application in every
 state. `showAlertBanner`, `bannerVariant`, `isDismissable` and
 `dismissedForDays` are read from the referenced `alertBanner` entry.
 
-Dev reads Contentful drafts while staging and prod only read published
-entries, so test with an unpublished entry on dev. Publishing an entry makes
-it live on staging and prod at the same time.
-
 ## Code owners and maintainers
 
 - [Origo](https://github.com/orgs/island-is/teams/origo/members)
