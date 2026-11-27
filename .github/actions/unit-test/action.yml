@@ -4,26 +4,12 @@ inputs:
   dd-api-key:
     description: 'Datadog API key'
     required: true
-  aws-access-key-id:
-    description: 'AWS access key ID'
-    required: true
-  aws-secret-access-key:
-    description: 'AWS secret access key'
-    required: true
   docker-registry:
     description: 'Docker registry'
     required: true
 runs:
   using: 'composite'
   steps:
-    - name: Docker login to ECR repo
-      run: ./scripts/ci/docker-login-ecr.sh
-      shell: bash
-      env:
-        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
-        DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-
     - name: Configure Datadog Test Optimization
       uses: datadog/test-visibility-github-action@v2
       with:

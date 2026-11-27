@@ -77,6 +77,7 @@ env:
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   AWS_REGION: eu-west-1
+  ECR_ROLE_ARN: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/') || startsWith(github.ref, 'refs/heads/gh-readonly-queue/')) && 'arn:aws:iam::821090935708:role/github-action-monorepo-ecr-release' || 'arn:aws:iam::821090935708:role/github-action-monorepo-ecr-pr' }}
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
@@ -113,6 +114,7 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+      id-token: 'write'
     steps:
       - name: Set outputs
         id: set-outputs
@@ -287,6 +289,17 @@ jobs:
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Configure AWS credentials for ECR
+        id: ecr-credentials
+        if: ${{ inputs.run_merge_queue == true && github.event_name == 'workflow_dispatch' && startsWith(steps.get-branch.outputs.MAIN_BRANCH, 'release/') && steps.docker_projects.outputs.CHUNKS }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE_ARN }}
+          role-session-name: install-release-reuse-${{ github.run_id }}
+          aws-region: eu-west-1
+          output-credentials: true
+          output-env-credentials: false
+
       - name: Reuse pre-release docker images
         id: release-docker-reuse
         # A release is started with a workflow dispatch on the renamed pre-release
@@ -294,8 +307,9 @@ jobs:
         if: ${{ inputs.run_merge_queue == true && github.event_name == 'workflow_dispatch' && startsWith(steps.get-branch.outputs.MAIN_BRANCH, 'release/') && steps.docker_projects.outputs.CHUNKS }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ steps.ecr-credentials.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.ecr-credentials.outputs.aws-secret-access-key }}
+          AWS_SESSION_TOKEN: ${{ steps.ecr-credentials.outputs.aws-session-token }}
           RELEASE_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
           RELEASE_SHA: ${{ github.sha }}
           DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}

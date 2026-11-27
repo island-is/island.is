@@ -33,6 +33,7 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   AWS_REGION: eu-west-1
+  ECR_ROLE_ARN: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/') || startsWith(github.ref, 'refs/heads/gh-readonly-queue/')) && 'arn:aws:iam::821090935708:role/github-action-monorepo-ecr-release' || 'arn:aws:iam::821090935708:role/github-action-monorepo-ecr-pr' }}
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   GENERATED_FILES: ${{ github.sha }}.tar.gz
@@ -48,6 +49,7 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+      id-token: 'write'
     uses: ./.github/workflows/install.yml
     secrets: inherit
     with:
@@ -66,6 +68,7 @@ jobs:
     permissions:
       actions: read
       contents: read
+      id-token: write
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ''
@@ -107,12 +110,23 @@ jobs:
           node ./scripts/ci/docker/create-id.mjs
       - name: load-deps
         uses: ./.github/actions/load-deps
+      - name: Configure AWS credentials for ECR
+        id: ecr-credentials
+        if: steps.gather.outcome == 'success'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE_ARN }}
+          role-session-name: merge-queue-docker-build-${{ github.run_id }}
+          aws-region: eu-west-1
+          output-credentials: true
+          output-env-credentials: false
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ steps.ecr-credentials.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.ecr-credentials.outputs.aws-secret-access-key }}
+          AWS_SESSION_TOKEN: ${{ steps.ecr-credentials.outputs.aws-session-token }}
 
       - name: Prepare Docker build arguments
         id: dockerargs
@@ -290,8 +304,6 @@ jobs:
         uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   typecheck:
