@@ -93,6 +93,9 @@ jobs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
     runs-on: arc-shared
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
@@ -115,13 +118,19 @@ jobs:
       - name: Get local secrets
         working-directory: infra
         run: node -r esbuild-register src/secrets.ts get-all-required-secrets --env=${{ matrix.env }} >> LOCAL_SECRETS
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::821090935708:role/github-action-monorepo-ssm-lister
+          role-duration-seconds: 900
+          role-session-name: DescribeSSM
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
           role-to-assume: ${{ env.ROLE }}
+          role-chaining: true
           role-duration-seconds: 900
           role-session-name: DescribeSSM
       - name: Get secrets in AWS
@@ -131,14 +140,20 @@ jobs:
         run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
         working-directory: infra
 
+      - name: Configure AWS Credentials (OIDC) for IDS Prod
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::821090935708:role/github-action-monorepo-ssm-lister
+          role-duration-seconds: 900
+          role-session-name: DescribeSSM
       - name: Configure AWS Credentials for IDS Prod
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
           role-duration-seconds: 900
           role-to-assume: arn:aws:iam::567113216315:role/list-ssm-parameters
+          role-chaining: true
 
       - name: Get secrets in IDS Prod AWS
         env:
