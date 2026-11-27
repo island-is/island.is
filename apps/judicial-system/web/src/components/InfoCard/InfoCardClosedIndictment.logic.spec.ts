@@ -23,6 +23,11 @@ const prosecutor: InstitutionUser = {
   institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
 }
 
+const prisonStaff: InstitutionUser = {
+  role: UserRole.PRISON_SYSTEM_STAFF,
+  institution: { type: InstitutionType.PRISON },
+}
+
 const verdictAppeal = {
   appealType: AppealCaseType.VERDICT,
   appealState: AppealCaseState.READY_TO_COMPLETE,
@@ -128,19 +133,26 @@ describe('resolveClosedIndictmentAppealCase', () => {
         workingCase,
         explicit,
         'ruling-order-appeal',
+        prosecutor,
       ),
     ).toBe(explicit)
   })
 
   it('keeps an explicit null as no appeal', () => {
     expect(
-      resolveClosedIndictmentAppealCase(workingCase, null, undefined),
+      resolveClosedIndictmentAppealCase(
+        workingCase,
+        null,
+        undefined,
+        prosecutor,
+      ),
     ).toBeNull()
     expect(
       resolveClosedIndictmentAppealCase(
         onlyVerdictAppeal(completedVerdictAppeal),
         null,
         undefined,
+        prosecutor,
       ),
     ).toBeNull()
   })
@@ -151,6 +163,7 @@ describe('resolveClosedIndictmentAppealCase', () => {
         workingCase,
         undefined,
         'ruling-order-appeal',
+        prosecutor,
       ),
     ).toBe(rulingOrder)
     expect(
@@ -158,13 +171,19 @@ describe('resolveClosedIndictmentAppealCase', () => {
         workingCase,
         undefined,
         'verdict-appeal',
+        prosecutor,
       ),
     ).toBe(completedVerdictAppeal)
   })
 
   it('takes the case level appeal before the verdict appeal', () => {
     expect(
-      resolveClosedIndictmentAppealCase(workingCase, undefined, undefined),
+      resolveClosedIndictmentAppealCase(
+        workingCase,
+        undefined,
+        undefined,
+        prosecutor,
+      ),
     ).toBe(caseLevel)
   })
 
@@ -174,6 +193,7 @@ describe('resolveClosedIndictmentAppealCase', () => {
         onlyVerdictAppeal(completedVerdictAppeal),
         undefined,
         undefined,
+        prosecutor,
       ),
     ).toBe(completedVerdictAppeal)
   })
@@ -189,8 +209,42 @@ describe('resolveClosedIndictmentAppealCase', () => {
         onlyVerdictAppeal({ ...completedVerdictAppeal, appealState }),
         undefined,
         undefined,
+        prosecutor,
       ),
     ).toBeUndefined()
+  })
+
+  it('gives a prison system user no completed verdict appeal', () => {
+    expect(
+      resolveClosedIndictmentAppealCase(
+        onlyVerdictAppeal(completedVerdictAppeal),
+        undefined,
+        undefined,
+        prisonStaff,
+      ),
+    ).toBeUndefined()
+  })
+
+  it('still gives a prison system user the case level appeal', () => {
+    expect(
+      resolveClosedIndictmentAppealCase(
+        workingCase,
+        undefined,
+        undefined,
+        prisonStaff,
+      ),
+    ).toBe(caseLevel)
+  })
+
+  it('still gives a prison system user the appeal named in the query string', () => {
+    expect(
+      resolveClosedIndictmentAppealCase(
+        workingCase,
+        undefined,
+        'ruling-order-appeal',
+        prisonStaff,
+      ),
+    ).toBe(rulingOrder)
   })
 
   it('gives nothing for a named appeal it cannot find', () => {
@@ -199,6 +253,7 @@ describe('resolveClosedIndictmentAppealCase', () => {
         onlyVerdictAppeal(completedVerdictAppeal),
         undefined,
         'unknown-appeal',
+        prosecutor,
       ),
     ).toBeUndefined()
   })

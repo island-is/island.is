@@ -44,6 +44,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     workingCase,
     props.appealCase,
     appealCaseId,
+    user,
   )
 
   const {

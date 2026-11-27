@@ -1,6 +1,7 @@
 import type { InstitutionUser } from '@island.is/judicial-system/types'
 import {
   isCourtOfAppealsUser,
+  isPrisonSystemUser,
   isVerdictAppealConfirmed,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -37,12 +38,14 @@ export const shouldShowVerdictAppealOutcome = (
  * in by the page wins, null meaning there is none. Otherwise the appeal named
  * by `appealCaseId` in the query string, and with none named, the case level
  * appeal, then the verdict appeal once it is completed - so the parties see
- * how a verdict appeal ended on their own overview of the case.
+ * how a verdict appeal ended on their own overview of the case. Prison system
+ * users do not get that last fallback to the verdict appeal.
  */
 export const resolveClosedIndictmentAppealCase = (
   workingCase: WorkingCase,
   appealCase: AppealCase | null | undefined,
   appealCaseId: string | undefined,
+  user?: InstitutionUser,
 ): AppealCase | null | undefined => {
   if (appealCase !== undefined) {
     return appealCase
@@ -54,6 +57,10 @@ export const resolveClosedIndictmentAppealCase = (
 
   if (workingCase.appealCase) {
     return workingCase.appealCase
+  }
+
+  if (isPrisonSystemUser(user)) {
+    return undefined
   }
 
   return workingCase.verdictAppealCase?.appealState ===
