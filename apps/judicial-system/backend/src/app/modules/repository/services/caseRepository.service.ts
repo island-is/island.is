@@ -867,7 +867,10 @@ export class CaseRepositoryService {
    * one defendant is not enough, so the join is grouped per case and counted
    * against the number of defendants this case has.
    */
-  async findCandidateMergeCases(theCase: Case): Promise<Case[]> {
+  async findCandidateMergeCases(
+    theCase: Case,
+    options?: { transaction?: Transaction },
+  ): Promise<Case[]> {
     const defendantMatch = this.defendantMatch(theCase)
 
     if (!defendantMatch) {
@@ -904,6 +907,7 @@ export class CaseRepositoryService {
         having: literal(
           `COUNT(DISTINCT "defendants"."id") = ${theCase.defendants?.length}`,
         ),
+        transaction: options?.transaction,
       })
 
       this.logger.debug(
