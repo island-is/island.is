@@ -25,6 +25,7 @@ import {
   RulingModifiedAlert,
   SectionHeading,
   UserContext,
+  VerdictAppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
@@ -252,6 +253,7 @@ const Completed: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            <VerdictAppealConclusion />
             <AllIndictmentCaseFiles />
             {isRulingOrFine && (
               <Box component="section">

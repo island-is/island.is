@@ -651,5 +651,23 @@ describe('Defender IndictmentOverview', () => {
         screen.queryByText('Niðurstaða Landsréttar'),
       ).not.toBeInTheDocument()
     })
+
+    it('does not show Landsréttur’s dómsorð before the verdict appeal is completed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        }),
+      )
+
+      await screen.findAllByText('Eigin sakborningur')
+      expect(screen.queryByText('Dómsorð Landsréttar')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+      ).not.toBeInTheDocument()
+    })
   })
 })

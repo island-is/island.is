@@ -449,6 +449,12 @@ const useInfoCardItems = (
     values: [getVerdictAppealRulingDecisionLabel(targetAppealCase)],
   }
 
+  const appealCompletedDate: Item = {
+    id: 'appeal-completed-date-item',
+    title: 'Dagsetning lykta',
+    values: [formatDate(targetAppealCase?.appealCompletedDate, 'PP')],
+  }
+
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
     title: strings.indictmentReviewer,
@@ -636,6 +642,7 @@ const useInfoCardItems = (
     appealAssistant,
     appealJudges,
     appealRulingDecision,
+    appealCompletedDate,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
