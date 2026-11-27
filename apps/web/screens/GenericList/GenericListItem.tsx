@@ -70,7 +70,15 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
                 ))}
               </Inline>
             )}
-            {showReadspeaker && <Webreader readClass="rs_read" marginTop={0} />}
+            {showReadspeaker && (
+              <Webreader
+                marginTop={0}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
+            )}
           </Stack>
           {item.image && (
             <Box
