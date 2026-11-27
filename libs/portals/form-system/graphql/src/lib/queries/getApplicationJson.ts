@@ -8,6 +8,10 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
         id
         organizationNationalId
         slug
+        formName {
+          is
+          en
+        }
         isTest
         status
         submittedAt

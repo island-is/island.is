@@ -5,8 +5,14 @@ import {
   UPDATE_ORGANIZATION_LOGO,
 } from '@island.is/form-system/graphql'
 import { toast } from '@island.is/island-ui/core'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { InputHTMLAttributes, ReactNode } from 'react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
+import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import {
   ControlContext,
   IControlContext,
@@ -20,7 +26,11 @@ jest.mock('@island.is/localization', () => ({
   }),
 }))
 jest.mock('@island.is/form-system/ui', () => ({
-  m: { enableApplicationPdfDownload: { defaultMessage: 'Download PDF' } },
+  m: {
+    enableApplicationPdfDownload: { defaultMessage: 'Download PDF' },
+    completedMessage: { defaultMessage: 'Staðfesting' },
+    preview: { defaultMessage: 'Skoða skjá' },
+  },
 }))
 jest.mock('./components/AdditionalInfo', () => ({
   AdditionalInfo: () => null,
@@ -34,7 +44,12 @@ jest.mock('@island.is/island-ui/core', () => {
     Stack: Container,
     Text: Container,
     GridRow: Container,
-    Button: Container,
+    Button: ({
+      children,
+      onClick,
+    }: ButtonHTMLAttributes<HTMLButtonElement>) => (
+      <button onClick={onClick}>{children}</button>
+    ),
     Input: () => null,
     Divider: () => null,
     AlertMessage: () => null,
@@ -71,6 +86,7 @@ const renderCompleted = (
 ) => {
   const controlDispatch = jest.fn<IControlContext['controlDispatch']>()
   const formUpdate = jest.fn<IControlContext['formUpdate']>()
+  const onPreview = jest.fn()
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <ControlContext.Consumer>
@@ -102,14 +118,37 @@ const renderCompleted = (
               formUpdate,
             }}
           >
-            <Completed />
+            <Completed onPreview={onPreview} />
           </ControlContext.Provider>
         )}
       </ControlContext.Consumer>
     </MockedProvider>,
   )
-  return { controlDispatch, formUpdate }
+  return { controlDispatch, formUpdate, onPreview }
 }
+
+it('offers a screen preview before the confirmation heading', () => {
+  const { onPreview } = renderCompleted([])
+  const headingRow = screen.getByText('Staðfesting').parentElement
+  if (!headingRow) {
+    throw new Error('Missing confirmation heading row')
+  }
+  expect(
+    within(headingRow)
+      .getByRole('button', { name: 'Skoða skjá' })
+      .compareDocumentPosition(screen.getByText('Staðfesting')) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
+
+  fireEvent.click(
+    within(headingRow).getByRole('button', { name: 'Skoða skjá' }),
+  )
+
+  expect(onPreview).toHaveBeenCalledTimes(1)
+  expect(
+    screen.queryByRole('button', { name: 'Skoða með tengingum' }),
+  ).toBeNull()
+})
 
 describe('Completed organization logo', () => {
   afterEach(() => {

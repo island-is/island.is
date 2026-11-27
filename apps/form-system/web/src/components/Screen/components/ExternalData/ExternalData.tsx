@@ -1,12 +1,5 @@
-import { m } from '@island.is/form-system/ui'
-import {
-  AlertMessage,
-  Box,
-  Checkbox,
-  Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { ExternalDataAgreement, m } from '@island.is/form-system/ui'
+import { AlertMessage, Box, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { useIntl } from 'react-intl'
@@ -114,12 +107,9 @@ export const ExternalData = ({
           />
         </Box>
       )}
-      <Checkbox
-        large={true}
-        backgroundColor="blue"
-        label={formatMessage(m.externalDataAgreement)}
+      <ExternalDataAgreement
         disabled={disabled}
-        onChange={(event) => setExternalDataAgreement(event.target.checked)}
+        onChange={setExternalDataAgreement}
       />
     </Box>
   )

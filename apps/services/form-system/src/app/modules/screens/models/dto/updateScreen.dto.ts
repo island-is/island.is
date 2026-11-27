@@ -18,7 +18,11 @@ export class UpdateScreenDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiPropertyOptional({ type: LanguageType })
+  @ApiPropertyOptional({
+    type: LanguageType,
+    description:
+      'Omitted or null values preserve the existing name. Use empty translations to clear it.',
+  })
   name?: LanguageType
 
   @IsOptional()

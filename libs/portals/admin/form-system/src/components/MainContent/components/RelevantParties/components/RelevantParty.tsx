@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemField, FormSystemFormApplicant } from '@island.is/api/schema'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import {
   CREATE_FORM_DELEGATION,
   DELETE_FORM_DELEGATION,
@@ -24,6 +25,65 @@ interface Props {
   relevantApplicant: FormSystemField
 }
 
+const applicantInstructions: Record<
+  string,
+  { description: string; example: string; englishExample: string }
+> = {
+  [ApplicantTypesEnum.INDIVIDUAL]: {
+    description: 'Heiti fyrir innskráðan einstakling sem sækir um fyrir sig.',
+    example: 'Umsækjandi',
+    englishExample: 'Applicant',
+  },
+  [ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL]: {
+    description:
+      'Heiti fyrir innskráðan einstakling sem fyllir út umsókn í umboði annars einstaklings.',
+    example: 'Umboðsaðili',
+    englishExample: 'Authorised representative',
+  },
+  [ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION]: {
+    description:
+      'Heiti fyrir einstaklinginn sem veitti umboðið og sótt er um fyrir, ekki þann sem fyllir út umsóknina.',
+    example: 'Umboðsveitandi',
+    englishExample: 'Authorising individual',
+  },
+  [ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY]: {
+    description:
+      'Heiti fyrir innskráðan einstakling sem fyllir út umsókn í umboði lögaðila.',
+    example: 'Umboðsaðili fyrirtækis',
+    englishExample: 'Company representative',
+  },
+  [ApplicantTypesEnum.LEGAL_ENTITY]: {
+    description:
+      'Heiti fyrir lögaðilann sem veitti umboðið og sótt er um fyrir, ekki umboðsaðilann.',
+    example: 'Fyrirtæki',
+    englishExample: 'Company',
+  },
+  [ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION]: {
+    description:
+      'Heiti fyrir innskráðan prókúruhafa sem fyllir út umsókn fyrir lögaðila.',
+    example: 'Prókúruhafi',
+    englishExample: 'Procuration holder',
+  },
+  [ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER]: {
+    description:
+      'Heiti fyrir lögaðilann sem prókúruhafi sækir um fyrir, ekki prókúruhafann sjálfan.',
+    example: 'Fyrirtæki',
+    englishExample: 'Company',
+  },
+  [ApplicantTypesEnum.LEGAL_GUARDIAN]: {
+    description:
+      'Heiti fyrir innskráðan forsjáraðila sem fyllir út umsókn fyrir barn sitt.',
+    example: 'Forsjáraðili',
+    englishExample: 'Legal guardian',
+  },
+  [ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN]: {
+    description:
+      'Heiti fyrir barnið sem sótt er um fyrir, ekki forsjáraðilann sem fyllir út umsóknina.',
+    example: 'Barn',
+    englishExample: 'Child',
+  },
+}
+
 export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { formatMessage } = useIntl()
   const {
@@ -43,6 +103,8 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
 
   const [currentApplicant, setCurrentApplicant] =
     useState<FormSystemField>(relevantApplicant)
+  const instructions =
+    applicantInstructions[currentApplicant.fieldSettings?.applicantType ?? '']
   const selectedDelegations = control.form.delegations ?? []
   const formRef = useRef(control.form)
   const selectedDelegationsRef = useRef(selectedDelegations)
@@ -159,8 +221,16 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
 
       <GridRow>
         <GridColumn span="5/10">
+          {instructions && (
+            <Text variant="small" marginBottom={2}>
+              {instructions.description} Sláðu inn fyrirsögn á íslensku, til
+              dæmis „{instructions.example}“, en ekki raunverulegt nafn
+              einstaklings eða lögaðila.
+            </Text>
+          )}
           <Input
             label={applicantType.description?.is ?? ''}
+            required
             name={currentApplicant.fieldSettings?.applicantType ?? ''}
             backgroundColor="blue"
             readOnly={isReadOnly}
@@ -195,8 +265,17 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
           />
         </GridColumn>
         <GridColumn span="5/10">
+          {instructions && (
+            <Text variant="small" marginBottom={2}>
+              Sláðu inn enska þýðingu fyrirsagnarinnar fyrir sama aðila, til
+              dæmis „{instructions.englishExample}“ fyrir „
+              {instructions.example}“. Þessi fyrirsögn birtist þegar umsóknin er
+              á ensku.
+            </Text>
+          )}
           <Input
             label={formatMessage(m.englishTranslation)}
+            required
             name={'en-' + (currentApplicant.fieldSettings?.applicantType ?? '')}
             backgroundColor="blue"
             readOnly={isReadOnly}

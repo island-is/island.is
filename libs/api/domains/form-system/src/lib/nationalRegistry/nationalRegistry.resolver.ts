@@ -1,9 +1,13 @@
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
+  ScopesGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -22,7 +26,33 @@ import { FormSystemPersonByNationalId } from '../../models/nationalRegistryPerso
 @CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system/national-registry' })
 export class NationalRegistryResolver {
-  constructor(private readonly service: NationalRegistryV3ClientService) {}
+  constructor(
+    private readonly service: NationalRegistryV3ClientService,
+    private readonly applicationsService: NationalRegistryV3ApplicationsClientService,
+  ) {}
+
+  @Audit()
+  @UseGuards(ScopesGuard)
+  @Scopes(ApiScope.meDetails)
+  @Query(() => [FormSystemPersonByNationalId], {
+    name: 'formSystemCustodyChildren',
+    nullable: true,
+  })
+  async getCustodyChildren(
+    @CurrentUser() user: User,
+  ): Promise<FormSystemPersonByNationalId[]> {
+    const nationalIds = await this.applicationsService.getCustodyChildren(user)
+
+    return Promise.all(
+      nationalIds.map(async (nationalId) => {
+        const child = await this.applicationsService.getOtherIndividual(
+          nationalId,
+          user,
+        )
+        return { nationalId, fullName: child?.name || null }
+      }),
+    )
+  }
 
   @Audit()
   @Query(() => FormSystemNameByNationalId, {
