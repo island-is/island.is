@@ -161,8 +161,7 @@ export class PoliceController {
     )
 
     return this.policeService.uploadPoliceCaseFile(
-      caseId,
-      theCase.type,
+      theCase,
       uploadPoliceCaseFile,
       user,
     )
