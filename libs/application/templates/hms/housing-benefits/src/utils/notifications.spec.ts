@@ -55,7 +55,7 @@ describe('housing benefits scheduled notifications', () => {
       })
       expect(getArg(configs[0], 'expiryDate')).toEqual({
         key: 'expiryDate',
-        value: '2026-11-30T10:00:00.000Z',
+        value: '30.11.2026',
       })
       expect(configs[1]).toMatchObject({
         template: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',

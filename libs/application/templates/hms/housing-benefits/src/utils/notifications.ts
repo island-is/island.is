@@ -1,6 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import format from 'date-fns/format'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -95,7 +96,7 @@ const buildNotificationArgs = (
   const args: Array<{ key: string; value: string }> = [
     {
       key: 'expiryDate',
-      value: getHousingBenefitsPruneDate(application).toISOString(),
+      value: format(getHousingBenefitsPruneDate(application), 'dd.MM.yyyy'),
     },
   ]
 
