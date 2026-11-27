@@ -266,10 +266,7 @@ const HeaderContainer = () => {
                                 id: header.tipDisclaimer,
                                 defaultMessage: header.tipDisclaimer,
                               },
-                              {
-                                linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
-                                linkEnd: '</a>',
-                              },
+                              { supportEmail },
                             )}
                           />
                         )}

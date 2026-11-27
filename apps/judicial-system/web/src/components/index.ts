@@ -40,6 +40,7 @@ export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as RequestCaseDefenderInfo } from './RequestCaseDefenderInfo/RequestCaseDefenderInfo'
 export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary'
+export { default as ExplanationText } from './ExplanationText/ExplanationText'
 export {
   default as FeatureProvider,
   FeatureContext,

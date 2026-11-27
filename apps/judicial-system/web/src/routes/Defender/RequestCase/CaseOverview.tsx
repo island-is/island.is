@@ -18,9 +18,9 @@ import {
   CaseTitleInfoAndTags,
   Conclusion,
   conclusion,
+  ExplanationText,
   FormContentContainer,
   FormContext,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PdfButton,
@@ -113,9 +113,9 @@ export const CaseOverview = () => {
                     },
                   )}
                   message={
-                    <MarkdownWrapper
-                      markdown={workingCase.caseModifiedExplanation}
-                      textProps={{ variant: 'small' }}
+                    <ExplanationText
+                      explanation={workingCase.caseModifiedExplanation}
+                      variant="small"
                     />
                   }
                 />

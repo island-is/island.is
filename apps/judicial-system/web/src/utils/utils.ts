@@ -106,7 +106,7 @@ export const createCaseResentExplanation = (
 
   return `${
     workingCase.caseResentExplanation
-      ? `${workingCase.caseResentExplanation}<br/><br/>`
+      ? `${workingCase.caseResentExplanation}\n\n`
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }

@@ -17,7 +17,7 @@ export const createCaseModifiedExplanation = (
   institutionName?: string | null,
 ): string => {
   const now = new Date()
-  const history = previousExplanation ? `${previousExplanation}<br/><br/>` : ''
+  const history = previousExplanation ? `${previousExplanation}\n\n` : ''
 
   return `${history}${formatMessage(
     {

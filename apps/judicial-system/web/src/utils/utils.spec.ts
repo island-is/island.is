@@ -30,6 +30,7 @@ import {
   applyAppealCaseUpdate,
   applyMergedCaseEntries,
   canSkipArraignmentSummons,
+  createCaseResentExplanation,
   getAppealActorText,
   getDefaultDefendantGender,
   getDefenceUserMatchingPartyIds,
@@ -2367,5 +2368,32 @@ describe('isMatchingAppealCaseFile', () => {
         defender,
       ),
     ).toBe(false)
+  })
+})
+
+describe('createCaseResentExplanation', () => {
+  const now = new Date('2022-06-13T13:37:00Z')
+
+  beforeEach(() => jest.useFakeTimers().setSystemTime(now))
+  afterEach(() => jest.useRealTimers())
+
+  it('starts the explanation with when the case was resent', () => {
+    const res = createCaseResentExplanation({} as WorkingCase, 'Wrong date')
+
+    expect(res).toBe(`Krafa endursend ${formatDate(now, 'PPPp')} - Wrong date`)
+  })
+
+  it('puts a new explanation two lines below the earlier ones', () => {
+    const res = createCaseResentExplanation(
+      { caseResentExplanation: 'Earlier explanation' } as WorkingCase,
+      'Wrong date',
+    )
+
+    expect(res).toBe(
+      `Earlier explanation\n\nKrafa endursend ${formatDate(
+        now,
+        'PPPp',
+      )} - Wrong date`,
+    )
   })
 })
