@@ -6,7 +6,8 @@ import { stringHash } from '@island.is/shared/utils'
 
 const GLOBAL_APPLICATION_TYPE = '*'
 
-// TODO: generate these interfaces with graphql codegen
+// These interfaces mirror the fields selected in GET_APPLICATION_TYPE_SETTINGS.
+// Keep them in sync with that query.
 export interface ApplicationTypeAlertBanner {
   id: string
   showAlertBanner: boolean
