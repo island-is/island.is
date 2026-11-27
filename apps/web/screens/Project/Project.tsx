@@ -37,6 +37,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import type { LinkType } from '@island.is/web/hooks/useLinkResolver'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -68,6 +69,7 @@ export interface PageProps {
   locale: Locale
   backLink?: { url: string; text: string }
   customContentfulIds?: (string | undefined)[]
+  customLinkType?: LinkType
   customBreadcrumbItems?: BreadCrumbItem[]
   customContent?: React.ReactNode
   parentSubpage?: ProjectParentSubpage | null
@@ -83,6 +85,7 @@ const ProjectPage: Screen<PageProps> = ({
   locale,
   backLink,
   customContentfulIds,
+  customLinkType,
   customBreadcrumbItems,
   customContent,
   parentSubpage,
@@ -111,7 +114,7 @@ const ProjectPage: Screen<PageProps> = ({
 
   useContentfulId(...contentfulIds)
   useLocalLinkTypeResolver(
-    parentSubpage ? 'projectparentsubpagechild' : undefined,
+    customLinkType ?? (parentSubpage ? 'projectparentsubpagechild' : undefined),
   )
 
   // Only link events to the project event routes when they can resolve an organization
