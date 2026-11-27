@@ -61,6 +61,9 @@ spacing before the number and no extra group indentation.
 Each number belongs to the first field visible in that row. When resuming an
 application, an incomplete section without a visible incomplete screen remains
 selected with no current screen.
+Summary rendering and required-field validation count visible repeated messages
+when determining multiset rows, matching the input screen. Messages themselves
+are not displayed as answers.
 
 Checkbox, radio-button, and dropdown fields can control dependencies while part
 of a multiset. Dependent fields in the same multiset follow the controlling

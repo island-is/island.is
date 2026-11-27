@@ -49,9 +49,7 @@ export const Summary = ({ state }: Props) => {
               ...(screen.fields ?? [])
                 .filter(
                   (field) =>
-                    field?.isPartOfMultiset !== false &&
-                    !field?.isHidden &&
-                    field?.fieldType !== FieldTypesEnum.MESSAGE,
+                    field?.isPartOfMultiset !== false && !field?.isHidden,
                 )
                 .map((field) => field?.values?.length ?? 0),
             )
@@ -131,37 +129,42 @@ export const Summary = ({ state }: Props) => {
             const visibleFields =
               screen?.fields?.filter(
                 (field): field is NonNullable<typeof field> =>
-                  field != null &&
-                  !field.isHidden &&
-                  field.fieldType !== FieldTypesEnum.MESSAGE,
+                  field != null && !field.isHidden,
               ) ?? []
+            const answerFields = visibleFields.filter(
+              (field) => field.fieldType !== FieldTypesEnum.MESSAGE,
+            )
 
             const firstMultisetFieldIndex = screen?.isMulti
-              ? visibleFields.findIndex(
+              ? answerFields.findIndex(
                   (field) => field.isPartOfMultiset !== false,
                 )
               : -1
             const leadingFields =
               firstMultisetFieldIndex === -1
-                ? visibleFields
-                : visibleFields.slice(0, firstMultisetFieldIndex)
+                ? answerFields
+                : answerFields.slice(0, firstMultisetFieldIndex)
             const multisetFields =
               firstMultisetFieldIndex === -1
                 ? []
-                : visibleFields.filter(
+                : answerFields.filter(
                     (field) => field.isPartOfMultiset !== false,
                   )
             const trailingFields =
               firstMultisetFieldIndex === -1
                 ? []
-                : visibleFields
+                : answerFields
                     .slice(firstMultisetFieldIndex)
                     .filter((field) => field.isPartOfMultiset === false)
 
-            const numberOfItems = Math.max(
-              1,
-              ...multisetFields.map((f) => f.values?.length ?? 0),
-            )
+            const numberOfItems = screen?.isMulti
+              ? Math.max(
+                  1,
+                  ...visibleFields
+                    .filter((field) => field.isPartOfMultiset !== false)
+                    .map((field) => field.values?.length ?? 0),
+                )
+              : 1
 
             return (
               <Box

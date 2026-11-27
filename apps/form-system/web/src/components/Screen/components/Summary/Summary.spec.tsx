@@ -148,11 +148,33 @@ it('omits hidden dependent rows from summaries and required-field validation', (
 })
 
 it.each([
-  { isHidden: true, fieldType: FieldTypesEnum.TEXTBOX },
-  { isHidden: false, fieldType: FieldTypesEnum.MESSAGE },
+  {
+    isHidden: true,
+    fieldType: FieldTypesEnum.TEXTBOX,
+    isPartOfMultiset: true,
+    expectedRows: 1,
+  },
+  {
+    isHidden: false,
+    fieldType: FieldTypesEnum.MESSAGE,
+    isPartOfMultiset: true,
+    expectedRows: 3,
+  },
+  {
+    isHidden: true,
+    fieldType: FieldTypesEnum.MESSAGE,
+    isPartOfMultiset: true,
+    expectedRows: 1,
+  },
+  {
+    isHidden: false,
+    fieldType: FieldTypesEnum.MESSAGE,
+    isPartOfMultiset: false,
+    expectedRows: 1,
+  },
 ])(
-  'does not count non-rendered multiset values ($fieldType, hidden=$isHidden) as required rows',
-  (nonRenderedField) => {
+  'aligns rendered and validated rows for $fieldType, hidden=$isHidden, repeated=$isPartOfMultiset',
+  ({ expectedRows, ...rowCountField }) => {
     jest.mocked(hasError).mockImplementation((_, index = 0) => index > 0)
     const state: ApplicationState = {
       application: { id: 'application', hasPayment: false },
@@ -165,9 +187,10 @@ it.each([
               id: 'screen',
               sectionId: 'section',
               isMulti: true,
+              multiMax: 3,
               fields: [
                 { ...field('required', true), isRequired: true },
-                { ...field('not-rendered', true, 3), ...nonRenderedField },
+                { ...field('not-rendered', true, 3), ...rowCountField },
               ],
             },
           ],
@@ -179,10 +202,14 @@ it.each([
 
     render(<Summary state={state} />)
 
-    expect(screen.getAllByRole('status')).toHaveLength(1)
+    expect(
+      screen.getAllByRole('status').map((output) => output.textContent),
+    ).toEqual(
+      Array.from({ length: expectedRows }, (_, index) => `required:${index}`),
+    )
     expect(mockDispatch).toHaveBeenLastCalledWith({
       type: 'SET_VALIDITY',
-      payload: { isValid: true },
+      payload: { isValid: expectedRows === 1 },
     })
   },
 )
