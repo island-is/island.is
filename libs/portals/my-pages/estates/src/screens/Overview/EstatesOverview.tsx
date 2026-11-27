@@ -55,12 +55,12 @@ export const EstatesOverview = () => {
 
   useDebounce(
     () => {
-      if (searchTouched.current) {
+      if (searchTouched.current && !loading) {
         announceCount(filtered.length)
       }
     },
     500,
-    [search],
+    [search, filtered.length, loading],
   )
 
   return (
