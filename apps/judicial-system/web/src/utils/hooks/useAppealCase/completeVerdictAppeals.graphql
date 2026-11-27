@@ -1,0 +1,6 @@
+mutation CompleteVerdictAppeals($input: CompleteVerdictAppealsInput!) {
+  completeVerdictAppeals(input: $input) {
+    id
+    appealState
+  }
+}

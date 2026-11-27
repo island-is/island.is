@@ -51,6 +51,11 @@ const verdictAppealState: CaseTableColumn = { title: 'Staða' }
 const verdictAppealHead: CaseTableColumn = { title: 'Dómsformaður' }
 const verdictAppealCompletedDate: CaseTableColumn = { title: 'Máli lokið' }
 const verdictAppealResult: CaseTableColumn = { title: 'Niðurstaða' }
+// The court of appeals' list of confirmed appeals still to be completed: the
+// date the court recorded for the appeal's conclusion, and whether it is
+// concluded with a judgment or a ruling.
+const verdictAppealRulingDate: CaseTableColumn = { title: 'Dómsuppkvaðning' }
+const verdictAppealRulingType: CaseTableColumn = { title: 'Staða' }
 // The public prosecution's view of an appealed verdict. Its prosecutors follow
 // the appeal from their own side, so who appealed is a tag rather than text and
 // the status is how far the appeal has come, not what the court of appeals has
@@ -99,6 +104,8 @@ export const caseTableColumns = {
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  verdictAppealRulingDate,
+  verdictAppealRulingType,
   appealProsecutor,
   verdictAppealAppellantTag,
   verdictAppealDate,

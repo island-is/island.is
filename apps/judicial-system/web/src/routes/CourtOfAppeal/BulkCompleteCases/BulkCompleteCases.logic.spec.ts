@@ -1,3 +1,4 @@
+import { MAX_COMPLETED_VERDICT_APPEALS } from '@island.is/judicial-system/types'
 import type {
   CaseTableCell,
   CaseTableRow,
@@ -7,14 +8,22 @@ import { CaseActionType } from '@island.is/judicial-system-web/src/graphql/schem
 import {
   formatCaseCountDative,
   formatCaseNumberList,
+  getAppealCaseIds,
+  getCellDisplayText,
   getCellText,
   getColumnWidth,
+  getFutureRulingDateWarning,
   getMoveAnnouncement,
   getRowActionLabel,
   getRowCaseNumber,
   getRowId,
   getRowLabel,
+  getRowsWithFutureRulingDate,
+  getRulingDate,
+  getStageRefusal,
+  getStageRefusalMessage,
   partitionRows,
+  RULING_DATE_COLUMN_INDEX,
   stageCase,
   unstageCase,
 } from './BulkCompleteCases.logic'
@@ -61,20 +70,202 @@ describe('getRowId', () => {
 })
 
 describe('stageCase', () => {
+  const appealRows = [appealRow('a', 'a'), appealRow('b', 'b')]
+
   it('adds a case to the end', () => {
-    expect(stageCase(['b'], rows, 'a')).toEqual(['b', 'a'])
+    expect(stageCase(['b'], appealRows, 'a')).toEqual(['b', 'a'])
   })
 
   it('does not stage a case twice', () => {
     const staged = ['a']
 
-    expect(stageCase(staged, rows, 'a')).toBe(staged)
+    expect(stageCase(staged, appealRows, 'a')).toBe(staged)
   })
 
   it('ignores a case that is not among the rows', () => {
     const staged = ['a']
 
-    expect(stageCase(staged, rows, 'unknown')).toBe(staged)
+    expect(stageCase(staged, appealRows, 'unknown')).toBe(staged)
+  })
+
+  // Appeals are completed by their appeal case id.
+  it('does not stage a row without an appeal case', () => {
+    const staged: string[] = []
+
+    expect(stageCase(staged, rows, 'a')).toBe(staged)
+  })
+
+  it('stages no more than the most that can be completed at once', () => {
+    const manyRows = Array.from(
+      { length: MAX_COMPLETED_VERDICT_APPEALS + 1 },
+      (_, i) => appealRow(`case-${i}`, `appeal-${i}`),
+    )
+    const full = manyRows
+      .slice(0, MAX_COMPLETED_VERDICT_APPEALS)
+      .map((r) => getRowId(r))
+    const lastId = getRowId(manyRows[MAX_COMPLETED_VERDICT_APPEALS])
+
+    expect(stageCase(full.slice(1), manyRows, full[0])).toHaveLength(
+      MAX_COMPLETED_VERDICT_APPEALS,
+    )
+    expect(stageCase(full, manyRows, lastId)).toBe(full)
+  })
+})
+
+describe('getStageRefusal', () => {
+  it('refuses a row without an appeal case', () => {
+    expect(getStageRefusal([], rows, 'a')).toBe('noAppealCase')
+  })
+
+  it('refuses a row once the most that can be completed are staged', () => {
+    const staged = Array.from(
+      { length: MAX_COMPLETED_VERDICT_APPEALS },
+      (_, i) => `appeal-${i}`,
+    )
+
+    expect(
+      getStageRefusal(staged, [appealRow('x', 'x-appeal')], 'x-appeal'),
+    ).toBe('limitReached')
+    expect(
+      getStageRefusal(
+        staged.slice(1),
+        [appealRow('x', 'x-appeal')],
+        'x-appeal',
+      ),
+    ).toBeUndefined()
+  })
+
+  it('refuses nothing that staging would leave alone anyway', () => {
+    expect(getStageRefusal([], rows, 'unknown')).toBeUndefined()
+    expect(getStageRefusal(['a'], rows, 'a')).toBeUndefined()
+  })
+
+  it('says how many can be completed at once', () => {
+    expect(getStageRefusalMessage('limitReached')).toBe(
+      `Hægt er að ljúka að hámarki ${MAX_COMPLETED_VERDICT_APPEALS} málum í einu.`,
+    )
+  })
+})
+
+describe('getAppealCaseIds', () => {
+  it('takes the appeal case ids, not the case ids', () => {
+    expect(
+      getAppealCaseIds([
+        appealRow('a', 'a-appeal'),
+        appealRow('b', 'b-appeal'),
+      ]),
+    ).toEqual(['a-appeal', 'b-appeal'])
+  })
+
+  it('leaves out a row without an appeal case', () => {
+    expect(getAppealCaseIds([caseRow('a', 'S-1/2026')])).toEqual([])
+  })
+})
+
+describe('ruling date', () => {
+  const now = new Date()
+  const hoursFromNow = (hours: number) =>
+    new Date(now.getTime() + hours * 60 * 60 * 1000)
+
+  const rulingDateRow = (
+    caseNumber: string,
+    sortValue: string | undefined,
+    lines: string[] = ['1.1.2026'],
+  ): CaseTableRow => {
+    const cells: CaseTableCell[] = [
+      {
+        sortValue: `sort-${caseNumber}`,
+        value: { __typename: 'StringValue', str: caseNumber },
+      },
+      { sortValue: 'jon', value: { __typename: 'StringValue', str: 'Jón' } },
+      { sortValue: 'tegund', value: { __typename: 'StringValue', str: 'Rán' } },
+      {
+        sortValue,
+        value: { __typename: 'StringGroupValue', strList: lines },
+      },
+    ]
+
+    return { ...row(caseNumber, cells), appealCaseId: `${caseNumber}-appeal` }
+  }
+
+  it('is read from the fourth column', () => {
+    expect(RULING_DATE_COLUMN_INDEX).toBe(3)
+  })
+
+  it('reads the date-time of the ruling date cell', () => {
+    const rulingDate = hoursFromNow(5)
+
+    expect(
+      getRulingDate(rulingDateRow('S-1/2026', rulingDate.toISOString())),
+    ).toEqual(rulingDate)
+  })
+
+  it('reads no date from a value that is not a date-time', () => {
+    expect(getRulingDate(rulingDateRow('S-1/2026', 'tomorrow'))).toBeUndefined()
+    expect(getRulingDate(rulingDateRow('S-1/2026', '2026'))).toBeUndefined()
+    expect(
+      getRulingDate(rulingDateRow('S-1/2026', '2026-13-45T99:99:00.000Z')),
+    ).toBeUndefined()
+    expect(getRulingDate(rulingDateRow('S-1/2026', undefined))).toBeUndefined()
+    expect(getRulingDate(caseRow('a', 'S-1/2026'))).toBeUndefined()
+  })
+
+  it('finds the rows whose ruling is later than now', () => {
+    const future = rulingDateRow('S-1/2026', hoursFromNow(2).toISOString())
+    const past = rulingDateRow('S-2/2026', hoursFromNow(-2).toISOString())
+    const exactlyNow = rulingDateRow('S-3/2026', now.toISOString())
+    const unparseable = rulingDateRow('S-4/2026', 'not a date')
+
+    expect(
+      getRowsWithFutureRulingDate([future, past, exactlyNow, unparseable], now),
+    ).toEqual([future])
+  })
+
+  it('names each such case with its date and time as the row shows them', () => {
+    const stagedRows = [
+      rulingDateRow('S-1/2026', hoursFromNow(2).toISOString(), [
+        '3.11.2026',
+        'kl. 14:05',
+      ]),
+      rulingDateRow('S-2/2026', hoursFromNow(-2).toISOString(), ['1.1.2026']),
+      rulingDateRow('S-3/2026', hoursFromNow(48).toISOString(), ['5.11.2026']),
+    ]
+
+    expect(getFutureRulingDateWarning(stagedRows, now)).toBe(
+      'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026 kl. 14:05), S-3/2026 (5.11.2026)',
+    )
+  })
+
+  it('gives no warning when every ruling has come', () => {
+    expect(
+      getFutureRulingDateWarning(
+        [rulingDateRow('S-1/2026', hoursFromNow(-1).toISOString())],
+        now,
+      ),
+    ).toBeUndefined()
+  })
+})
+
+describe('getCellDisplayText', () => {
+  it('joins the lines of a string group', () => {
+    expect(
+      getCellDisplayText({
+        value: {
+          __typename: 'StringGroupValue',
+          strList: ['3.11.2026', '', 'kl. 14:05'],
+        },
+      }),
+    ).toBe('3.11.2026 kl. 14:05')
+  })
+
+  it('reads a string value', () => {
+    expect(
+      getCellDisplayText({ value: { __typename: 'StringValue', str: 'S-1' } }),
+    ).toBe('S-1')
+  })
+
+  it('is empty for a cell without text', () => {
+    expect(getCellDisplayText(undefined)).toBe('')
   })
 })
 

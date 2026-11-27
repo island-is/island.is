@@ -13,6 +13,7 @@ import {
   AppealCaseState,
   appealCourtSessionTypeNames,
   AppealEventType,
+  AppealRulingType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -907,6 +908,54 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   },
 }
 
+// The court of appeals' list of confirmed appeals still to be completed.
+
+// The date the court recorded for the appeal's conclusion. The court usually
+// enters a date only, which is stored as midnight, so a time is shown only when
+// one was recorded. The sort value is the full ISO date-time: it sorts as the
+// other date columns do and is what the page compares with the clock.
+const verdictAppealRulingDate: CaseTableCellGenerator<StringGroupValue> = {
+  includes: { verdictAppealCase: { attributes: ['appealRulingDate'] } },
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
+    const rulingDate = c.appeal?.appealRulingDate
+
+    if (!rulingDate) {
+      return generateCell()
+    }
+
+    const date = new Date(rulingDate)
+    const datePart = formatDate(date, 'd.M.yyyy')
+    const timePart = formatDate(date, 'HH:mm')
+
+    if (!datePart || !timePart) {
+      return generateCell()
+    }
+
+    const strList =
+      timePart === '00:00' ? [datePart] : [datePart, `kl. ${timePart}`]
+
+    return generateCell({ strList }, date.toISOString())
+  },
+}
+
+// Whether the confirmed appeal concludes with a judgment or a ruling.
+const verdictAppealRulingType: CaseTableCellGenerator<TagValue> = {
+  includes: { verdictAppealCase: { attributes: ['appealRulingType'] } },
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    switch (c.appeal?.appealRulingType) {
+      case AppealRulingType.VERDICT:
+        return generateCell({ color: 'mint', text: 'Dómur staðfestur' }, 'A')
+      case AppealRulingType.RULING:
+        return generateCell(
+          { color: 'blueberry', text: 'Úrskurður staðfestur' },
+          'B',
+        )
+      default:
+        return generateCell()
+    }
+  },
+}
+
 // The public prosecution's list of appealed verdicts. One row per case, so the
 // appeals regarding each defendant are folded into one answer to "who appealed,
 // and when".
@@ -1729,6 +1778,8 @@ export const caseTableCellGenerators: Record<
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  verdictAppealRulingDate,
+  verdictAppealRulingType,
   appealProsecutor,
   verdictAppealAppellantTag,
   verdictAppealDate,

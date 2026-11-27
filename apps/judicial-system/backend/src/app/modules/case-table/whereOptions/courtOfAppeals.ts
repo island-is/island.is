@@ -128,6 +128,31 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
     displayCases: presentVerdictAppealAsRowAppeal,
   })
 
+// Appeals the court has confirmed and has still to complete. The court
+// completes them from this list in bulk, so each row carries its appeal case
+// id. These appeals stay on the completed list as well.
+export const courtOfAppealsVerdictAppealsReadyToCompleteWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      appealCase: { attributes: [], required: false },
+      verdictAppealCase: {
+        attributes: [],
+        required: true,
+        where: { appeal_state: AppealCaseState.READY_TO_COMPLETE },
+      },
+    },
+    where: {
+      [Op.and]: [
+        courtOfAppealsCasesAccessWhereOptions().where,
+        {
+          '$verdictAppealCase.appeal_state$': AppealCaseState.READY_TO_COMPLETE,
+        },
+        buildHasSentAppealSummonsCondition(),
+      ],
+    },
+    displayCases: presentVerdictAppealAsRowAppeal,
+  })
+
 export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
   (): CaseWhereOptions => ({
     includes: {

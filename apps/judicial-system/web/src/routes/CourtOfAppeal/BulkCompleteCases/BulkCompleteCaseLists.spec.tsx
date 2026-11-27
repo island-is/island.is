@@ -16,6 +16,20 @@ import BulkCompleteCaseLists from './BulkCompleteCaseLists'
 
 const mockHandleOpenCase = jest.fn()
 const mockToastError = jest.fn()
+const mockToastWarning = jest.fn()
+// Read through a getter, so a test can lower the cap without staging a
+// hundred rows.
+let mockMaxCompletedVerdictAppeals = 100
+
+jest.mock('@island.is/judicial-system/types', () => {
+  const mocked = { ...jest.requireActual('@island.is/judicial-system/types') }
+
+  Object.defineProperty(mocked, 'MAX_COMPLETED_VERDICT_APPEALS', {
+    get: () => mockMaxCompletedVerdictAppeals,
+  })
+
+  return mocked
+})
 
 jest.mock('motion/react', () => ({
   ...jest.requireActual('motion/react'),
@@ -49,6 +63,7 @@ jest.mock(
 jest.mock('@island.is/judicial-system-web/src/utils/toast', () => ({
   toast: {
     error: (message: string) => mockToastError(message),
+    warning: (message: string) => mockToastWarning(message),
     success: jest.fn(),
   },
 }))
@@ -101,6 +116,8 @@ describe('BulkCompleteCaseLists', () => {
     window.localStorage.clear()
     mockHandleOpenCase.mockReset()
     mockToastError.mockReset()
+    mockToastWarning.mockReset()
+    mockMaxCompletedVerdictAppeals = 100
   })
 
   afterEach(() => {
@@ -638,6 +655,152 @@ describe('BulkCompleteCaseLists', () => {
     expect(liveRegion).toHaveTextContent(
       'Mál S-1/2026, Jón Jónsson tekið af lista',
     )
+  })
+
+  it('heads the list with the title it is given', () => {
+    render(
+      <BulkCompleteCaseLists
+        rows={rows}
+        columns={columns}
+        onComplete={jest.fn(async () => undefined)}
+        title="Listi til prófunar"
+      />,
+    )
+
+    expect(screen.getByText('Listi til prófunar')).toBeInTheDocument()
+    expect(screen.queryByText('Mál í dómsuppkvaðningu')).not.toBeInTheDocument()
+  })
+
+  it('stages no more cases than can be completed at once', async () => {
+    mockMaxCompletedVerdictAppeals = 2
+    renderLists()
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+    await stage('S-3/2026, Siggi Sigurðsson')
+
+    expect(mockToastWarning).toHaveBeenCalledWith(
+      'Hægt er að ljúka að hámarki 2 málum í einu.',
+    )
+    expect(
+      screen.getByRole('button', {
+        name: stageLabel('S-3/2026, Siggi Sigurðsson'),
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', {
+        name: unstageLabel('S-3/2026, Siggi Sigurðsson'),
+      }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('does not stage a case without an appeal case', async () => {
+    renderLists(undefined, [
+      { ...caseRow('x', 'S-8/2026', 'Óli Ólason'), appealCaseId: null },
+      ...rows,
+    ])
+    await turnOnSelection()
+
+    await stage('S-8/2026, Óli Ólason')
+
+    expect(mockToastWarning).toHaveBeenCalledTimes(1)
+    expect(
+      screen.getByText('Engin mál valin – smelltu á mál til að velja það'),
+    ).toBeInTheDocument()
+  })
+
+  describe('a ruling date that has not come', () => {
+    const now = Date.now()
+    const hour = 60 * 60 * 1000
+
+    const rulingDateRow = (
+      caseId: string,
+      caseNumber: string,
+      defendant: string,
+      rulingDate: Date,
+      lines: string[],
+    ): CaseTableRow => {
+      const base = caseRow(caseId, caseNumber, defendant)
+
+      return {
+        ...base,
+        cells: [
+          ...base.cells,
+          {
+            sortValue: 'tegund',
+            value: { __typename: 'StringValue', str: 'Þjófnaður' },
+          },
+          {
+            sortValue: rulingDate.toISOString(),
+            value: { __typename: 'StringGroupValue', strList: lines },
+          },
+        ],
+      }
+    }
+
+    const rulingRows = [
+      rulingDateRow('a', 'S-1/2026', 'Jón Jónsson', new Date(now + 2 * hour), [
+        '3.11.2026',
+        'kl. 14:05',
+      ]),
+      rulingDateRow(
+        'b',
+        'S-2/2026',
+        'Gunna Gunnarsdóttir',
+        new Date(now - 2 * hour),
+        ['1.11.2026'],
+      ),
+    ]
+
+    const rulingColumns = [
+      { title: 'Málsnúmer' },
+      { title: 'Varnaraðili' },
+      { title: 'Tegund' },
+      { title: 'Dómsuppkvaðning' },
+    ]
+
+    const renderRulingLists = () =>
+      render(
+        <BulkCompleteCaseLists
+          rows={rulingRows}
+          columns={rulingColumns}
+          onComplete={jest.fn(async () => undefined)}
+        />,
+      )
+
+    it('warns in the confirm modal, naming the case and its date', async () => {
+      renderRulingLists()
+      await turnOnSelection()
+      await stage('S-1/2026, Jón Jónsson')
+      await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+      await user.click(confirmButton())
+
+      const modal = screen.getByRole('dialog')
+      expect(
+        within(modal).getByText(
+          'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026 kl. 14:05)',
+        ),
+      ).toBeInTheDocument()
+      expect(
+        within(modal).getByRole('button', { name: 'Já, ljúka málum' }),
+      ).toBeEnabled()
+    })
+
+    it('does not warn when every ruling has come', async () => {
+      renderRulingLists()
+      await turnOnSelection()
+      await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+      await user.click(confirmButton())
+
+      expect(
+        within(screen.getByRole('dialog')).queryByText(
+          /Dómsuppkvaðning er ekki hafin/,
+        ),
+      ).not.toBeInTheDocument()
+    })
   })
 
   it('shows that no cases were found and no toggle when there are no rows', () => {

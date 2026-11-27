@@ -31,10 +31,13 @@ import {
   formatCaseCountDative,
   formatCaseNumberList,
   getColumnWidth,
+  getFutureRulingDateWarning,
   getMoveAnnouncement,
   getRowActionLabel,
   getRowId,
   getRowLabel,
+  getStageRefusal,
+  getStageRefusalMessage,
   partitionRows,
   stageCase,
   unstageCase,
@@ -45,6 +48,8 @@ interface Props {
   rows: CaseTableRow[]
   columns: { title: string }[]
   onComplete: (rows: CaseTableRow[]) => Promise<void>
+  // The heading of the list the cases are picked from.
+  title?: string
 }
 
 type ModalState = 'none' | 'confirm' | 'success'
@@ -66,7 +71,12 @@ const EmptyList: FC<{ text: string }> = ({ text }) => (
   </div>
 )
 
-const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
+const BulkCompleteCaseLists: FC<Props> = ({
+  rows,
+  columns,
+  onComplete,
+  title = 'Mál í dómsuppkvaðningu',
+}) => {
   const { openCaseInNewTab } = useOpenCaseInNewTab()
   const {
     isOpeningCaseId,
@@ -137,6 +147,15 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     }
 
     const rowId = getRowId(row)
+
+    if (!isStaged) {
+      const refusal = getStageRefusal(stagedIds, rows, rowId)
+
+      if (refusal) {
+        toast.warning(getStageRefusalMessage(refusal))
+        return
+      }
+    }
 
     if (!event) {
       moveFocusFromMovedRow()
@@ -217,9 +236,14 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
     setSelectionMode(false)
   }
 
+  const futureRulingDateWarning =
+    modal === 'confirm'
+      ? getFutureRulingDateWarning(staged, new Date())
+      : undefined
+
   const emptyState = (
     <div className={stack({ gap: 3 })}>
-      <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
+      <SectionHeading title={title} marginBottom={0} />
       <div className={caseTableStyles.infoContainer}>
         <AlertMessage
           type="info"
@@ -276,7 +300,7 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
           </ExpandingSection>
           <div className={stack({ gap: 3 })}>
             <div className={styles.sectionHeader}>
-              <SectionHeading title="Mál í dómsuppkvaðningu" marginBottom={0} />
+              <SectionHeading title={title} marginBottom={0} />
               <div ref={toggleContainerRef}>
                 <ToggleSwitchCheckbox
                   name="select-cases-to-complete"
@@ -306,9 +330,19 @@ const BulkCompleteCaseLists: FC<Props> = ({ rows, columns, onComplete }) => {
           <Modal
             key="confirm"
             title="Viltu ljúka málunum?"
-            text={`Áfrýjun verður lokið í ${formatCaseCountDative(
-              staged.length,
-            )}: ${formatCaseNumberList(staged)}.`}
+            text={
+              <div className={stack({ gap: 3 })}>
+                <Text>{`Áfrýjun verður lokið í ${formatCaseCountDative(
+                  staged.length,
+                )}: ${formatCaseNumberList(staged)}.`}</Text>
+                {futureRulingDateWarning && (
+                  <AlertMessage
+                    type="warning"
+                    message={futureRulingDateWarning}
+                  />
+                )}
+              </div>
+            }
             onClose={() => setModal('none')}
             loading={isCompleting}
             buttons={[
