@@ -230,6 +230,7 @@ export interface Debt {
   description: string
   propertyValuation: string
   debtType: string
+  enabled?: boolean
 }
 
 export interface ApplicationDebts {

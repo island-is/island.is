@@ -62,7 +62,7 @@ describe('asset share validation logic', () => {
 describe('domestic and foreign debts validation', () => {
   const debtsSchema = inheritanceReportSchema.shape.debts
 
-  const parseDebt = (debt: Record<string, string>) =>
+  const parseDebt = (debt: Record<string, string | boolean>) =>
     debtsSchema.safeParse({
       domesticAndForeignDebts: {
         data: [
@@ -105,5 +105,57 @@ describe('domestic and foreign debts validation', () => {
 
   it('accepts an empty debt row', () => {
     expect(parseDebt({}).success).toBe(true)
+  })
+
+  it('does not validate a disabled debt', () => {
+    const result = parseDebt({
+      description: '1234567891',
+      nationalId: '123',
+      debtType: DebtTypes.CreditCard,
+      propertyValuation: '695333',
+      enabled: false,
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts a prefilled debt without a national id', () => {
+    const result = debtsSchema.safeParse({
+      domesticAndForeignDebts: {
+        data: [
+          {
+            description: 'Opinber gjöld',
+            assetNumber: '',
+            propertyValuation: '1232454',
+            debtType: DebtTypes.PublicCharges,
+            enabled: false,
+          },
+        ],
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('validates an enabled debt', () => {
+    const result = parseDebt({
+      description: '1234567891',
+      nationalId: '123',
+      debtType: DebtTypes.CreditCard,
+      propertyValuation: '695333',
+      enabled: true,
+    })
+
+    expect(result.success).toBe(false)
+    expect(
+      result.success
+        ? []
+        : result.error.issues.map((issue) => issue.path.join('.')),
+    ).toEqual(
+      expect.arrayContaining([
+        'domesticAndForeignDebts.data.0.nationalId',
+        'domesticAndForeignDebts.data.0.assetNumber',
+      ]),
+    )
   })
 })

@@ -189,6 +189,7 @@ export const expandAnswers = (
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
               debtType: debt.debtType ?? '',
+              enabled: debt.enabled ?? true,
             }
           },
         ),

@@ -20,8 +20,9 @@ export const OverviewDebts: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  const debtsData = (answers.debts as unknown as ApplicationDebts)
-    ?.domesticAndForeignDebts.data
+  const debtsData = (
+    answers.debts as unknown as ApplicationDebts
+  )?.domesticAndForeignDebts.data?.filter((debt) => debt.enabled !== false)
 
   return (
     <Box marginTop={2}>
