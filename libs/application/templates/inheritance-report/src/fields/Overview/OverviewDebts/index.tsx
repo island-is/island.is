@@ -141,7 +141,9 @@ const Debt = ({
             value={formatNationalId(nationalId)}
           />
         )}
-        <Row title={formatMessage(m.debtsLoanIdentity)} value={assetNumber} />
+        {assetNumber && (
+          <Row title={formatMessage(m.debtsLoanIdentity)} value={assetNumber} />
+        )}
       </Box>
     </Box>
   )
