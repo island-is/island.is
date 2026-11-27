@@ -413,49 +413,54 @@ const EditableEqualityAttachments = ({
   const full = attachments.length >= MAX_ATTACHMENTS
 
   return (
-    <Stack space={2}>
-      <Text variant="h4" as="h3">
-        {formatMessage(m.title)}
-      </Text>
-      {blockMessage && <AlertMessage type="warning" message={blockMessage} />}
-      {loadError && (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(messages.errors.alertTitle)}
-          message={formatMessage(m.loadError)}
+    // marginTop separates the section from the plan's dropzone above it.
+    <Box marginTop={5}>
+      <Stack space={2}>
+        <Box>
+          <Text variant="h4" as="h3" marginBottom={1}>
+            {formatMessage(m.optionalTitle)}
+          </Text>
+          <Text>{formatMessage(m.intro)}</Text>
+        </Box>
+        {blockMessage && <AlertMessage type="warning" message={blockMessage} />}
+        {loadError && (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={formatMessage(m.loadError)}
+          />
+        )}
+        {errors.length > 0 && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={
+              errors.length > 1 ? (
+                <BulletList>
+                  {errors.map((message, index) => (
+                    <Bullet key={index}>{message}</Bullet>
+                  ))}
+                </BulletList>
+              ) : (
+                errors[0]
+              )
+            }
+          />
+        )}
+        <InputFileUpload
+          name="equalityAttachmentsUpload"
+          files={files}
+          buttonLabel={formatMessage(m.uploadFiles)}
+          accept={ATTACHMENT_ACCEPT}
+          multiple
+          disabled={busy || full}
+          onChange={(newFiles) => void handleFilesChanged(newFiles)}
+          onRemove={(file) => void handleRemove(file)}
+          onUploadRejection={handleUploadRejection}
         />
-      )}
-      {errors.length > 0 && (
-        <AlertMessage
-          type="error"
-          title={formatMessage(messages.errors.alertTitle)}
-          message={
-            errors.length > 1 ? (
-              <BulletList>
-                {errors.map((message, index) => (
-                  <Bullet key={index}>{message}</Bullet>
-                ))}
-              </BulletList>
-            ) : (
-              errors[0]
-            )
-          }
-        />
-      )}
-      <InputFileUpload
-        name="equalityAttachmentsUpload"
-        files={files}
-        description={formatMessage(m.description)}
-        buttonLabel={formatMessage(m.uploadButton)}
-        accept={ATTACHMENT_ACCEPT}
-        multiple
-        disabled={busy || full}
-        onChange={(newFiles) => void handleFilesChanged(newFiles)}
-        onRemove={(file) => void handleRemove(file)}
-        onUploadRejection={handleUploadRejection}
-      />
-      {full && <Text variant="small">{formatMessage(m.limitReached)}</Text>}
-    </Stack>
+        {full && <Text variant="small">{formatMessage(m.limitReached)}</Text>}
+      </Stack>
+    </Box>
   )
 }
 

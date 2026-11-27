@@ -175,6 +175,31 @@ describe('AppealCaseController - Transition', () => {
     })
   })
 
+  // The backend takes a confirmation back itself when the court changes what
+  // it confirmed; no user can ask for it.
+  describe('take back the confirmation of a verdict appeal', () => {
+    it.each([
+      [AppealCaseType.VERDICT, AppealCaseState.READY_TO_COMPLETE],
+      [AppealCaseType.VERDICT, AppealCaseState.APPEALED],
+      [AppealCaseType.RULING, AppealCaseState.RECEIVED],
+    ])(
+      'should refuse it on a %s appeal in state %s',
+      async (appealType, appealState) => {
+        const then = await givenWhenThen(
+          { id: caseId, type: CaseType.INDICTMENT } as Case,
+          { id: appealCaseId, appealType, appealState } as AppealCase,
+          AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+        expect(mockEventService.postEvent).not.toHaveBeenCalled()
+        expect(transactionContext?.afterCommit).toHaveLength(0)
+      },
+    )
+  })
+
   describe('confirm a verdict appeal', () => {
     const concludedDate = new Date('2024-01-10T00:00:00Z')
     const rulingFile = {

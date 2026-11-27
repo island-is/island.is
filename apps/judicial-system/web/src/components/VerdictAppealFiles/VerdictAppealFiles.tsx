@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
-import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -19,6 +19,7 @@ import {
   useAppealSummons,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import AppealProcessFileRow from './AppealProcessFileRow'
 import {
@@ -31,26 +32,19 @@ import {
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
   getAppealSummonsServiceRecipientOptions,
+  getVerdictAppealFileGroupKey,
   getVerdictAppealFileGroups,
+  getVerdictAppealFileGroupTitle,
+  getVerdictAppealFileSentInBy,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
 
-// Appeal documents are "sent in" (design, 2026-09-03), unlike the case files
-// the shared formatter describes as "lagt fram". When the public prosecution
-// office registered the appeal on a letter, the defender who wrote that letter
-// is the one who sent it in, not the defender of record.
-const formatSentInBy = (defenderName?: string | null): string => {
-  const initials = getInitials(defenderName)
-
-  return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
-}
-
 /**
  * The appeal-process section of a completed indictment: the áfrýjunarstefna
- * the public prosecution office issues, and the appeal declaration each
- * defendant's defender filed, with whatever came with it. Renders nothing until
- * there is something to show. Which declarations that is, and for whom, is
- * decided by getVerdictAppealFileGroups.
+ * the public prosecution office issues, each defendant's áfrýjunaryfirlýsing,
+ * and greinargerðir once filed. Renders nothing until there is something to
+ * show. Which files that is, and for whom, is decided by
+ * getVerdictAppealFileGroups.
  *
  * The rows offer no deletion: a declaration is the appeal itself, and the way to
  * take it back is to withdraw the appeal from the verdict timeline card.
@@ -279,166 +273,171 @@ const VerdictAppealFiles: FC = () => {
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
-      {showSummonses && (
-        <Box dataTestId="appealSummonses" marginBottom={2}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            paddingBottom={2}
-            borderBottomWidth="standard"
-            borderColor="blue200"
-          >
-            <Text variant="small">
-              {summonses.length === 0
-                ? 'Áfrýjunarstefna hefur ekki verið gefin út'
-                : 'Áfrýjunarstefna'}
-            </Text>
-            {showIssueButton && (
-              <Button
-                variant="text"
-                size="small"
-                onClick={() =>
-                  router.push(
-                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}`,
-                  )
-                }
-              >
-                Gefa út áfrýjunarstefnu
-              </Button>
-            )}
-          </Box>
-          {summonses.map((summons) => {
-            const fileName = formatAppealSummonsFileName(summons)
-            const confirmedLabel = formatAppealSummonsConfirmedDate(
-              summons.confirmedDate,
-            )
-            const sentTooltip = formatAppealSummonsSentToCourtOfAppealsTooltip(
-              summons.sentToCourtOfAppealsDate,
-            )
-            const showConfirm = canConfirmAppealSummonsRow(summons, user)
-
-            return (
-              <AppealProcessFileRow
-                key={summons.id}
-                title={fileName}
-                titleIcon={sentTooltip ? 'informationCircle' : undefined}
-                titleIconTooltip={sentTooltip}
-                onOpen={() => openAppealSummonsPdf(summons.id)}
-                menuAriaLabel={`Valmynd fyrir ${fileName}`}
-                meta={
-                  confirmedLabel ? (
-                    <Text whiteSpace="nowrap">{confirmedLabel}</Text>
-                  ) : undefined
-                }
-                action={
-                  showConfirm ? (
-                    <Button
-                      size="small"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        if (summonsIdToConfirm) {
-                          return
-                        }
-
-                        setSummonsIdToConfirm(summons.id)
-                      }}
-                    >
-                      Staðfesta
-                    </Button>
-                  ) : undefined
-                }
-                menuItems={getAppealSummonsMenuItems(
-                  summons,
-                  user,
-                  () =>
+      <div className={stack({ gap: 2 })}>
+        {showSummonses && (
+          <Box dataTestId="appealSummonses">
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              paddingBottom={2}
+              borderBottomWidth="standard"
+              borderColor="blue200"
+            >
+              <Text variant="small">
+                {summonses.length === 0
+                  ? 'Áfrýjunarstefna hefur ekki verið gefin út'
+                  : 'Áfrýjunarstefna'}
+              </Text>
+              {showIssueButton && (
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() =>
                     router.push(
-                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
-                    ),
-                  () => openAppealSummonsPdf(summons.id),
-                  () => {
-                    if (summonsIdToDelete) {
-                      return
-                    }
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                >
+                  Gefa út áfrýjunarstefnu
+                </Button>
+              )}
+            </Box>
+            {summonses.map((summons) => {
+              const fileName = formatAppealSummonsFileName(summons)
+              const confirmedLabel = formatAppealSummonsConfirmedDate(
+                summons.confirmedDate,
+              )
+              const sentTooltip =
+                formatAppealSummonsSentToCourtOfAppealsTooltip(
+                  summons.sentToCourtOfAppealsDate,
+                )
+              const showConfirm = canConfirmAppealSummonsRow(summons, user)
 
-                    setSummonsIdToDelete(summons.id)
-                  },
-                  () => {
-                    if (summonsIdToSendToService) {
-                      return
-                    }
+              return (
+                <AppealProcessFileRow
+                  key={summons.id}
+                  title={fileName}
+                  titleIcon={sentTooltip ? 'informationCircle' : undefined}
+                  titleIconTooltip={sentTooltip}
+                  onOpen={() => openAppealSummonsPdf(summons.id)}
+                  menuAriaLabel={`Valmynd fyrir ${fileName}`}
+                  meta={
+                    confirmedLabel ? (
+                      <Text whiteSpace="nowrap">{confirmedLabel}</Text>
+                    ) : undefined
+                  }
+                  action={
+                    showConfirm ? (
+                      <Button
+                        size="small"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          if (summonsIdToConfirm) {
+                            return
+                          }
 
-                    openSendToServiceModal(summons.id)
-                  },
-                  () => {
-                    if (summonsIdToSend) {
-                      return
-                    }
+                          setSummonsIdToConfirm(summons.id)
+                        }}
+                      >
+                        Staðfesta
+                      </Button>
+                    ) : undefined
+                  }
+                  menuItems={getAppealSummonsMenuItems(
+                    summons,
+                    user,
+                    () =>
+                      router.push(
+                        `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
+                      ),
+                    () => openAppealSummonsPdf(summons.id),
+                    () => {
+                      if (summonsIdToDelete) {
+                        return
+                      }
 
-                    setSummonsIdToSend(summons.id)
+                      setSummonsIdToDelete(summons.id)
+                    },
+                    () => {
+                      if (summonsIdToSendToService) {
+                        return
+                      }
+
+                      openSendToServiceModal(summons.id)
+                    },
+                    () => {
+                      if (summonsIdToSend) {
+                        return
+                      }
+
+                      setSummonsIdToSend(summons.id)
+                    },
+                  )}
+                />
+              )
+            })}
+          </Box>
+        )}
+        {groups.map((group) => (
+          <Box key={getVerdictAppealFileGroupKey(group)}>
+            {groups.length > 1 && (
+              <Text variant="eyebrow" marginBottom={1}>
+                {getVerdictAppealFileGroupTitle(group)}
+              </Text>
+            )}
+            {group.files.map((file) => (
+              <AppealProcessFileRow
+                key={file.id}
+                title={file.name ?? ''}
+                disabled={!file.isKeyAccessible}
+                onOpen={() => onOpen(file.id)}
+                menuAriaLabel={`Valmynd fyrir ${file.name}`}
+                menuItems={[
+                  {
+                    title: 'Opna',
+                    onClick: () => onOpen(file.id),
+                    icon: 'open',
                   },
-                )}
-              />
-            )
-          })}
-        </Box>
-      )}
-      {groups.map(({ defendant, files }) => (
-        <Box key={defendant.id} marginBottom={2}>
-          {groups.length > 1 && (
-            <Text variant="eyebrow" marginBottom={1}>
-              {defendant.name}
-            </Text>
-          )}
-          {files.map((file) => (
-            <AppealProcessFileRow
-              key={file.id}
-              title={file.name ?? ''}
-              disabled={!file.isKeyAccessible}
-              onOpen={() => onOpen(file.id)}
-              menuAriaLabel={`Valmynd fyrir ${file.name}`}
-              menuItems={[
-                {
-                  title: 'Opna',
-                  onClick: () => onOpen(file.id),
-                  icon: 'open',
-                },
-              ]}
-              meta={
-                <>
-                  {/* Date only, no time of day. An appeal the public
+                ]}
+                meta={
+                  <>
+                    {/* Date only, no time of day. An appeal the public
                   prosecution office registers on a letter has only the date the
                   letter was filed, so showing the upload time for appeals filed
                   in the portal would make the two look inconsistent when they
                   are not (design, 2026-09-16). */}
-                  <Text whiteSpace="nowrap">
-                    {formatDate(file.created, 'dd.MM.y')}
-                  </Text>
-                  <Text whiteSpace="nowrap" variant="small">
-                    {formatSentInBy(
-                      defendant.appealDefenderName ?? defendant.defenderName,
-                    )}
-                  </Text>
-                </>
-              }
-            />
-          ))}
-        </Box>
-      ))}
-      {/* Last, because the court writes the letter once the appeal has
-      reached it and it has settled who represents each party. Generated on
-      demand rather than stored, so there is nothing to date it by here - the
-      letter carries the date it was signed. */}
-      {appointmentLetters.map((letter) => (
-        <PdfButton
-          key={letter.key}
-          renderAs="row"
-          caseId={workingCase.id}
-          title={letter.fileName}
-          pdfType="appealAppointmentLetter"
-          elementId={letter.elementId}
-        />
-      ))}
+                    <Text whiteSpace="nowrap">
+                      {formatDate(file.created, 'dd.MM.y')}
+                    </Text>
+                    <Text whiteSpace="nowrap" variant="small">
+                      {getVerdictAppealFileSentInBy(group, file)}
+                    </Text>
+                  </>
+                }
+              />
+            ))}
+          </Box>
+        ))}
+        {/* Last, because the court writes the letter once the appeal has
+        reached it and it has settled who represents each party. Generated on
+        demand rather than stored, so there is nothing to date it by here - the
+        letter carries the date it was signed. */}
+        {appointmentLetters.length > 0 && (
+          <div>
+            {appointmentLetters.map((letter) => (
+              <PdfButton
+                key={letter.key}
+                renderAs="row"
+                caseId={workingCase.id}
+                title={letter.fileName}
+                pdfType="appealAppointmentLetter"
+                elementId={letter.elementId}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

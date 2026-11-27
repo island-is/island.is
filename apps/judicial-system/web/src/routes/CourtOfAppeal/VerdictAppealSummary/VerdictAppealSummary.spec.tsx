@@ -35,6 +35,7 @@ import VerdictAppealSummary from './VerdictAppealSummary'
 
 const mockPush = jest.fn()
 const mockScrollTo = jest.fn()
+const mockRefreshCase = jest.fn()
 const mockTransitionAppealCase = jest.fn()
 const mockUpdateAppealCase = jest.fn()
 const mockGetFileUrl = jest.fn()
@@ -134,6 +135,13 @@ jest.mock('next/router', () => ({
   },
 }))
 
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
+}))
+
 const rulingFile = {
   ...mockCaseFile(CaseFileCategory.VERDICT_APPEAL_RULING),
   id: 'ruling-file',
@@ -224,7 +232,7 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
         isLoadingWorkingCase: false,
         caseNotFound: false,
         isCaseUpToDate: true,
-        refreshCase: jest.fn(),
+        refreshCase: mockRefreshCase,
         getCase: jest.fn(),
         isCreating: false,
       }}
@@ -336,6 +344,7 @@ const reviewDocument = async () => {
 describe('VerdictAppealSummary', () => {
   beforeEach(() => {
     mockPush.mockReset()
+    mockRefreshCase.mockReset()
     mockPush.mockResolvedValue(true)
     mockTransitionAppealCase.mockReset()
     mockUpdateAppealCase.mockReset()
@@ -541,11 +550,11 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
 
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
 
     await reviewDocument()
 
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeEnabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeEnabled()
   })
 
   it('marks the appeal ready to complete and shows it confirmed', async () => {
@@ -554,7 +563,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     expect(mockTransitionAppealCase).toHaveBeenCalledWith(
       'case-id',
@@ -628,7 +637,7 @@ describe('VerdictAppealSummary', () => {
     await userEvent.click(screen.getByRole('button', { name: 'PDF villa' }))
 
     expect(reviewedCheckbox()).toBeDisabled()
-    expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+    expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
   })
 
   it('stays in the modal when the appeal could not be confirmed', async () => {
@@ -637,7 +646,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     await waitFor(() => expect(mockTransitionAppealCase).toHaveBeenCalled())
     expect(screen.getByText(modalTitle)).toBeInTheDocument()
@@ -657,8 +666,8 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
-    await clickRegardless(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
+    await clickRegardless(screen.getByTestId('confirmVerdictAppealButton'))
 
     expect(mockTransitionAppealCase).toHaveBeenCalledTimes(1)
 
@@ -683,7 +692,7 @@ describe('VerdictAppealSummary', () => {
 
     await openModal()
     await reviewDocument()
-    await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+    await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
     const cancelButton = screen.getByRole('button', { name: 'Hætta við' })
 
@@ -728,6 +737,25 @@ describe('VerdictAppealSummary', () => {
     ).not.toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByTestId('previousButton')).toBeInTheDocument()
+  })
+
+  // Correcting how a confirmed appeal ended takes it back to APPEALED, and the
+  // page then asks for confirmation again, saying nothing of its own about it.
+  it('offers to confirm again once a confirmed appeal is taken back', () => {
+    const { rerender } = renderPage(
+      withAppeal({ appealState: AppealCaseState.READY_TO_COMPLETE }),
+    )
+
+    expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
+    expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
+
+    rerender(page(withAppeal({ appealState: AppealCaseState.APPEALED })))
+
+    expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+    expect(screen.queryAllByText('Jón Jónsson')).toHaveLength(0)
+    expect(screen.getByText('Niðurstaða Landsréttar')).toBeInTheDocument()
+    expect(screen.getByTestId('continueButton')).toHaveTextContent('Staðfesta')
+    expect(screen.getByTestId('continueButton')).toBeEnabled()
   })
 
   // A confirmed appeal has ended, so how it ended stays on the page even when
@@ -833,6 +861,35 @@ describe('VerdictAppealSummary', () => {
       expect(screen.getByTestId('continueButton')).toBeEnabled()
     })
 
+    it('does not open the document fetched on an earlier visit to the appeal', async () => {
+      let resolveUrl: (url: string) => void = () => undefined
+      mockGetFileUrl.mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveUrl = resolve
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      rerender(page(otherCase))
+      await screen.findByRole('heading', { level: 2, name: 'Mál nr. 556/2026' })
+
+      rerender(page())
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('heading', { level: 2, name: 'Mál nr. 556/2026' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await act(async () => resolveUrl('https://files.dummy.dd/domur.pdf'))
+
+      expect(screen.queryByText(modalTitle)).not.toBeInTheDocument()
+      expect(screen.queryByTestId('pdfViewer')).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
     it('drops the review of the appeal left behind', async () => {
       const { rerender } = renderPage()
 
@@ -858,7 +915,7 @@ describe('VerdictAppealSummary', () => {
       )
       expect(reviewedCheckbox()).not.toBeChecked()
       expect(reviewedCheckbox()).toBeDisabled()
-      expect(screen.getByTestId('confirmCompleteAppealButton')).toBeDisabled()
+      expect(screen.getByTestId('confirmVerdictAppealButton')).toBeDisabled()
     })
 
     it('leaves the appeal on the page alone when the one left behind is confirmed', async () => {
@@ -884,7 +941,7 @@ describe('VerdictAppealSummary', () => {
 
       await openModal()
       await reviewDocument()
-      await userEvent.click(screen.getByTestId('confirmCompleteAppealButton'))
+      await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
 
       expect(mockTransitionAppealCase).toHaveBeenCalledWith(
         'case-id',
@@ -904,6 +961,65 @@ describe('VerdictAppealSummary', () => {
       expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
       expect(screen.getByTestId('continueButton')).toBeEnabled()
       expect(mockScrollTo).not.toHaveBeenCalled()
+      expect(mockRefreshCase).not.toHaveBeenCalled()
     })
+
+    it('fetches the case again when a confirmation answers after leaving the appeal and coming back', async () => {
+      let finishTransition: (completed: boolean) => void = () => undefined
+      mockTransitionAppealCase.mockImplementationOnce(
+        (
+          caseId: string,
+          appealCaseId: string,
+          transition: AppealCaseTransition,
+          setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
+        ) =>
+          new Promise<boolean>((resolve) => {
+            finishTransition = (completed) => {
+              if (completed) {
+                confirmAppeal(caseId, appealCaseId, transition, setWorkingCase)
+              }
+
+              resolve(completed)
+            }
+          }),
+      )
+      const { rerender } = renderPage()
+
+      await openModal()
+      await reviewDocument()
+      await userEvent.click(screen.getByTestId('confirmVerdictAppealButton'))
+
+      expect(mockTransitionAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+        expect.any(Function),
+      )
+
+      rerender(page(otherCase))
+
+      await screen.findByRole('heading', { level: 2, name: 'Mál nr. 556/2026' })
+
+      rerender(page())
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('heading', { level: 2, name: 'Mál nr. 556/2026' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await act(async () => finishTransition(true))
+
+      expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+      expect(mockScrollTo).not.toHaveBeenCalled()
+      expect(mockRefreshCase).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Samantekt - Réttarvörslugátt')
   })
 })

@@ -50,6 +50,17 @@ export const titles = {
       completed: 'Máli lokið - Réttarvörslugátt',
     },
   },
+  courtOfAppeal: {
+    verdictAppeal: {
+      overview: 'Yfirlit - Réttarvörslugátt',
+      registration: 'Skráning og úthlutun - Réttarvörslugátt',
+      defender: 'Verjandi - Réttarvörslugátt',
+      statementDeadlines: 'Greinargerðarfrestir - Réttarvörslugátt',
+      statementUpload: 'Hlaða upp greinargerð - Réttarvörslugátt',
+      status: 'Staða og lyktir - Réttarvörslugátt',
+      summary: 'Samantekt - Réttarvörslugátt',
+    },
+  },
   defender: {
     caseOverview: 'Yfirlit - Verjandi - Réttarvörslugátt',
     cases: 'Öll mál - Verjandi - Réttarvörslugátt',

@@ -192,6 +192,59 @@ jobs:
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
 
+      # Trivy: scan this leg's image right after push. Legs run in
+      # parallel, so this adds only the scan to the slowest leg.
+      # A failed gate fails the leg, so success blocks the merge.
+      # v0.36.0 pinned by SHA: tags were hijacked in March 2026.
+      # Report-only unless repo variable TRIVY_FAIL_ON is set; then it
+      # shows and blocks on those severities (e.g. CRITICAL).
+      - name: Trivy image report
+        id: trivy
+        if: env.JSON_imageName != '' && env.JSON_imageTag != ''
+        continue-on-error: ${{ vars.TRIVY_FAIL_ON == '' }}
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        env:
+          TRIVY_IMAGE_SRC: remote
+        with:
+          version: v0.76.2
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
+          scanners: vuln
+          severity: ${{ vars.TRIVY_FAIL_ON || 'HIGH,CRITICAL' }}
+          exit-code: ${{ vars.TRIVY_FAIL_ON != '' && '1' || '0' }}
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          format: table
+          output: trivy-image.txt
+
+      - name: Trivy summary
+        if: always() && steps.trivy.outcome != 'skipped'
+        env:
+          SEVERITY: ${{ vars.TRIVY_FAIL_ON || 'HIGH,CRITICAL' }}
+        run: |
+          {
+            echo "### Trivy: $JSON_imageName ($SEVERITY, fixable)"
+            echo '```'
+            head -c 500000 trivy-image.txt 2>/dev/null || echo "No report"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Always blocks: any secret in image files, ENV or history.
+      # Runs whenever there is an image, whatever the CVE report did.
+      - name: Trivy secrets gate
+        id: trivy-secrets
+        if: always() && steps.trivy.outcome != 'skipped'
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        env:
+          TRIVY_IMAGE_SRC: remote
+          TRIVY_IMAGE_CONFIG_SCANNERS: secret
+        with:
+          skip-setup-trivy: true
+          image-ref: ${{ env.DOCKER_REGISTRY }}/${{ env.JSON_imageName }}:${{ env.JSON_imageTag }}
+          scanners: secret
+          trivy-config: trivy.yaml
+          cache-dir: ${{ runner.temp }}/trivy-cache
+          exit-code: 1
+
   e2e:
     uses: ./.github/workflows/e2e.yml
     needs:

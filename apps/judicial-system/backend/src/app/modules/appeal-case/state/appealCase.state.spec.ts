@@ -210,6 +210,36 @@ describe('transitionAppealCase', () => {
       ).toThrow(ForbiddenException)
     })
 
+    it('goes back from confirmed to appealed with everything recorded kept', () => {
+      const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+        theCase,
+        {
+          ...verdictAppeal(AppealCaseState.READY_TO_COMPLETE),
+          appealRulingDate: new Date('2024-01-10T00:00:00Z'),
+        } as AppealCase,
+      )
+
+      expect(caseUpdate).toEqual({})
+      expect(appealCaseUpdate).toEqual({
+        appealState: AppealCaseState.APPEALED,
+      })
+    })
+
+    it.each(
+      Object.values(AppealCaseState).filter(
+        (appealState) => appealState !== AppealCaseState.READY_TO_COMPLETE,
+      ),
+    )('does not go back to appealed from %s', (appealState) => {
+      expect(() =>
+        transitionAppealCase(
+          AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+          theCase,
+          verdictAppeal(appealState),
+        ),
+      ).toThrow(ForbiddenException)
+    })
+
     it('is withdrawn from the state it is filed in', () => {
       const { appealCaseUpdate } = transitionAppealCase(
         AppealCaseTransition.WITHDRAW_APPEAL,
@@ -230,6 +260,19 @@ describe('transitionAppealCase', () => {
         expect(() =>
           transitionAppealCase(
             AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+            { type: CaseType.CUSTODY } as Case,
+            { appealType: AppealCaseType.RULING, appealState } as AppealCase,
+          ),
+        ).toThrow(ForbiddenException)
+      },
+    )
+
+    it.each(Object.values(AppealCaseState))(
+      'never has a confirmation taken back from %s',
+      (appealState) => {
+        expect(() =>
+          transitionAppealCase(
+            AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
             { type: CaseType.CUSTODY } as Case,
             { appealType: AppealCaseType.RULING, appealState } as AppealCase,
           ),
