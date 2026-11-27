@@ -247,16 +247,20 @@ describe('FileController - Attach ruling order document', () => {
   })
 
   describe('key segment after the case id is not a uuid', () => {
+    const malformedKey = `${caseId}/${'x'.repeat(36)}/urskurdur.pdf`
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen(makeCase(), pronouncedOrally, {
-        key: `${caseId}/${'x'.repeat(36)}/urskurdur.pdf`,
+        key: malformedKey,
       })
     })
 
     it('should be rejected', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `${malformedKey} is not a valid key for case ${caseId}`,
+      )
       expect(
         mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
       ).not.toHaveBeenCalled()

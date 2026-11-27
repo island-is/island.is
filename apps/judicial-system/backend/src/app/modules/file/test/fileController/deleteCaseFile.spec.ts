@@ -243,7 +243,10 @@ describe('FileController - Delete case file', () => {
       expect(then.result).toEqual({ success: true })
     })
 
-    it('should keep the file in S3', () => {
+    it('should keep the file in S3 without looking the key up', () => {
+      expect(
+        mockCaseFileRepositoryService.existsLiveByKey,
+      ).not.toHaveBeenCalled()
       expect(mockDeleteObject).not.toHaveBeenCalled()
     })
   })
