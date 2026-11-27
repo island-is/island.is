@@ -11,6 +11,7 @@ import {
   CheckBoxDisplay,
   DateDisplay,
   DefaultDisplay,
+  ExternalDataAgreement,
   FieldTypesEnum,
   FileUploadDisplay,
   hasFieldValueError,
@@ -24,7 +25,6 @@ import {
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   GridColumn,
   GridRow,
@@ -88,12 +88,7 @@ export const PreviewPremises = ({ form }: { form: FormSystemForm }) => {
           ))}
         </Stack>
       </Box>
-      <Checkbox
-        large
-        backgroundColor="blue"
-        name="previewExternalDataAgreement"
-        label={formatMessage(m.externalDataAgreement)}
-      />
+      <ExternalDataAgreement name="previewExternalDataAgreement" />
     </Box>
   )
 }

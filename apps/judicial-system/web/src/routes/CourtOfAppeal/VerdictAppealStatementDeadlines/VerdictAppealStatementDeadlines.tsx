@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -7,7 +6,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -20,7 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useAppealStatementDeadline from '@island.is/judicial-system-web/src/utils/hooks/useAppealStatementDeadline'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
@@ -57,7 +55,6 @@ const VerdictAppealStatementDeadlines = () => {
   // appeal when the URL names no appeal, and this page is never about that
   // one.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const { setAppealStatementDeadline, isSettingAppealStatementDeadline } =
     useAppealStatementDeadline()
@@ -127,7 +124,9 @@ const VerdictAppealStatementDeadlines = () => {
       isValid
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader
+        title={titles.courtOfAppeal.verdictAppeal.statementDeadlines}
+      />
       <FormContentContainer>
         <Box marginBottom={5}>
           <PageTitle marginBottom={caseNumber || headerLines.length ? 1 : 0}>

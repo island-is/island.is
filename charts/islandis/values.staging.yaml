@@ -2682,7 +2682,6 @@ services-bff-portals-admin:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
-      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'
@@ -2771,7 +2770,6 @@ services-bff-portals-my-pages:
     primary-gw:
       hostnames:
         - 'beta.staging01.devland.is'
-      noAuth: true
       parentRefs:
         - name: 'gateway-external'
           namespace: 'envoy-gateway-external'

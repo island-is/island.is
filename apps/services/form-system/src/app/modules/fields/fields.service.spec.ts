@@ -11,6 +11,50 @@ import { FieldsService } from './fields.service'
 import { Field } from './models/field.model'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 
+describe('FieldsService.create', () => {
+  it('persists and returns the default upload settings for new FILE fields', async () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const create = jest.fn(async (field: Partial<Field>) => ({
+      ...field,
+      id: 'field-id',
+    }))
+    const service = Object.assign(Object.create(FieldsService.prototype), {
+      fieldModel: { create },
+      screenModel: {
+        findByPk: jest.fn().mockResolvedValue({ sectionId: 'section-id' }),
+      },
+      sectionModel: {
+        findByPk: jest.fn().mockResolvedValue({ formId: 'form-id' }),
+      },
+      formModel: {
+        findByPk: jest.fn().mockResolvedValue({
+          organizationNationalId: user.nationalId,
+        }),
+      },
+    }) as FieldsService
+    const input = {
+      screenId: 'screen-id',
+      fieldType: FieldTypesEnum.FILE,
+      displayOrder: 0,
+    }
+    const fileSettings = {
+      maxFiles: 1,
+      fileTypes: '.pdf',
+      fileMaxSize: 10485760,
+    }
+
+    const result = await service.create(user, input)
+
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...input,
+        fieldSettings: expect.objectContaining(fileSettings),
+      }),
+    )
+    expect(result.fieldSettings).toMatchObject(fileSettings)
+  })
+})
+
 describe('FieldsService.update', () => {
   const user = { nationalId: 'owner', scope: [] } as unknown as User
   const fieldTypes = [

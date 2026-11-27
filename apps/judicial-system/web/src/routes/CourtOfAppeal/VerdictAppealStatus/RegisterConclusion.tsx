@@ -37,6 +37,7 @@ import {
   appealRulingTypeLabels,
   getAppealRulingTypeWording,
 } from './RegisterConclusion.logic'
+import { withReturnedAppealState } from './VerdictAppealStatus.logic'
 
 interface Props {
   // The ruling document as the page holds it, uploaded or on its way. The
@@ -77,7 +78,9 @@ const rulingChoiceOf = (
  * The outcome and its type show on the form at once and their saves run one
  * at a time in the order they were made. One that fails puts the working case
  * back to the choice the appeal last held. The concluding words are saved the
- * way every debounced field is.
+ * way every debounced field is. Each save writes back the state it left the
+ * appeal in, since a change to how a confirmed appeal ended takes it back to
+ * be confirmed again.
  */
 const RegisterConclusion: FC<Props> = ({
   rulingFiles,
@@ -107,6 +110,22 @@ const RegisterConclusion: FC<Props> = ({
         : previous,
     )
 
+  // Writes the state a save left the appeal in: a change to how a confirmed
+  // appeal ended takes it back to be confirmed again.
+  const followAppealState = (
+    caseId: string,
+    appealCaseId: string,
+    updated: AppealCase | undefined,
+  ) =>
+    setWorkingCase((previous) =>
+      withReturnedAppealState(
+        previous,
+        caseId,
+        appealCaseId,
+        updated?.appealState,
+      ),
+    )
+
   const setAndSendToServer = (
     update: Omit<UpdateAppealCaseInput, 'caseId' | 'appealCaseId'>,
   ) => {
@@ -131,17 +150,20 @@ const RegisterConclusion: FC<Props> = ({
       value,
       // The whole choice, not only what changed: a save queued behind one
       // that fails then still stores everything the form shows.
-      persist: async () =>
-        Boolean(
-          await updateAppealCase(caseId, appealCaseId, {
-            ...(value.appealRulingDecision
-              ? { appealRulingDecision: value.appealRulingDecision }
-              : {}),
-            ...(value.appealRulingType
-              ? { appealRulingType: value.appealRulingType }
-              : {}),
-          }),
-        ),
+      persist: async () => {
+        const updated = await updateAppealCase(caseId, appealCaseId, {
+          ...(value.appealRulingDecision
+            ? { appealRulingDecision: value.appealRulingDecision }
+            : {}),
+          ...(value.appealRulingType
+            ? { appealRulingType: value.appealRulingType }
+            : {}),
+        })
+
+        followAppealState(caseId, appealCaseId, updated)
+
+        return Boolean(updated)
+      },
       rollback: (choice) => revert(caseId, appealCaseId, choice),
     })
   }
@@ -158,12 +180,18 @@ const RegisterConclusion: FC<Props> = ({
         )
       }
     },
-    onSave: (appealConclusion) => {
-      if (verdictAppealCase) {
-        updateAppealCase(workingCase.id, verdictAppealCase.id, {
-          appealConclusion,
-        })
+    onSave: async (appealConclusion) => {
+      if (!verdictAppealCase) {
+        return
       }
+
+      const caseId = workingCase.id
+      const appealCaseId = verdictAppealCase.id
+      const updated = await updateAppealCase(caseId, appealCaseId, {
+        appealConclusion,
+      })
+
+      followAppealState(caseId, appealCaseId, updated)
     },
   })
 

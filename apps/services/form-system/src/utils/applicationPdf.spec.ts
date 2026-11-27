@@ -1,4 +1,8 @@
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import PDFDocument from 'pdfkit'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 import { buildApplicationPdf } from './applicationPdf'
@@ -17,6 +21,60 @@ describe('buildApplicationPdf layout', () => {
         screens: [Object.assign(new ScreenDto(), { fields })],
       }),
     ],
+  })
+
+  it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
+    'separates children with a blank line and no numbering for %s fields',
+    async (fieldType) => {
+      const text = jest.spyOn(PDFDocument.prototype, 'text')
+      const height = jest.spyOn(PDFDocument.prototype, 'heightOfString')
+      await buildApplicationPdf(
+        applicationWithFields([
+          Object.assign(new FieldDto(), {
+            name: { is: 'Children' },
+            fieldType,
+            fieldSettings: { familyType: FamilyTypes.CHILD },
+            values: [
+              { json: {} },
+              { json: { name: 'First child', nationalId: '0101232989' } },
+              { json: {} },
+              { json: { name: 'Second child', nationalId: '0101212989' } },
+              { json: {} },
+            ],
+          }),
+        ]),
+      )
+
+      const expected =
+        'Nafn: First child\nKennitala: 0101232989\n\nNafn: Second child\nKennitala: 0101212989'
+      expect(text.mock.calls.map(([value]) => value)).toContain(expected)
+      expect(height.mock.calls.map(([value]) => value)).toContain(expected)
+      expect(
+        text.mock.calls.some(
+          ([value]) => typeof value === 'string' && /^\d+\. /.test(value),
+        ),
+      ).toBe(false)
+    },
+  )
+
+  it('keeps numbering for repeated values in other fields', async () => {
+    const text = jest.spyOn(PDFDocument.prototype, 'text')
+    await buildApplicationPdf(
+      applicationWithFields([
+        Object.assign(new FieldDto(), {
+          name: { is: 'Answers' },
+          fieldType: FieldTypesEnum.TEXTBOX,
+          values: [
+            { json: { text: 'First answer' } },
+            { json: { text: 'Second answer' } },
+          ],
+        }),
+      ]),
+    )
+
+    expect(text.mock.calls.map(([value]) => value)).toEqual(
+      expect.arrayContaining(['1. ', 'First answer', '2. ', 'Second answer']),
+    )
   })
 
   it.each(['', ' \n ', undefined])(

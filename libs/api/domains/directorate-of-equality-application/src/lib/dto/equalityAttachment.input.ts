@@ -48,3 +48,14 @@ export class DeleteEqualityAttachmentInput {
   @IsUUID()
   attachmentId!: string
 }
+
+/**
+ * Asks DMR for a presigned URL to PUT the plan PDF to. PDF only, so nothing but
+ * the application is needed. The returned key then goes in
+ * `equalityReportPdfKey` on the content mutations.
+ */
+@InputType('DirectorateOfEqualityPresignEqualityPlanInput')
+export class PresignEqualityPlanInput {
+  @Field(() => String)
+  applicationId!: string
+}

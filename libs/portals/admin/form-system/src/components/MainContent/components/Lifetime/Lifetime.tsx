@@ -19,11 +19,9 @@ export const Lifetime = () => {
 
   return (
     <>
-      <Row>
-        <Box marginLeft={1}>
-          <Text variant="h3">{formatMessage(m.applicationLifetime)}</Text>
-        </Box>
-      </Row>
+      <Box display="flex" justifyContent="flexStart">
+        <Text variant="h3">{formatMessage(m.applicationLifetime)}</Text>
+      </Box>
       <Box marginTop={2}></Box>
       <Row>
         <Column span="6/10">

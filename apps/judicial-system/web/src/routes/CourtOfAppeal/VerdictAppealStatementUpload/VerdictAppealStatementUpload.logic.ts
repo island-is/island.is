@@ -73,6 +73,45 @@ export const isPartyStatementFile = (
 ): boolean =>
   file.category === category && isSameAppealStatementParty(file, party.ids)
 
+/**
+ * Name stamped as fileRepresentative when the court uploads on a party's
+ * behalf. Without it, submittedBy is the court user and the overview would
+ * label the row as that user in the party's advocate role.
+ */
+export const getStatementUploadFileRepresentative = (
+  theCase: Pick<
+    Parameters<typeof getStatementDeadlineParties>[0],
+    'defendants' | 'civilClaimants' | 'appealProsecutor'
+  >,
+  party: Pick<StatementDeadlineParty, 'role' | 'ids'>,
+): string | undefined => {
+  if (party.role === 'PROSECUTION') {
+    return theCase.appealProsecutor?.name ?? undefined
+  }
+
+  if (party.ids.defendantId) {
+    const defendant = theCase.defendants?.find(
+      (entry) => entry.id === party.ids.defendantId,
+    )
+
+    return defendant?.appealDefenderName ?? defendant?.defenderName ?? undefined
+  }
+
+  if (party.ids.civilClaimantId) {
+    const civilClaimant = theCase.civilClaimants?.find(
+      (entry) => entry.id === party.ids.civilClaimantId,
+    )
+
+    return (
+      civilClaimant?.appealSpokespersonName ??
+      civilClaimant?.spokespersonName ??
+      undefined
+    )
+  }
+
+  return undefined
+}
+
 // The line under the case number naming whose statement this is: the role,
 // and the name after it when there is one.
 export const getStatementUploadHeaderLine = (

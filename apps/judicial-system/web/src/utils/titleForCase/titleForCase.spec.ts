@@ -176,4 +176,13 @@ describe('titleForCase', () => {
     const res = fn(theCase)
     expect(res).toEqual('Krafa um framlengingu á farbanni')
   })
+
+  test('should handle indictment case', () => {
+    const theCase = {
+      state: CaseState.COMPLETED,
+      type: CaseType.INDICTMENT,
+    } as WorkingCase
+    const res = fn(theCase)
+    expect(res).toEqual('Máli lokið')
+  })
 })

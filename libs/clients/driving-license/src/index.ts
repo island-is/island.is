@@ -20,6 +20,7 @@ export {
 // the barrel because Nx module boundaries block deep-importing `src/v6` from
 // another lib.
 export {
+  DtoV6DeprivationDto,
   ModelsV6PostTemporaryLicenseWithHealthDeclaration,
   ModelsV6PostFullLicenseWithHealthDeclaration,
 } from './v6/index'

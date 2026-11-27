@@ -24,6 +24,10 @@ These commands are just shorthands for the setup described below.
 
 ## API
 
+The organization forms-list endpoint selects only table/action metadata and
+returns `FormListItemDto` entries. Full form definitions are fetched separately
+by ID; list requests do not load configuration or content columns.
+
 ### Initial setup
 
 First, make sure you have docker, then run:
@@ -77,6 +81,12 @@ always send applications to the configured Zendesk sandbox, including applicatio
 for published forms. Stored production tenants and brand IDs are ignored there,
 even when `NODE_ENV=production`.
 
+## Application JSON
+
+Application JSON fetched via X-Road and the sample JSON downloaded from the
+admin portal both include `formName`, containing the form's Icelandic (`is`)
+and English (`en`) names.
+
 ## Application PDFs
 
 Application PDFs display the organization's stored `logo.is` in the top-right
@@ -84,6 +94,13 @@ header on the first page only, regardless of the PDF language. Content starts be
 header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
+Children are displayed without numbering, with a blank line between each child.
+
+## File upload defaults
+
+New FILE fields default to one `.pdf` file with a maximum size of 10485760 bytes
+(10 MiB). The field-type options expose the same defaults when selecting FILE
+in the editor. Existing fields retain their saved upload settings.
 
 ## Field content migration
 

@@ -1,4 +1,7 @@
-import { isStoredVerdictAppealRulingPdf } from '@island.is/judicial-system/types'
+import {
+  isStoredVerdictAppealRulingPdf,
+  isVerdictAppealConfirmed,
+} from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
@@ -16,19 +19,19 @@ import { appealRulingDecisionOptions } from '../VerdictAppealStatus/RegisterConc
 /**
  * Whether how the appeal ended is shown: the outcome, the Court of Appeals'
  * concluding words and its document. They are shown once the court has marked
- * the appeal "Lokið", and for an appeal it has completed. Moving the status
+ * the appeal "Lokið", and for an appeal it has confirmed. Moving the status
  * away from "Lokið" leaves what was recorded on record, so it is hidden
- * rather than shown for an appeal that has not ended. A completed appeal
+ * rather than shown for an appeal that has not ended. A confirmed appeal
  * whose status was later moved away from "Lokið" has still ended, and keeps
  * showing it.
  */
 export const isVerdictAppealOutcomeShown = (
   appeal:
-    | Pick<AppealCase, 'appealState' | 'verdictAppealStatus'>
+    | Pick<AppealCase, 'appealType' | 'appealState' | 'verdictAppealStatus'>
     | null
     | undefined,
 ): boolean =>
-  appeal?.appealState === AppealCaseState.COMPLETED ||
+  isVerdictAppealConfirmed(appeal) ||
   appeal?.verdictAppealStatus === VerdictAppealStatus.COMPLETED
 
 /** The document the Court of Appeals ended the appeal with. */
@@ -39,8 +42,8 @@ export const getVerdictAppealRulingFiles = (
     (file) => file.category === CaseFileCategory.VERDICT_APPEAL_RULING,
   )
 
-/** The ruling document the appeal can be completed with. */
-export const getCompletableVerdictAppealRulingFile = (
+/** The ruling document the appeal can be confirmed with. */
+export const getConfirmableVerdictAppealRulingFile = (
   theCase: Pick<WorkingCase, 'caseFiles'>,
 ): CaseFile | undefined =>
   (theCase.caseFiles ?? []).find(isStoredVerdictAppealRulingPdf)
@@ -108,13 +111,50 @@ export const isSameVerdictAppealRulingDate = (
   picked: Date,
 ): boolean => (stored ? new Date(stored).getTime() === picked.getTime() : false)
 
+export type VerdictAppealSummaryStage =
+  | 'IN_PROGRESS'
+  | 'CONFIRMED'
+  | 'COMPLETED'
+
+/**
+ * Where the appeal stands for its summary. IN_PROGRESS: the court has not
+ * confirmed how it ended, and the page offers to. CONFIRMED: the court has
+ * confirmed it (READY_TO_COMPLETE), but the outcome is not released, so the
+ * page warns that the parties do not see it. COMPLETED: the outcome is
+ * released to everyone who can open the appeal. Past IN_PROGRESS the page
+ * shows the appeal as it ended and offers nothing more to do.
+ */
+export const getVerdictAppealSummaryStage = (
+  appealCase: Pick<AppealCase, 'appealType' | 'appealState'> | undefined | null,
+): VerdictAppealSummaryStage => {
+  if (appealCase?.appealState === AppealCaseState.COMPLETED) {
+    return 'COMPLETED'
+  }
+
+  return isVerdictAppealConfirmed(appealCase) ? 'CONFIRMED' : 'IN_PROGRESS'
+}
+
+/**
+ * Whether the public prosecution has sent the appeal to the Court of Appeals:
+ * at least one of its summonses carries the date it was sent there. The
+ * server only lists sent summonses under sentAppealSummonses; the date is
+ * checked as well so the rule does not rest on that alone.
+ */
+export const isVerdictAppealSentToCourtOfAppeals = (
+  appeal: Pick<AppealCase, 'sentAppealSummonses'> | null | undefined,
+): boolean =>
+  (appeal?.sentAppealSummonses ?? []).some((summons) =>
+    Boolean(summons.sentToCourtOfAppealsDate),
+  )
+
 /**
  * Whether the court can confirm the appeal as finished: it is still open,
- * the court has marked it "Lokið", and everything the backend asks of a
- * finished appeal is on record - the outcome, its type, the concluding words,
- * the date the appeal ended and the document, stored as a PDF.
+ * it has been sent to the Court of Appeals, the court has marked it "Lokið",
+ * and everything the backend asks of a finished appeal is on record - the
+ * outcome, its type, the concluding words, the date the appeal ended and the
+ * document, stored as a PDF.
  */
-export const canCompleteVerdictAppeal = (
+export const canConfirmVerdictAppeal = (
   theCase: Pick<WorkingCase, 'verdictAppealCase' | 'caseFiles'>,
 ): boolean => {
   const appeal = theCase.verdictAppealCase
@@ -122,9 +162,36 @@ export const canCompleteVerdictAppeal = (
   return Boolean(
     appeal &&
       appeal.appealState === AppealCaseState.APPEALED &&
+      isVerdictAppealSentToCourtOfAppeals(appeal) &&
       appeal.verdictAppealStatus === VerdictAppealStatus.COMPLETED &&
       isVerdictAppealConclusionFieldsValid(appeal) &&
       appeal.appealRulingDate &&
-      getCompletableVerdictAppealRulingFile(theCase),
+      getConfirmableVerdictAppealRulingFile(theCase),
   )
 }
+
+/** The case and the verdict appeal a confirmation on the page is for. */
+export interface VerdictAppealConfirmationTarget {
+  caseId: string
+  appealCaseId: string | undefined
+}
+
+export const getVerdictAppealConfirmationTarget = (
+  theCase: Pick<WorkingCase, 'id' | 'verdictAppealCase'>,
+): VerdictAppealConfirmationTarget => ({
+  caseId: theCase.id,
+  appealCaseId: theCase.verdictAppealCase?.id,
+})
+
+/**
+ * Whether a request begun for one appeal still answers for the appeal on the
+ * page. The page stays mounted when the user moves to another case or appeal,
+ * so a response for the one they left must not act on the one they are at.
+ */
+export const isSameVerdictAppealConfirmationTarget = (
+  started: VerdictAppealConfirmationTarget,
+  current: VerdictAppealConfirmationTarget,
+): boolean =>
+  Boolean(started.appealCaseId) &&
+  started.caseId === current.caseId &&
+  started.appealCaseId === current.appealCaseId

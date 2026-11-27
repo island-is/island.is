@@ -1,5 +1,7 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
+  AppealCaseType,
   AppealCourtSessionType,
   AppealEventType,
   UserRole,
@@ -14,6 +16,8 @@ import {
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
   toAppealCourtSessionDraft,
+  withReturnedAppealState,
+  withRulingDocumentChanged,
 } from './VerdictAppealStatus.logic'
 
 describe('getVerdictAppealStatusHeaderLines', () => {
@@ -164,4 +168,97 @@ describe('getInitialVerdictAppealStatus', () => {
       expect(getInitialVerdictAppealStatus(verdictAppealCase)).toBeUndefined()
     },
   )
+})
+
+const caseWithVerdictAppealIn = (appealState: AppealCaseState) =>
+  ({
+    id: 'case-id',
+    verdictAppealCase: {
+      id: 'verdict-appeal',
+      appealType: AppealCaseType.VERDICT,
+      appealState,
+      appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+    },
+  } as unknown as WorkingCase)
+
+describe('withReturnedAppealState', () => {
+  it('writes the returned state and keeps everything else', () => {
+    const confirmed = caseWithVerdictAppealIn(AppealCaseState.READY_TO_COMPLETE)
+
+    expect(
+      withReturnedAppealState(
+        confirmed,
+        'case-id',
+        'verdict-appeal',
+        AppealCaseState.APPEALED,
+      ),
+    ).toEqual({
+      ...confirmed,
+      verdictAppealCase: {
+        ...confirmed.verdictAppealCase,
+        appealState: AppealCaseState.APPEALED,
+      },
+    })
+  })
+
+  it.each([undefined, null])(
+    'leaves the case as it is when the response carries no state (%s)',
+    (appealState) => {
+      const confirmed = caseWithVerdictAppealIn(
+        AppealCaseState.READY_TO_COMPLETE,
+      )
+
+      expect(
+        withReturnedAppealState(
+          confirmed,
+          'case-id',
+          'verdict-appeal',
+          appealState,
+        ),
+      ).toBe(confirmed)
+    },
+  )
+
+  it('leaves another case as it is', () => {
+    const confirmed = caseWithVerdictAppealIn(AppealCaseState.READY_TO_COMPLETE)
+
+    expect(
+      withReturnedAppealState(
+        confirmed,
+        'another-case-id',
+        'verdict-appeal',
+        AppealCaseState.APPEALED,
+      ),
+    ).toBe(confirmed)
+  })
+})
+
+describe('withRulingDocumentChanged', () => {
+  it('takes a confirmed appeal back and keeps everything else', () => {
+    const confirmed = caseWithVerdictAppealIn(AppealCaseState.READY_TO_COMPLETE)
+
+    expect(withRulingDocumentChanged(confirmed)).toEqual({
+      ...confirmed,
+      verdictAppealCase: {
+        ...confirmed.verdictAppealCase,
+        appealState: AppealCaseState.APPEALED,
+      },
+    })
+  })
+
+  it.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.COMPLETED,
+    AppealCaseState.WITHDRAWN,
+  ])('leaves an appeal that is %s as it is', (appealState) => {
+    const theCase = caseWithVerdictAppealIn(appealState)
+
+    expect(withRulingDocumentChanged(theCase)).toBe(theCase)
+  })
+
+  it('leaves a case without a verdict appeal as it is', () => {
+    const theCase = { id: 'case-id' } as unknown as WorkingCase
+
+    expect(withRulingDocumentChanged(theCase)).toBe(theCase)
+  })
 })

@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FamilyTypes } from '@island.is/form-system/enums'
 import {
   Checkbox,
   Input,
@@ -41,6 +42,7 @@ jest.mock('@island.is/form-system/ui', () => ({
     },
     largeTextArea: { id: 'largeTextArea', defaultMessage: 'Large text area' },
     largeCheckbox: { id: 'largeCheckbox', defaultMessage: 'Large checkbox' },
+    isPartOfMulti: { id: 'isPartOfMulti', defaultMessage: 'Part of multiset' },
   },
 }))
 
@@ -125,6 +127,7 @@ const renderSettings = (
     informationText: { is: 'Information text', en: '' },
     tooltip: { is: 'Help text', en: '' },
   },
+  fieldOverrides: Partial<FormSystemField> = {},
 ) => {
   const controlDispatch = jest.fn()
   const updateActiveItem = jest.fn()
@@ -137,6 +140,7 @@ const renderSettings = (
     fieldType,
     fieldSettings: { isLarge, subLabel },
     ...content,
+    ...fieldOverrides,
   } as FormSystemField
   const otherField = { ...field, id: 'other-field' }
   let selectField: (field: FormSystemField) => void
@@ -150,7 +154,13 @@ const renderSettings = (
         ...defaults.control.activeItem,
         data: field,
       },
-      form: { ...defaults.control.form, fields: [field, otherField] },
+      form: {
+        ...defaults.control.form,
+        fields: [field, otherField],
+        screens: field.screenId
+          ? [{ id: field.screenId, sectionId: 'section', isMulti: true }]
+          : [],
+      },
       isReadOnly,
     })
     const controlRef = useRef(control)
@@ -215,6 +225,30 @@ const renderSettings = (
       changeOriginalInformation(text),
   }
 }
+
+it.each([
+  [FamilyTypes.CHILD, false],
+  [FamilyTypes.SPOUSE, true],
+  [FamilyTypes.APPLICANT_INFO, true],
+  [FamilyTypes.NATIONAL_ID_ESTATE, true],
+])('offers multiset membership for %s: %s', (familyType, visible) => {
+  renderSettings(
+    'FAMILY',
+    false,
+    undefined,
+    false,
+    {},
+    {
+      screenId: 'multi-screen',
+      isPartOfMultiset: true,
+      fieldSettings: { familyType },
+    },
+  )
+
+  expect(
+    screen.queryByRole('checkbox', { name: 'Part of multiset' }) !== null,
+  ).toBe(visible)
+})
 
 it.each(['TEXTBOX', 'NUMBERBOX', 'CHECKBOX', 'NATIONAL_ID', 'EMAIL'])(
   'exposes localized editors for populated information and tooltip content for %s',
