@@ -1,4 +1,11 @@
-import { type JSX, type MouseEvent, useEffect, useMemo, useRef } from 'react'
+import {
+  type JSX,
+  type KeyboardEvent,
+  type MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -169,7 +176,16 @@ const GenericTable = <Cell,>({
               className: styles.tableRowContainer,
               onClick: (evt: MouseEvent<HTMLTableRowElement>) =>
                 !r.isDisabled && r.onClick(evt),
-              onKeyDown: onEnterOrSpace(() => !r.isDisabled && r.onClick()),
+              onKeyDown: (evt: KeyboardEvent<HTMLTableRowElement>) => {
+                // Keydowns from inside the row, such as on its menu button or
+                // the menu's items, bubble up here and are not the row's own.
+                // A held key repeats, and must not open row after row.
+                if (evt.target !== evt.currentTarget || evt.repeat) {
+                  return
+                }
+
+                onEnterOrSpace(() => !r.isDisabled && r.onClick())(evt)
+              },
             }
 
             const content = (

@@ -221,6 +221,21 @@ describe('BulkCompleteCases', () => {
     )
   })
 
+  it.each([
+    '/malalistar/afryjud-mal-i-domsuppkvadningu?x=1',
+    '/malalistar/afryjud-mal-i-domsuppkvadningu#efst',
+    '/landsrettur/malalistar/afryjud-mal-i-domsuppkvadningu?x=1#efst',
+  ])('finds the list at %s', (asPath) => {
+    mockAsPath = asPath
+
+    renderPage()
+
+    expect(screen.getByText('S-1/2026')).toBeInTheDocument()
+    expect(
+      screen.queryByText('Þú hefur ekki aðgang að þessum málalista'),
+    ).not.toBeInTheDocument()
+  })
+
   it('serves the same list under the general case list path', () => {
     mockAsPath = '/malalistar/afryjud-mal-i-domsuppkvadningu'
 
@@ -299,7 +314,9 @@ describe('BulkCompleteCases', () => {
       }),
     ).toBeInTheDocument()
     expect(screen.queryByText('Málunum er lokið')).not.toBeInTheDocument()
-    expect(mockRefetch).not.toHaveBeenCalled()
+    // The list is reloaded all the same, so an appeal completed elsewhere
+    // leaves it before the next try.
+    expect(mockRefetch).toHaveBeenCalledTimes(1)
   })
 
   it.each([
@@ -329,6 +346,58 @@ describe('BulkCompleteCases', () => {
         name: unstageLabel('S-2/2026, Gunna Gunnarsdóttir'),
       }),
     ).toBeInTheDocument()
-    expect(mockRefetch).not.toHaveBeenCalled()
+    // The list is reloaded all the same, so an appeal completed elsewhere
+    // leaves it before the next try.
+    expect(mockRefetch).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([
+    ['with the rows it had', loaded().data],
+    ['without data', undefined],
+  ])(
+    'keeps the success modal when the reload after completing fails, %s',
+    async (_, dataAfterFailure) => {
+      mockCompleteVerdictAppeals.mockResolvedValue({
+        data: {
+          completeVerdictAppeals: [
+            { id: 'case-a-appeal', appealState: 'COMPLETED' },
+            { id: 'case-b-appeal', appealState: 'COMPLETED' },
+          ],
+        },
+      })
+      mockRefetch.mockImplementation(async () => {
+        mockUseCaseTableQuery.mockReturnValue({
+          data: dataAfterFailure,
+          loading: false,
+          error: new Error('Reload failed'),
+          refetch: mockRefetch,
+        })
+
+        throw new Error('Reload failed')
+      })
+      renderPage()
+      await stageBoth()
+
+      await confirm()
+
+      expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Ekki tókst að sækja málalista'),
+      ).not.toBeInTheDocument()
+      expect(mockToastError).not.toHaveBeenCalled()
+    },
+  )
+
+  it('reloads the list and still reports the failure when the reload fails too', async () => {
+    mockCompleteVerdictAppeals.mockRejectedValue(new Error('Network error'))
+    mockRefetch.mockRejectedValue(new Error('Reload failed'))
+    renderPage()
+    await stageBoth()
+
+    await confirm()
+
+    await waitFor(() => expect(mockToastError).toHaveBeenCalledTimes(1))
+    expect(mockRefetch).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText('Málunum er lokið')).not.toBeInTheDocument()
   })
 })

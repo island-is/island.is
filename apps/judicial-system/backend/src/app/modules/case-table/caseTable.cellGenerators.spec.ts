@@ -990,7 +990,7 @@ describe('verdict appeals ready to complete cell generators', () => {
 
   describe('ruling date', () => {
     // Built in local time, which is what the cell formats in.
-    it('shows the date alone when the court recorded no time', () => {
+    it('shows the date of a ruling recorded at midnight', () => {
       const rulingDate = new Date(2026, 10, 3)
 
       const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
@@ -998,11 +998,11 @@ describe('verdict appeals ready to complete cell generators', () => {
         user,
       )
 
-      expect(cell.value).toEqual({ strList: ['3.11.2026'] })
+      expect(cell.value).toEqual({ str: '3.11.2026' })
       expect(cell.sortValue).toBe(rulingDate.toISOString())
     })
 
-    it('shows the time on a line of its own when one was recorded', () => {
+    it('shows the date only when the stored value carries a time', () => {
       const rulingDate = new Date(2026, 10, 3, 14, 5)
 
       const cell = caseTableCellGenerators.verdictAppealRulingDate.generate(
@@ -1010,7 +1010,7 @@ describe('verdict appeals ready to complete cell generators', () => {
         user,
       )
 
-      expect(cell.value).toEqual({ strList: ['3.11.2026', 'kl. 14:05'] })
+      expect(cell.value).toEqual({ str: '3.11.2026' })
       expect(cell.sortValue).toBe(rulingDate.toISOString())
     })
 

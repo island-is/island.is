@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Button } from '@island.is/island-ui/core'
@@ -23,13 +23,13 @@ import { useCompleteVerdictAppealsMutation } from '@island.is/judicial-system-we
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import BulkCompleteCaseLists from './BulkCompleteCaseLists'
-import { getAppealCaseIds } from './BulkCompleteCases.logic'
+import { getAppealCaseIds, getTableRoute } from './BulkCompleteCases.logic'
 
 const BulkCompleteCases: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
 
-  const type = getCaseTableType(user, router.asPath.split('/').pop())
+  const type = getCaseTableType(user, getTableRoute(router.asPath))
 
   const { data, loading, error, refetch } = useCaseTableQuery({
     variables: {
@@ -49,28 +49,53 @@ const BulkCompleteCases: FC = () => {
     errorPolicy: 'all',
   })
 
-  const table = type && caseTables[type]
-  const rows = data?.caseTable.rows ?? []
+  // The rows last loaded. A reload that fails leaves them on the page, with
+  // whatever the lists are showing over them, rather than an error in their
+  // place.
+  const [loadedRows, setLoadedRows] = useState<CaseTableRow[]>()
 
-  // Rejects when nothing was completed, which the lists report as a failure
-  // and keep the cases staged for another try.
-  const completeCases = async (stagedRows: CaseTableRow[]): Promise<void> => {
-    const { data: completed, errors } = await completeVerdictAppealsMutation({
-      variables: {
-        input: { appealCaseIds: getAppealCaseIds(stagedRows) },
-      },
-    })
-
-    if ((errors && errors.length > 0) || !completed?.completeVerdictAppeals) {
-      throw new Error('Failed to complete verdict appeals')
+  useEffect(() => {
+    if (data?.caseTable) {
+      setLoadedRows(data.caseTable.rows)
     }
+  }, [data])
 
-    // The appeals are completed whether or not the list can be reloaded, so a
-    // failed reload must not be reported as a failure to complete them.
+  const table = type && caseTables[type]
+  const rows = data?.caseTable.rows ?? loadedRows
+
+  // A failed reload is not reported: whether or not the appeals were
+  // completed is what the lists report.
+  const reloadRows = async () => {
     try {
       await refetch()
     } catch {
       // The list keeps the rows it had until the page is reloaded.
+    }
+  }
+
+  // Rejects when nothing was completed, which the lists report as a failure
+  // and keep the cases staged for another try. The list is reloaded either
+  // way: the appeals are completed all or none, so an appeal completed
+  // elsewhere fails every try until it has left the list.
+  const completeCases = async (stagedRows: CaseTableRow[]): Promise<void> => {
+    let isCompleted = false
+
+    try {
+      const { data: completed, errors } = await completeVerdictAppealsMutation({
+        variables: {
+          input: { appealCaseIds: getAppealCaseIds(stagedRows) },
+        },
+      })
+
+      isCompleted =
+        (!errors || errors.length === 0) &&
+        Boolean(completed?.completeVerdictAppeals)
+    } finally {
+      await reloadRows()
+    }
+
+    if (!isCompleted) {
+      throw new Error('Failed to complete verdict appeals')
     }
   }
 
@@ -108,17 +133,18 @@ const BulkCompleteCases: FC = () => {
         {hasError && errorMessage}
         {user &&
           (table ? (
-            loading ? (
-              <TableSkeleton />
-            ) : error ? (
-              errorMessage
-            ) : (
+            rows ? (
               <BulkCompleteCaseLists
                 rows={rows}
                 columns={table.columns}
                 onComplete={completeCases}
                 title={table.title}
               />
+            ) : !loading && error ? (
+              /* The load error shows only while there are no rows to show */
+              errorMessage
+            ) : (
+              <TableSkeleton />
             )
           ) : (
             /* A route that resolves to no table is one the user has no access to */

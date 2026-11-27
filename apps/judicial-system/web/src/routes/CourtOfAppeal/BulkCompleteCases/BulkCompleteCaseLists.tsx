@@ -31,6 +31,8 @@ import {
   formatCaseCountDative,
   formatCaseNumberList,
   getColumnWidth,
+  getCompletedTitle,
+  getConfirmTitle,
   getFutureRulingDateWarning,
   getMoveAnnouncement,
   getRowActionLabel,
@@ -39,6 +41,7 @@ import {
   getStageRefusal,
   getStageRefusalMessage,
   partitionRows,
+  pruneStagedIds,
   stageCase,
   unstageCase,
 } from './BulkCompleteCases.logic'
@@ -89,6 +92,9 @@ const BulkCompleteCaseLists: FC<Props> = ({
   const [selectionMode, setSelectionMode] = useState(false)
   const [stagedIds, setStagedIds] = useState<string[]>([])
   const [modal, setModal] = useState<ModalState>('none')
+  // The staged rows as they were when the confirm modal opened. The modal
+  // names these and completes these, though the list may change under it.
+  const [confirmRows, setConfirmRows] = useState<CaseTableRow[]>([])
   const [completedRows, setCompletedRows] = useState<CaseTableRow[]>([])
   const [isCompleting, setIsCompleting] = useState(false)
   const [announcement, setAnnouncement] = useState('')
@@ -97,7 +103,16 @@ const BulkCompleteCaseLists: FC<Props> = ({
   // re-render that disables it still sends nothing.
   const isCompletingRef = useRef(false)
 
-  const { staged, source } = partitionRows(rows, stagedIds)
+  // A staged row that has left the list leaves the selection too, so it
+  // neither counts towards the most that can be completed nor comes back
+  // staged should it return.
+  const liveStagedIds = pruneStagedIds(stagedIds, rows)
+
+  if (liveStagedIds !== stagedIds) {
+    setStagedIds(liveStagedIds)
+  }
+
+  const { staged, source } = partitionRows(rows, liveStagedIds)
 
   const tableColumns = columns.map((c, idx) => ({
     title: c.title,
@@ -149,7 +164,7 @@ const BulkCompleteCaseLists: FC<Props> = ({
     const rowId = getRowId(row)
 
     if (!isStaged) {
-      const refusal = getStageRefusal(stagedIds, rows, rowId)
+      const refusal = getStageRefusal(liveStagedIds, rows, rowId)
 
       if (refusal) {
         toast.warning(getStageRefusalMessage(refusal))
@@ -208,6 +223,11 @@ const BulkCompleteCaseLists: FC<Props> = ({
     }
   }
 
+  const openConfirm = () => {
+    setConfirmRows(staged)
+    setModal('confirm')
+  }
+
   const handleConfirm = async () => {
     if (isCompletingRef.current) {
       return
@@ -217,8 +237,8 @@ const BulkCompleteCaseLists: FC<Props> = ({
     setIsCompleting(true)
 
     try {
-      await onComplete(staged)
-      setCompletedRows(staged)
+      await onComplete(confirmRows)
+      setCompletedRows(confirmRows)
       setModal('success')
     } catch {
       setModal('none')
@@ -238,7 +258,7 @@ const BulkCompleteCaseLists: FC<Props> = ({
 
   const futureRulingDateWarning =
     modal === 'confirm'
-      ? getFutureRulingDateWarning(staged, new Date())
+      ? getFutureRulingDateWarning(confirmRows, new Date())
       : undefined
 
   const emptyState = (
@@ -275,7 +295,7 @@ const BulkCompleteCaseLists: FC<Props> = ({
                       variant="text"
                       icon="arrowForward"
                       disabled={!isPresent || staged.length === 0}
-                      onClick={() => setModal('confirm')}
+                      onClick={openConfirm}
                     >
                       Ljúka málum
                     </Button>
@@ -329,12 +349,12 @@ const BulkCompleteCaseLists: FC<Props> = ({
         {modal === 'confirm' && (
           <Modal
             key="confirm"
-            title="Viltu ljúka málunum?"
+            title={getConfirmTitle(confirmRows.length)}
             text={
               <div className={stack({ gap: 3 })}>
                 <Text>{`Áfrýjun verður lokið í ${formatCaseCountDative(
-                  staged.length,
-                )}: ${formatCaseNumberList(staged)}.`}</Text>
+                  confirmRows.length,
+                )}: ${formatCaseNumberList(confirmRows)}.`}</Text>
                 {futureRulingDateWarning && (
                   <AlertMessage
                     type="warning"
@@ -361,7 +381,7 @@ const BulkCompleteCaseLists: FC<Props> = ({
         {modal === 'success' && (
           <Modal
             key="success"
-            title="Málunum er lokið"
+            title={getCompletedTitle(completedRows.length)}
             text={`Áfrýjun er lokið í ${formatCaseCountDative(
               completedRows.length,
             )}: ${formatCaseNumberList(completedRows)}.`}

@@ -1,4 +1,11 @@
-import { MAX_COMPLETED_VERDICT_APPEALS } from '@island.is/judicial-system/types'
+import addDays from 'date-fns/addDays'
+import startOfDay from 'date-fns/startOfDay'
+
+import {
+  caseTables,
+  CaseTableType,
+  MAX_COMPLETED_VERDICT_APPEALS,
+} from '@island.is/judicial-system/types'
 import type {
   CaseTableCell,
   CaseTableRow,
@@ -11,7 +18,10 @@ import {
   getAppealCaseIds,
   getCellDisplayText,
   getCellText,
+  getColumnIndex,
   getColumnWidth,
+  getCompletedTitle,
+  getConfirmTitle,
   getFutureRulingDateWarning,
   getMoveAnnouncement,
   getRowActionLabel,
@@ -22,7 +32,9 @@ import {
   getRulingDate,
   getStageRefusal,
   getStageRefusalMessage,
+  getTableRoute,
   partitionRows,
+  pruneStagedIds,
   RULING_DATE_COLUMN_INDEX,
   stageCase,
   unstageCase,
@@ -122,16 +134,14 @@ describe('getStageRefusal', () => {
       { length: MAX_COMPLETED_VERDICT_APPEALS },
       (_, i) => `appeal-${i}`,
     )
+    const stagedRows = staged.map((id) => appealRow(`case-${id}`, id))
+    const candidate = appealRow('x', 'x-appeal')
 
     expect(
-      getStageRefusal(staged, [appealRow('x', 'x-appeal')], 'x-appeal'),
+      getStageRefusal(staged, [...stagedRows, candidate], 'x-appeal'),
     ).toBe('limitReached')
     expect(
-      getStageRefusal(
-        staged.slice(1),
-        [appealRow('x', 'x-appeal')],
-        'x-appeal',
-      ),
+      getStageRefusal(staged.slice(1), [...stagedRows, candidate], 'x-appeal'),
     ).toBeUndefined()
   })
 
@@ -164,13 +174,14 @@ describe('getAppealCaseIds', () => {
 
 describe('ruling date', () => {
   const now = new Date()
-  const hoursFromNow = (hours: number) =>
-    new Date(now.getTime() + hours * 60 * 60 * 1000)
+  const today = startOfDay(now)
+  const atTime = (day: Date, hours: number, minutes: number) =>
+    new Date(day.getFullYear(), day.getMonth(), day.getDate(), hours, minutes)
 
   const rulingDateRow = (
     caseNumber: string,
     sortValue: string | undefined,
-    lines: string[] = ['1.1.2026'],
+    shownDate = '1.1.2026',
   ): CaseTableRow => {
     const cells: CaseTableCell[] = [
       {
@@ -179,21 +190,55 @@ describe('ruling date', () => {
       },
       { sortValue: 'jon', value: { __typename: 'StringValue', str: 'Jón' } },
       { sortValue: 'tegund', value: { __typename: 'StringValue', str: 'Rán' } },
-      {
-        sortValue,
-        value: { __typename: 'StringGroupValue', strList: lines },
-      },
+      { sortValue, value: { __typename: 'StringValue', str: shownDate } },
     ]
 
     return { ...row(caseNumber, cells), appealCaseId: `${caseNumber}-appeal` }
   }
 
-  it('is read from the fourth column', () => {
-    expect(RULING_DATE_COLUMN_INDEX).toBe(3)
+  const warns = (rulingDate: Date) =>
+    getRowsWithFutureRulingDate(
+      [rulingDateRow('S-1/2026', rulingDate.toISOString())],
+      now,
+    ).length === 1
+
+  // Fails when the list to complete loses its ruling date column, which
+  // would otherwise silently turn the warning off.
+  it('is read from the ruling date column of the list to complete', () => {
+    const columnKeys =
+      caseTables[
+        CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE
+      ].columnKeys
+
+    expect(RULING_DATE_COLUMN_INDEX).not.toBeNull()
+    expect(RULING_DATE_COLUMN_INDEX).toBe(
+      columnKeys.indexOf('verdictAppealRulingDate'),
+    )
+  })
+
+  it('finds no column a table does not have', () => {
+    expect(getColumnIndex(['defendants'], 'verdictAppealRulingDate')).toBe(null)
+    expect(
+      getColumnIndex(
+        ['defendants', 'verdictAppealRulingDate'],
+        'verdictAppealRulingDate',
+      ),
+    ).toBe(1)
+  })
+
+  it('reads no date and warns about nothing without the column', () => {
+    const tomorrowRow = rulingDateRow(
+      'S-1/2026',
+      addDays(today, 1).toISOString(),
+    )
+
+    expect(getRulingDate(tomorrowRow, null)).toBeUndefined()
+    expect(getRowsWithFutureRulingDate([tomorrowRow], now, null)).toEqual([])
+    expect(getFutureRulingDateWarning([tomorrowRow], now, null)).toBeUndefined()
   })
 
   it('reads the date-time of the ruling date cell', () => {
-    const rulingDate = hoursFromNow(5)
+    const rulingDate = addDays(today, 3)
 
     expect(
       getRulingDate(rulingDateRow('S-1/2026', rulingDate.toISOString())),
@@ -210,36 +255,54 @@ describe('ruling date', () => {
     expect(getRulingDate(caseRow('a', 'S-1/2026'))).toBeUndefined()
   })
 
-  it('finds the rows whose ruling is later than now', () => {
-    const future = rulingDateRow('S-1/2026', hoursFromNow(2).toISOString())
-    const past = rulingDateRow('S-2/2026', hoursFromNow(-2).toISOString())
-    const exactlyNow = rulingDateRow('S-3/2026', now.toISOString())
-    const unparseable = rulingDateRow('S-4/2026', 'not a date')
-
-    expect(
-      getRowsWithFutureRulingDate([future, past, exactlyNow, unparseable], now),
-    ).toEqual([future])
+  // Days are compared, not times: a ruling dated today has come.
+  it('does not warn about a ruling dated today, at any time', () => {
+    expect(warns(atTime(today, 0, 0))).toBe(false)
+    expect(warns(atTime(today, 23, 59))).toBe(false)
   })
 
-  it('names each such case with its date and time as the row shows them', () => {
+  it('does not warn about a ruling dated yesterday', () => {
+    expect(warns(atTime(addDays(today, -1), 0, 0))).toBe(false)
+    expect(warns(atTime(addDays(today, -1), 23, 59))).toBe(false)
+  })
+
+  it('warns about a ruling dated tomorrow, from its first minute', () => {
+    expect(warns(atTime(addDays(today, 1), 0, 0))).toBe(true)
+  })
+
+  it('does not warn about a ruling date it cannot read', () => {
+    expect(
+      getRowsWithFutureRulingDate(
+        [rulingDateRow('S-1/2026', 'not a date')],
+        now,
+      ),
+    ).toEqual([])
+  })
+
+  it('names each such case with its date as the row shows it', () => {
     const stagedRows = [
-      rulingDateRow('S-1/2026', hoursFromNow(2).toISOString(), [
+      rulingDateRow(
+        'S-1/2026',
+        atTime(addDays(today, 1), 14, 5).toISOString(),
         '3.11.2026',
-        'kl. 14:05',
-      ]),
-      rulingDateRow('S-2/2026', hoursFromNow(-2).toISOString(), ['1.1.2026']),
-      rulingDateRow('S-3/2026', hoursFromNow(48).toISOString(), ['5.11.2026']),
+      ),
+      rulingDateRow(
+        'S-2/2026',
+        atTime(today, 23, 59).toISOString(),
+        '1.1.2026',
+      ),
+      rulingDateRow('S-3/2026', addDays(today, 2).toISOString(), '5.11.2026'),
     ]
 
     expect(getFutureRulingDateWarning(stagedRows, now)).toBe(
-      'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026 kl. 14:05), S-3/2026 (5.11.2026)',
+      'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026), S-3/2026 (5.11.2026)',
     )
   })
 
   it('gives no warning when every ruling has come', () => {
     expect(
       getFutureRulingDateWarning(
-        [rulingDateRow('S-1/2026', hoursFromNow(-1).toISOString())],
+        [rulingDateRow('S-1/2026', addDays(today, -1).toISOString())],
         now,
       ),
     ).toBeUndefined()
@@ -504,5 +567,58 @@ describe('getColumnWidth', () => {
   it('gives no width when the table has another number of columns', () => {
     expect(getColumnWidth(0, 5)).toBeUndefined()
     expect(getColumnWidth(0, 7)).toBeUndefined()
+  })
+})
+
+describe('getTableRoute', () => {
+  it('is the last segment of the path', () => {
+    expect(getTableRoute('/malalistar/afryjud-mal-i-domsuppkvadningu')).toBe(
+      'afryjud-mal-i-domsuppkvadningu',
+    )
+  })
+
+  it('leaves out a query string and a hash', () => {
+    expect(
+      getTableRoute('/malalistar/afryjud-mal-i-domsuppkvadningu?x=1#efst'),
+    ).toBe('afryjud-mal-i-domsuppkvadningu')
+    expect(
+      getTableRoute('/malalistar/afryjud-mal-i-domsuppkvadningu#efst'),
+    ).toBe('afryjud-mal-i-domsuppkvadningu')
+  })
+})
+
+describe('pruneStagedIds', () => {
+  const appealRows = [appealRow('a', 'a'), appealRow('b', 'b')]
+
+  it('drops the ids whose rows have left the list', () => {
+    expect(pruneStagedIds(['b', 'gone', 'a'], appealRows)).toEqual(['b', 'a'])
+  })
+
+  it('returns the same ids when none has gone', () => {
+    const staged = ['b', 'a']
+
+    expect(pruneStagedIds(staged, appealRows)).toBe(staged)
+  })
+
+  it('does not count rows that have left towards the most staged', () => {
+    const gone = Array.from(
+      { length: MAX_COMPLETED_VERDICT_APPEALS },
+      (_, i) => `gone-${i}`,
+    )
+
+    expect(getStageRefusal(gone, appealRows, 'a')).toBeUndefined()
+    expect(stageCase(gone, appealRows, 'a')).toEqual(['a'])
+  })
+})
+
+describe('modal titles', () => {
+  it('speaks of a single case in the singular', () => {
+    expect(getConfirmTitle(1)).toBe('Viltu ljúka málinu?')
+    expect(getCompletedTitle(1)).toBe('Málinu er lokið')
+  })
+
+  it.each([0, 2, 21])('speaks of %i cases in the plural', (count) => {
+    expect(getConfirmTitle(count)).toBe('Viltu ljúka málunum?')
+    expect(getCompletedTitle(count)).toBe('Málunum er lokið')
   })
 })

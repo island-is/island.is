@@ -1,3 +1,6 @@
+import type { ReactElement } from 'react'
+import addDays from 'date-fns/addDays'
+import startOfDay from 'date-fns/startOfDay'
 import {
   act,
   fireEvent,
@@ -363,7 +366,7 @@ describe('BulkCompleteCaseLists', () => {
     await user.click(confirmButton())
 
     const modal = screen.getByRole('dialog')
-    expect(within(modal).getByText('Viltu ljúka málunum?')).toBeInTheDocument()
+    expect(within(modal).getByText('Viltu ljúka málinu?')).toBeInTheDocument()
     expect(
       within(modal).getByText('Áfrýjun verður lokið í 1 máli: S-1/2026.'),
     ).toBeInTheDocument()
@@ -407,7 +410,7 @@ describe('BulkCompleteCaseLists', () => {
 
     resolveComplete()
 
-    expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+    expect(await screen.findByText('Málinu er lokið')).toBeInTheDocument()
   })
 
   it('keeps the cases staged and shows an error when completing fails', async () => {
@@ -430,7 +433,7 @@ describe('BulkCompleteCaseLists', () => {
         name: unstageLabel('S-1/2026, Jón Jónsson'),
       }),
     ).toBeInTheDocument()
-    expect(screen.queryByText('Málunum er lokið')).not.toBeInTheDocument()
+    expect(screen.queryByText('Málinu er lokið')).not.toBeInTheDocument()
   })
 
   it('shows the success modal and clears staging when it is closed', async () => {
@@ -467,9 +470,9 @@ describe('BulkCompleteCaseLists', () => {
 
     await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
 
-    expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+    expect(await screen.findByText('Málinu er lokið')).toBeInTheDocument()
     expect(screen.getAllByRole('dialog')).toHaveLength(1)
-    expect(screen.queryByText('Viltu ljúka málunum?')).not.toBeInTheDocument()
+    expect(screen.queryByText('Viltu ljúka málinu?')).not.toBeInTheDocument()
   })
 
   it('lays out both lists with the same fixed columns', async () => {
@@ -657,6 +660,137 @@ describe('BulkCompleteCaseLists', () => {
     )
   })
 
+  it('titles the modals in the plural for several cases', async () => {
+    renderLists()
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+    await user.click(confirmButton())
+
+    expect(screen.getByText('Viltu ljúka málunum?')).toBeInTheDocument()
+  })
+
+  describe('when rows leave the list while staged', () => {
+    const renderWithRows = (theRows: CaseTableRow[]) =>
+      render(
+        <BulkCompleteCaseLists
+          rows={theRows}
+          columns={columns}
+          onComplete={jest.fn(async () => undefined)}
+        />,
+      )
+
+    const rerenderWith = (
+      rerender: (ui: ReactElement) => void,
+      theRows: CaseTableRow[],
+    ) =>
+      rerender(
+        <BulkCompleteCaseLists
+          rows={theRows}
+          columns={columns}
+          onComplete={jest.fn(async () => undefined)}
+        />,
+      )
+
+    it('drops them from the staged list and the confirm modal', async () => {
+      const { rerender } = renderWithRows(rows)
+      await turnOnSelection()
+      await stage('S-1/2026, Jón Jónsson')
+      await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+      rerenderWith(rerender, [rows[0], rows[2]])
+
+      expect(
+        screen.queryByRole('button', {
+          name: unstageLabel('S-2/2026, Gunna Gunnarsdóttir'),
+        }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('button', {
+          name: unstageLabel('S-1/2026, Jón Jónsson'),
+        }),
+      ).toBeInTheDocument()
+
+      await user.click(confirmButton())
+
+      expect(screen.getByText('Viltu ljúka málinu?')).toBeInTheDocument()
+      expect(
+        screen.getByText('Áfrýjun verður lokið í 1 máli: S-1/2026.'),
+      ).toBeInTheDocument()
+    })
+
+    it('no longer counts them towards the most that can be staged', async () => {
+      mockMaxCompletedVerdictAppeals = 2
+      const { rerender } = renderWithRows(rows)
+      await turnOnSelection()
+      await stage('S-1/2026, Jón Jónsson')
+      await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+      rerenderWith(rerender, [rows[0], rows[2]])
+      await stage('S-3/2026, Siggi Sigurðsson')
+
+      expect(mockToastWarning).not.toHaveBeenCalled()
+      expect(
+        screen.getByRole('button', {
+          name: unstageLabel('S-3/2026, Siggi Sigurðsson'),
+        }),
+      ).toBeInTheDocument()
+    })
+
+    it('does not bring a row back staged when it returns', async () => {
+      const { rerender } = renderWithRows(rows)
+      await turnOnSelection()
+      await stage('S-2/2026, Gunna Gunnarsdóttir')
+
+      rerenderWith(rerender, [rows[0], rows[2]])
+      rerenderWith(rerender, rows)
+
+      expect(
+        screen.getByRole('button', {
+          name: stageLabel('S-2/2026, Gunna Gunnarsdóttir'),
+        }),
+      ).toBeInTheDocument()
+    })
+  })
+
+  it('keeps naming the cases in the confirm modal when the list empties under it', async () => {
+    let resolveComplete: () => void = () => undefined
+    const onComplete = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveComplete = resolve
+        }),
+    )
+    const { rerender } = renderLists(onComplete)
+    await turnOnSelection()
+    await stage('S-1/2026, Jón Jónsson')
+    await stage('S-2/2026, Gunna Gunnarsdóttir')
+    await user.click(confirmButton())
+    await user.click(screen.getByRole('button', { name: 'Já, ljúka málum' }))
+
+    rerender(
+      <BulkCompleteCaseLists
+        rows={[]}
+        columns={columns}
+        onComplete={onComplete}
+      />,
+    )
+
+    expect(screen.getByText('Viltu ljúka málunum?')).toBeInTheDocument()
+    expect(
+      screen.getByText('Áfrýjun verður lokið í 2 málum: S-1/2026 og S-2/2026.'),
+    ).toBeInTheDocument()
+    expect(onComplete).toHaveBeenCalledWith([rows[0], rows[1]])
+
+    await act(async () => resolveComplete())
+
+    expect(await screen.findByText('Málunum er lokið')).toBeInTheDocument()
+    expect(
+      screen.getByText('Áfrýjun er lokið í 2 málum: S-1/2026 og S-2/2026.'),
+    ).toBeInTheDocument()
+  })
+
   it('heads the list with the title it is given', () => {
     render(
       <BulkCompleteCaseLists
@@ -711,15 +845,14 @@ describe('BulkCompleteCaseLists', () => {
   })
 
   describe('a ruling date that has not come', () => {
-    const now = Date.now()
-    const hour = 60 * 60 * 1000
+    const today = startOfDay(new Date())
 
     const rulingDateRow = (
       caseId: string,
       caseNumber: string,
       defendant: string,
       rulingDate: Date,
-      lines: string[],
+      shownDate: string,
     ): CaseTableRow => {
       const base = caseRow(caseId, caseNumber, defendant)
 
@@ -733,23 +866,26 @@ describe('BulkCompleteCaseLists', () => {
           },
           {
             sortValue: rulingDate.toISOString(),
-            value: { __typename: 'StringGroupValue', strList: lines },
+            value: { __typename: 'StringValue', str: shownDate },
           },
         ],
       }
     }
 
     const rulingRows = [
-      rulingDateRow('a', 'S-1/2026', 'Jón Jónsson', new Date(now + 2 * hour), [
+      rulingDateRow(
+        'a',
+        'S-1/2026',
+        'Jón Jónsson',
+        addDays(today, 1),
         '3.11.2026',
-        'kl. 14:05',
-      ]),
+      ),
       rulingDateRow(
         'b',
         'S-2/2026',
         'Gunna Gunnarsdóttir',
-        new Date(now - 2 * hour),
-        ['1.11.2026'],
+        addDays(today, -1),
+        '1.11.2026',
       ),
     ]
 
@@ -780,7 +916,7 @@ describe('BulkCompleteCaseLists', () => {
       const modal = screen.getByRole('dialog')
       expect(
         within(modal).getByText(
-          'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026 kl. 14:05)',
+          'Dómsuppkvaðning er ekki hafin í eftirfarandi málum: S-1/2026 (3.11.2026)',
         ),
       ).toBeInTheDocument()
       expect(

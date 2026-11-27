@@ -1,5 +1,12 @@
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+
 import { enumerate } from '@island.is/judicial-system/formatters'
-import { MAX_COMPLETED_VERDICT_APPEALS } from '@island.is/judicial-system/types'
+import type { CaseTableColumnKey } from '@island.is/judicial-system/types'
+import {
+  caseTables,
+  CaseTableType,
+  MAX_COMPLETED_VERDICT_APPEALS,
+} from '@island.is/judicial-system/types'
 import type {
   CaseTableCell,
   CaseTableRow,
@@ -13,6 +20,26 @@ export type RowClickAction = 'stage' | 'unstage' | 'open'
  */
 export const getRowId = (row: CaseTableRow): string =>
   row.appealCaseId ?? row.caseId
+
+/**
+ * The last segment of a page path, without its query string or hash: the
+ * route of the case table the page shows.
+ */
+export const getTableRoute = (asPath: string): string | undefined =>
+  asPath.split(/[?#]/)[0].split('/').pop()
+
+/**
+ * The staged ids whose rows are still among the rows. The same array when
+ * none has gone, so it can be compared by identity.
+ */
+export const pruneStagedIds = (
+  stagedIds: string[],
+  rows: CaseTableRow[],
+): string[] => {
+  const pruned = stagedIds.filter((id) => rows.some((r) => getRowId(r) === id))
+
+  return pruned.length === stagedIds.length ? stagedIds : pruned
+}
 
 export type StageRefusal = 'noAppealCase' | 'limitReached'
 
@@ -38,7 +65,7 @@ export const getStageRefusal = (
     return 'noAppealCase'
   }
 
-  if (stagedIds.length >= MAX_COMPLETED_VERDICT_APPEALS) {
+  if (pruneStagedIds(stagedIds, rows).length >= MAX_COMPLETED_VERDICT_APPEALS) {
     return 'limitReached'
   }
 
@@ -72,7 +99,7 @@ export const stageCase = (
     return stagedIds
   }
 
-  return [...stagedIds, rowId]
+  return [...pruneStagedIds(stagedIds, rows), rowId]
 }
 
 /** The appeal case ids of the rows, which is what completing them takes. */
@@ -138,6 +165,14 @@ export const getRowCaseNumber = (row: CaseTableRow): string =>
 export const formatCaseCountDative = (count: number): string =>
   count % 10 === 1 && count % 100 !== 11 ? `${count} máli` : `${count} málum`
 
+// Only a single case is spoken of in the singular: 21 cases are still
+// several.
+export const getConfirmTitle = (count: number): string =>
+  count === 1 ? 'Viltu ljúka málinu?' : 'Viltu ljúka málunum?'
+
+export const getCompletedTitle = (count: number): string =>
+  count === 1 ? 'Málinu er lokið' : 'Málunum er lokið'
+
 export const formatCaseNumberList = (rows: CaseTableRow[]): string =>
   enumerate(
     rows.map(getRowCaseNumber).filter((n) => n !== ''),
@@ -185,19 +220,44 @@ export const getMoveAnnouncement = (
 const designTableWidth = 1344
 const designColumnWidths = [190, 230, 200, 230, 220, 210]
 
-// The position of "Dómsuppkvaðning" among the six case columns.
-export const RULING_DATE_COLUMN_INDEX = 3
+/**
+ * The position of a column among a table's columns, or null when the table
+ * has no such column.
+ */
+export const getColumnIndex = (
+  columnKeys: CaseTableColumnKey[],
+  key: CaseTableColumnKey,
+): number | null => {
+  const index = columnKeys.indexOf(key)
+
+  return index < 0 ? null : index
+}
+
+// The position of "Dómsuppkvaðning" in the list of appeals to complete. When
+// the table has no such column, no ruling date is read and nothing warns.
+export const RULING_DATE_COLUMN_INDEX = getColumnIndex(
+  caseTables[CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE]
+    .columnKeys,
+  'verdictAppealRulingDate',
+)
 
 // The ruling date cell sorts by its ISO date-time.
 const isoDateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/
 
 /**
- * The ruling date and time of a row, read from the sort value of its ruling
+ * The ruling date of a row, read from the sort value of its ruling
  * date cell. Undefined when the row has no such cell or its value is not a
  * date-time.
  */
-export const getRulingDate = (row: CaseTableRow): Date | undefined => {
-  const sortValue = row.cells[RULING_DATE_COLUMN_INDEX]?.sortValue
+export const getRulingDate = (
+  row: CaseTableRow,
+  columnIndex: number | null = RULING_DATE_COLUMN_INDEX,
+): Date | undefined => {
+  if (columnIndex === null) {
+    return undefined
+  }
+
+  const sortValue = row.cells[columnIndex]?.sortValue
 
   if (!sortValue || !isoDateTime.test(sortValue)) {
     return undefined
@@ -208,26 +268,37 @@ export const getRulingDate = (row: CaseTableRow): Date | undefined => {
   return Number.isNaN(date.getTime()) ? undefined : date
 }
 
-/** The rows whose ruling date and time is later than now. */
+/**
+ * The rows whose ruling date falls on a later day than now, in the user's
+ * time zone. A ruling dated today has come, whatever time it carries.
+ */
 export const getRowsWithFutureRulingDate = (
   rows: CaseTableRow[],
   now: Date,
+  columnIndex: number | null = RULING_DATE_COLUMN_INDEX,
 ): CaseTableRow[] =>
   rows.filter((r) => {
-    const rulingDate = getRulingDate(r)
+    const rulingDate = getRulingDate(r, columnIndex)
 
-    return rulingDate !== undefined && rulingDate.getTime() > now.getTime()
+    return (
+      rulingDate !== undefined && differenceInCalendarDays(rulingDate, now) > 0
+    )
   })
 
 /**
- * Names the rows whose ruling has not come, each with its date and time as
- * the row shows them. Undefined when there are none.
+ * Names the rows whose ruling has not come, each with its date as the row
+ * shows it. Undefined when there are none.
  */
 export const getFutureRulingDateWarning = (
   rows: CaseTableRow[],
   now: Date,
+  columnIndex: number | null = RULING_DATE_COLUMN_INDEX,
 ): string | undefined => {
-  const futureRows = getRowsWithFutureRulingDate(rows, now)
+  if (columnIndex === null) {
+    return undefined
+  }
+
+  const futureRows = getRowsWithFutureRulingDate(rows, now, columnIndex)
 
   if (futureRows.length === 0) {
     return undefined
@@ -235,7 +306,7 @@ export const getFutureRulingDateWarning = (
 
   const cases = futureRows.map((r) => {
     const caseNumber = getRowCaseNumber(r)
-    const rulingDate = getCellDisplayText(r.cells[RULING_DATE_COLUMN_INDEX])
+    const rulingDate = getCellDisplayText(r.cells[columnIndex])
 
     return rulingDate ? `${caseNumber} (${rulingDate})` : caseNumber
   })

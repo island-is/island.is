@@ -910,13 +910,13 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
 
 // The court of appeals' list of confirmed appeals still to be completed.
 
-// The date the court recorded for the appeal's conclusion. The court usually
-// enters a date only, which is stored as midnight, so a time is shown only when
-// one was recorded. The sort value is the full ISO date-time: it sorts as the
-// other date columns do and is what the page compares with the clock.
-const verdictAppealRulingDate: CaseTableCellGenerator<StringGroupValue> = {
+// The date the court recorded for the appeal's conclusion, without a time,
+// whatever time the stored value carries. The sort value is the full ISO
+// date-time: it sorts chronologically, and the page parses it to tell whether
+// the ruling date has come.
+const verdictAppealRulingDate: CaseTableCellGenerator<StringValue> = {
   includes: { verdictAppealCase: { attributes: ['appealRulingDate'] } },
-  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     const rulingDate = c.appeal?.appealRulingDate
 
     if (!rulingDate) {
@@ -924,17 +924,13 @@ const verdictAppealRulingDate: CaseTableCellGenerator<StringGroupValue> = {
     }
 
     const date = new Date(rulingDate)
-    const datePart = formatDate(date, 'd.M.yyyy')
-    const timePart = formatDate(date, 'HH:mm')
+    const dateValue = formatDate(date, 'd.M.yyyy')
 
-    if (!datePart || !timePart) {
+    if (!dateValue) {
       return generateCell()
     }
 
-    const strList =
-      timePart === '00:00' ? [datePart] : [datePart, `kl. ${timePart}`]
-
-    return generateCell({ strList }, date.toISOString())
+    return generateCell({ str: dateValue }, date.toISOString())
   },
 }
 

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import GenericTable from './GenericTable'
@@ -318,4 +318,58 @@ describe('GenericTable', () => {
     expect(triggers[0]).toHaveAttribute('aria-haspopup', 'menu')
     expect(triggers[0]).toHaveAttribute('tabindex', '0')
   })
+
+  describe.each([false, true])(
+    'keyboard activation with fadeInNewRows %s',
+    (fadeInNewRows) => {
+      const renderWithMenu = (onClick: jest.Mock) =>
+        render(
+          <GenericTable
+            tableId="test-table"
+            columns={columns}
+            rows={[
+              {
+                ...row('1', 'R-123/2021', onClick),
+                contextMenuItems: [{ title: 'Eyða', onClick: jest.fn() }],
+              },
+            ]}
+            loadingIndicator={() => <span>loading</span>}
+            fadeInNewRows={fadeInNewRows}
+          />,
+        )
+
+      it('does not activate the row from Enter or Space on its menu button', async () => {
+        const onClick = jest.fn()
+        renderWithMenu(onClick)
+
+        const trigger = await screen.findByRole('button', {
+          name: 'Frekari aðgerðir fyrir mál R-123/2021',
+        })
+        fireEvent.keyDown(trigger, { key: 'Enter' })
+        fireEvent.keyDown(trigger, { key: ' ' })
+
+        expect(onClick).not.toHaveBeenCalled()
+
+        fireEvent.keyDown(
+          screen.getByRole('button', { name: 'Opna mál R-123/2021' }),
+          { key: 'Enter' },
+        )
+
+        expect(onClick).toHaveBeenCalledTimes(1)
+      })
+
+      it('does not activate the row from a held key', async () => {
+        const onClick = jest.fn()
+        renderWithMenu(onClick)
+
+        const rowElement = await screen.findByRole('button', {
+          name: 'Opna mál R-123/2021',
+        })
+        fireEvent.keyDown(rowElement, { key: 'Enter', repeat: true })
+        fireEvent.keyDown(rowElement, { key: ' ', repeat: true })
+
+        expect(onClick).not.toHaveBeenCalled()
+      })
+    },
+  )
 })
