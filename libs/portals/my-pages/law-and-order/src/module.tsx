@@ -1,13 +1,14 @@
+import { lazy } from 'react'
+import { Navigate } from 'react-router-dom'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
-import { lazy } from 'react'
-import PoliceCases from './screens/PoliceCases/PoliceCases'
-import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
-import { Navigate } from 'react-router-dom'
+
 import { LawAndOrderPaths } from './lib/paths'
+import PoliceCaseDetail from './screens/PoliceCaseDetail/PoliceCaseDetail'
+import PoliceCases from './screens/PoliceCases/PoliceCases'
 import Verdict from './screens/Verdict/Verdict'
-import { Features } from '@island.is/feature-flags'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
 const CourtCaseDetail = lazy(() =>
@@ -85,14 +86,12 @@ export const lawAndOrderModule: PortalModule = {
     {
       name: m.driversPoints,
       path: LawAndOrderPaths.DriversPoints,
-      key: Features.isDriversDeprivationsEnabled,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <DriversPoints />,
     },
     {
       name: m.driversDeprivations,
       path: LawAndOrderPaths.DriversDeprivations,
-      key: Features.isDriversDeprivationsEnabled,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
       element: <DriversDeprivations />,
     },

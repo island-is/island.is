@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+
+import { DrivingLicensePenaltyPointDetail } from '@island.is/api/schema'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
 import {
   CardLoader,
   createColumnHelper,
@@ -12,10 +14,10 @@ import {
   RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { DrivingLicensePenaltyPointDetail } from '@island.is/api/schema'
+
 import { messages } from '../../lib/messages'
+import { useGetDriversDeprivationQuery } from '../DriversDeprivations/DriversDeprivations.generated'
 import { useGetDriversPenaltyPointsQuery } from './DriversPoints.generated'
-import { useGetDriversDeprivationsQuery } from '../DriversDeprivations/DriversDeprivations.generated'
 
 const columnHelper =
   createColumnHelper<
@@ -34,7 +36,7 @@ const DriversPoints = () => {
     data: deprivationsData,
     loading: deprivationsLoading,
     error: deprivationsError,
-  } = useGetDriversDeprivationsQuery()
+  } = useGetDriversDeprivationQuery()
 
   const details = data?.drivingLicensePenaltyPoints?.details ?? []
 
@@ -42,33 +44,18 @@ const DriversPoints = () => {
 
   const isEmpty = !loading && !error && details.length === 0
 
-  const currentDeprivation =
-    deprivationsData?.drivingLicenseDeprivations?.current
+  const currentDeprivation = deprivationsData?.drivingLicenseDeprivation
 
   const deprivationAlert =
     !deprivationsLoading && !deprivationsError && currentDeprivation
-      ? currentDeprivation.active === true
-        ? {
-            type: 'error' as const,
-            title: formatMessage(messages.driversDeprivationsActiveTitle),
-            message: currentDeprivation.dateTo
-              ? formatMessage(messages.driversDeprivationsActiveDescription, {
-                  dateTo: formatDate(currentDeprivation.dateTo),
-                })
-              : undefined,
-          }
-        : currentDeprivation.active === false &&
-          currentDeprivation.retakeRequired === true
-        ? {
-            type: 'warning' as const,
-            title: formatMessage(
-              messages.driversDeprivationsRetakeRequiredTitle,
-            ),
-            message: formatMessage(
-              messages.driversDeprivationsRetakeRequiredDescription,
-            ),
-          }
-        : undefined
+      ? {
+          title: formatMessage(messages.driversDeprivationsActiveTitle),
+          message: currentDeprivation.dateTo
+            ? formatMessage(messages.driversDeprivationsActiveDescription, {
+                dateTo: formatDate(currentDeprivation.dateTo),
+              })
+            : undefined,
+        }
       : undefined
 
   const columns = useMemo(
@@ -136,8 +123,16 @@ const DriversPoints = () => {
           {deprivationAlert && (
             <Box marginBottom={3}>
               <AlertMessage
-                type={deprivationAlert.type}
-                title={deprivationAlert.title}
+                type="error"
+                title={
+                  <Text
+                    as="h2"
+                    variant="h5"
+                    marginBottom={deprivationAlert.message ? 1 : 0}
+                  >
+                    {deprivationAlert.title}
+                  </Text>
+                }
                 message={deprivationAlert.message}
               />
             </Box>
