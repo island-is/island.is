@@ -54,6 +54,18 @@ settings also clears any previously saved child multiset membership.
 These changes update both editor state and the saved field. The form-system
 data migration also clears existing child-family multiset membership.
 
+## Multiset dependencies
+
+Checkbox, radio-button, and dropdown fields can control dependencies while part
+of a multiset. Dependent fields in the same multiset follow the controlling
+value in their own row. Dependents outside that multiset are visible while any
+parent row selects their controlling value. Removing the last selected row
+updates those dependencies. Hidden row controls do not contribute selections or
+required-field errors. Live forms and previews with connections use these rules;
+unrestricted previews continue to show every field.
+Submitted JSON and PDFs omit values from hidden dependent rows while saved
+application values keep their original row indexes for reopening.
+
 ## Forms list
 
 The forms-list query requests only the ID, Icelandic name, slug, modification

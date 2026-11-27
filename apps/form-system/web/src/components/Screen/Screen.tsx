@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import {
   NOTIFY_EXTERNAL_SERVICE,
   removeTypename,
@@ -190,6 +191,15 @@ export const Screen = () => {
     fieldIndex: number,
     itemIndex: number,
   ) => {
+    if (
+      currentScreen?.data &&
+      getHiddenMultisetFieldIds(
+        currentScreen.data,
+        state.application.dependencies,
+        itemIndex,
+      ).has(field.id)
+    )
+      return null
     const showRowGutter =
       isMulti && field.isPartOfMultiset !== false && numberOfItems > 1
     return (

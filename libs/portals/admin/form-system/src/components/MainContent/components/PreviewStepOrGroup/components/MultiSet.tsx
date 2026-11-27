@@ -1,4 +1,9 @@
-import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemScreen,
+} from '@island.is/api/schema'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import { Action, ApplicationState, m } from '@island.is/form-system/ui'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -10,9 +15,10 @@ interface Props {
   screen: FormSystemScreen
   dispatch?: Dispatch<Action>
   state?: Pick<ApplicationState, 'currentScreen'>
+  dependencies?: FormSystemDependency[]
 }
 
-export const MultiSet = ({ screen, dispatch, state }: Props) => {
+export const MultiSet = ({ screen, dispatch, state, dependencies }: Props) => {
   const { formatMessage } = useLocale()
   const { unregister } = useFormContext()
   const [numberOfItems, setNumberOfItems] = useState(() =>
@@ -55,6 +61,10 @@ export const MultiSet = ({ screen, dispatch, state }: Props) => {
     fieldIndex: number,
     itemIndex: number,
   ) => {
+    if (
+      getHiddenMultisetFieldIds(screen, dependencies, itemIndex).has(field.id)
+    )
+      return null
     const showRowGutter = field.isPartOfMultiset !== false && numberOfItems > 1
     return (
       <Box

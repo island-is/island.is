@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import {
   Action,
+  applyDependencyVisibility,
   ApplicationState,
   FieldTypeMapping,
   getInitialJsonForField,
@@ -42,7 +43,7 @@ export const initialState = {
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
   const application = initializeApplication(state.application)
-  const sections: FormSystemSection[] = updatePaymentSectionVisibility(
+  const visibility = applyDependencyVisibility(
     (application.sections ?? [])
       .filter((s): s is FormSystemSection => s != null)
       .sort(
@@ -50,6 +51,10 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
           (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
           (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
       ),
+    application.dependencies ?? [],
+  )
+  const sections: FormSystemSection[] = updatePaymentSectionVisibility(
+    visibility.sections,
     application.hasPayment,
   )
   const screens = sections
@@ -69,6 +74,11 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(sections)
   return {
     ...state,
+    application: {
+      ...application,
+      sections,
+      dependencies: visibility.dependencies,
+    },
     sections,
     screens,
     currentSection,
@@ -309,14 +319,19 @@ export const applicationReducer = (
         }),
       }
 
-      const updatedSections: FormSystemSection[] = state.sections.map(
-        (section) => ({
+      const visibility = applyDependencyVisibility(
+        state.sections.map((section) => ({
           ...section,
           screens: section.screens?.map((screen) => {
             if (!screen) return screen
             return screen.id === updatedScreen.id ? updatedScreen : screen
           }),
-        }),
+        })),
+        state.application.dependencies ?? [],
+      )
+      const updatedSections = updatePaymentSectionVisibility(
+        visibility.sections,
+        state.application.hasPayment,
       )
 
       const updatedCurrentSection =
@@ -338,10 +353,17 @@ export const applicationReducer = (
         application: {
           ...state.application,
           sections: updatedSections,
+          dependencies: visibility.dependencies,
         },
         currentSection: updatedCurrentSection,
         currentScreen: state.currentScreen
-          ? { ...state.currentScreen, data: updatedScreen }
+          ? {
+              ...state.currentScreen,
+              data:
+                updatedSections[state.currentSection.index]?.screens?.[
+                  state.currentScreen.index
+                ] ?? undefined,
+            }
           : state.currentScreen,
       }
     }
@@ -368,14 +390,19 @@ export const applicationReducer = (
         }),
       }
 
-      const updatedSections: FormSystemSection[] = state.sections.map(
-        (section) => ({
+      const visibility = applyDependencyVisibility(
+        state.sections.map((section) => ({
           ...section,
           screens: section.screens?.map((screen) => {
             if (!screen) return screen
             return screen.id === updatedScreen.id ? updatedScreen : screen
           }),
-        }),
+        })),
+        state.application.dependencies ?? [],
+      )
+      const updatedSections = updatePaymentSectionVisibility(
+        visibility.sections,
+        state.application.hasPayment,
       )
 
       const updatedCurrentSection =
@@ -401,10 +428,17 @@ export const applicationReducer = (
         application: {
           ...state.application,
           sections: updatedSections,
+          dependencies: visibility.dependencies,
         },
         currentSection: updatedCurrentSection,
         currentScreen: state.currentScreen
-          ? { ...state.currentScreen, data: updatedScreen }
+          ? {
+              ...state.currentScreen,
+              data:
+                updatedSections[state.currentSection.index]?.screens?.[
+                  state.currentScreen.index
+                ] ?? undefined,
+            }
           : state.currentScreen,
       }
     }

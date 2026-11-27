@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react'
 import { ComponentProps, ReactNode } from 'react'
 import { Display } from '../Display/Display'
 import { Summary } from './Summary'
+import { hasError } from '../../../../utils/validation'
 
 jest.mock('@apollo/client', () => ({ useMutation: () => [] }))
 jest.mock('@island.is/form-system/graphql', () => ({
@@ -40,7 +41,9 @@ const mockDispatch = jest.fn()
 jest.mock('../../../../context/ApplicationProvider', () => ({
   useApplicationContext: () => ({ dispatch: mockDispatch }),
 }))
-jest.mock('../../../../utils/validation', () => ({ hasError: () => false }))
+jest.mock('../../../../utils/validation', () => ({
+  hasError: jest.fn(() => false),
+}))
 jest.mock('../../../../utils/payment', () => ({
   getVisiblePaymentFields: () => [],
 }))
@@ -51,7 +54,10 @@ jest.mock('../Display/Display', () => ({
   ),
 }))
 
-beforeEach(() => jest.clearAllMocks())
+beforeEach(() => {
+  jest.clearAllMocks()
+  jest.mocked(hasError).mockReturnValue(false)
+})
 
 const field = (
   id: string,
@@ -65,6 +71,80 @@ const field = (
   fieldType: FieldTypesEnum.TEXTBOX,
   isPartOfMultiset,
   values: Array.from({ length: count }, () => ({ json: { text: 'value' } })),
+})
+
+it('omits hidden dependent rows from summaries and required-field validation', () => {
+  jest
+    .mocked(hasError)
+    .mockImplementation((item, index = 0) => item.id === 'child' && index === 1)
+  const parent: FormSystemField = {
+    ...field('parent', true, 2),
+    fieldType: FieldTypesEnum.CHECKBOX,
+    values: [
+      { json: { checkboxValue: true } },
+      { json: { checkboxValue: false } },
+    ],
+  }
+  const state: ApplicationState = {
+    application: {
+      id: 'application',
+      hasPayment: false,
+      dependencies: [
+        { parentProp: 'parent', childProps: ['child'], isSelected: true },
+      ],
+    },
+    sections: [
+      {
+        id: 'section',
+        sectionType: SectionTypes.INPUT,
+        screens: [
+          {
+            id: 'screen',
+            sectionId: 'section',
+            isMulti: true,
+            fields: [parent, { ...field('child', true), isRequired: true }],
+          },
+        ],
+      },
+    ],
+    screens: [],
+    currentSection: { index: 0, data: { id: 'section' } },
+  }
+  const { rerender } = render(<Summary state={state} />)
+  expect(screen.getByText('child:0')).toBeTruthy()
+  expect(screen.queryByText('child:1')).toBeNull()
+  expect(mockDispatch).toHaveBeenLastCalledWith({
+    type: 'SET_VALIDITY',
+    payload: { isValid: true },
+  })
+
+  const sections = state.sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen?.fields?.map((item) =>
+              item?.id === parent.id
+                ? {
+                    ...parent,
+                    values: [
+                      { json: { checkboxValue: true } },
+                      { json: { checkboxValue: true } },
+                    ],
+                  }
+                : item,
+            ),
+          }
+        : screen,
+    ),
+  }))
+  rerender(<Summary state={{ ...state, sections }} />)
+  expect(screen.getByText('child:1')).toBeTruthy()
+  expect(mockDispatch).toHaveBeenLastCalledWith({
+    type: 'SET_VALIDITY',
+    payload: { isValid: false },
+  })
 })
 
 it.each([true, false])(

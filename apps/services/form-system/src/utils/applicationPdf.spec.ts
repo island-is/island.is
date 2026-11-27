@@ -23,6 +23,42 @@ describe('buildApplicationPdf layout', () => {
     ],
   })
 
+  it('omits hidden dependent multiset answers from the PDF', async () => {
+    const text = jest.spyOn(PDFDocument.prototype, 'text')
+    const application = applicationWithFields([
+      Object.assign(new FieldDto(), {
+        id: 'parent',
+        fieldType: FieldTypesEnum.CHECKBOX,
+        isPartOfMultiset: true,
+        values: [
+          { json: { checkboxValue: false } },
+          { json: { checkboxValue: true } },
+        ],
+      }),
+      Object.assign(new FieldDto(), {
+        id: 'child',
+        name: { is: 'Answers' },
+        fieldType: FieldTypesEnum.TEXTBOX,
+        isPartOfMultiset: true,
+        values: [
+          { json: { text: 'Hidden answer' } },
+          { json: { text: 'Visible answer' } },
+        ],
+      }),
+    ])
+    const screen = application.sections?.[0]?.screens?.[0]
+    if (!screen) throw new Error('Missing screen fixture')
+    screen.isMulti = true
+    application.dependencies = [
+      { parentProp: 'parent', childProps: ['child'], isSelected: true },
+    ]
+
+    await buildApplicationPdf(application)
+    const content = text.mock.calls.map(([value]) => value)
+    expect(content).toContain('Visible answer')
+    expect(content).not.toContain('Hidden answer')
+  })
+
   it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
     'separates children with a blank line and no numbering for %s fields',
     async (fieldType) => {

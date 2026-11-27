@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemDependency, FormSystemField } from '@island.is/api/schema'
 import {
   NotificationCommands,
   SectionTypes,
@@ -140,8 +140,12 @@ beforeEach(() => {
     .mockReturnValue([notifyExternal, { loading: false }] as never)
 })
 
-const renderScreen = (isMulti = true) => {
-  const fields = [
+const renderScreen = (
+  isMulti = true,
+  fieldOverrides?: FormSystemField[],
+  dependencies?: FormSystemDependency[],
+) => {
+  const fields = fieldOverrides ?? [
     field('standalone-first', false, 4),
     field('repeated-first', true, 2),
     field('standalone-second', false),
@@ -154,12 +158,41 @@ const renderScreen = (isMulti = true) => {
       currentScreen: { data: { id: 'screen', isMulti, multiMax: 3, fields } },
       currentSection: { index: 0, data: section },
       sections: [section],
-      application: {},
+      application: { dependencies },
     },
     dispatch,
   } as unknown as ReturnType<typeof useApplicationContext>)
   render(<Screen />)
 }
+
+it('renders only the matching repeated dependent row while retaining standalone dependents', () => {
+  renderScreen(
+    true,
+    [
+      {
+        ...field('parent', true, 2),
+        fieldType: 'CHECKBOX',
+        values: [
+          { json: { checkboxValue: false } },
+          { json: { checkboxValue: true } },
+        ],
+      },
+      field('child', true, 2),
+      field('external', false),
+    ],
+    [
+      {
+        parentProp: 'parent',
+        childProps: ['child', 'external'],
+        isSelected: true,
+      },
+    ],
+  )
+
+  expect(screen.queryByText('child:0')).toBeNull()
+  expect(screen.getByText('child:1')).toBeTruthy()
+  expect(screen.getByText('external:0')).toBeTruthy()
+})
 
 it('keeps leading fields above the multiset and moves interleaved standalone fields below its controls', () => {
   renderScreen()

@@ -1,11 +1,21 @@
 import { FormSystemSection } from '@island.is/api/schema'
 import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import {
   applicationReducer,
+  initialReducer,
   uploadNavigationReducer,
 } from './applicationReducer'
 
 jest.mock('@island.is/form-system/ui', () => ({
+  ...jest.requireActual(
+    '../../../../../libs/portals/form-system/ui-components/src/lib/fieldTypes',
+  ),
+  FieldTypesEnum: jest.requireActual('@island.is/form-system/enums')
+    .FieldTypesEnum,
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../libs/portals/form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
 }))
 
@@ -28,6 +38,56 @@ const createState = (): ApplicationState => {
     currentScreen: { index: 1, data: section.screens?.[1] ?? undefined },
   }
 }
+
+it('recalculates dependencies on reopening and when the last selected multiset row is removed', () => {
+  const state = createState()
+  const screen = state.currentScreen?.data
+  if (!screen) throw new Error('Missing screen fixture')
+  screen.isMulti = true
+  screen.fields = [
+    {
+      id: 'parent',
+      screenId: screen.id,
+      name: { is: 'Parent' },
+      isRequired: false,
+      isPartOfMultiset: true,
+      fieldType: FieldTypesEnum.CHECKBOX,
+      values: [
+        { json: { checkboxValue: false } },
+        { json: { checkboxValue: true } },
+      ],
+    },
+    {
+      id: 'external',
+      screenId: screen.id,
+      name: { is: 'External' },
+      isRequired: false,
+      isPartOfMultiset: false,
+      fieldType: FieldTypesEnum.TEXTBOX,
+    },
+  ]
+  state.application.dependencies = [
+    { parentProp: 'parent', childProps: ['external'], isSelected: true },
+  ]
+  const reopened = initialReducer({
+    ...state,
+    application: {
+      ...state.application,
+      sections: state.sections,
+      dependencies: [
+        { parentProp: 'parent', childProps: ['external'], isSelected: false },
+      ],
+    },
+  })
+  expect(reopened.application.dependencies?.[0]?.isSelected).toBe(true)
+  expect(reopened.sections[0].screens?.[1]?.fields?.[1]?.isHidden).toBe(false)
+
+  const result = applicationReducer(state, { type: 'REMOVE_MULTISET_ITEM' })
+  expect(result.application.dependencies?.[0]?.isSelected).toBe(false)
+  expect(result.currentScreen?.data?.fields?.[0]?.values).toHaveLength(1)
+  expect(result.currentScreen?.data?.fields?.[1]?.isHidden).toBe(true)
+  expect(result.currentScreen?.data).toBe(result.sections[0].screens?.[1])
+})
 
 it.each([
   { type: 'INCREMENT', expectedIndex: 2 },

@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import {
   ApplicationState,
   FieldTypesEnum,
@@ -42,6 +43,14 @@ export const Summary = ({ state }: Props) => {
 
       for (const screen of section.screens ?? []) {
         if (!screen || screen.isHidden) continue
+        const multisetValueCount = screen.isMulti
+          ? Math.max(
+              1,
+              ...(screen.fields ?? [])
+                .filter((field) => field?.isPartOfMultiset !== false)
+                .map((field) => field?.values?.length ?? 0),
+            )
+          : 1
 
         for (const field of screen.fields ?? []) {
           if (!field || field.isHidden) continue
@@ -51,9 +60,17 @@ export const Summary = ({ state }: Props) => {
           const valueCount =
             field.isPartOfMultiset === false
               ? 1
-              : Math.max(1, field.values?.length ?? 0)
+              : Math.max(multisetValueCount, field.values?.length ?? 0)
 
           for (let valueIndex = 0; valueIndex < valueCount; valueIndex++) {
+            if (
+              getHiddenMultisetFieldIds(
+                screen,
+                state.application.dependencies,
+                valueIndex,
+              ).has(field.id)
+            )
+              continue
             if (field.isRequired && hasError(field, valueIndex)) return true
           }
         }
@@ -61,7 +78,7 @@ export const Summary = ({ state }: Props) => {
     }
 
     return false
-  }, [state?.sections])
+  }, [state?.sections, state?.application.dependencies])
 
   useEffect(() => {
     // make state.isValid mean “no required missing”
@@ -218,7 +235,16 @@ export const Summary = ({ state }: Props) => {
                               )}
 
                               {multisetFields
-                                .filter((field) => field.values?.[itemIndex])
+                                .filter(
+                                  (field) =>
+                                    (field.values?.[itemIndex] ||
+                                      field.isRequired) &&
+                                    !getHiddenMultisetFieldIds(
+                                      screen ?? {},
+                                      state?.application.dependencies,
+                                      itemIndex,
+                                    ).has(field.id),
+                                )
                                 .map((field) => {
                                   const key = `${
                                     field.id ?? 'field'

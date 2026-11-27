@@ -1,6 +1,7 @@
 import {
   FamilyTypes,
   FieldTypesEnum,
+  getHiddenMultisetFieldIds,
   SectionTypes,
 } from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
@@ -626,10 +627,19 @@ export const buildApplicationPdf = (
 
         for (const field of screen.fields ?? []) {
           if (field.isHidden) continue
+          const values = field.values?.filter(
+            (_, index) =>
+              !getHiddenMultisetFieldIds(
+                screen,
+                application.dependencies,
+                index,
+              ).has(field.id),
+          )
+          if (field.values?.length && !values?.length) continue
 
           drawField(
             document,
-            field,
+            { ...field, values },
             section.sectionType !== SectionTypes.PARTIES,
             locale,
           )

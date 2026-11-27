@@ -53,6 +53,9 @@ jest.mock('react-intl', () => ({
   IntlProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
 jest.mock('@island.is/form-system/ui', () => ({
+  applyDependencyVisibility: jest.requireActual(
+    '../../../../../../../form-system/ui-components/src/lib/applyDependencyVisibility',
+  ).applyDependencyVisibility,
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
   FormStepper: ({ sections }: { sections: FormSystemSection[] }) => (
     <div data-testid="applicant-steps">
