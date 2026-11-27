@@ -135,11 +135,13 @@ export class FileService {
   ): Promise<void> {
     const prefix = `${theCase.id}/`
     const uploadId = key.slice(prefix.length, prefix.length + UUID_LENGTH)
+    const fileName = key.slice(prefix.length + UUID_LENGTH + 1)
 
     if (
       !key.startsWith(prefix) ||
       !isUuid(uploadId) ||
-      key[prefix.length + UUID_LENGTH] !== '/'
+      key[prefix.length + UUID_LENGTH] !== '/' ||
+      fileName.length === 0
     ) {
       throw new BadRequestException(
         `${key} is not a valid key for case ${theCase.id}`,

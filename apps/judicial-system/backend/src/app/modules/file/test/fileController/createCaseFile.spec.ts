@@ -593,6 +593,30 @@ describe('FileController - Create case file', () => {
     })
   })
 
+  describe('key has no file name', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const key = `${caseId}/${uuid()}/`
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should throw bad request exception', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `${key} is not a valid key for case ${caseId}`,
+      )
+      expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
   describe('key already belongs to a case file', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
