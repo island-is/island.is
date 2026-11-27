@@ -411,14 +411,15 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             description: z.string(),
-            nationalId: z.string(),
+            nationalId: z.string().default(''),
             assetNumber: z.string(),
             propertyValuation: z.string(),
             debtType: z.string(),
+            enabled: z.boolean().optional(),
           })
           .refine(
-            ({ nationalId }) => {
-              return nationalId === ''
+            ({ nationalId, enabled }) => {
+              return enabled === false || nationalId === ''
                 ? true
                 : nationalId && kennitala.isValid(nationalId)
             },
@@ -434,7 +435,9 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
+              enabled,
             }) =>
+              enabled !== false &&
               debtType !== DebtTypes.InsuranceInstitute &&
               [description, nationalId, propertyValuation, debtType].some(
                 (field) => field !== '',
@@ -453,7 +456,9 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
+              enabled,
             }) =>
+              enabled !== false &&
               [description, nationalId, assetNumber, debtType].some(
                 (field) => field !== '',
               )
@@ -470,7 +475,9 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
+              enabled,
             }) =>
+              enabled !== false &&
               [nationalId, propertyValuation, assetNumber, debtType].some(
                 (field) => field !== '',
               )
@@ -487,7 +494,9 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
+              enabled,
             }) =>
+              enabled !== false &&
               [description, nationalId, propertyValuation, assetNumber].some(
                 (field) => field !== '',
               )
