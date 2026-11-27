@@ -68,7 +68,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealAssistant,
     appealJudges,
     appealRulingDecision,
-    appealCompletedDate,
+    appealRulingDate,
     linkedCaseSections,
   } = useInfoCardItems('h4', targetAppealCase ?? null)
 
@@ -135,8 +135,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(shouldShowVerdictAppealOutcome(targetAppealCase, user)
                     ? [
                         appealRulingDecision,
-                        ...(targetAppealCase?.appealCompletedDate
-                          ? [appealCompletedDate]
+                        ...(targetAppealCase?.appealRulingDate
+                          ? [appealRulingDate]
                           : []),
                       ]
                     : []),

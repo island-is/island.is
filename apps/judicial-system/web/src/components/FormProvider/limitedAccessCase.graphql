@@ -105,7 +105,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealConclusion
       appealRulingDate
       appealRulingDecision
-      appealCompletedDate
       appealRulingType
       courtSessions {
         id

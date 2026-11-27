@@ -261,7 +261,6 @@ query Case($input: CaseQueryInput!) {
       appealRulingDecision
       appealRulingType
       appealRulingDate
-      appealCompletedDate
       caseName
       appealConclusion
       appealAssistant {

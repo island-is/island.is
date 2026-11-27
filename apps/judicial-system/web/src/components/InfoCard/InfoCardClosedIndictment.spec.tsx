@@ -463,14 +463,14 @@ describe('InfoCardClosedIndictment', () => {
       // The parties open the case from their own case list, with no appeal
       // in the URL, and learn there how the verdict appeal ended.
       describe('when the query string names no appeal', () => {
-        const appealCompletedDate = '2026-11-20T10:00:00.000Z'
+        const appealRulingDate = '2026-11-20T10:00:00.000Z'
 
         it('shows the outcome and the date it ended once completed', async () => {
           renderClosedIndictment(
             caseWithAppeal({
               ...verdictAppeal,
               appealState: AppealCaseState.COMPLETED,
-              appealCompletedDate,
+              appealRulingDate,
             }),
           )
 
@@ -479,13 +479,13 @@ describe('InfoCardClosedIndictment', () => {
           expect(screen.getByText('Staðfesting')).toBeInTheDocument()
           expect(screen.getByText('Dagsetning lykta')).toBeInTheDocument()
           expect(
-            screen.getByText(formatDate(appealCompletedDate, 'PP') ?? ''),
+            screen.getByText(formatDate(appealRulingDate, 'PP') ?? ''),
           ).toBeInTheDocument()
         })
 
         it('shows nothing of the appeal before it is completed', async () => {
           renderClosedIndictment(
-            caseWithAppeal({ ...verdictAppeal, appealCompletedDate }),
+            caseWithAppeal({ ...verdictAppeal, appealRulingDate }),
           )
 
           await screen.findByText('007-2021-202000')
