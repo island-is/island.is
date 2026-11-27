@@ -449,6 +449,9 @@ jobs:
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ${{ startsWith(github.ref, 'refs/heads/pre-release/') && 'arc-mergequeue' || 'arc-shared' }}
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
@@ -457,18 +460,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials for ECR
+        id: ecr-credentials
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE_ARN }}
+          role-session-name: push-helm-docker-build-${{ github.run_id }}
+          aws-region: eu-west-1
+          output-credentials: true
+          output-env-credentials: false
+
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ steps.ecr-credentials.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.ecr-credentials.outputs.aws-secret-access-key }}
+          AWS_SESSION_TOKEN: ${{ steps.ecr-credentials.outputs.aws-session-token }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -578,12 +587,16 @@ jobs:
         run: |
           node scripts/ci/docker/write-data.mjs
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials for ECR
+        id: ecr-credentials
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.ECR_ROLE_ARN }}
+          role-session-name: push-deploy-feature-${{ github.run_id }}
           aws-region: eu-west-1
+          output-credentials: true
+          output-env-credentials: false
 
       - name: Get manifest data
         id: manifest
@@ -591,6 +604,9 @@ jobs:
         env:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          AWS_ACCESS_KEY_ID: ${{ steps.ecr-credentials.outputs.aws-access-key-id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.ecr-credentials.outputs.aws-secret-access-key }}
+          AWS_SESSION_TOKEN: ${{ steps.ecr-credentials.outputs.aws-session-token }}
         run: |
           node scripts/ci/docker/feature-deploy-bootstrap.mjs "$FEATURE_NAME"
           node scripts/ci/docker/feature-deploy-get-data.mjs
