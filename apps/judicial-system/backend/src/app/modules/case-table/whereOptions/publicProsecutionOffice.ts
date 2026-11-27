@@ -40,10 +40,6 @@ export const publicProsecutionOfficeIndictmentsNewWhereOptions =
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
         { indictment_reviewer_id: null },
-        // A case that comes back from the court of appeals is not assigned for
-        // review again, so it goes straight to the review list - also when it
-        // was appealed before anyone had been assigned to it.
-        buildHasCompletedVerdictAppealCondition(false),
       ],
     },
     displayCases: expandCasesWithDefendants,
@@ -51,9 +47,10 @@ export const publicProsecutionOfficeIndictmentsNewWhereOptions =
 
 // Two kinds of row are in review. A district court verdict is, for each
 // defendant the assigned reviewer has not yet decided on. And a court of
-// appeals verdict is from the moment the court completes the verdict appeal:
-// it is reviewed by the prosecutor who argued the appeal, so nobody assigns it
-// and it never passes through the list of new cases.
+// appeals verdict is from the moment the court completes the verdict appeal.
+// It never passes through the list of new cases: every case is assigned a
+// reviewer when it comes from the district court, before it can go to the
+// court of appeals, so the reviewer condition already holds when it returns.
 //
 // A completed verdict appeal brings every defendant of the case back, not only
 // those the appeal concerned. What carries such a row on from here - the
@@ -71,6 +68,9 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
               indictment_review_decision: null,
               is_closed_without_enforcement: { [Op.not]: true },
             },
+            // Temporary: this admits every defendant for as long as the appeal
+            // is completed. It will change once the review decision on the
+            // court of appeals verdict has fields of its own to ask about.
             buildHasCompletedVerdictAppealCondition(true),
           ],
         },
@@ -79,12 +79,7 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
     where: {
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
-        {
-          [Op.or]: [
-            { indictment_reviewer_id: { [Op.not]: null } },
-            buildHasCompletedVerdictAppealCondition(true),
-          ],
-        },
+        { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
     displayCases: expandCasesWithDefendantsAfterVerdictAppeal,
@@ -296,7 +291,9 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
         { indictment_reviewer_id: { [Op.not]: null } },
         // Once the court of appeals has completed the appeal the case is no
-        // longer under appeal - it is back in review.
+        // longer under appeal - it is back in review. A completed appeal case
+        // may re-appear on this list once it has been reviewed; that is not
+        // implemented yet.
         buildHasCompletedVerdictAppealCondition(false),
       ],
     },

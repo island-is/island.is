@@ -85,17 +85,16 @@ describe('public prosecution office lists after a verdict appeal', () => {
   const completedVerdictAppeal = `EXISTS ( SELECT 1 FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_type" = 'VERDICT' AND ac."appeal_state" = 'COMPLETED' )`
 
   describe('the review list', () => {
-    // Either a reviewer has been assigned or the court of appeals has completed
-    // the appeal. The second arm is what lets a case that was appealed before
-    // anyone was assigned skip the list of new cases.
-    it('admits a case with a completed verdict appeal whether or not it has a reviewer', async () => {
+    // A case has a reviewer before it can go to the court of appeals, so the
+    // case level asks for nothing more than it did: the completed appeal only
+    // widens which defendants get a row.
+    it('still asks only for a reviewer at the case level', async () => {
       const sql = await membershipSql(
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW,
       )
 
-      expect(sql).toContain(
-        `("Case"."indictment_reviewer_id" IS NOT NULL OR ${completedVerdictAppeal} )`,
-      )
+      expect(sql).toContain('"Case"."indictment_reviewer_id" IS NOT NULL')
+      expect(sql.split('"appeal_case"')).toHaveLength(2)
     })
 
     // The defendants join decides which rows the case gets. A defendant
@@ -141,16 +140,6 @@ describe('public prosecution office lists after a verdict appeal', () => {
     })
   })
 
-  it('keeps a case with a completed verdict appeal off the list of new cases', async () => {
-    const sql = await membershipSql(
-      CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW,
-    )
-
-    expect(sql).toContain(
-      `"Case"."indictment_reviewer_id" IS NULL AND NOT ${completedVerdictAppeal}`,
-    )
-  })
-
   it('takes a case off the appealed list once its verdict appeal is completed', async () => {
     const sql = await membershipSql(
       CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
@@ -161,9 +150,12 @@ describe('public prosecution office lists after a verdict appeal', () => {
     )
   })
 
-  // The other lists say nothing about a completed verdict appeal: what moves a
-  // court of appeals verdict through them is not recorded yet.
+  // The other lists say nothing about a completed verdict appeal. The list of
+  // new cases needs no rule: a returning case already has a reviewer. For the
+  // rest, what moves a court of appeals verdict through them is not recorded
+  // yet.
   it.each([
+    CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW,
     CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
     CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
     CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
