@@ -154,6 +154,15 @@ export class AppealCase extends Model {
   appealRulingDate?: Date
 
   /**********
+   * The time and date that the court of appeals released the outcome of a
+   * verdict appeal, completing it. Set for verdict appeals only: the date the
+   * appeal itself ended is the court's own, in appealRulingDate.
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  appealCompletedDate?: Date
+
+  /**********
    * The surrogate key of the assistant assigned to the appeal case
    **********/
   @ForeignKey(() => User)

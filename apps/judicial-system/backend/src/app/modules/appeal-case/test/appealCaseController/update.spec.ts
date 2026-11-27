@@ -292,29 +292,294 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
-  describe('a completed verdict appeal', () => {
+  describe('the outcome of a verdict appeal', () => {
     const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
-    const appealCase = {
+    const recorded = {
       id: appealCaseId,
       caseId,
       appealType: AppealCaseType.VERDICT,
-      appealState: AppealCaseState.COMPLETED,
-    } as AppealCase
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      appealRulingType: AppealRulingType.VERDICT,
+      appealConclusion: 'The appealed judgment stands.',
+      appealRulingDate: new Date('2024-01-10T00:00:00Z'),
+    }
+    const changes: [string, UpdateAppealCaseDto][] = [
+      [
+        'appealRulingDecision',
+        { appealRulingDecision: AppealCaseRulingDecision.CHANGED },
+      ],
+      ['appealRulingType', { appealRulingType: AppealRulingType.RULING }],
+      ['appealConclusion', { appealConclusion: 'The judgment is set aside.' }],
+      [
+        'appealRulingDate',
+        { appealRulingDate: new Date('2024-01-12T00:00:00Z') },
+      ],
+      ['appealRulingModifiedHistory', { appealRulingModifiedHistory: 'Typo' }],
+      [
+        'verdictAppealStatus',
+        { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT },
+      ],
+    ]
 
-    // The court can still correct what it recorded: the outcome stays with it
-    // until it is released.
-    it('should store the update', async () => {
-      const then = await givenWhenThen(theCase, appealCase, {
-        appealConclusion: 'Conclusion',
-      })
+    // The court can still correct what it recorded until the outcome is
+    // released.
+    it.each(changes)(
+      'should store a change of %s once the appeal is confirmed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          {
+            ...recorded,
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+          } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+      },
+    )
+
+    // Once released, the outcome is everyone's.
+    it.each(changes)(
+      'should refuse a change of %s once the appeal is completed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
+
+    // A form that saves every field it shows sends the outcome back as it is.
+    it('should store an update of a completed appeal that repeats its outcome', async () => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+        {
+          appealRulingDecision: recorded.appealRulingDecision,
+          appealRulingType: recorded.appealRulingType,
+          appealConclusion: recorded.appealConclusion,
+          appealRulingDate: new Date(recorded.appealRulingDate),
+          verdictAppealStatus: recorded.verdictAppealStatus,
+          caseName: 'A v. B',
+        },
+      )
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+    })
+
+    // An empty history is written over the stored one, so it would blank it.
+    it.each([
+      ['an empty', ''],
+      ['a null', null],
+    ])(
+      'should refuse %s modification history once the appeal is completed',
+      async (_, appealRulingModifiedHistory) => {
+        const then = await givenWhenThen(
+          theCase,
+          {
+            ...recorded,
+            appealState: AppealCaseState.COMPLETED,
+            appealRulingModifiedHistory: 'An earlier correction',
+          } as AppealCase,
+          { appealRulingModifiedHistory } as unknown as UpdateAppealCaseDto,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      },
+    )
+
+    it('should store a null modification history on a completed appeal that has none', async () => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+        { appealRulingModifiedHistory: null } as unknown as UpdateAppealCaseDto,
+      )
+
+      expect(then.error).toBeUndefined()
+    })
+
+    it('should store a change outside the outcome of a completed appeal', async () => {
+      const then = await givenWhenThen(
+        theCase,
+        { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+        { caseName: 'A v. B' },
+      )
 
       expect(then.error).toBeUndefined()
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
-        { appealConclusion: 'Conclusion' },
+        { caseName: 'A v. B' },
         { transaction },
       )
     })
+
+    // A ruling appeal's outcome is not withheld, so nothing about it is locked
+    // by its completion here.
+    it.each([
+      [
+        'appealRulingDecision',
+        { appealRulingDecision: AppealCaseRulingDecision.CHANGED },
+      ],
+      ['appealConclusion', { appealConclusion: 'The ruling is set aside.' }],
+      ['appealRulingModifiedHistory', { appealRulingModifiedHistory: 'Typo' }],
+    ])(
+      'should store a change of %s on a completed ruling appeal',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          { id: caseId, type: CaseType.CUSTODY } as Case,
+          {
+            id: appealCaseId,
+            caseId,
+            appealType: AppealCaseType.RULING,
+            appealState: AppealCaseState.COMPLETED,
+            appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+            appealConclusion: 'The ruling stands.',
+          } as AppealCase,
+          update as UpdateAppealCaseDto,
+        )
+
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+      },
+    )
+  })
+
+  // The court's case number, bench and assistant are frozen with the outcome
+  // once a verdict appeal is completed.
+  describe('the court record of a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const assistantId = uuid()
+    const otherAssistantId = uuid()
+    const judgeIds = [uuid(), uuid(), uuid()]
+    const recorded = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealCaseNumber: '1/2024',
+      appealAssistantId: assistantId,
+      appealJudges: bench(judgeIds),
+    }
+    const changes: [string, UpdateAppealCaseDto][] = [
+      ['a new case number', { appealCaseNumber: '2/2024' }],
+      ['an empty case number', { appealCaseNumber: '' }],
+      [
+        'a null case number',
+        { appealCaseNumber: null } as unknown as UpdateAppealCaseDto,
+      ],
+      ['a new assistant', { appealAssistantId: otherAssistantId }],
+      [
+        'a null assistant',
+        { appealAssistantId: null } as unknown as UpdateAppealCaseDto,
+      ],
+      ['a new judge', { appealJudgeIds: [judgeIds[0], judgeIds[1], uuid()] }],
+      [
+        'a reordered bench',
+        { appealJudgeIds: [judgeIds[1], judgeIds[0], judgeIds[2]] },
+      ],
+      ['an empty bench', { appealJudgeIds: [] }],
+    ]
+
+    beforeEach(() => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockImplementation(async (id: string) => ({
+        id,
+        role:
+          id === assistantId || id === otherAssistantId
+            ? UserRole.COURT_OF_APPEALS_ASSISTANT
+            : UserRole.COURT_OF_APPEALS_JUDGE,
+      }))
+    })
+
+    it.each(changes)(
+      'should store %s once the appeal is confirmed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          {
+            ...recorded,
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+          } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+      },
+    )
+
+    it.each(changes)(
+      'should refuse %s once the appeal is completed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+        ).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
+
+    // A form that saves every field it shows sends the record back as it is,
+    // and a null bench is not sent at all.
+    it.each([
+      ['the case number', { appealCaseNumber: '1/2024' }],
+      ['the assistant', { appealAssistantId: assistantId }],
+      ['the bench', { appealJudgeIds: [...judgeIds] }],
+      [
+        'a null bench',
+        { appealJudgeIds: null } as unknown as UpdateAppealCaseDto,
+      ],
+    ])(
+      'should accept %s re-sent unchanged once the appeal is completed',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, appealState: AppealCaseState.COMPLETED } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+        expect(
+          mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+        ).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
+
+    it.each(changes)(
+      'should store %s on a completed ruling appeal',
+      async (_, update) => {
+        const then = await givenWhenThen(
+          { id: caseId, type: CaseType.CUSTODY } as Case,
+          {
+            ...recorded,
+            appealType: AppealCaseType.RULING,
+            appealState: AppealCaseState.COMPLETED,
+          } as AppealCase,
+          update,
+        )
+
+        expect(then.error).toBeUndefined()
+      },
+    )
   })
 
   describe('date of conclusion', () => {
@@ -342,36 +607,6 @@ describe('AppealCaseController - Update', () => {
       expect(
         mockFileService.invalidateVerdictAppealRulingConfirmation,
       ).not.toHaveBeenCalled()
-    })
-
-    // The confirmed copy of the ruling document is stamped with this date. A
-    // completed appeal stays completed; a confirmed one that is not yet
-    // completed goes back to APPEALED, which is covered below.
-    it('should have the ruling document stamped again when the date of a completed verdict appeal changes', async () => {
-      const appealCase = {
-        id: appealCaseId,
-        caseId,
-        appealType: AppealCaseType.VERDICT,
-        appealState: AppealCaseState.COMPLETED,
-        appealRulingDate: new Date('2024-01-05T00:00:00Z'),
-      } as AppealCase
-
-      const then = await givenWhenThen(theCase, appealCase, {
-        appealRulingDate: enteredDate,
-      })
-
-      expect(then.error).toBeUndefined()
-      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
-        appealCaseId,
-        { appealRulingDate: enteredDate },
-        { transaction },
-      )
-      expect(
-        mockFileService.invalidateVerdictAppealRulingConfirmation,
-      ).toHaveBeenCalledTimes(1)
-      expect(
-        mockFileService.invalidateVerdictAppealRulingConfirmation,
-      ).toHaveBeenCalledWith(caseId, transaction)
     })
 
     it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(

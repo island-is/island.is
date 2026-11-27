@@ -1,12 +1,18 @@
-import { IsEnum, IsOptional, IsUUID } from 'class-validator'
+import { IsIn, IsOptional, IsUUID } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { AppealEventType } from '@island.is/judicial-system/types'
 
+// The events a user may record directly. The completion of a verdict appeal
+// is recorded only by completing it, never written on its own.
+const recordableAppealEventTypes = Object.values(AppealEventType).filter(
+  (eventType) => eventType !== AppealEventType.APPEAL_COMPLETED,
+)
+
 export class CreateAppealEventLogDto {
-  @IsEnum(AppealEventType)
-  @ApiProperty({ enum: AppealEventType })
+  @IsIn(recordableAppealEventTypes)
+  @ApiProperty({ enum: recordableAppealEventTypes })
   readonly eventType!: AppealEventType
 
   // Verdict-appeal statements are per party. When set, the event log is
