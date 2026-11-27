@@ -1,17 +1,8 @@
-import type { FC, ReactNode } from 'react'
+import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import type { TagVariant } from '@island.is/island-ui/core'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Checkbox,
-  Icon,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Checkbox } from '@island.is/island-ui/core'
 import {
   caseTables,
   getCaseTableType,
@@ -31,15 +22,7 @@ import {
   GenericTable,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
-import type {
-  CaseTableCell,
-  CaseTableRow,
-  StringGroupValue,
-  StringValue,
-  TagGroupValue,
-  TagValue,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseTableRow } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseActionType,
   ContextMenuCaseActionType,
@@ -49,85 +32,11 @@ import {
   isNonEmptyArray,
 } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { useCancelCase } from './CancelCase'
 import { useCaseTableQuery } from './caseTable.generated'
+import { compare, render } from './caseTableCells'
 import * as styles from './CaseTable.css'
-
-const compare = (a: CaseTableCell, b: CaseTableCell): number => {
-  return compareLocaleIS(a.sortValue, b.sortValue)
-}
-
-const renderString = (value: StringValue) => {
-  return <Text>{value.str}</Text>
-}
-
-const renderStringGroup = (value: StringGroupValue) => {
-  const strings = value.strList.filter((v) => v !== '')
-  const length = strings.length
-
-  return (
-    <Box display="flex" flexDirection="column">
-      {strings.map((s, idx) => (
-        <Box key={idx} className={styles.stringGroupItem}>
-          {idx === length - 1 && value.hasCheckMark && (
-            <Icon icon="checkmark" color="blue400" size="medium" />
-          )}
-          {length < 3 && idx === 0 ? (
-            <Text>{s}</Text>
-          ) : (
-            <Text as="span" variant="small">
-              {s}
-            </Text>
-          )}
-        </Box>
-      ))}
-    </Box>
-  )
-}
-
-const renderTag = (value: TagValue) => {
-  return (
-    <Tag variant={value.color as TagVariant} outlined disabled truncate>
-      {value.text}
-    </Tag>
-  )
-}
-
-const renderTagGroup = (value: TagGroupValue) => {
-  const { firstTag, secondTag, thirdTag } = value
-
-  return (
-    <TagContainer>
-      {renderTag(firstTag)}
-      {secondTag && renderTag(secondTag)}
-      {thirdTag && renderTag(thirdTag)}
-    </TagContainer>
-  )
-}
-
-const render = (cell: CaseTableCell): ReactNode => {
-  if (!cell.value) {
-    return null
-  }
-
-  const value = cell.value
-
-  switch (value.__typename) {
-    case 'StringValue':
-      return renderString(value)
-    case 'StringGroupValue':
-      return renderStringGroup(value)
-    case 'TagValue':
-      return renderTag(value)
-    case 'TagGroupValue':
-      return renderTagGroup(value)
-    // This should never happen, but if it does, we return null
-    default:
-      return null
-  }
-}
 
 const CaseTable: FC = () => {
   const router = useRouter()
