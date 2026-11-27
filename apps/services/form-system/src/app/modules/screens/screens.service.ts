@@ -100,10 +100,13 @@ export class ScreensService {
       )
     }
 
-    const { identifier, ...updates } = updateScreenDto
+    const { identifier, name, ...updates } = updateScreenDto
     Object.assign(screen, updates)
     if (identifier != null) {
       screen.identifier = identifier
+    }
+    if (name != null) {
+      screen.name = name
     }
 
     await screen.save()

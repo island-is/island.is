@@ -1907,8 +1907,21 @@ describe('FormsService export', () => {
 
 describe('FormsService JSON sample', () => {
   const service = Object.create(FormsService.prototype) as {
-    mapFormToJsonSample: (form: Form) => ApplicationJsonDto
+    mapFormToJsonSample: (form: Partial<Form>) => ApplicationJsonDto
   }
+
+  it('includes the localized form name in the sample JSON', () => {
+    const form = {
+      name: { is: 'Heiti eyðublaðs', en: 'Form name' },
+      sections: [],
+    }
+
+    const sample = service.mapFormToJsonSample(form)
+
+    expect(JSON.parse(JSON.stringify(sample))).toMatchObject({
+      formName: { is: 'Heiti eyðublaðs', en: 'Form name' },
+    })
+  })
 
   it.each([
     [FamilyTypes.APPLICANT_INFO, ['nationalId', 'name']],

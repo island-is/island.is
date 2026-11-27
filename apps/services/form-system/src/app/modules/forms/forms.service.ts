@@ -1952,6 +1952,7 @@ export class FormsService {
     jsonSample.id = uuidV4()
     jsonSample.organizationNationalId = form.organizationNationalId ?? ''
     jsonSample.slug = form.slug ?? ''
+    jsonSample.formName = form.name
     jsonSample.isTest = true
     jsonSample.status = 'COMPLETED'
     jsonSample.submittedAt = new Date()
