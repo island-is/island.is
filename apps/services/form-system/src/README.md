@@ -77,6 +77,12 @@ always send applications to the configured Zendesk sandbox, including applicatio
 for published forms. Stored production tenants and brand IDs are ignored there,
 even when `NODE_ENV=production`.
 
+## Application JSON
+
+Application JSON fetched via X-Road and the sample JSON downloaded from the
+admin portal both include `formName`, containing the form's Icelandic (`is`)
+and English (`en`) names.
+
 ## Application PDFs
 
 Application PDFs display the organization's stored `logo.is` in the top-right

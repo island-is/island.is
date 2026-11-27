@@ -103,6 +103,7 @@ export {
   getAppealJudgeUserIds,
   hasAllAppealJudges,
   isSameAppealBench,
+  isVerdictAppealConfirmed,
 } from './lib/appealCase'
 export type {
   AppealCorrectionLock,

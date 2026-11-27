@@ -1,4 +1,4 @@
-import { Box, GridRow } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { SubmissionUrls } from './SubmissionUrls'
@@ -9,11 +9,9 @@ export const Urls = () => {
 
   return (
     <>
-      <GridRow>
-        <Box marginLeft={1}>
-          <Text variant="h3">{formatMessage(m.submitUrls)}</Text>
-        </Box>
-      </GridRow>
+      <Box display="flex" justifyContent="flexStart">
+        <Text variant="h3">{formatMessage(m.submitUrls)}</Text>
+      </Box>
       <SubmissionUrls />
     </>
   )

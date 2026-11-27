@@ -4,6 +4,7 @@ import {
   NotificationCommands,
   SectionTypes,
 } from '@island.is/form-system/enums'
+import { ExternalDataAgreement } from '@island.is/form-system/ui'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
@@ -22,6 +23,16 @@ jest.mock('@island.is/shared/components', () => ({
   Markdown: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 jest.mock('@island.is/form-system/ui', () => ({
+  ExternalDataAgreement: ({
+    onChange,
+    disabled,
+  }: ComponentProps<typeof ExternalDataAgreement>) => (
+    <input
+      type="checkbox"
+      onChange={(event) => onChange?.(event.target.checked)}
+      disabled={disabled}
+    />
+  ),
   SectionTypes: jest.requireActual<
     typeof import('@island.is/form-system/enums')
   >('@island.is/form-system/enums').SectionTypes,
@@ -60,9 +71,6 @@ jest.mock('@island.is/island-ui/core', () => ({
   ),
   Icon: () => null,
   Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  Checkbox: ({ onChange, disabled }: ComponentProps<'input'>) => (
-    <input type="checkbox" onChange={onChange} disabled={disabled} />
-  ),
   Button: ({
     children,
     onClick,

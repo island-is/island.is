@@ -1033,6 +1033,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
   const givenWhenThen = async (
     appealState: AppealCaseState,
     currentUser: unknown,
+    verdictAppealStatus: VerdictAppealStatus | null = VerdictAppealStatus.COMPLETED,
   ): Promise<Then> => {
     const interceptor = new CaseInterceptor({
       findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
@@ -1051,7 +1052,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       id: 'verdict_appeal',
       appealState,
       appealCaseNumber: '2/2024',
-      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      verdictAppealStatus,
       statementDeadlines: [prosecutionDeadline],
       ...outcome,
     }
@@ -1121,50 +1122,128 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       },
     ],
   ])('when the user is %s', (_, currentUser) => {
-    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
-      'and the verdict appeal is %s',
-      (appealState) => {
-        let then: Then
+    describe.each([
+      AppealCaseState.APPEALED,
+      AppealCaseState.READY_TO_COMPLETE,
+    ])('and the verdict appeal is %s', (appealState) => {
+      let then: Then
 
-        beforeEach(async () => {
-          then = await givenWhenThen(appealState, currentUser)
+      beforeEach(async () => {
+        then = await givenWhenThen(appealState, currentUser)
+      })
+
+      it('withholds the outcome', () => {
+        expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
+      })
+
+      it('presents the appeal as in progress', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          id: 'verdict_appeal',
+          appealState: AppealCaseState.APPEALED,
+          appealCaseNumber: '2/2024',
         })
+      })
 
-        it('withholds the outcome', () => {
-          expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
-        })
+      it('presents a recorded status of completed as under advisement', () => {
+        expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+          VerdictAppealStatus.UNDER_ADVISEMENT,
+        )
+      })
 
-        it('presents the appeal as in progress', () => {
-          expect(then.result.verdictAppealCase).toMatchObject({
-            id: 'verdict_appeal',
-            appealState: AppealCaseState.APPEALED,
-            appealCaseNumber: '2/2024',
-          })
-        })
+      it('leaves the court of appeals ruling out of the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+        ])
+      })
+    })
 
-        it('presents a recorded status of completed as under advisement', () => {
-          expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
-            VerdictAppealStatus.UNDER_ADVISEMENT,
-          )
-        })
+    // An appeal under advisement still carries the statement deadlines the
+    // user may see, so a confirmed one carries exactly the same.
+    it('presents the statement deadlines of a confirmed appeal as before it was confirmed', async () => {
+      const appealed = await givenWhenThen(
+        AppealCaseState.APPEALED,
+        currentUser,
+      )
+      const confirmed = await givenWhenThen(
+        AppealCaseState.READY_TO_COMPLETE,
+        currentUser,
+      )
 
-        it('strips statement deadlines when the completed appeal is masked', () => {
-          if (appealState !== AppealCaseState.COMPLETED) {
-            return
-          }
+      expect(confirmed.result.verdictAppealCase.statementDeadlines).toEqual(
+        appealed.result.verdictAppealCase.statementDeadlines,
+      )
+    })
 
-          expect(
-            then.result.verdictAppealCase.statementDeadlines,
-          ).toBeUndefined()
-        })
+    // The court can record another status after confirming. Outside the court
+    // a confirmed appeal is under advisement, whatever it records.
+    it.each([
+      VerdictAppealStatus.POSTPONED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+      null,
+    ])(
+      'presents a confirmed appeal with a recorded status %s as under advisement',
+      async (verdictAppealStatus) => {
+        const then = await givenWhenThen(
+          AppealCaseState.READY_TO_COMPLETE,
+          currentUser,
+          verdictAppealStatus,
+        )
 
-        it('leaves the court of appeals ruling out of the case files', () => {
-          expect(then.result.caseFiles.map((file) => file.id)).toEqual([
-            'district_ruling',
-          ])
+        expect(then.result.verdictAppealCase).toMatchObject({
+          appealState: AppealCaseState.APPEALED,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
         })
       },
     )
+
+    // Before the court confirms, only a recorded status of completed is
+    // rewritten.
+    it.each([
+      VerdictAppealStatus.POSTPONED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+    ])(
+      'presents an unconfirmed appeal with a recorded status %s as recorded',
+      async (verdictAppealStatus) => {
+        const then = await givenWhenThen(
+          AppealCaseState.APPEALED,
+          currentUser,
+          verdictAppealStatus,
+        )
+
+        expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+          verdictAppealStatus,
+        )
+      },
+    )
+
+    // A completed appeal has its outcome released to everyone who can open
+    // it; the court's ruling document stays with the court.
+    describe('and the verdict appeal is COMPLETED', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(AppealCaseState.COMPLETED, currentUser)
+      })
+
+      it('includes the outcome', () => {
+        expect(then.result.verdictAppealCase).toMatchObject(outcome)
+      })
+
+      it('presents the appeal as completed, with the status as recorded', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          id: 'verdict_appeal',
+          appealState: AppealCaseState.COMPLETED,
+          appealCaseNumber: '2/2024',
+          verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        })
+      })
+
+      it('leaves the court of appeals ruling out of the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+        ])
+      })
+    })
 
     it('still presents a withdrawn appeal as withdrawn', async () => {
       const then = await givenWhenThen(AppealCaseState.WITHDRAWN, currentUser)
@@ -1175,7 +1254,11 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
     })
   })
 
-  describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+  describe.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.READY_TO_COMPLETE,
+    AppealCaseState.COMPLETED,
+  ])(
     'when the user is a court of appeals user and the verdict appeal is %s',
     (appealState) => {
       let then: Then
@@ -1304,11 +1387,28 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     id: 'own_event',
     defendantId: 'own_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    created: new Date('2026-11-10T12:00:00.000Z'),
+    userName: 'Own Filer',
+    userTitle: 'Verjandi',
+    institutionName: 'Own firm',
   }
   const otherStatementEvent = {
     id: 'other_statement_event',
     defendantId: 'other_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    created: new Date('2026-11-11T12:00:00.000Z'),
+    userName: 'Other Filer',
+    userTitle: 'Verjandi',
+    institutionName: 'Other firm',
+  }
+  const prosecutionStatementEvent = {
+    id: 'prosecution_statement_event',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    userRole: UserRole.PROSECUTOR,
+    created: new Date('2026-11-12T12:00:00.000Z'),
+    userName: 'Prosecutor Filer',
+    userTitle: 'Saksóknari',
+    institutionName: 'Ákæruvaldið',
   }
   const coDefendantProsecutionAppeal = {
     id: 'co_defendant_prosecution_appeal',
@@ -1331,6 +1431,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     const appealEventLogs = [
       ownEvent,
       otherStatementEvent,
+      prosecutionStatementEvent,
       coDefendantProsecutionAppeal,
     ]
 
@@ -1384,7 +1485,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     mockHandle.mockReset()
   })
 
-  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+  it('keeps own-party rows, co-defendant statement filings, and prosecution appeal events', async () => {
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
@@ -1414,8 +1515,125 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     ).toEqual(['own_deadline'])
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
+      'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
+    // Co-party / unscoped prosecution SENT rows are filing-status only —
+    // created is kept for the file cutoff; filer PII is dropped.
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'other_statement_event',
+      ),
+    ).toEqual({
+      id: 'other_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      defendantId: 'other_defendant',
+      created: otherStatementEvent.created,
+      userRole: undefined,
+      civilClaimantId: undefined,
+    })
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'prosecution_statement_event',
+      ),
+    ).toEqual({
+      id: 'prosecution_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.PROSECUTOR,
+      created: prosecutionStatementEvent.created,
+      defendantId: undefined,
+      civilClaimantId: undefined,
+    })
+  })
+
+  it('strips filer identity from co-party verdict-appeal statement files', async () => {
+    const makeStatementFile = (fields: {
+      id: string
+      defendantId?: string
+      category: CaseFileCategory
+      submittedBy: string
+      fileRepresentative: string
+    }) => ({
+      ...fields,
+      state: CaseFileState.STORED_IN_RVG,
+      toJSON: () => ({ ...fields, state: CaseFileState.STORED_IN_RVG }),
+    })
+
+    const theCase = {
+      ...makeIndictmentWithVerdictAppeal(),
+      caseFiles: [
+        makeStatementFile({
+          id: 'own_statement',
+          defendantId: 'own_defendant',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Own Filer',
+          fileRepresentative: 'Own Advocate',
+        }),
+        makeStatementFile({
+          id: 'other_statement',
+          defendantId: 'other_defendant',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Other Filer',
+          fileRepresentative: 'Other Advocate',
+        }),
+        makeStatementFile({
+          id: 'prosecution_statement',
+          category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          submittedBy: 'Prosecutor Filer',
+          fileRepresentative: 'Ákærandi',
+        }),
+      ],
+    }
+
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      caseFiles: {
+        id: string
+        submittedBy?: string
+        fileRepresentative?: string
+      }[]
+    }
+
+    expect(
+      result.caseFiles.find((file) => file.id === 'own_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: 'Own Filer',
+        fileRepresentative: 'Own Advocate',
+      }),
+    )
+    expect(
+      result.caseFiles.find((file) => file.id === 'other_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: undefined,
+        fileRepresentative: undefined,
+      }),
+    )
+    expect(
+      result.caseFiles.find((file) => file.id === 'prosecution_statement'),
+    ).toEqual(
+      expect.objectContaining({
+        submittedBy: undefined,
+        fileRepresentative: undefined,
+      }),
+    )
   })
 
   it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {
@@ -1449,6 +1667,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
       'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
   })
@@ -1488,8 +1707,10 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealRulingDate).toBeUndefined()
   })
 
-  it('withholds Landsréttur ruling fields from defence users once completed', async () => {
-    const theCase = makeIndictmentWithVerdictAppeal(AppealCaseState.COMPLETED)
+  it('withholds Landsréttur ruling fields from defence users once confirmed', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal(
+      AppealCaseState.READY_TO_COMPLETE,
+    )
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
     }))

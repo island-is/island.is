@@ -15,3 +15,8 @@ The mutation requires the form-system scope.
 Logo defaults are `{ is: '', en: '' }`. Enabling PDF downloads refreshes
 `logo.is` from Contentful, resetting it to `''` when no logo is returned.
 Fetch failures leave the stored logo unchanged.
+
+`formSystemCustodyChildren` requires an authenticated user and `ApiScope.meDetails`,
+matching the National Registry child-query authorization. Lookup failures return
+a GraphQL error and a null custody field without nulling unrelated query results.
+Successful lookups still return the children, or an empty list when none exist.

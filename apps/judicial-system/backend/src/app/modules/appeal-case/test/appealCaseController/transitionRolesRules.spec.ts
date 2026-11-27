@@ -1,3 +1,4 @@
+import type { RolesRule } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
   AppealCaseType,
@@ -11,7 +12,12 @@ import {
 
 import { AppealCase, AppealEventLog, Case, User } from '../../../repository'
 import {
+  courtOfAppealsAssistantTransitionRule,
+  courtOfAppealsJudgeTransitionRule,
+  courtOfAppealsRegistrarTransitionRule,
   defenderTransitionRule,
+  districtCourtJudgeTransitionRule,
+  districtCourtRegistrarTransitionRule,
   prosecutorRepresentativeTransitionRule,
   prosecutorTransitionRule,
   publicProsecutorStaffCreateRule,
@@ -35,6 +41,59 @@ const buildRequest = (
 // An APPEALED event on the appeal case - the appellant is now read from here.
 const appealed = (fields: Partial<AppealEventLog> = {}): AppealEventLog =>
   ({ eventType: AppealEventType.APPEALED, ...fields } as AppealEventLog)
+
+// RolesGuard rejects a transition the user's rule does not list, so the lists
+// are what decides who may confirm a verdict appeal.
+describe('AppealCaseController - transition rules for confirming a verdict appeal', () => {
+  const dtoFieldValues = (rule: RolesRule) =>
+    (rule as { dtoFieldValues?: string[] }).dtoFieldValues ?? []
+
+  it.each([
+    ['judge', courtOfAppealsJudgeTransitionRule],
+    ['registrar', courtOfAppealsRegistrarTransitionRule],
+    ['assistant', courtOfAppealsAssistantTransitionRule],
+  ])('should let a court of appeals %s confirm a verdict appeal', (_, rule) => {
+    expect(dtoFieldValues(rule)).toContain(
+      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+    )
+  })
+
+  it.each([
+    ['prosecutor', prosecutorTransitionRule],
+    ['prosecutor representative', prosecutorRepresentativeTransitionRule],
+    ['defender', defenderTransitionRule],
+    ['district court judge', districtCourtJudgeTransitionRule],
+    ['district court registrar', districtCourtRegistrarTransitionRule],
+    ['public prosecutor staff', publicProsecutorStaffTransitionRule],
+  ])('should not let a %s confirm a verdict appeal', (_, rule) => {
+    expect(dtoFieldValues(rule)).not.toContain(
+      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+    )
+  })
+})
+
+// The backend takes a confirmation back itself when the court changes what it
+// confirmed, so no rule lets a user ask for it.
+describe('AppealCaseController - transition rules for taking a confirmation back', () => {
+  const dtoFieldValues = (rule: RolesRule) =>
+    (rule as { dtoFieldValues?: string[] }).dtoFieldValues ?? []
+
+  it.each([
+    ['court of appeals judge', courtOfAppealsJudgeTransitionRule],
+    ['court of appeals registrar', courtOfAppealsRegistrarTransitionRule],
+    ['court of appeals assistant', courtOfAppealsAssistantTransitionRule],
+    ['prosecutor', prosecutorTransitionRule],
+    ['prosecutor representative', prosecutorRepresentativeTransitionRule],
+    ['defender', defenderTransitionRule],
+    ['district court judge', districtCourtJudgeTransitionRule],
+    ['district court registrar', districtCourtRegistrarTransitionRule],
+    ['public prosecutor staff', publicProsecutorStaffTransitionRule],
+  ])('should not let a %s take a confirmation back', (_, rule) => {
+    expect(dtoFieldValues(rule)).not.toContain(
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+    )
+  })
+})
 
 describe('AppealCaseController - transition withdrawal rules', () => {
   describe('prosecution', () => {

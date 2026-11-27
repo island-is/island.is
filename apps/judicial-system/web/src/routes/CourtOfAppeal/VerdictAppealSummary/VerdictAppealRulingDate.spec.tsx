@@ -108,7 +108,7 @@ const theCase = {
   verdictAppealCase: {
     id: 'verdict-appeal',
     appealType: AppealCaseType.VERDICT,
-    appealState: AppealCaseState.COMPLETED,
+    appealState: AppealCaseState.READY_TO_COMPLETE,
     appealRulingDate: storedDate,
   },
 } as unknown as WorkingCase
@@ -133,6 +133,10 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
       }}
     >
       {children}
+      {/* What the section has written back to the appeal's state. */}
+      <output data-testid="verdictAppealState">
+        {workingCase.verdictAppealCase?.appealState}
+      </output>
     </FormContext.Provider>
   )
 }
@@ -209,6 +213,45 @@ describe('VerdictAppealRulingDate', () => {
     },
   )
 
+  // A new date takes a confirmed appeal back on the backend, and the response
+  // says so.
+  it('takes the state the save returns along with the date', async () => {
+    const today = formatDateForServer(startOfToday())
+    mockUpdateAppealCase.mockResolvedValue({
+      id: 'verdict-appeal',
+      appealRulingDate: today,
+      appealState: AppealCaseState.APPEALED,
+    })
+    renderSection()
+
+    await userEvent.click(screen.getByRole('button', { name: 'today' }))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('verdictAppealState')).toHaveTextContent(
+        AppealCaseState.APPEALED,
+      ),
+    )
+    expect(screen.getByTestId('shownDate')).toHaveTextContent(today)
+  })
+
+  it('keeps the state when the response carries none', async () => {
+    const today = formatDateForServer(startOfToday())
+    mockUpdateAppealCase.mockResolvedValue({
+      id: 'verdict-appeal',
+      appealRulingDate: today,
+    })
+    renderSection()
+
+    await userEvent.click(screen.getByRole('button', { name: 'today' }))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('shownDate')).toHaveTextContent(today),
+    )
+    expect(screen.getByTestId('verdictAppealState')).toHaveTextContent(
+      AppealCaseState.READY_TO_COMPLETE,
+    )
+  })
+
   it('keeps the stored date when the save fails', async () => {
     mockUpdateAppealCase.mockResolvedValue(undefined)
     renderSection()
@@ -249,6 +292,61 @@ describe('VerdictAppealRulingDate', () => {
       )
 
       expect(screen.getByTestId('shownDate')).toHaveTextContent(today)
+    })
+
+    // A save only ever takes a confirmed appeal back, so the state an earlier
+    // save returns holds whatever order the responses arrive in. The date
+    // still follows the latest save.
+    it('takes the state an earlier save returns even after a later one has answered', async () => {
+      const { first, second } = await pickBoth()
+
+      await act(async () =>
+        second.resolve({ id: 'verdict-appeal', appealRulingDate: today }),
+      )
+      await act(async () =>
+        first.resolve({
+          id: 'verdict-appeal',
+          appealRulingDate: verdictDay,
+          appealState: AppealCaseState.APPEALED,
+        }),
+      )
+
+      expect(screen.getByTestId('shownDate')).toHaveTextContent(today)
+      expect(screen.getByTestId('verdictAppealState')).toHaveTextContent(
+        AppealCaseState.APPEALED,
+      )
+    })
+
+    // The server stored the first date and took the appeal back, so the page
+    // must not go on showing it confirmed when the pick back to the stored
+    // date fails.
+    it('takes the state an earlier save returns when the latest save fails', async () => {
+      const first = deferredSave()
+      const second = deferredSave()
+      mockUpdateAppealCase
+        .mockImplementationOnce(() => first.promise)
+        .mockImplementationOnce(() => second.promise)
+      renderSection()
+
+      await userEvent.click(screen.getByRole('button', { name: 'today' }))
+      await userEvent.click(screen.getByRole('button', { name: 'stored day' }))
+      expect(mockUpdateAppealCase).toHaveBeenCalledTimes(2)
+      const mountsBefore = mockPickerMounts
+
+      await act(async () =>
+        first.resolve({
+          id: 'verdict-appeal',
+          appealRulingDate: today,
+          appealState: AppealCaseState.APPEALED,
+        }),
+      )
+      await act(async () => second.resolve(undefined))
+
+      expect(screen.getByTestId('verdictAppealState')).toHaveTextContent(
+        AppealCaseState.APPEALED,
+      )
+      expect(screen.getByTestId('shownDate')).toHaveTextContent(storedDate)
+      expect(mockPickerMounts).toBe(mountsBefore + 1)
     })
 
     it('does not reset the picker when an earlier save fails after a later one is stored', async () => {

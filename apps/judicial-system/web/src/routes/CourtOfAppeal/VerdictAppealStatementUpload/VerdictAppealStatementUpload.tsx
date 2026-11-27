@@ -10,7 +10,7 @@ import {
   type UploadFile,
 } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -28,12 +28,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useAppealStatementDeadline from '@island.is/judicial-system-web/src/utils/hooks/useAppealStatementDeadline'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
 import {
   getStatementFileCategories,
+  getStatementUploadFileRepresentative,
   getStatementUploadHeaderLine,
   getStatementUploadParty,
   isPartyStatementFile,
@@ -115,6 +115,9 @@ const VerdictAppealStatementUpload = () => {
       status: FileUploadStatus.done,
       defendantId: party?.ids.defendantId ?? undefined,
       civilClaimantId: party?.ids.civilClaimantId ?? undefined,
+      fileRepresentative: party
+        ? getStatementUploadFileRepresentative(workingCase, party)
+        : undefined,
     })
 
   // A staged file only has a row to lose. One the submit already uploaded,
@@ -201,7 +204,7 @@ const VerdictAppealStatementUpload = () => {
       isValid
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
+      <PageHeader title={titles.courtOfAppeal.verdictAppeal.statementUpload} />
       {party && categories && (
         <>
           <FormContentContainer>

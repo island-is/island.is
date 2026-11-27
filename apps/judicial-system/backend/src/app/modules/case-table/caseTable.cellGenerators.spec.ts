@@ -1,6 +1,7 @@
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealCourtSessionType,
   AppealEventType,
   CaseIndictmentRulingDecision,
@@ -158,23 +159,47 @@ describe('verdict appeal cell generators', () => {
   })
 
   describe('result', () => {
-    it('shows the ruling of a completed appeal', () => {
-      const cell = caseTableCellGenerators.verdictAppealResult.generate(
-        caseWithVerdictAppeal({
-          appealState: AppealCaseState.COMPLETED,
-          appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
-        }),
-        user,
-      )
+    // The column is the court of appeals' own, so the result shows from the
+    // moment the court confirms the appeal.
+    it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+      'shows the ruling of a %s appeal',
+      (appealState) => {
+        const cell = caseTableCellGenerators.verdictAppealResult.generate(
+          caseWithVerdictAppeal({
+            appealType: AppealCaseType.VERDICT,
+            appealState,
+            appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+          }),
+          user,
+        )
 
-      expect(cell.value).toEqual({ color: 'mint', text: 'Staðfest' })
+        expect(cell.value).toEqual({ color: 'mint', text: 'Staðfest' })
+      },
+    )
+
+    // Whether the appeal is confirmed is read off its type, so the column
+    // fetches the type along with the state.
+    it('fetches the appeal type with the state and the ruling', () => {
+      expect(
+        caseTableCellGenerators.verdictAppealResult.includes?.verdictAppealCase
+          ?.attributes,
+      ).toEqual(
+        expect.arrayContaining([
+          'appealType',
+          'appealState',
+          'appealRulingDecision',
+        ]),
+      )
     })
 
     // A withdrawal ends the appeal without a ruling, and the design puts it in
     // the completed list under the result column.
     it('shows a withdrawal as the result', () => {
       const cell = caseTableCellGenerators.verdictAppealResult.generate(
-        caseWithVerdictAppeal({ appealState: AppealCaseState.WITHDRAWN }),
+        caseWithVerdictAppeal({
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.WITHDRAWN,
+        }),
         user,
       )
 
@@ -183,7 +208,10 @@ describe('verdict appeal cell generators', () => {
 
     it('leaves the result empty while the appeal is still open', () => {
       const cell = caseTableCellGenerators.verdictAppealResult.generate(
-        caseWithVerdictAppeal({ appealState: AppealCaseState.APPEALED }),
+        caseWithVerdictAppeal({
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        }),
         user,
       )
 
@@ -721,7 +749,7 @@ describe('public prosecution appealed verdict cell generators', () => {
       [VerdictAppealStatus.POSTPONED, 'purple', 'Frestað'],
       [VerdictAppealStatus.UNDER_ADVISEMENT, 'mint', 'Dómtekið'],
       // Nothing about the appeal changes outside the court of appeals until
-      // the appeal itself is completed.
+      // its outcome is released.
       [VerdictAppealStatus.COMPLETED, 'mint', 'Dómtekið'],
     ])(
       'tags the appeal by the status the court of appeals recorded: %s',
@@ -742,7 +770,25 @@ describe('public prosecution appealed verdict cell generators', () => {
     )
 
     it.each([undefined, VerdictAppealStatus.COMPLETED])(
-      'keeps a completed appeal under advisement until its outcome is released',
+      'keeps a confirmed appeal under advisement until its outcome is released (status %s)',
+      (verdictAppealStatus) => {
+        const cell = caseTableCellGenerators.verdictAppealProgress.generate(
+          row({
+            appeal: {
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+              verdictAppealStatus,
+              appealCaseNumber: '526/2026',
+            },
+          }),
+          user,
+        )
+
+        expect(cell.value).toEqual({ color: 'mint', text: 'Dómtekið' })
+      },
+    )
+
+    it.each([undefined, VerdictAppealStatus.COMPLETED])(
+      'shows a completed appeal as completed (status %s)',
       (verdictAppealStatus) => {
         const cell = caseTableCellGenerators.verdictAppealProgress.generate(
           row({
@@ -755,7 +801,72 @@ describe('public prosecution appealed verdict cell generators', () => {
           user,
         )
 
-        expect(cell.value).toEqual({ color: 'mint', text: 'Dómtekið' })
+        expect(cell.value).toEqual({ color: 'darkerBlue', text: 'Lokið' })
+      },
+    )
+
+    // Outside the court a confirmed appeal reads as one under advisement,
+    // whatever status the court records on it afterwards.
+    it.each([
+      VerdictAppealStatus.COMPLETED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+      VerdictAppealStatus.POSTPONED,
+    ])(
+      'shows the same session and progress for a confirmed appeal recorded as %s as for one under advisement',
+      (verdictAppealStatus) => {
+        const courtSessions = [
+          {
+            sessionType: AppealCourtSessionType.MAIN_HEARING,
+            sessionDate: daysFromNow(3),
+          },
+        ]
+        const underAdvisement =
+          caseTableCellGenerators.verdictAppealCourtSession.generate(
+            row({
+              appeal: {
+                appealState: AppealCaseState.APPEALED,
+                verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+                courtSessions,
+              },
+            }),
+            user,
+          )
+        const confirmed =
+          caseTableCellGenerators.verdictAppealCourtSession.generate(
+            row({
+              appeal: {
+                appealState: AppealCaseState.READY_TO_COMPLETE,
+                verdictAppealStatus,
+                courtSessions,
+              },
+            }),
+            user,
+          )
+
+        expect(confirmed).toEqual(underAdvisement)
+        expect(confirmed.value).toBeUndefined()
+
+        const progress = (appeal: Record<string, unknown>) =>
+          caseTableCellGenerators.verdictAppealProgress.generate(
+            row({ appeal }),
+            user,
+          )
+
+        expect(
+          progress({
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+            verdictAppealStatus,
+            appealCaseNumber: '526/2026',
+            courtSessions,
+          }),
+        ).toEqual(
+          progress({
+            appealState: AppealCaseState.APPEALED,
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            appealCaseNumber: '526/2026',
+            courtSessions,
+          }),
+        )
       },
     )
 

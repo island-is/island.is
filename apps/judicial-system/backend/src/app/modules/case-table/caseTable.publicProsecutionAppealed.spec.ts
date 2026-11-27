@@ -310,6 +310,21 @@ describe('public prosecution appealed case list', () => {
     )
   })
 
+  // Outside the court of appeals a confirmed appeal reads as one still in
+  // progress, so the list must not tell the states apart: nothing about the
+  // verdict appeal's state decides whether a case is on it.
+  it('does not select on the state of the verdict appeal', async () => {
+    const sql = flat(
+      await sqlForTableRows(
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+        publicProsecutionUser,
+      ),
+    )
+
+    expect(sql).not.toMatch(/"verdictAppealCase"\."appeal_state" (=|IN)/)
+    expect(sql).not.toContain('READY_TO_COMPLETE')
+  })
+
   // Search runs off the access options rather than the table's, so without
   // this a prosecutor could open a case from the list and still not find it
   // by name.

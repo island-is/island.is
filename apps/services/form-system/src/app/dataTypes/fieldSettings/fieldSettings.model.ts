@@ -166,16 +166,6 @@ export class FieldSettings {
   familyType?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  showBiologicalChildren?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  showChildrenInCustody?: boolean
-
-  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })

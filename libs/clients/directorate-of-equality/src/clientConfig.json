@@ -1409,7 +1409,7 @@
     },
     "/api/v1/application/reports/{providerId}/equality-content": {
       "put": {
-        "description": "Replaces the narrative body of an EQUALITY report in place. Allowed only on reports in status `IN_REVIEW`. Emits an `EDITED` event; status is preserved. island.is-filed reports only.",
+        "description": "Replaces the narrative body of an EQUALITY report in place. Allowed only on reports in status `IN_REVIEW`. Emits an `EDITED` event; status is preserved. island.is-filed reports only. A plan PDF may arrive inline (`equalityReportPdf`, base64) or by `equalityReportPdfKey` from `POST …/equality-content/presign`; the key is single use.",
         "operationId": "editApplicationEqualityContent",
         "parameters": [
           {
@@ -1437,6 +1437,76 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApplicationReportDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/equality-content/presign": {
+      "post": {
+        "description": "Presigned PUT URL for the plan PDF of an EQUALITY report in status `DRAFT` or `IN_REVIEW`. PDF only; takes no body. Upload the bytes to `url`, then send `key` as `equalityReportPdfKey` (with `equalityReportPdfFilename`) on `PATCH …/draft` or `PUT …/equality-content`. The plan is then stored exactly as an inline `equalityReportPdf` would be: at most 4 MB, must be a PDF. A key is single use: a successful request consumes the upload, and resending it fails the request. An upload that is never registered expires after 24 hours.",
+        "operationId": "presignApplicationEqualityPlan",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignUploadResponseDto"
                 }
               }
             }
@@ -2605,7 +2675,7 @@
         "tags": ["Application"]
       },
       "patch": {
-        "description": "Patches report-level header fields (contact / admin / headcount / equality narrative) on a DRAFT report. PATCH semantics: omitted keys are left untouched, an explicit null clears the column. Returns the refreshed draft detail. 404 if the draft is not owned by the company or has already been submitted.",
+        "description": "Patches report-level header fields (contact / admin / headcount / equality narrative) on a DRAFT report. PATCH semantics: omitted keys are left untouched, an explicit null clears the column. A plan PDF may arrive inline (`equalityReportPdf`, base64) or by `equalityReportPdfKey` from `POST …/equality-content/presign`; the key is single use, so omit it from later saves. Returns the refreshed draft detail. 404 if the draft is not owned by the company or has already been submitted.",
         "operationId": "updateApplicationReportDraft",
         "parameters": [
           {
@@ -5738,11 +5808,16 @@
           },
           "equalityReportPdf": {
             "type": "string",
-            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent`. Max 4MB decoded."
+            "description": "New narrative content as a base64-encoded PDF, stored verbatim and replacing the prior content in place. Mutually exclusive with `equalityReportContent` and `equalityReportPdfKey`. Max 4MB decoded."
           },
           "equalityReportPdfFilename": {
             "type": "string",
-            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` or `equalityReportPdfKey` is supplied."
+          },
+          "equalityReportPdfKey": {
+            "type": "string",
+            "description": "Object key from `POST …/equality-content/presign` for a plan PDF already uploaded to the presigned URL. Stored exactly as an inline `equalityReportPdf` would be (max 4MB, must be a PDF). Requires `equalityReportPdfFilename`. Cannot be combined with a non-empty `equalityReportPdf` or `equalityReportContent` (400); a null beside the key is ignored and the key wins. **Single use:** a successful request consumes the upload; presign again for another file.",
+            "maxLength": 256
           }
         }
       },
@@ -6448,13 +6523,19 @@
           },
           "equalityReportPdf": {
             "type": "string",
-            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent`. Max 4MB decoded.",
+            "description": "Narrative gender-equality plan as a base64-encoded PDF, stored verbatim. Mutually exclusive with `equalityReportContent` and `equalityReportPdfKey`. Max 4MB decoded.",
             "nullable": true
           },
           "equalityReportPdfFilename": {
             "type": "string",
             "nullable": true,
-            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` is supplied."
+            "description": "File name of the uploaded PDF, shown in the review UI. Required when `equalityReportPdf` or `equalityReportPdfKey` is supplied."
+          },
+          "equalityReportPdfKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "Object key from `POST …/equality-content/presign` for a plan PDF already uploaded to the presigned URL. Stored exactly as an inline `equalityReportPdf` would be (max 4MB, must be a PDF). Requires `equalityReportPdfFilename`. Cannot be combined with a non-empty `equalityReportPdf` or `equalityReportContent` (400); a null beside the key is ignored and the key wins. **Single use:** a successful request consumes the upload, so send the key once and omit it from later saves — resending it fails the whole PATCH, header fields included. A null or empty key is ignored; clear the plan with `equalityReportContent: null`.",
+            "maxLength": 256
           }
         }
       },
