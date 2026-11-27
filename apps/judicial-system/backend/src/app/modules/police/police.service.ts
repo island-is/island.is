@@ -587,7 +587,9 @@ export class PoliceService {
 
     try {
       const res = await this.fetchPoliceDocumentApi(
-        `${this.xRoadPath}/V2/GetDocumentListById/${encodeURIComponent(caseId)}`,
+        `${this.xRoadPath}/V2/GetDocumentListById/${encodeURIComponent(
+          caseId,
+        )}`,
       )
 
       if (res.ok) {
