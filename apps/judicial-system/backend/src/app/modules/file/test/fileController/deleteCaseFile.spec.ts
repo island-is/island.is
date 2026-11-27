@@ -2,11 +2,17 @@ import { from, lastValueFrom } from 'rxjs'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { ExecutionContext } from '@nestjs/common'
+import { ExecutionContext, InternalServerErrorException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 
-import { CaseFileState, CaseType } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  AppealCaseType,
+  CaseFileCategory,
+  CaseFileState,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
@@ -14,7 +20,14 @@ import { TransactionCommitInterceptor } from '../../../../interceptors/transacti
 import { getOrCreateTransaction } from '../../../../middleware'
 import { runInRequestContext } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
+import {
+  AppealCase,
+  AppealCaseRepositoryService,
+  Case,
+  CaseFile,
+  CaseFileRepositoryService,
+} from '../../../repository'
+import { FileService } from '../../file.service'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
 
 interface Then {
@@ -37,6 +50,8 @@ describe('FileController - Delete case file', () => {
   let mockAwsS3Service: AwsS3Service
   let mockDeleteObject: jest.Mock
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
+  let fileServiceUnderTest: FileService
   let mockTransaction: jest.Mock
   let mockCommit: jest.Mock
   let transaction: Transaction
@@ -46,12 +61,16 @@ describe('FileController - Delete case file', () => {
     const {
       awsS3Service,
       caseFileRepositoryService,
+      appealCaseRepositoryService,
       fileController,
+      fileService,
       sequelize,
     } = await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
+    fileServiceUnderTest = fileService
 
     mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
     mockDeleteObject.mockResolvedValue(true)
@@ -343,6 +362,165 @@ describe('FileController - Delete case file', () => {
     it('should not commit or delete the file from S3', () => {
       expect(mockCommit).not.toHaveBeenCalled()
       expect(mockDeleteObject).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('ruling of a verdict appeal deleted', () => {
+    const caseId = uuid()
+    const verdictAppealCaseId = uuid()
+    const fileId = uuid()
+    const rulingFile = {
+      id: fileId,
+      key: `${caseId}/${uuid()}/ruling.pdf`,
+      category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    } as CaseFile
+    const caseWithAppeal = (appealState: AppealCaseState): Case =>
+      ({
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        verdictAppealCase: {
+          id: verdictAppealCaseId,
+          appealType: AppealCaseType.VERDICT,
+          appealState,
+        } as AppealCase,
+      } as Case)
+
+    describe('once the verdict appeal is confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+        mockUpdate.mockResolvedValueOnce(1)
+
+        then = await givenWhenThen(
+          caseId,
+          caseWithAppeal(AppealCaseState.READY_TO_COMPLETE),
+          fileId,
+          rulingFile,
+        )
+      })
+
+      // The appeal cannot stay confirmed without the document it was
+      // confirmed with.
+      it('should delete the file and take the confirmation back in the same transaction', () => {
+        expect(then.result).toEqual({ success: true })
+        expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+          fileId,
+          { state: CaseFileState.DELETED, isKeyAccessible: false },
+          { transaction },
+        )
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          verdictAppealCaseId,
+          { appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
+          transaction,
+        })
+      })
+    })
+
+    describe('once the verdict appeal is confirmed, but the file is not deleted', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+        mockUpdate.mockResolvedValueOnce(0)
+
+        then = await givenWhenThen(
+          caseId,
+          caseWithAppeal(AppealCaseState.READY_TO_COMPLETE),
+          fileId,
+          rulingFile,
+        )
+      })
+
+      it('should leave the appeal confirmed', () => {
+        expect(then.result).toEqual({ success: false })
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+      'when the verdict appeal is %s',
+      (appealState) => {
+        let then: Then
+
+        beforeEach(async () => {
+          const mockUpdate =
+            mockCaseFileRepositoryService.updateById as jest.Mock
+          mockUpdate.mockResolvedValueOnce(1)
+
+          then = await givenWhenThen(
+            caseId,
+            caseWithAppeal(appealState),
+            fileId,
+            rulingFile,
+          )
+        })
+
+        it('should delete the file and leave the appeal in its state', () => {
+          expect(then.result).toEqual({ success: true })
+          expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+          expect(
+            mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+          ).not.toHaveBeenCalled()
+        })
+      },
+    )
+
+    describe('another file deleted once the verdict appeal is confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+        mockUpdate.mockResolvedValueOnce(1)
+
+        then = await givenWhenThen(
+          caseId,
+          caseWithAppeal(AppealCaseState.READY_TO_COMPLETE),
+          fileId,
+          { ...rulingFile, category: CaseFileCategory.APPEAL_COURT_RECORD },
+        )
+      })
+
+      it('should leave the appeal confirmed', () => {
+        expect(then.result).toEqual({ success: true })
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    // Every route deletes in a transaction; without one the confirmation
+    // could not be taken back together with the file.
+    describe('without a transaction once the verdict appeal is confirmed', () => {
+      let error: unknown
+
+      beforeEach(async () => {
+        error = undefined
+
+        try {
+          await fileServiceUnderTest.deleteCaseFile(
+            caseWithAppeal(AppealCaseState.READY_TO_COMPLETE),
+            rulingFile,
+          )
+        } catch (reason) {
+          error = reason
+        }
+      })
+
+      it('should refuse to delete the file', () => {
+        expect(error).toBeInstanceOf(InternalServerErrorException)
+        expect(mockCaseFileRepositoryService.updateById).not.toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
     })
   })
 })

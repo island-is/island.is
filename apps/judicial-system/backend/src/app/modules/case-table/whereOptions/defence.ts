@@ -130,8 +130,10 @@ export const defenceIndictmentsAppealedWhereOptions = (
 // follow it to the court of appeals.
 //
 // One row per case, about the verdict appeal, which is what the columns read.
-// An appeal the court of appeals has completed, or one that was withdrawn,
-// drops off the list; the case stays among the completed ones throughout.
+// An appeal the court of appeals has confirmed but not completed stays on the
+// list, where it reads as under advisement: leaving it would tell the advocate
+// that the court has concluded. A completed appeal, or one that was withdrawn,
+// drops off; the case stays among the completed ones throughout.
 export const defenceIndictmentsVerdictAppealedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
@@ -140,7 +142,11 @@ export const defenceIndictmentsVerdictAppealedWhereOptions = (
       attributes: [],
       required: true,
       where: {
-        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+        appeal_state: [
+          AppealCaseState.APPEALED,
+          AppealCaseState.RECEIVED,
+          AppealCaseState.READY_TO_COMPLETE,
+        ],
       },
     },
   },
@@ -152,6 +158,7 @@ export const defenceIndictmentsVerdictAppealedWhereOptions = (
         '$verdictAppealCase.appeal_state$': [
           AppealCaseState.APPEALED,
           AppealCaseState.RECEIVED,
+          AppealCaseState.READY_TO_COMPLETE,
         ],
       },
     ],
