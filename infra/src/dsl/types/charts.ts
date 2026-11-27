@@ -24,6 +24,12 @@ export interface EnvironmentConfig {
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
   awsAccountId: string
   feature?: string
+  /**
+   * Feature deployments only: the feature has its own identity-server stack,
+   * so identity-server URLs are rewritten to the feature host. When unset,
+   * the feature uses the dev identity-server.
+   */
+  ownIds?: boolean
   redisHost: string
   global: any
 }

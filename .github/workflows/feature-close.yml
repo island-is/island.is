@@ -18,7 +18,15 @@ jobs:
   close_feature:
     name: Terminate feature deployment
     runs-on: arc-shared
-    if: ${{ github.event.label.name == 'deploy-feature' || github.event.pull_request.merged == true }}
+    # Tear down when the last feature deployment label is removed, or the PR is
+    # merged. Removing only one of the two labels keeps the deployment.
+    if: ${{
+      github.event.pull_request.merged == true ||
+      (
+      (github.event.label.name == 'deploy-feature' || github.event.label.name == 'ids-deploy-feature') &&
+      !contains(github.event.pull_request.labels.*.name, 'deploy-feature') &&
+      !contains(github.event.pull_request.labels.*.name, 'ids-deploy-feature')
+      ) }}
     permissions:
       id-token: write
       contents: write
