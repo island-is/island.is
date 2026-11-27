@@ -1,0 +1,396 @@
+import type { FC, MouseEvent, ReactNode } from 'react'
+import { useRef, useState } from 'react'
+import { AnimatePresence, useIsPresent } from 'motion/react'
+
+import {
+  AlertMessage,
+  Button,
+  Text,
+  ToggleSwitchCheckbox,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
+import {
+  Modal,
+  SectionHeading,
+  useOpenCaseInNewTab,
+} from '@island.is/judicial-system-web/src/components'
+import ExpandingSection from '@island.is/judicial-system-web/src/components/Motion/ExpandingSection'
+import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
+import type { CaseTableRow } from '@island.is/judicial-system-web/src/graphql/schema'
+import * as caseTableStyles from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/CaseTable.css'
+import {
+  compare,
+  render,
+} from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/caseTableCells'
+import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
+
+import {
+  formatCaseCountDative,
+  formatCaseNumberList,
+  getColumnWidth,
+  getCompletedTitle,
+  getConfirmButtonText,
+  getConfirmTitle,
+  getFutureRulingDateWarning,
+  getMoveAnnouncement,
+  getRowActionLabel,
+  getRowId,
+  getRowLabel,
+  getStageRefusal,
+  getStageRefusalMessage,
+  partitionRows,
+  pruneStagedIds,
+  stageCase,
+  unstageCase,
+} from './BulkCompleteCases.logic'
+import * as styles from './BulkCompleteCases.css'
+
+interface Props {
+  rows: CaseTableRow[]
+  columns: { title: string }[]
+  onComplete: (rows: CaseTableRow[]) => Promise<void>
+  // The heading of the list the cases are picked from.
+  title?: string
+}
+
+type ModalState = 'none' | 'confirm' | 'success'
+
+// A closing block is kept on the page from the props it had when it was last
+// shown, so its content cannot be told about the change through props. This
+// hands that content whether the block is still on the page.
+const WithPresence: FC<{ children: (isPresent: boolean) => ReactNode }> = ({
+  children,
+}) => {
+  const isPresent = useIsPresent()
+
+  return children(isPresent)
+}
+
+const EmptyList: FC<{ text: string }> = ({ text }) => (
+  <div className={styles.emptyList}>
+    <Text variant="small">{text}</Text>
+  </div>
+)
+
+const BulkCompleteCaseLists: FC<Props> = ({
+  rows,
+  columns,
+  onComplete,
+  title = 'Mál í dómsuppkvaðningu',
+}) => {
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
+  const {
+    isOpeningCaseId,
+    isOpeningDefendantIds,
+    isOpeningAppealCaseId,
+    handleOpenCase,
+    LoadingIndicator,
+    showLoading,
+  } = useCaseList()
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [stagedIds, setStagedIds] = useState<string[]>([])
+  const [modal, setModal] = useState<ModalState>('none')
+  // The staged rows as they were when the confirm modal opened. The modal
+  // names these and completes these, though the list may change under it.
+  const [confirmRows, setConfirmRows] = useState<CaseTableRow[]>([])
+  const [completedRows, setCompletedRows] = useState<CaseTableRow[]>([])
+  const [isCompleting, setIsCompleting] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const toggleContainerRef = useRef<HTMLDivElement>(null)
+  // Set synchronously, so a second click on the confirm button before the
+  // re-render that disables it still sends nothing.
+  const isCompletingRef = useRef(false)
+
+  // A staged row that has left the list leaves the selection too, so it
+  // neither counts towards the most that can be completed nor comes back
+  // staged should it return.
+  const liveStagedIds = pruneStagedIds(stagedIds, rows)
+
+  if (liveStagedIds !== stagedIds) {
+    setStagedIds(liveStagedIds)
+  }
+
+  const { staged, source } = partitionRows(rows, liveStagedIds)
+
+  const tableColumns = columns.map((c, idx) => ({
+    title: c.title,
+    width: getColumnWidth(idx, columns.length),
+    compare,
+    render,
+  }))
+
+  const handleToggle = (checked: boolean) => {
+    setSelectionMode(checked)
+
+    if (!checked) {
+      setStagedIds([])
+    }
+  }
+
+  // A row moved with the keyboard leaves its list, taking focus with it, so
+  // focus goes to the row that takes its place, or to the selection toggle
+  // when the list is left empty.
+  const moveFocusFromMovedRow = () => {
+    const movedRow = document.activeElement
+
+    if (!(movedRow instanceof HTMLTableRowElement)) {
+      return
+    }
+
+    const nextRow =
+      movedRow.nextElementSibling ?? movedRow.previousElementSibling
+
+    if (nextRow instanceof HTMLTableRowElement) {
+      nextRow.focus()
+      return
+    }
+
+    toggleContainerRef.current?.querySelector('input')?.focus()
+  }
+
+  const moveCase = (
+    row: CaseTableRow,
+    isStaged: boolean,
+    event?: MouseEvent<HTMLTableRowElement>,
+  ) => {
+    // The second click of a double click lands on whatever row has slid in
+    // under the pointer, so only the first click moves a case.
+    if (event && event.detail > 1) {
+      return
+    }
+
+    const rowId = getRowId(row)
+
+    if (!isStaged) {
+      const refusal = getStageRefusal(liveStagedIds, rows, rowId)
+
+      if (refusal) {
+        toast.warning(getStageRefusalMessage(refusal))
+        return
+      }
+    }
+
+    if (!event) {
+      moveFocusFromMovedRow()
+    }
+
+    setAnnouncement(
+      getMoveAnnouncement(isStaged ? 'unstage' : 'stage', getRowLabel(row)),
+    )
+    setStagedIds((prev) =>
+      isStaged ? unstageCase(prev, rowId) : stageCase(prev, rows, rowId),
+    )
+  }
+
+  const getTableRow = (
+    r: CaseTableRow,
+    isStaged: boolean,
+    isInteractive = true,
+  ) => {
+    const label = getRowLabel(r)
+    const common = {
+      id: getRowId(r),
+      cells: r.cells,
+      contextMenuItems: [openCaseInNewTab(r.caseId, r.appealCaseId)],
+      label,
+    }
+
+    if (selectionMode) {
+      return {
+        ...common,
+        onClick: (event?: MouseEvent<HTMLTableRowElement>) =>
+          moveCase(r, isStaged, event),
+        isDisabled: !isInteractive,
+        isLoading: false,
+        actionLabel: getRowActionLabel(isStaged ? 'unstage' : 'stage', label),
+      }
+    }
+
+    const isOpening =
+      isOpeningCaseId === r.caseId &&
+      compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+      isOpeningAppealCaseId === r.appealCaseId
+
+    return {
+      ...common,
+      onClick: () =>
+        handleOpenCase(r.caseId, false, r.defendantIds, r.appealCaseId),
+      isDisabled: !isInteractive || isOpening,
+      isLoading: isOpening && showLoading,
+      actionLabel: getRowActionLabel('open', label),
+    }
+  }
+
+  const openConfirm = () => {
+    setConfirmRows(staged)
+    setModal('confirm')
+  }
+
+  const handleConfirm = async () => {
+    if (isCompletingRef.current) {
+      return
+    }
+
+    isCompletingRef.current = true
+    setIsCompleting(true)
+
+    try {
+      await onComplete(confirmRows)
+      setCompletedRows(confirmRows)
+      setModal('success')
+    } catch {
+      setModal('none')
+      toast.error('Ekki tókst að ljúka málum. Vinsamlega reynið aftur.')
+    } finally {
+      isCompletingRef.current = false
+      setIsCompleting(false)
+    }
+  }
+
+  const handleCloseSuccess = () => {
+    setModal('none')
+    setCompletedRows([])
+    setStagedIds([])
+    setSelectionMode(false)
+  }
+
+  const futureRulingDateWarning =
+    modal === 'confirm'
+      ? getFutureRulingDateWarning(confirmRows, new Date())
+      : undefined
+
+  const emptyState = (
+    <div className={stack({ gap: 3 })}>
+      <SectionHeading title={title} marginBottom={0} />
+      <div className={caseTableStyles.infoContainer}>
+        <AlertMessage
+          type="info"
+          title="Engin mál fundust"
+          message="Engin mál fundust í þessum flokki"
+        />
+      </div>
+    </div>
+  )
+
+  return (
+    <>
+      <VisuallyHidden>
+        <span aria-live="polite">{announcement}</span>
+      </VisuallyHidden>
+      {rows.length === 0 ? (
+        emptyState
+      ) : (
+        <div>
+          <ExpandingSection show={selectionMode}>
+            <WithPresence>
+              {(isPresent) => (
+                // While the section closes, its rows no longer respond: the
+                // same cases are back in the list below.
+                <div className={stack({ gap: 3 })} inert={!isPresent}>
+                  <div className={styles.sectionHeader}>
+                    <SectionHeading title="Mál til að ljúka" marginBottom={0} />
+                    <Button
+                      variant="text"
+                      icon="arrowForward"
+                      disabled={!isPresent || staged.length === 0}
+                      onClick={openConfirm}
+                    >
+                      Ljúka málum
+                    </Button>
+                  </div>
+                  <div className={styles.stagingSection}>
+                    <GenericTable
+                      tableId="bulk-complete-cases-staged"
+                      columns={tableColumns}
+                      rows={staged.map((r) => getTableRow(r, true, isPresent))}
+                      loadingIndicator={LoadingIndicator}
+                      fadeInNewRows
+                      fixedLayout
+                    />
+                    {staged.length === 0 && (
+                      <EmptyList text="Engin mál valin – smelltu á mál til að velja það" />
+                    )}
+                  </div>
+                </div>
+              )}
+            </WithPresence>
+          </ExpandingSection>
+          <div className={stack({ gap: 3 })}>
+            <div className={styles.sectionHeader}>
+              <SectionHeading title={title} marginBottom={0} />
+              <div ref={toggleContainerRef}>
+                <ToggleSwitchCheckbox
+                  name="select-cases-to-complete"
+                  label={<Text>Velja mál til að ljúka</Text>}
+                  checked={selectionMode}
+                  onChange={handleToggle}
+                />
+              </div>
+            </div>
+            <div>
+              <GenericTable
+                tableId="bulk-complete-cases-source"
+                columns={tableColumns}
+                rows={source.map((r) => getTableRow(r, false))}
+                loadingIndicator={LoadingIndicator}
+                fadeInNewRows
+                fixedLayout
+              />
+              {source.length === 0 && <EmptyList text="Öll mál valin" />}
+            </div>
+          </div>
+        </div>
+      )}
+      <AnimatePresence mode="wait">
+        {modal === 'confirm' && (
+          <Modal
+            key="confirm"
+            title={getConfirmTitle(confirmRows.length)}
+            text={
+              <div className={stack({ gap: 3 })}>
+                <Text>{`Áfrýjun verður lokið í ${formatCaseCountDative(
+                  confirmRows.length,
+                )}: ${formatCaseNumberList(confirmRows)}.`}</Text>
+                {futureRulingDateWarning && (
+                  <AlertMessage
+                    type="warning"
+                    message={futureRulingDateWarning}
+                  />
+                )}
+              </div>
+            }
+            onClose={() => setModal('none')}
+            loading={isCompleting}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModal('none'),
+                variant: 'ghost',
+              },
+              {
+                text: getConfirmButtonText(confirmRows.length),
+                onClick: handleConfirm,
+              },
+            ]}
+          />
+        )}
+        {modal === 'success' && (
+          <Modal
+            key="success"
+            title={getCompletedTitle(completedRows.length)}
+            text={`Áfrýjun er lokið í ${formatCaseCountDative(
+              completedRows.length,
+            )}: ${formatCaseNumberList(completedRows)}.`}
+            onClose={handleCloseSuccess}
+            buttons={[{ text: 'Loka', onClick: handleCloseSuccess }]}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+export default BulkCompleteCaseLists
