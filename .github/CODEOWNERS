@@ -404,6 +404,9 @@ codemagic.yaml                                                                  
 /libs/clients/form-system/                                                                                                   @island-is/advania
 /libs/form-system                                                                                                            @island-is/advania
 /libs/portals/form-system                                                                                                    @island-is/advania
+/libs/application/templates/temporary-vehicle-export/                                                                        @island-is/advania
+/libs/application/template-api-modules/src/lib/modules/templates/temporary-vehicle-export/                                   @island-is/advania
+/libs/clients/rsk/kilometragjald-reimbursement/                                                                              @island-is/advania
 
 /apps/skilavottord/                                                                                                          @island-is/deloitte
 /libs/skilavottord/                                                                                                          @island-is/deloitte
