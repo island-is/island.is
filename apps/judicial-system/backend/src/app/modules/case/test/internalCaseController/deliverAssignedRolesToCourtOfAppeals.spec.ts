@@ -24,6 +24,7 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
   const appealJudge1Id = uuid()
   const appealJudge2Id = uuid()
   const appealJudge3Id = uuid()
+  const appealJudge4Id = uuid()
   const appealAssistantNationalId = uuid()
   const appealAssistantName = uuid()
   const appealJudge1NationalId = uuid()
@@ -32,14 +33,15 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
   const appealJudge2Name = uuid()
   const appealJudge3NationalId = uuid()
   const appealJudge3Name = uuid()
+  const appealJudge4NationalId = uuid()
+  const appealJudge4Name = uuid()
 
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
   } as Case
 
-  // The bench is stored in order; the robot gets the first three, presiding
-  // judge first, so a fourth judge is not delivered.
+  // The bench is stored in order; the robot gets every judge, presiding first.
   const appealCase = {
     id: appealCaseId,
     appealCaseNumber,
@@ -66,8 +68,8 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
       },
       {
         displayOrder: 3,
-        userId: uuid(),
-        user: { nationalId: uuid(), name: uuid() },
+        userId: appealJudge4Id,
+        user: { nationalId: appealJudge4NationalId, name: appealJudge4Name },
       },
     ],
   } as unknown as AppealCase
@@ -111,7 +113,7 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
       then = await givenWhenThen()
     })
 
-    it('should return success', () => {
+    it('should deliver every seated judge in display order', () => {
       expect(
         mockCourtService.updateAppealCaseWithAssignedRoles,
       ).toHaveBeenCalledWith(
@@ -120,12 +122,24 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
         appealCaseNumber,
         appealAssistantNationalId,
         appealAssistantName,
-        appealJudge1NationalId,
-        appealJudge1Name,
-        appealJudge2NationalId,
-        appealJudge2Name,
-        appealJudge3NationalId,
-        appealJudge3Name,
+        [
+          {
+            nationalId: appealJudge1NationalId,
+            name: appealJudge1Name,
+          },
+          {
+            nationalId: appealJudge2NationalId,
+            name: appealJudge2Name,
+          },
+          {
+            nationalId: appealJudge3NationalId,
+            name: appealJudge3Name,
+          },
+          {
+            nationalId: appealJudge4NationalId,
+            name: appealJudge4Name,
+          },
+        ],
       )
       expect(then.result).toEqual({ delivered: true })
     })

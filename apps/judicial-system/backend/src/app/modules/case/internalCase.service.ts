@@ -1209,8 +1209,11 @@ export class InternalCaseService {
     appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
-    // The court's robot takes three judges, presiding judge first.
-    const [judge1, judge2, judge3] = getAppealJudges(appealCase)
+    // Presiding judge first; include every seated judge for the robot.
+    const appealJudges = getAppealJudges(appealCase).map((judge) => ({
+      nationalId: judge.nationalId,
+      name: judge.name,
+    }))
 
     return this.courtService
       .updateAppealCaseWithAssignedRoles(
@@ -1219,12 +1222,7 @@ export class InternalCaseService {
         appealCase.appealCaseNumber,
         appealCase.appealAssistant?.nationalId,
         appealCase.appealAssistant?.name,
-        judge1?.nationalId,
-        judge1?.name,
-        judge2?.nationalId,
-        judge2?.name,
-        judge3?.nationalId,
-        judge3?.name,
+        appealJudges,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
