@@ -2,24 +2,19 @@ import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { FamilyTypes } from '@island.is/form-system/enums'
 import { GET_CUSTODY_CHILDREN } from '@island.is/form-system/graphql'
-import {
-  Box,
-  LoadingDots,
-  Select,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Box, LoadingDots, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Dispatch, useEffect } from 'react'
+import { useController, useFormContext } from 'react-hook-form'
+import { v4 as uuid } from 'uuid'
 import { Action } from '../../../lib'
 import { FieldTypesEnum } from '../../../lib/enums'
-import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 import { previewMockData } from '../../../lib/previewMockData'
+import { ChildrenTable } from './ChildrenTable'
 
 interface Props {
   item: FormSystemField
-  valueIndex?: number
   dispatch?: Dispatch<Action>
   isPreview?: boolean
 }
@@ -27,11 +22,6 @@ interface Props {
 type FamilyMember = {
   name: string
   nationalId: string
-}
-
-type FamilyOption = {
-  label: string
-  value: FamilyMember
 }
 
 type RegistryChild = {
@@ -43,14 +33,102 @@ type CustodyChildrenData = {
   formSystemCustodyChildren: RegistryChild[]
 }
 
-export const Child = ({
+type ChildFormValues = Record<string, (string[] | null)[]>
+
+const ChildTable = ({
   item,
-  valueIndex = 0,
+  members,
   dispatch,
-  isPreview = false,
-}: Props) => {
+  isPreview,
+  errorMessage,
+}: Props & { members: FamilyMember[]; errorMessage?: string }) => {
   const { lang, formatMessage } = useLocale()
-  const { control, trigger } = useFormContext()
+  const { control, trigger } = useFormContext<ChildFormValues>()
+  const savedIds = (item.values ?? []).flatMap((value) =>
+    value?.json?.nationalId ? [value.json.nationalId] : [],
+  )
+  const { field: selection, fieldState } = useController<
+    ChildFormValues,
+    `${string}.0`
+  >({
+    name: `${item.id}.0`,
+    control,
+    defaultValue: isPreview
+      ? null
+      : item.values?.length === 0 || savedIds.length > 0
+      ? savedIds
+      : null,
+    rules: {
+      validate: (ids) =>
+        !item.isRequired ||
+        members.some(
+          (member) => ids === null || ids.includes(member.nationalId),
+        ) ||
+        formatMessage(m.atLeastOneChildRequired),
+    },
+  })
+  const selectedIds = selection.value
+  const selectedMembers = members.filter(
+    (member) => selectedIds === null || selectedIds.includes(member.nationalId),
+  )
+
+  useEffect(() => {
+    if (errorMessage) return
+
+    if (
+      item.values?.length === selectedMembers.length &&
+      selectedMembers.every(
+        (member, index) =>
+          item.values?.[index]?.json?.nationalId === member.nationalId &&
+          item.values?.[index]?.json?.name === member.name,
+      )
+    ) {
+      return
+    }
+
+    dispatch?.({
+      type: 'SET_FIELD_VALUES',
+      payload: {
+        id: item.id,
+        values: selectedMembers.map((member, order) => ({
+          id:
+            item.values?.find(
+              (value) => value?.json?.nationalId === member.nationalId,
+            )?.id ?? uuid(),
+          order,
+          json: member,
+        })),
+      },
+    })
+  }, [dispatch, errorMessage, item.id, item.values, selectedMembers])
+
+  return (
+    <ChildrenTable
+      label={item.name?.[lang] ?? ''}
+      required={item.isRequired ?? false}
+      members={members}
+      errorMessage={errorMessage}
+      validationMessage={fieldState.error?.message}
+      selectedNationalIds={selectedMembers.map((member) => member.nationalId)}
+      onSelectionChange={(nationalId, checked) => {
+        selection.onChange(
+          members
+            .filter((member) =>
+              member.nationalId === nationalId
+                ? checked
+                : selectedIds === null ||
+                  selectedIds.includes(member.nationalId),
+            )
+            .map((member) => member.nationalId),
+        )
+        trigger(selection.name)
+      }}
+    />
+  )
+}
+
+export const Child = ({ item, dispatch, isPreview = false }: Props) => {
+  const { lang, formatMessage } = useLocale()
   const cached = !isPreview && (item.list?.length ?? 0) > 0
   const { data, loading, error } = useQuery<CustodyChildrenData>(
     GET_CUSTODY_CHILDREN,
@@ -77,39 +155,43 @@ export const Child = ({
       },
     },
   )
-  const fieldName = `${item.id}.${valueIndex}`
-  const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
+
+  useEffect(() => {
+    if (isPreview || cached || !loading) return
+
+    dispatch?.({
+      type: 'SET_FIELD_LOADING',
+      payload: { id: item.id, loading: true },
+    })
+
+    return () => {
+      dispatch?.({
+        type: 'SET_FIELD_LOADING',
+        payload: { id: item.id, loading: false },
+      })
+    }
+  }, [cached, dispatch, isPreview, item.id, loading])
 
   const children =
     (isPreview
       ? previewMockData[FieldTypesEnum.FAMILY][FamilyTypes.CHILD]
       : data
     )?.formSystemCustodyChildren ?? []
-  const options: FamilyOption[] = cached
+  const members: FamilyMember[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value
           ? [
               {
-                label: listItem.label?.[lang] ?? listItem.value,
-                value: {
-                  name: listItem.label?.[lang] ?? listItem.value,
-                  nationalId: listItem.value,
-                },
+                name: listItem.label?.[lang] ?? listItem.value,
+                nationalId: listItem.value,
               },
             ]
           : [],
       )
     : children.map((child) => ({
-        label: child.fullName ?? child.nationalId,
-        value: {
-          name: child.fullName ?? child.nationalId,
-          nationalId: child.nationalId,
-        },
+        name: child.fullName ?? child.nationalId,
+        nationalId: child.nationalId,
       }))
-
-  const selected = options.find(
-    (option: FamilyOption) => option.value.nationalId === selectedNationalId,
-  )
 
   if (loading && !cached) {
     return (
@@ -123,50 +205,13 @@ export const Child = ({
   }
 
   return (
-    <Controller
-      name={fieldName}
-      control={control}
-      defaultValue={selectedNationalId}
-      rules={{
-        required: {
-          value: item.isRequired ?? false,
-          message: formatMessage(m.required),
-        },
-      }}
-      render={({ field, fieldState }) => (
-        <Select
-          name="child"
-          label={item.name?.[lang] ?? ''}
-          placeholder="Veldu barn"
-          options={options}
-          value={selected}
-          required={item.isRequired ?? false}
-          backgroundColor="blue"
-          isClearable={!item.isRequired}
-          onChange={(option) => {
-            const member = option?.value as FamilyMember | undefined
-            const nationalId = member?.nationalId ?? ''
-            const name = member?.name ?? ''
-
-            field.onChange(nationalId)
-            trigger(fieldName)
-            dispatch?.({
-              type: 'SET_NATIONAL_ID',
-              payload: { id: item.id, value: nationalId, valueIndex },
-            })
-            dispatch?.({
-              type: 'SET_NAME',
-              payload: { id: item.id, value: name, valueIndex },
-            })
-          }}
-          hasError={Boolean(error || fieldState.error)}
-          errorMessage={
-            error
-              ? formatMessage(m.basicErrorMessage)
-              : fieldState.error?.message
-          }
-        />
-      )}
+    <ChildTable
+      key={item.id}
+      item={item}
+      members={members}
+      dispatch={dispatch}
+      isPreview={isPreview}
+      errorMessage={error ? formatMessage(m.basicErrorMessage) : undefined}
     />
   )
 }

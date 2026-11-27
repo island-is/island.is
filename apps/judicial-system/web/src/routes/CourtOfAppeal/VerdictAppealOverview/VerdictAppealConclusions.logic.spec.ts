@@ -1,6 +1,7 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   AppealCaseState,
+  AppealCaseType,
   AppealRulingType,
   CaseIndictmentRulingDecision,
   VerdictAppealStatus,
@@ -137,19 +138,23 @@ describe('getVerdictAppealConclusions', () => {
     ).toEqual(['Dómsorð héraðsdóms'])
   })
 
-  it('keeps the court of appeals words of a completed appeal under another status', () => {
-    expect(
-      getVerdictAppealConclusions(
-        caseWith({
-          verdictAppealCase: {
-            appealState: AppealCaseState.COMPLETED,
-            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
-            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
-          },
-        } as Partial<ConclusionCase>),
-      ).map((conclusion) => conclusion.title),
-    ).toEqual(['Dómsorð Landsréttar'])
-  })
+  it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+    'keeps the court of appeals words of a %s appeal under another status',
+    (appealState) => {
+      expect(
+        getVerdictAppealConclusions(
+          caseWith({
+            verdictAppealCase: {
+              appealType: AppealCaseType.VERDICT,
+              appealState,
+              verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+              appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+            },
+          } as Partial<ConclusionCase>),
+        ).map((conclusion) => conclusion.title),
+      ).toEqual(['Dómsorð Landsréttar'])
+    },
+  )
 
   // Read side by side, district court first - the order the proceeding went in.
   it('puts the district court first when both have concluded', () => {

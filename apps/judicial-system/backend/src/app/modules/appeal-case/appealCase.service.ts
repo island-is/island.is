@@ -42,12 +42,14 @@ import {
   isSameAppealBench,
   isSameAppealStatementParty,
   isStoredVerdictAppealRulingPdf,
+  isVerdictAppealConfirmed,
   verdictAppealDeclarationFileCategories,
   VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { queueMessagesAfterCommit } from '../../middleware'
+import { canUserAccessCase } from '../case/filters/case.filter'
 import { FileService } from '../file'
 import {
   AppealCase,
@@ -75,6 +77,8 @@ import {
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
 import {
+  changedLockedCompletedVerdictAppealFields,
+  changesConfirmedVerdictAppealOutcome,
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
@@ -150,7 +154,9 @@ export class AppealCaseService {
   // Writes one appeal event-log row per given party. Callers decide which
   // parties an event applies to: writeEventLog to every party the user
   // represents (an appeal / statement covers all of them), the withdrawal flow
-  // to only the parties actually being withdrawn.
+  // to only the parties actually being withdrawn. An act of the court of
+  // appeals itself - completing a verdict appeal - names no party and is
+  // written as a single row without one.
   private async writeEventLogRows(
     theCase: Case,
     appealCase: AppealCase,
@@ -168,10 +174,10 @@ export class AppealCaseService {
             caseId: theCase.id,
             appealCaseId: appealCase.id,
             eventType,
-            // Everything written here is a party acting outside the court
-            // record; in-court APPEALED events are built by
-            // buildInCourtAppealedEvent instead. Origin is only meaningful for
-            // APPEALED.
+            // An APPEALED event written here is a party appealing outside the
+            // court record; in-court APPEALED events are built by
+            // buildInCourtAppealedEvent instead. No other event has an origin,
+            // whether a party's or the court of appeals' own APPEAL_COMPLETED.
             appealOrigin:
               eventType === AppealEventType.APPEALED
                 ? AppealOrigin.OUT_OF_COURT
@@ -1099,6 +1105,29 @@ export class AppealCaseService {
       )
     }
 
+    // A completed verdict appeal is over: its outcome has been released to
+    // everyone, and nothing more is delivered or notified for it. Its record
+    // is frozen - the outcome, and the court's case number, bench and
+    // assistant under which it was decided - before anything is written or
+    // queued.
+    if (
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.COMPLETED
+    ) {
+      const changedLockedFields = changedLockedCompletedVerdictAppealFields(
+        appealCase,
+        update,
+      )
+
+      if (changedLockedFields.length > 0) {
+        throw new ForbiddenException(
+          `Completed verdict appeal ${
+            appealCase.id
+          } cannot be changed (${changedLockedFields.join(', ')})`,
+        )
+      }
+    }
+
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
     const data: UpdateAppealCase = { ...columnUpdate }
@@ -1109,6 +1138,25 @@ export class AppealCaseService {
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
+    }
+
+    // The court of appeals confirmed a verdict appeal with the outcome on
+    // record then, so a change to it has the appeal confirmed again. It goes
+    // back to APPEALED in the same write, with everything recorded kept.
+    // Nothing is announced: the outcome was never released.
+    const takesConfirmationBack =
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.READY_TO_COMPLETE &&
+      changesConfirmedVerdictAppealOutcome(appealCase, update)
+
+    if (takesConfirmationBack) {
+      const { appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+        theCase,
+        appealCase,
+      )
+
+      Object.assign(data, appealCaseUpdate)
     }
 
     let updatedAppealCase = appealCase
@@ -1123,15 +1171,11 @@ export class AppealCaseService {
       })
     }
 
-    // The confirmed copy of a completed verdict appeal's ruling document is
-    // stamped with this date, so a new date has it stamped again.
-    if (
-      appealCase.appealType === AppealCaseType.VERDICT &&
-      appealCase.appealState === AppealCaseState.COMPLETED &&
-      update.appealRulingDate &&
-      update.appealRulingDate.getTime() !==
-        appealCase.appealRulingDate?.getTime()
-    ) {
+    // An appeal whose confirmation is taken back is no longer confirmed, so
+    // the stamped copy of its ruling document is not trusted either. That
+    // covers a new date of conclusion, which the copy is stamped with. A
+    // completed appeal keeps its copy: its outcome cannot change.
+    if (takesConfirmationBack) {
       await this.fileService.invalidateVerdictAppealRulingConfirmation(
         theCase.id,
         transaction,
@@ -1425,6 +1469,14 @@ export class AppealCaseService {
     transaction: Transaction,
     defendantId?: string,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // Taking a confirmation back follows from the court changing what it
+    // confirmed, which the backend applies itself; no user requests it.
+    if (transition === AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE) {
+      throw new ForbiddenException(
+        `The appeal transition ${transition} cannot be requested`,
+      )
+    }
+
     // Withdrawing a verdict appeal is per defendant, the same way filing one is.
     if (
       transition === AppealCaseTransition.WITHDRAW_APPEAL &&
@@ -1440,10 +1492,17 @@ export class AppealCaseService {
     }
 
     if (
+      transition === AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      appealCase.appealType === AppealCaseType.VERDICT
+    ) {
+      return this.confirmVerdictAppeal(theCase, appealCase, transaction)
+    }
+
+    if (
       transition === AppealCaseTransition.COMPLETE_APPEAL &&
       appealCase.appealType === AppealCaseType.VERDICT
     ) {
-      return this.completeVerdictAppeal(theCase, appealCase, transaction)
+      return this.releaseVerdictAppeal(theCase, appealCase, user, transaction)
     }
 
     // Withdrawing an in-court ruling-order appeal is per party: only the
@@ -1647,10 +1706,11 @@ export class AppealCaseService {
       )
     }
 
-    // An appeal the court of appeals has concluded has nothing left to
-    // withdraw, whoever else still stands as an appellant. The outcome stays
-    // with the court until it is released, so the refusal does not say why.
-    if (lockedAppealCase?.appealState === AppealCaseState.COMPLETED) {
+    // An appeal the court of appeals has confirmed or completed has nothing
+    // left to withdraw, whoever else still stands as an appellant. The outcome
+    // stays with the court until it is released, so the refusal does not say
+    // why, nor tell a confirmed appeal from a completed one.
+    if (isVerdictAppealConfirmed(lockedAppealCase)) {
       throw new ForbiddenException('The verdict appeal cannot be withdrawn')
     }
 
@@ -1746,26 +1806,17 @@ export class AppealCaseService {
     return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
   }
 
-  // The court of appeals concludes a verdict appeal once everything about how
-  // it ended is on record: a status of completed, the outcome, whether it is a
-  // judgment or a ruling, the concluding words, the date it ended and the
-  // document itself. That date is the court's own and is kept as entered.
-  //
-  // Nothing is announced. The outcome stays with the court until it is
-  // released, so no message is queued and nothing is delivered - which is why
-  // this does not go through applyTransition, where completing an appeal
-  // notifies the parties and delivers the ruling.
-  private async completeVerdictAppeal(
+  // Everything about how a verdict appeal ended has to be on record both when
+  // the court confirms it and when its outcome is released: the appeal has
+  // been sent to the court, the court has given it a status of completed, the
+  // outcome, whether it is a judgment or a ruling, the concluding words, the
+  // date it ended and the document itself, stored as a PDF. The court can
+  // still edit the record after confirming, so the release checks it again
+  // rather than publish an empty or contradictory outcome.
+  private assertVerdictAppealRecordComplete(
     theCase: Case,
     appealCase: AppealCase,
-    transaction: Transaction,
-  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
-      AppealCaseTransition.COMPLETE_APPEAL,
-      theCase,
-      appealCase,
-    )
-
+  ): void {
     // The court of appeals can reach the case through another appeal of it
     // while the public prosecution is still preparing this one.
     if (!appealCase.sentAppealSummonses?.length) {
@@ -1787,9 +1838,66 @@ export class AppealCaseService {
       !hasRulingFile
     ) {
       throw new BadRequestException(
-        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion, date of conclusion and ruling document, a PDF, are in place`,
+        `Verdict appeal ${appealCase.id} cannot be confirmed or completed before its status is completed and its outcome, ruling type, conclusion, date of conclusion and ruling document, a PDF, are in place`,
       )
     }
+  }
+
+  // The court of appeals confirms how a verdict appeal ended once its record
+  // is complete. The date it ended is the court's own and is kept as entered.
+  //
+  // Nothing is announced. The outcome stays with the court until it is
+  // released, so no message is queued and nothing is delivered - which is why
+  // this does not go through applyTransition.
+  private async confirmVerdictAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
+      theCase,
+      appealCase,
+    )
+
+    this.assertVerdictAppealRecordComplete(theCase, appealCase)
+
+    this.logger.debug(
+      `Confirming verdict appeal ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    const updatedAppealCase = await this.appealCaseRepositoryService.update(
+      appealCase.id,
+      appealCaseUpdate,
+      { transaction },
+    )
+
+    return { caseUpdate, appealCaseUpdate, appealCase: updatedAppealCase }
+  }
+
+  // A confirmed verdict appeal is completed when its outcome is released to
+  // everyone who can open it. The state machine refuses it unless the court has
+  // confirmed the appeal, the record is checked again since the court may have
+  // edited it after confirming, and the date the court entered is kept. The
+  // release is recorded as an event of the court, naming the user who made it.
+  // It does not go through applyTransition, where completing an appeal
+  // notifies the parties and delivers the ruling: the court's ruling document
+  // stays with the court, so nothing is queued or delivered here.
+  //
+  // Completing one appeal and completing many come through here alike.
+  private async releaseVerdictAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.COMPLETE_APPEAL,
+      theCase,
+      appealCase,
+    )
+
+    this.assertVerdictAppealRecordComplete(theCase, appealCase)
 
     this.logger.debug(
       `Completing verdict appeal ${appealCase.id} of case ${theCase.id}`,
@@ -1801,7 +1909,124 @@ export class AppealCaseService {
       { transaction },
     )
 
+    await this.writeEventLogRows(
+      theCase,
+      appealCase,
+      AppealEventType.APPEAL_COMPLETED,
+      user,
+      [{}],
+      transaction,
+    )
+
     return { caseUpdate, appealCaseUpdate, appealCase: updatedAppealCase }
+  }
+
+  // The court of appeals completes many confirmed verdict appeals at once.
+  // Each goes through releaseVerdictAppeal exactly as a single completion
+  // does, and the request is all or nothing: anything refused - an appeal
+  // that is missing, is not a verdict appeal, is on a case the user cannot
+  // write, is not confirmed or has an incomplete record - throws, and the
+  // transaction rolls back every appeal completed before it.
+  //
+  // The route names no case, so what the per-appeal route's guards do is done
+  // here: the cases are read under FOR UPDATE and the user's write access to
+  // each is checked. The locks are taken in the order the single route takes
+  // them, case row before appeal row, and each kind in id order, so a bulk
+  // completion and a single one on the same appeal wait for each other rather
+  // than deadlock.
+  async completeVerdictAppeals(
+    appealCaseIds: string[],
+    user: User,
+    transaction: Transaction,
+  ): Promise<{ theCase: Case; appealCase: AppealCase }[]> {
+    // Ids are stored in lower case; a uuid sent in upper case names the same
+    // appeal, and is matched and deduplicated as such.
+    const ids = [...new Set(appealCaseIds.map((id) => id.toLowerCase()))].sort()
+
+    this.logger.debug(`Completing verdict appeals ${ids}`)
+
+    const found = await this.appealCaseRepositoryService.findByIds(ids, {
+      transaction,
+    })
+
+    const missingIds = ids.filter((id) => !found.some((a) => a.id === id))
+
+    if (missingIds.length > 0) {
+      throw new NotFoundException(
+        `Appeal cases ${missingIds.join(', ')} do not exist`,
+      )
+    }
+
+    const notVerdictAppealIds = found
+      .filter((a) => a.appealType !== AppealCaseType.VERDICT)
+      .map((a) => a.id)
+
+    if (notVerdictAppealIds.length > 0) {
+      throw new BadRequestException(
+        `Appeal cases ${notVerdictAppealIds.join(
+          ', ',
+        )} are not verdict appeals`,
+      )
+    }
+
+    // A case has at most one verdict appeal, so each case is locked once.
+    const caseIds = [...new Set(found.map((a) => a.caseId))].sort()
+
+    for (const caseId of caseIds) {
+      await this.caseRepositoryService.lockByIdForUpdate(caseId, transaction)
+    }
+
+    await this.appealCaseRepositoryService.findByIds(ids, {
+      transaction,
+      forUpdate: true,
+    })
+
+    // Read with everything the single route's guards read, now that nothing
+    // can change under it.
+    const appeals: { theCase: Case; appealCase: AppealCase }[] = []
+
+    for (const { id, caseId } of found) {
+      const theCase = await this.caseRepositoryService.findLiveById(caseId, {
+        transaction,
+      })
+
+      if (!theCase || theCase.verdictAppealCase?.id !== id) {
+        throw new NotFoundException(
+          `Verdict appeal ${id} of case ${caseId} does not exist`,
+        )
+      }
+
+      appeals.push({ theCase, appealCase: theCase.verdictAppealCase })
+    }
+
+    const inaccessible = appeals.filter(
+      ({ theCase }) => !canUserAccessCase(theCase, user, true),
+    )
+
+    if (inaccessible.length > 0) {
+      throw new ForbiddenException(
+        `User ${
+          user.id
+        } does not have write access to the cases of verdict appeals ${inaccessible
+          .map(({ appealCase }) => appealCase.id)
+          .join(', ')}`,
+      )
+    }
+
+    const completed: { theCase: Case; appealCase: AppealCase }[] = []
+
+    for (const { theCase, appealCase } of appeals) {
+      const result = await this.releaseVerdictAppeal(
+        theCase,
+        appealCase,
+        user,
+        transaction,
+      )
+
+      completed.push({ theCase, appealCase: result.appealCase })
+    }
+
+    return completed
   }
 
   private async applyTransition(

@@ -22,6 +22,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
+import { AppealVerdict } from './appealVerdict.model'
 import { Case } from './case.model'
 import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { DefendantEventLog } from './defendantEventLog.model'
@@ -311,6 +312,10 @@ export class Defendant extends Model {
   @HasMany(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict, isArray: true })
   verdicts?: Verdict[]
+
+  @HasMany(() => AppealVerdict, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => AppealVerdict, isArray: true })
+  appealVerdicts?: AppealVerdict[]
 
   @Column({
     type: DataType.ENUM,

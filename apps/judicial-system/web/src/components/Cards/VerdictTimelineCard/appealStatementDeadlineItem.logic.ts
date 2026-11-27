@@ -12,10 +12,11 @@ import type { VerdictTimelineItem } from './VerdictTimelineBody'
  * Statement deadline for one party while the verdict appeal is still open.
  * Completed / withdrawn appeals leave the outcome off the timeline card.
  *
- * Expiry comes from the backend `isExpired` flag (whole-day rule). For
- * non-court-of-appeals users, completed appeals are masked as APPEALED and
- * statementDeadlines are stripped server-side, so this COMPLETED check mainly
- * covers court-of-appeals viewers who still receive the real state.
+ * Expiry comes from the backend `isExpired` flag (whole-day rule). Outside
+ * the court of appeals, an appeal the court has confirmed but not completed
+ * arrives as APPEALED with its deadlines, so its bullet stays exactly as on an
+ * appeal under advisement until the appeal is completed and its outcome
+ * released.
  */
 export const getOpenAppealStatementDeadlineItem = (
   verdictAppealCase:

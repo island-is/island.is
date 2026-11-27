@@ -1,57 +1,79 @@
 import { Injectable } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
-import { PenaltyPointsClientService } from '@island.is/clients/driving-license'
-import { isDefined } from '@island.is/shared/utils'
 import {
+  DrivingLicenseApi,
+  DtoV5DeprivationDto,
+  DtoV6DeprivationDto,
+  PenaltyPointsClientService,
+} from '@island.is/clients/driving-license'
+import { isDefined } from '@island.is/shared/utils'
+
+import {
+  DrivingLicenseDeprivation,
   DrivingLicenseDeprivations,
   DrivingLicenseDeprivationStatus,
 } from '../models'
 
+const mapDeprivation = (
+  d: DtoV5DeprivationDto | DtoV6DeprivationDto,
+): DrivingLicenseDeprivation | null => {
+  if (!d.dateFrom) return null
+
+  const lost = d.licenseLost ?? false
+  const expired = d.licenseExpired ?? false
+  const status =
+    lost && expired
+      ? DrivingLicenseDeprivationStatus.LOSTANDEXPIRED
+      : lost
+      ? DrivingLicenseDeprivationStatus.LOST
+      : expired
+      ? DrivingLicenseDeprivationStatus.EXPIRED
+      : undefined
+
+  const dateTo = d.dateTo ?? undefined
+  const now = new Date()
+
+  return {
+    dateFrom: d.dateFrom,
+    dateTo,
+    status,
+    name: d.deprivationName ?? undefined,
+    type: d.deprivationType ?? undefined,
+    retakeRequired: d.retakeLicense ?? undefined,
+    active: d.dateFrom <= now && (!dateTo || dateTo >= now),
+  }
+}
+
 @Injectable()
 export class DeprivationsService {
   constructor(
+    private readonly drivingLicenseApi: DrivingLicenseApi,
     private readonly penaltyPointsClientService: PenaltyPointsClientService,
   ) {}
 
-  async getDeprivations(user: User): Promise<DrivingLicenseDeprivations> {
+  async getDeprivation(user: User): Promise<DrivingLicenseDeprivation | null> {
+    const d = await this.drivingLicenseApi.getDeprivation({
+      nationalId: user.nationalId,
+      auth: user,
+    })
+
+    const deprivation = d ? mapDeprivation(d) : null
+    return deprivation?.active ? deprivation : null
+  }
+
+  async getDeprivations(
+    user: User,
+  ): Promise<DrivingLicenseDeprivations | null> {
     const deprivations = await this.penaltyPointsClientService.deprivations(
       user,
     )
 
-    const mapped = deprivations
-      .map((d) => {
-        if (!d.dateFrom) return undefined
-
-        const lost = d.licenseLost ?? false
-        const expired = d.licenseExpired ?? false
-        const status =
-          lost && expired
-            ? DrivingLicenseDeprivationStatus.LOSTANDEXPIRED
-            : lost
-            ? DrivingLicenseDeprivationStatus.LOST
-            : expired
-            ? DrivingLicenseDeprivationStatus.EXPIRED
-            : undefined
-
-        const dateTo = d.dateTo ?? undefined
-        const now = new Date()
-        const active = d.dateFrom <= now && (!dateTo || dateTo >= now)
-
-        return {
-          dateFrom: d.dateFrom,
-          dateTo,
-          status,
-          name: d.deprivationName ?? undefined,
-          type: d.deprivationType ?? undefined,
-          retakeRequired: d.retakeLicense ?? undefined,
-          active,
-        }
-      })
+    const [current, ...history] = deprivations
+      .map(mapDeprivation)
       .filter(isDefined)
       .sort((a, b) => b.dateFrom.getTime() - a.dateFrom.getTime())
 
-    const [current, ...history] = mapped
-
-    return { current, history }
+    return current ? { current, history } : null
   }
 }

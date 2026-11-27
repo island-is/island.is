@@ -2,6 +2,7 @@ import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 import { setFieldValue } from './fieldReducerUtils'
+import { fieldReducer } from './fieldReducer'
 
 jest.mock('@island.is/form-system/ui', () => ({
   FieldTypesEnum: {
@@ -92,6 +93,43 @@ const createState = (
 
 const choiceField = (state: ApplicationState) =>
   state.sections[1].screens?.[0]?.fields?.[0]
+
+it.each([
+  {
+    values: [
+      {
+        id: 'child',
+        order: 0,
+        json: { name: 'Selected child', nationalId: '0101202989' },
+      },
+    ],
+  },
+  { values: [] },
+])(
+  'replaces field values throughout the screen-save state (case %#)',
+  ({ values }) => {
+    const state = createState(FieldTypesEnum.TEXTBOX, 'choice')
+    state.currentSection = { index: 1, data: state.sections[1] }
+    state.currentScreen = {
+      index: 0,
+      data: state.sections[1].screens?.[0] ?? undefined,
+    }
+
+    const updated = fieldReducer(state, {
+      type: 'SET_FIELD_VALUES',
+      payload: { id: 'choice', values },
+    })
+
+    expect(choiceField(updated)?.values).toEqual(values)
+    expect(updated.application.sections).toBe(updated.sections)
+    expect(updated.currentScreen?.data).toBe(updated.sections[1].screens?.[0])
+    expect(updated.currentSection.data).toBe(updated.sections[1])
+    expect(updated.sections[1].screens?.[0]?.fields?.[1]).toBe(
+      state.sections[1].screens?.[0]?.fields?.[1],
+    )
+    expect(choiceField(state)?.values).toHaveLength(2)
+  },
+)
 
 describe.each([
   FieldTypesEnum.CHECKBOX,

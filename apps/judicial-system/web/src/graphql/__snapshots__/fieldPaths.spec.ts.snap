@@ -1742,6 +1742,7 @@ Array [
   "limitedAccessCase.verdictAppealCase.appealEventLogs.userTitle",
   "limitedAccessCase.verdictAppealCase.appealRulingDate",
   "limitedAccessCase.verdictAppealCase.appealRulingDecision",
+  "limitedAccessCase.verdictAppealCase.appealRulingType",
   "limitedAccessCase.verdictAppealCase.appealState",
   "limitedAccessCase.verdictAppealCase.appealType",
   "limitedAccessCase.verdictAppealCase.caseName",

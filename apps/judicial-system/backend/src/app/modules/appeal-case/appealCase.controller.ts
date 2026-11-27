@@ -30,7 +30,11 @@ import {
   RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
-import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  AppealCaseTransition,
+  AppealCaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsAssistantRule,
@@ -53,6 +57,7 @@ import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
+import { CompleteVerdictAppealsDto } from './dto/completeVerdictAppeals.dto'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
@@ -341,11 +346,93 @@ export class AppealCaseController {
     // this handler has returned - as it was when the handler committed a
     // transaction of its own. Still fire and forget: a failed announcement is
     // logged, not returned to the caller.
-    registerAfterCommit(() =>
-      this.eventService.postEvent(dto.transition, theCase),
-    )
+    const transition = dto.transition
+
+    // Confirming a verdict appeal is not announced: its outcome stays with
+    // the court of appeals until it is released. Releasing it completes an
+    // áfrýjun, which is announced apart from a completed kæra. Taking a
+    // confirmation back is refused by the service and is checked here only to
+    // narrow the type.
+    if (
+      transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      transition !== AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+    ) {
+      const event =
+        transition === AppealCaseTransition.COMPLETE_APPEAL &&
+        appealCase.appealType === AppealCaseType.VERDICT
+          ? 'COMPLETE_VERDICT_APPEAL'
+          : transition
+
+      registerAfterCommit(() => this.eventService.postEvent(event, theCase))
+    }
 
     return result.appealCase
+  }
+
+  // The court of appeals completes many confirmed verdict appeals at once. The
+  // route names no case, so there is no case for the per-case guards to read
+  // and lock: the service reads and locks every case itself and checks the
+  // user's write access to each, as CaseExistsForUpdateGuard and
+  // CaseWriteGuard do on the per-appeal route. The rules are bare roles, so
+  // RolesGuard decides before anything is read.
+  @UseGuards(RolesGuard)
+  @RolesRules(
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Post('appealCases/complete')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
+  @ApiCreatedResponse({
+    type: AppealCase,
+    isArray: true,
+    description: 'Completes confirmed verdict appeals, all or none of them',
+  })
+  async completeVerdictAppeals(
+    @CurrentHttpUser() user: User,
+    @Body() dto: CompleteVerdictAppealsDto,
+  ): Promise<AppealCase[]> {
+    this.logger.debug(`Completing verdict appeals ${dto.appealCaseIds}`)
+
+    // One transaction for the whole request, committed by
+    // TransactionCommitInterceptor after this handler returns, so either every
+    // appeal is completed or none is.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const completed = await this.appealCaseService.completeVerdictAppeals(
+      dto.appealCaseIds,
+      user,
+      transaction,
+    )
+
+    // Each completion is an áfrýjun and is announced as the per-appeal route
+    // announces one, once the transaction has committed. The commit
+    // interceptor awaits its callbacks before the response is sent, and a
+    // request may complete up to a hundred appeals, so the one callback only
+    // starts the announcements: they are posted one after another in the
+    // background, and the response does not wait for them.
+    const cases = completed.map(({ theCase }) => theCase)
+
+    registerAfterCommit(async () => {
+      void this.announceVerdictAppealCompletions(cases)
+    })
+
+    return completed.map(({ appealCase }) => appealCase)
+  }
+
+  // Never rejects: a failed announcement is logged and the next one is
+  // posted all the same.
+  private async announceVerdictAppealCompletions(cases: Case[]): Promise<void> {
+    for (const theCase of cases) {
+      try {
+        await this.eventService.postEvent('COMPLETE_VERDICT_APPEAL', theCase)
+      } catch (error) {
+        this.logger.error(
+          `Failed to announce the completion of the verdict appeal of case ${theCase.id}`,
+          { error },
+        )
+      }
+    }
   }
 
   // The public prosecution office prosecutes the appeal and is copied on the

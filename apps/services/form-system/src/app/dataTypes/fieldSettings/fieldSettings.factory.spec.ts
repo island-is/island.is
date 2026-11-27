@@ -3,6 +3,30 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
+it('defaults new FILE fields to one PDF with a ten MiB size limit', () => {
+  expect(FieldSettingsFactory.getDefaultSettings(FieldTypesEnum.FILE)).toEqual({
+    maxFiles: 1,
+    fileTypes: '.pdf',
+    fileMaxSize: 10485760,
+    zendeskIsCustomField: null,
+    zendeskCustomFieldId: null,
+  })
+  expect(
+    FieldSettingsFactory.getDefaultSettings(FieldTypesEnum.TEXTBOX),
+  ).not.toHaveProperty('maxFiles')
+})
+
+it.each([
+  { maxFiles: 3, fileTypes: '.png,.jpg', fileMaxSize: 1048576 },
+  { maxFiles: null, fileTypes: null, fileMaxSize: null },
+])('does not replace existing FILE settings: %j', (fileSettings) => {
+  const settings = Object.assign(new FieldSettings(), fileSettings)
+
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.FILE, settings),
+  ).toMatchObject(fileSettings)
+})
+
 it('preserves localized checkbox sublabels and removes the obsolete visibility flag', () => {
   const subLabel = { is: 'Undirtexti', en: 'Sublabel' }
   const settings = Object.assign(new FieldSettings(), {
@@ -25,11 +49,17 @@ it('preserves localized checkbox sublabels and removes the obsolete visibility f
   ).not.toHaveProperty('hasDescription')
 })
 
-it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
-  'drops obsolete child-source settings while preserving %s settings',
-  (type) => {
+it.each([
+  [FieldTypesEnum.FAMILY, true],
+  [FieldTypesEnum.FAMILY, false],
+  [FieldTypesEnum.CHILD, true],
+  [FieldTypesEnum.CHILD, false],
+])(
+  'drops obsolete child-source and dropdown settings for %s with isDropdown=%s',
+  (type, isDropdown) => {
     const settings = Object.assign(new FieldSettings(), {
       familyType: 'CHILD',
+      isDropdown,
       showBiologicalChildren: true,
       showChildrenInCustody: false,
       zendeskIsCustomField: true,
@@ -41,6 +71,15 @@ it.each([FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD])(
       zendeskIsCustomField: true,
       zendeskCustomFieldId: 'custom-field',
     })
+  },
+)
+
+it.each([FieldTypesEnum.ASSETS, FieldTypesEnum.PAYMENT_QUANTITY])(
+  'retains the dropdown setting for %s',
+  (type) => {
+    const settings = Object.assign(new FieldSettings(), { isDropdown: true })
+
+    expect(FieldSettingsFactory.getClass(type, settings)?.isDropdown).toBe(true)
   },
 )
 

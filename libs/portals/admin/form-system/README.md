@@ -43,6 +43,35 @@ saved edit. Updates to different fields can proceed independently.
 Selecting "Barn" shows guidance below the dropdown explaining that it contains children in
 the applicant's custody according to the National Registry, not children outside
 their custody. This guidance is also visible in read-only mode.
+Child fields always display all custody children in a table; there are no
+display-mode options or child `isDropdown` setting. Asset and payment-quantity
+fields retain their own dropdown settings.
+Each table row ends with a checkbox, initially checked. Saved selections are
+restored when returning to the screen, including when every child was unchecked.
+Child fields cannot be part of a multiset and do not show the multiset option.
+Selecting the child family type clears multiset membership. Opening editable
+settings also clears any previously saved child multiset membership.
+These changes update both editor state and the saved field. The form-system
+data migration also clears existing child-family multiset membership.
+
+## Forms list
+
+The forms-list query requests only the ID, Icelandic name, slug, modification
+date, status, submission-service URL, accessibility flag, last editor, and source
+form ID. The service selects only those columns, without loading form content,
+settings, or dependencies. Organization options remain available.
+Opening the editor or validating publication still fetches the complete form
+on demand.
+Status totals for the selected organization's forms appear in a horizontal row
+above the "Opna síu" and "Sía eftir leitarorði" controls, using the table's status
+tags. Totals include all loaded forms, regardless of the active filters.
+Clicking a status tag moves matching forms to the top without hiding other
+statuses or changing active filters. Hover and focus use each tag's matching
+color (green, blue, or purple), with a visible keyboard-focus outline. Clicking
+outside removes the highlight without changing the chosen sort order.
+Sorting by name or last-modified date clears the selected priority. The "Staða"
+table heading is not sortable; use the status tags above the filters instead.
+The "Nýtt" and "Flytja inn" buttons remain on the left.
 
 ## Publishing
 

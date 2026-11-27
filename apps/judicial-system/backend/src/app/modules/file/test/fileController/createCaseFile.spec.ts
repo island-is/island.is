@@ -23,7 +23,12 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { getOrCreateTransaction } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
-import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
+import {
+  AppealCaseRepositoryService,
+  Case,
+  CaseFile,
+  CaseFileRepositoryService,
+} from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 import { CreateFile } from '../../file.service'
 
@@ -43,6 +48,7 @@ describe('FileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -65,11 +71,13 @@ describe('FileController - Create case file', () => {
       queuedMessagesAfterCommit,
       sequelize,
       caseFileRepositoryService,
+      appealCaseRepositoryService,
       fileController,
     } = await createTestingFileModule()
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealCaseRepositoryService = appealCaseRepositoryService
 
     mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -493,7 +501,8 @@ describe('FileController - Create case file', () => {
       })
     })
 
-    describe('created once the verdict appeal has been completed', () => {
+    describe('created once the verdict appeal is confirmed', () => {
+      const verdictAppealCaseId = uuid()
       let then: Then
 
       beforeEach(async () => {
@@ -511,6 +520,126 @@ describe('FileController - Create case file', () => {
           {
             ...theCase,
             verdictAppealCase: {
+              id: verdictAppealCaseId,
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      // The court can still replace its document after confirming the appeal,
+      // and then has to confirm the appeal again.
+      it('should create the case file and take the confirmation back', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          verdictAppealCaseId,
+          { appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).toHaveBeenCalledWith(caseId, CaseFileCategory.VERDICT_APPEAL_RULING, {
+          transaction,
+        })
+      })
+
+      it('should not queue any messages', () => {
+        expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
+    describe.each([AppealCaseState.APPEALED])(
+      'created when the verdict appeal is %s',
+      (appealState) => {
+        let then: Then
+
+        beforeEach(async () => {
+          const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+          mockCreate.mockResolvedValueOnce({
+            ...createCaseFile,
+            id: uuid(),
+            name: 'test.pdf',
+            state: CaseFileState.STORED_IN_RVG,
+          })
+
+          then = await createCaseFileAs(
+            caseId,
+            createCaseFile,
+            {
+              ...theCase,
+              verdictAppealCase: {
+                id: uuid(),
+                appealType: AppealCaseType.VERDICT,
+                appealState,
+              },
+            } as Case,
+            courtOfAppealsUser,
+          )
+        })
+
+        it('should create the case file and leave the appeal in its state', () => {
+          expect(then.error).toBeUndefined()
+          expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+          expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+          expect(
+            mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+          ).not.toHaveBeenCalled()
+        })
+      },
+    )
+
+    describe('another category created once the verdict appeal is confirmed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          id: uuid(),
+          category: CaseFileCategory.COURT_CASE_FILE,
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          {
+            ...createCaseFile,
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+          },
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.READY_TO_COMPLETE,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should leave the appeal confirmed', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(
+          mockCaseFileRepositoryService.clearHashesForCaseAndCategory,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    // Once the outcome has been released, the court's document is part of it.
+    describe('created once the verdict appeal is completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
               id: uuid(),
               appealState: AppealCaseState.COMPLETED,
             },
@@ -519,11 +648,9 @@ describe('FileController - Create case file', () => {
         )
       })
 
-      // The court can still replace its document: the outcome stays with it
-      // until it is released.
-      it('should create the case file', () => {
-        expect(then.error).toBeUndefined()
-        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+      it('should refuse creation', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
       })
     })
 

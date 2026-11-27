@@ -46,4 +46,26 @@ describe('BackendService', () => {
     expect(headers.get('content-type')).toBe('application/json')
     expect(headers.get('x-datadog-trace-id')).toBe('123')
   })
+
+  it('posts the verdict appeals to complete to the backend', async () => {
+    fetchMock.mockClear()
+
+    const service = new BackendService(
+      config as never,
+      {
+        req: { headers: { authorization: 'Bearer user-token' } },
+      } as never,
+    )
+
+    await service.completeVerdictAppeals(['appeal-1', 'appeal-2'])
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    const [url, options] = fetchMock.mock.calls[0]
+
+    expect(url).toBe('http://backend/api/appealCases/complete')
+    expect(options.method).toBe('POST')
+    expect(JSON.parse(options.body)).toEqual({
+      appealCaseIds: ['appeal-1', 'appeal-2'],
+    })
+  })
 })

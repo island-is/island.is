@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseRulingDecision,
@@ -325,7 +326,7 @@ describe('InfoCardClosedIndictment', () => {
       const verdictAppeal = {
         id: 'verdict-appeal',
         appealType: AppealCaseType.VERDICT,
-        appealState: AppealCaseState.COMPLETED,
+        appealState: AppealCaseState.READY_TO_COMPLETE,
         appealCaseNumber: 'L-300/2026',
         appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
       }
@@ -336,12 +337,30 @@ describe('InfoCardClosedIndictment', () => {
           verdictAppealCase: appeal,
         } as unknown as WorkingCase)
 
-      it('shows the outcome to the Court of Appeals', async () => {
+      it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+        'shows the outcome to the Court of Appeals in state %s',
+        async (appealState) => {
+          mockAppealCaseIdQuery = 'verdict-appeal'
+
+          renderClosedIndictment(
+            caseWithAppeal({ ...verdictAppeal, appealState }),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+        },
+      )
+
+      it('shows the outcome to a prosecutor once the appeal is completed', async () => {
         mockAppealCaseIdQuery = 'verdict-appeal'
 
         renderClosedIndictment(
-          caseWithAppeal(verdictAppeal),
-          UserRole.COURT_OF_APPEALS_JUDGE,
+          caseWithAppeal({
+            ...verdictAppeal,
+            appealState: AppealCaseState.COMPLETED,
+          }),
         )
 
         await screen.findByText('L-300/2026')
@@ -349,7 +368,7 @@ describe('InfoCardClosedIndictment', () => {
         expect(screen.getByText('Staðfesting')).toBeInTheDocument()
       })
 
-      it('does not show the outcome to a prosecutor', async () => {
+      it('does not show the outcome to a prosecutor before the appeal is completed', async () => {
         mockAppealCaseIdQuery = 'verdict-appeal'
 
         renderClosedIndictment(caseWithAppeal(verdictAppeal))
@@ -438,6 +457,54 @@ describe('InfoCardClosedIndictment', () => {
           await screen.findByText('L-100/2026')
           expect(screen.queryByText('L-300/2026')).toBeNull()
           expect(screen.queryByText('Lyktir')).toBeNull()
+        })
+      })
+
+      // The parties open the case from their own case list, with no appeal
+      // in the URL, and learn there how the verdict appeal ended.
+      describe('when the query string names no appeal', () => {
+        const appealRulingDate = '2026-11-20T10:00:00.000Z'
+
+        it('shows the outcome and the date it ended once completed', async () => {
+          renderClosedIndictment(
+            caseWithAppeal({
+              ...verdictAppeal,
+              appealState: AppealCaseState.COMPLETED,
+              appealRulingDate,
+            }),
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+          expect(screen.getByText('Dagsetning lykta')).toBeInTheDocument()
+          expect(
+            screen.getByText(formatDate(appealRulingDate, 'PP') ?? ''),
+          ).toBeInTheDocument()
+        })
+
+        it('shows nothing of the appeal before it is completed', async () => {
+          renderClosedIndictment(
+            caseWithAppeal({ ...verdictAppeal, appealRulingDate }),
+          )
+
+          await screen.findByText('007-2021-202000')
+          expect(screen.queryByText('L-300/2026')).toBeNull()
+          expect(screen.queryByText('Lyktir')).toBeNull()
+          expect(screen.queryByText('Dagsetning lykta')).toBeNull()
+        })
+
+        it('leaves out the end date when it is not set', async () => {
+          renderClosedIndictment(
+            caseWithAppeal({
+              ...verdictAppeal,
+              appealState: AppealCaseState.COMPLETED,
+            }),
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.queryByText('Dagsetning lykta')).toBeNull()
         })
       })
 

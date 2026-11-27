@@ -1,150 +1,183 @@
+import {
+  DrivingLicenseApi,
+  PenaltyPointsClientService,
+} from '@island.is/clients/driving-license'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { DrivingLicenseDeprivationStatus } from '../models'
 import { DeprivationsService } from './deprivations.service'
-import { PenaltyPointsClientService } from '@island.is/clients/driving-license'
-import type { User } from '@island.is/auth-nest-tools'
-import type { DtoV5DeprivationDto } from '@island.is/clients/driving-license'
 
-const MOCK_USER = {} as User
+const user = createCurrentUser()
 
-const createDeprivation = (
-  overrides: Partial<DtoV5DeprivationDto>,
-): DtoV5DeprivationDto => ({
-  dateFrom: new Date('2020-01-01'),
-  ...overrides,
-})
+const yearsFromNow = (years: number) => {
+  const date = new Date()
+  date.setFullYear(date.getFullYear() + years)
+  return date
+}
 
-const createService = (deprivations: DtoV5DeprivationDto[]) => {
+const createService = ({
+  current = null,
+  all = [],
+}: {
+  current?: unknown
+  all?: unknown[]
+}) => {
+  const drivingLicenseApi = {
+    getDeprivation: jest.fn().mockResolvedValue(current),
+  } as unknown as DrivingLicenseApi
   const penaltyPointsClientService = {
-    deprivations: jest.fn().mockResolvedValue(deprivations),
+    deprivations: jest.fn().mockResolvedValue(all),
   } as unknown as PenaltyPointsClientService
 
-  return new DeprivationsService(penaltyPointsClientService)
+  return {
+    service: new DeprivationsService(
+      drivingLicenseApi,
+      penaltyPointsClientService,
+    ),
+    drivingLicenseApi,
+    penaltyPointsClientService,
+  }
 }
 
 describe('DeprivationsService', () => {
+  describe('getDeprivation', () => {
+    it('returns null when the response is empty', async () => {
+      const { service } = createService({ current: null })
+      expect(await service.getDeprivation(user)).toBeNull()
+    })
+
+    it('returns null for the no-active-deprivation response', async () => {
+      const { service } = createService({
+        current: {
+          dateFrom: null,
+          dateTo: null,
+          licenseLost: false,
+          deprivationName: null,
+          deprivationType: null,
+          licenseExpired: false,
+          retakeLicense: false,
+        },
+      })
+      expect(await service.getDeprivation(user)).toBeNull()
+    })
+
+    it('passes the user as auth and their nationalId', async () => {
+      const { service, drivingLicenseApi } = createService({ current: null })
+      await service.getDeprivation(user)
+      expect(drivingLicenseApi.getDeprivation).toHaveBeenCalledWith({
+        nationalId: user.nationalId,
+        auth: user,
+      })
+    })
+
+    it('maps the deprivation', async () => {
+      const dateFrom = yearsFromNow(-1)
+      const dateTo = yearsFromNow(1)
+      const { service } = createService({
+        current: {
+          dateFrom,
+          dateTo,
+          licenseLost: true,
+          licenseExpired: false,
+          deprivationName: 'Svipting',
+          deprivationType: 3,
+          retakeLicense: true,
+        },
+      })
+
+      expect(await service.getDeprivation(user)).toStrictEqual({
+        dateFrom,
+        dateTo,
+        status: DrivingLicenseDeprivationStatus.LOST,
+        name: 'Svipting',
+        type: 3,
+        retakeRequired: true,
+        active: true,
+      })
+    })
+
+    it.each([
+      [true, true, DrivingLicenseDeprivationStatus.LOSTANDEXPIRED],
+      [false, true, DrivingLicenseDeprivationStatus.EXPIRED],
+      [false, false, undefined],
+    ])(
+      'maps licenseLost=%s, licenseExpired=%s to status %s',
+      async (licenseLost, licenseExpired, expected) => {
+        const { service } = createService({
+          current: {
+            dateFrom: yearsFromNow(-1),
+            licenseLost,
+            licenseExpired,
+          },
+        })
+        expect((await service.getDeprivation(user))?.status).toBe(expected)
+      },
+    )
+
+    it.each([
+      ['no dateTo', yearsFromNow(-1), undefined],
+      ['dateTo in the future', yearsFromNow(-1), yearsFromNow(1)],
+    ])('returns the deprivation for %s', async (_, dateFrom, dateTo) => {
+      const { service } = createService({ current: { dateFrom, dateTo } })
+      expect((await service.getDeprivation(user))?.active).toBe(true)
+    })
+
+    it.each([
+      ['dateFrom in the future', yearsFromNow(1), undefined],
+      ['dateTo in the past', yearsFromNow(-2), yearsFromNow(-1)],
+    ])('returns null for %s', async (_, dateFrom, dateTo) => {
+      const { service } = createService({ current: { dateFrom, dateTo } })
+      expect(await service.getDeprivation(user)).toBeNull()
+    })
+  })
+
   describe('getDeprivations', () => {
-    it('returns current: undefined and history: [] for an empty list', async () => {
-      const service = createService([])
-
-      const response = await service.getDeprivations(MOCK_USER)
-
-      expect(response).toStrictEqual({ current: undefined, history: [] })
+    it('returns null for an empty list', async () => {
+      const { service } = createService({ all: [] })
+      expect(await service.getDeprivations(user)).toBeNull()
     })
 
-    it('returns a single item as current with an empty history', async () => {
-      const service = createService([
-        createDeprivation({ dateFrom: new Date('2020-01-01') }),
-      ])
-
-      const response = await service.getDeprivations(MOCK_USER)
-
-      expect(response.current).toBeDefined()
-      expect(response.current?.dateFrom).toStrictEqual(new Date('2020-01-01'))
-      expect(response.history).toStrictEqual([])
+    it('returns null when no item has a dateFrom', async () => {
+      const { service } = createService({ all: [{ dateFrom: null }] })
+      expect(await service.getDeprivations(user)).toBeNull()
     })
 
-    it('sets current to the most recent item by dateFrom and puts the rest in history', async () => {
-      const service = createService([
-        createDeprivation({ dateFrom: new Date('2018-01-01') }),
-        createDeprivation({ dateFrom: new Date('2022-06-15') }),
-        createDeprivation({ dateFrom: new Date('2020-03-10') }),
+    it('sets current to the most recent by dateFrom and puts the rest in history', async () => {
+      const { service } = createService({
+        all: [
+          { dateFrom: new Date('2018-01-01') },
+          { dateFrom: new Date('2022-06-15') },
+          { dateFrom: new Date('2020-03-10') },
+        ],
+      })
+
+      const response = await service.getDeprivations(user)
+
+      expect(response?.current?.dateFrom).toStrictEqual(new Date('2022-06-15'))
+      expect(response?.history.map((h) => h.dateFrom)).toStrictEqual([
+        new Date('2020-03-10'),
+        new Date('2018-01-01'),
       ])
-
-      const response = await service.getDeprivations(MOCK_USER)
-
-      expect(response.current?.dateFrom).toStrictEqual(new Date('2022-06-15'))
-      expect(response.history).toHaveLength(2)
-      expect(response.history.map((h) => h.dateFrom)).toStrictEqual(
-        expect.arrayContaining([
-          new Date('2018-01-01'),
-          new Date('2020-03-10'),
-        ]),
-      )
     })
 
     it('filters out items with no dateFrom', async () => {
-      const service = createService([
-        createDeprivation({ dateFrom: undefined }),
-        createDeprivation({ dateFrom: new Date('2021-01-01') }),
-      ])
-
-      const response = await service.getDeprivations(MOCK_USER)
-
-      expect(response.current).toBeDefined()
-      expect(response.history).toStrictEqual([])
-    })
-
-    describe('active computation', () => {
-      it('is true when dateTo is undefined', async () => {
-        const service = createService([
-          createDeprivation({ dateTo: undefined }),
-        ])
-
-        const response = await service.getDeprivations(MOCK_USER)
-
-        expect(response.current?.active).toBe(true)
+      const { service } = createService({
+        all: [{ dateFrom: null }, { dateFrom: new Date('2021-01-01') }],
       })
 
-      it('is true when dateTo is in the future', async () => {
-        const futureDate = new Date()
-        futureDate.setFullYear(futureDate.getFullYear() + 1)
+      const response = await service.getDeprivations(user)
 
-        const service = createService([
-          createDeprivation({ dateTo: futureDate }),
-        ])
-
-        const response = await service.getDeprivations(MOCK_USER)
-
-        expect(response.current?.active).toBe(true)
-      })
-
-      it('is false when dateFrom is in the future, even with no dateTo', async () => {
-        const futureDate = new Date()
-        futureDate.setFullYear(futureDate.getFullYear() + 1)
-
-        const service = createService([
-          createDeprivation({ dateFrom: futureDate, dateTo: undefined }),
-        ])
-
-        const response = await service.getDeprivations(MOCK_USER)
-
-        expect(response.current?.active).toBe(false)
-      })
-
-      it('is false when dateFrom is in the future, even with dateTo further ahead', async () => {
-        const startsAt = new Date()
-        startsAt.setFullYear(startsAt.getFullYear() + 1)
-        const endsAt = new Date()
-        endsAt.setFullYear(endsAt.getFullYear() + 2)
-
-        const service = createService([
-          createDeprivation({ dateFrom: startsAt, dateTo: endsAt }),
-        ])
-
-        const response = await service.getDeprivations(MOCK_USER)
-
-        expect(response.current?.active).toBe(false)
-      })
-
-      it('is false when dateTo is in the past', async () => {
-        const pastDate = new Date()
-        pastDate.setFullYear(pastDate.getFullYear() - 1)
-
-        const service = createService([createDeprivation({ dateTo: pastDate })])
-
-        const response = await service.getDeprivations(MOCK_USER)
-
-        expect(response.current?.active).toBe(false)
-      })
+      expect(response?.current?.dateFrom).toStrictEqual(new Date('2021-01-01'))
+      expect(response?.history).toStrictEqual([])
     })
 
     it('maps retakeLicense to retakeRequired', async () => {
-      const service = createService([
-        createDeprivation({ retakeLicense: true }),
-      ])
-
-      const response = await service.getDeprivations(MOCK_USER)
-
-      expect(response.current?.retakeRequired).toBe(true)
+      const { service } = createService({
+        all: [{ dateFrom: new Date('2020-01-01'), retakeLicense: true }],
+      })
+      expect(
+        (await service.getDeprivations(user))?.current?.retakeRequired,
+      ).toBe(true)
     })
   })
 })

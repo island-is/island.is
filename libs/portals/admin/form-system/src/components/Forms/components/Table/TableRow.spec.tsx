@@ -9,6 +9,7 @@ import {
 import { ApolloError } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
+import { FormListItem } from '@island.is/form-system/graphql'
 import { toast } from '@island.is/island-ui/core'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ReactNode, useContext, useEffect } from 'react'
@@ -234,7 +235,7 @@ describe('publishing a form', () => {
     otherForms: FormSystemForm[] = [],
   ) => {
     const forms = [form, ...otherForms]
-    const formsUpdated = jest.fn<(forms: FormSystemForm[]) => void>()
+    const formsUpdated = jest.fn<(forms: FormListItem[]) => void>()
     let latestContext: IFormsContext
     const Rows = () => {
       const context = useContext(FormsContext)

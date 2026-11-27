@@ -37,6 +37,7 @@ import { AppealStatementDeadline } from '../models/appealStatementDeadline.model
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
 import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
+import { AppealVerdict } from '../models/appealVerdict.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -302,6 +303,13 @@ export const caseInclude: Includeable[] = [
       {
         model: Verdict,
         as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: AppealVerdict,
+        as: 'appealVerdicts',
         required: false,
         order: [['created', 'DESC']],
         separate: true,
@@ -1406,6 +1414,13 @@ export const getLimitedAccessCaseInclude = (
           separate: true,
         },
         {
+          model: AppealVerdict,
+          as: 'appealVerdicts',
+          required: false,
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
           model: DefendantEventLog,
           as: 'eventLogs',
           required: false,
@@ -1816,6 +1831,7 @@ export interface UpdateAppealCase
     | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
+    | 'appealCompletedDate'
     | 'appealAssistantId'
     | 'appealRulingDecision'
     | 'appealConclusion'

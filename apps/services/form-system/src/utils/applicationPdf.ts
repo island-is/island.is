@@ -1,4 +1,8 @@
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
 import PDFDocument from 'pdfkit'
 import sanitizeHtml from 'sanitize-html'
@@ -203,15 +207,19 @@ type ValueLine = { prefix: string; text: string }
 const fieldLines = (
   field: {
     fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
+    fieldSettings?: { isAddressRequired?: boolean; familyType?: string }
     values?: Array<{ json?: unknown }>
   },
   locale: Locale,
 ): ValueLine[] => {
   const values = field.values ?? []
+  const isChild =
+    field.fieldType === FieldTypesEnum.CHILD ||
+    (field.fieldType === FieldTypesEnum.FAMILY &&
+      field.fieldSettings?.familyType === FamilyTypes.CHILD)
 
-  return values.flatMap((value, index) => {
-    const prefix = values.length > 1 ? `${index + 1}. ` : ''
+  const valueLines = values.map((value, index): ValueLine[] => {
+    const prefix = !isChild && values.length > 1 ? `${index + 1}. ` : ''
     const json = value?.json
     if (field.fieldType === FieldTypesEnum.FILE) {
       return fileNames(json).map((fileName, lineIndex) => ({
@@ -268,6 +276,12 @@ const fieldLines = (
         : [{ prefix: itemPrefix, text: formatted }]
     })
   })
+
+  return valueLines
+    .filter((lines) => lines.length > 0)
+    .flatMap((lines, index) =>
+      isChild && index > 0 ? [{ prefix: '', text: '' }, ...lines] : lines,
+    )
 }
 
 const drawValue = (
@@ -407,6 +421,7 @@ const drawField = (
     fieldType: string
     fieldSettings?: {
       isAddressRequired?: boolean
+      familyType?: string
       subLabel?: { is?: string; en?: string }
     }
     values?: Array<{ json?: unknown }>

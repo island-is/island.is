@@ -23,6 +23,15 @@ describe('pathIsProjectPage', () => {
     expect(pathIsProjectPage('/v/some-project/frett')).toBe(true)
   })
 
+  it('detects generic list items on a parent subpage chapter', () => {
+    expect(pathIsProjectPage('/v/some-project/parent/chapter/list-item')).toBe(
+      true,
+    )
+    expect(
+      pathIsProjectPage('/en/p/some-project/parent/chapter/list-item'),
+    ).toBe(true)
+  })
+
   it('returns false for the front page', () => {
     expect(pathIsProjectPage('/')).toBe(false)
   })
