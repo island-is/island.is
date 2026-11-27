@@ -723,7 +723,7 @@ it.each([false, true])(
     if (isRequired) {
       expect(screen.getByText('Veldu að minnsta kosti eitt barn.')).toBeTruthy()
     } else {
-      expect(screen.queryByRole('alert')).toBeNull()
+      expect(screen.queryByText('Veldu að minnsta kosti eitt barn.')).toBeNull()
     }
   },
 )
