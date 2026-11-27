@@ -5,6 +5,7 @@ import type { BreadCrumbItem } from '@island.is/island-ui/core'
 import type { ProjectPage } from '@island.is/web/graphql/schema'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { useLinkResolver } from '@island.is/web/hooks'
+import type { LinkType } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n, withLocale } from '@island.is/web/i18n'
 import type { LayoutProps } from '@island.is/web/layouts/main'
 import type { GenericListItemPageProps } from '@island.is/web/screens/GenericList/GenericListItem'
@@ -82,17 +83,33 @@ export const Component: ScreenType<ComponentProps> = ({
     isTag: true,
   })
 
+  // A generic list item on a parent subpage is reachable with or without the chapter slug in the url
+  const chapterInUrl = Boolean(router.query.genericListItemSlug)
+  const itemId = genericListItemProps.item.id
+
+  let customContentfulIds = [projectPage?.id, subpage?.id, itemId]
+  let customLinkType: LinkType | undefined = undefined
+
+  if (parentSubpage && chapterInUrl) {
+    customContentfulIds = [
+      projectPage?.id,
+      parentSubpage.id,
+      subpage?.id,
+      itemId,
+    ]
+    customLinkType = 'projectparentsubpagechildlistitem'
+  } else if (parentSubpage) {
+    customContentfulIds = [projectPage?.id, parentSubpage.id, itemId]
+    customLinkType = 'projectparentsubpagechild'
+  }
+
   return (
     <SubPageLayout
       layoutProps={parentProps.layoutProps}
       componentProps={{
         ...parentProps.componentProps,
-        customContentfulIds: [
-          projectPage?.id,
-          parentSubpage?.id,
-          subpage?.id,
-          genericListItemProps.item.id,
-        ],
+        customContentfulIds,
+        customLinkType,
         customBreadcrumbItems: breadcrumbItems,
         customContent: (
           <GenericListItemPage
