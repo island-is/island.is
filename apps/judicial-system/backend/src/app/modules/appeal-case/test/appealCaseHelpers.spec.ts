@@ -1,7 +1,9 @@
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCourtSessionType,
   AppealEventType,
+  AppealRulingType,
   CaseFileCategory,
   CaseType,
   InstitutionType,
@@ -13,9 +15,11 @@ import {
 import { AppealCase, AppealEventLog, Case, CaseFile } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  changesConfirmedVerdictAppealOutcome,
   currentAppealCourtSession,
   findAppealCaseOfCaseFile,
   hasStandingVerdictAppeal,
+  isVerdictAppealOver,
   nextAppealCourtSession,
   standingVerdictAppellantIds,
   standingVerdictAppellants,
@@ -710,8 +714,21 @@ describe('verdict appeal progress', () => {
   })
 
   // Lists outside the court of appeals read this, and they are shown nothing
-  // of how the appeal ended until the court releases it.
-  it('stays under advisement once the appeal itself is completed', () => {
+  // of how the appeal ended until its outcome is released.
+  it('stays under advisement once the court has confirmed the appeal', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.READY_TO_COMPLETE,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBe('UNDER_ADVISEMENT')
+  })
+
+  it('is completed once the appeal itself is completed', () => {
     expect(
       verdictAppealProgress(
         appealCase({
@@ -721,7 +738,7 @@ describe('verdict appeal progress', () => {
         }),
         now,
       ),
-    ).toBe('UNDER_ADVISEMENT')
+    ).toBe('COMPLETED')
   })
 
   // What the court of appeals records outranks what can be read off the
@@ -731,7 +748,7 @@ describe('verdict appeal progress', () => {
     [VerdictAppealStatus.COURT_SESSION_SCHEDULED, 'SCHEDULED'],
     [VerdictAppealStatus.POSTPONED, 'POSTPONED'],
     [VerdictAppealStatus.UNDER_ADVISEMENT, 'UNDER_ADVISEMENT'],
-    // The court's own note until the appeal itself is completed.
+    // The court's own note until the appeal's outcome is released.
     [VerdictAppealStatus.COMPLETED, 'UNDER_ADVISEMENT'],
   ])('takes the stage from the recorded status %s', (status, progress) => {
     expect(
@@ -768,17 +785,23 @@ describe('verdict appeal progress', () => {
     ).toBeUndefined()
   })
 
-  it('stays under advisement once the appeal itself is completed, whatever status was recorded', () => {
-    expect(
-      verdictAppealProgress(
-        appealCase({
-          appealState: AppealCaseState.COMPLETED,
-          verdictAppealStatus: VerdictAppealStatus.POSTPONED,
-        }),
-        now,
-      ),
-    ).toBe('UNDER_ADVISEMENT')
-  })
+  it.each([
+    [AppealCaseState.READY_TO_COMPLETE, 'UNDER_ADVISEMENT'],
+    [AppealCaseState.COMPLETED, 'COMPLETED'],
+  ])(
+    'is taken from the appeal state %s, whatever status was recorded',
+    (appealState, progress) => {
+      expect(
+        verdictAppealProgress(
+          appealCase({
+            appealState,
+            verdictAppealStatus: VerdictAppealStatus.POSTPONED,
+          }),
+          now,
+        ),
+      ).toBe(progress)
+    },
+  )
 
   describe('the session to show', () => {
     const held = session(AppealCourtSessionType.PREPARATORY_HEARING, -20)
@@ -839,6 +862,38 @@ describe('verdict appeal progress', () => {
       ).toBeUndefined()
     })
 
+    // Outside the court a confirmed appeal reads as one under advisement,
+    // whatever status the court records on it afterwards, so its session cell
+    // must read the same.
+    it.each([
+      VerdictAppealStatus.COMPLETED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+      VerdictAppealStatus.POSTPONED,
+      null,
+    ])(
+      'is the same for a confirmed appeal recorded as %s as for one under advisement',
+      (verdictAppealStatus) => {
+        const underAdvisement = currentAppealCourtSession(
+          appealCase({
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            courtSessions: [held, ahead],
+          }),
+          now,
+        )
+        const confirmed = currentAppealCourtSession(
+          appealCase({
+            appealState: AppealCaseState.READY_TO_COMPLETE,
+            verdictAppealStatus,
+            courtSessions: [held, ahead],
+          }),
+          now,
+        )
+
+        expect(confirmed).toEqual(underAdvisement)
+        expect(confirmed).toBeUndefined()
+      },
+    )
+
     it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
       'is none once the appeal is %s',
       (appealState) => {
@@ -851,6 +906,15 @@ describe('verdict appeal progress', () => {
         ).toBeUndefined()
       },
     )
+  })
+
+  it.each([
+    [AppealCaseState.APPEALED, false],
+    [AppealCaseState.READY_TO_COMPLETE, false],
+    [AppealCaseState.COMPLETED, true],
+    [AppealCaseState.WITHDRAWN, true],
+  ])('is over when the appeal is %s: %s', (appealState, over) => {
+    expect(isVerdictAppealOver(appealCase({ appealState }))).toBe(over)
   })
 
   it('picks the earliest session still ahead as the next one', () => {
@@ -866,5 +930,62 @@ describe('verdict appeal progress', () => {
     )
 
     expect(next?.sessionType).toBe(AppealCourtSessionType.MAIN_HEARING)
+  })
+})
+
+describe('changesConfirmedVerdictAppealOutcome', () => {
+  const confirmed = {
+    verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Conclusion',
+    appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+  } as AppealCase
+
+  it('is no change when nothing is sent', () => {
+    expect(changesConfirmedVerdictAppealOutcome(confirmed, {})).toBe(false)
+  })
+
+  it('is no change when every field is sent with the value it has', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome(confirmed, {
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingType: AppealRulingType.VERDICT,
+        appealConclusion: 'Conclusion',
+        // Another instance naming the same moment.
+        appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+      }),
+    ).toBe(false)
+  })
+
+  it.each([
+    ['status', { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }],
+    ['outcome', { appealRulingDecision: AppealCaseRulingDecision.CHANGED }],
+    ['ruling type', { appealRulingType: AppealRulingType.RULING }],
+    ['conclusion', { appealConclusion: 'Another conclusion' }],
+    ['conclusion cleared', { appealConclusion: null }],
+    [
+      'date of conclusion',
+      { appealRulingDate: new Date('2024-01-06T00:00:00Z') },
+    ],
+  ])('is a change when the %s differs', (_, update) => {
+    expect(changesConfirmedVerdictAppealOutcome(confirmed, update)).toBe(true)
+  })
+
+  it('is a change when a field with no value on record is given one', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome({} as AppealCase, {
+        appealConclusion: 'Conclusion',
+      }),
+    ).toBe(true)
+  })
+
+  it('is no change when a field with no value on record is cleared', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome({} as AppealCase, {
+        appealConclusion: null,
+      }),
+    ).toBe(false)
   })
 })

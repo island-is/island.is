@@ -92,6 +92,10 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
       }}
     >
       {children}
+      {/* What the form has written back to the appeal's state. */}
+      <output data-testid="verdictAppealState">
+        {workingCase.verdictAppealCase?.appealState}
+      </output>
     </FormContext.Provider>
   )
 }
@@ -348,6 +352,83 @@ describe('RegisterConclusion', () => {
         screen.getByRole('radio', { name: 'Fellt úr gildi' }),
       ).not.toBeChecked()
       expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+    })
+  })
+
+  // A change to how a confirmed appeal ended takes it back on the backend, and
+  // the response says so.
+  describe('a confirmed appeal', () => {
+    const confirmedCase = () =>
+      caseWith({
+        ...recordedOutcome,
+        appealState: AppealCaseState.READY_TO_COMPLETE,
+      })
+    const appealState = () =>
+      screen.getByTestId('verdictAppealState').textContent
+
+    beforeEach(() => {
+      mockUpdateAppealCase.mockResolvedValue({
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.APPEALED,
+      })
+    })
+
+    it('takes the state an outcome save returns and keeps the outcome picked', async () => {
+      renderForm(confirmedCase())
+
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      )
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+      expect(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      ).toBeChecked()
+      expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+    })
+
+    it('takes the state a type save returns', async () => {
+      renderForm(confirmedCase())
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+      expect(screen.getByRole('radio', { name: 'Úrskurður' })).toBeChecked()
+    })
+
+    it('takes the state a save of the concluding words returns and keeps the words', async () => {
+      renderForm(confirmedCase())
+
+      const field = screen.getByPlaceholderText('Hvert er dómsorð Landsréttar?')
+
+      await userEvent.clear(field)
+      await userEvent.type(field, 'Óraskað')
+      await userEvent.tab()
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+      expect(field).toHaveValue('Óraskað')
+    })
+
+    it('keeps its state when the response carries none', async () => {
+      mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
+      renderForm(confirmedCase())
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+
+      await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it('keeps its state when the save fails', async () => {
+      mockUpdateAppealCase.mockResolvedValue(undefined)
+      renderForm(confirmedCase())
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+
+      await waitFor(() =>
+        expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked(),
+      )
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
     })
   })
 

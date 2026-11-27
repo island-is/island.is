@@ -58,7 +58,18 @@ type CaseEvent =
   | 'VERDICT_DELIVERED_TO_POLICE'
   | 'VERDICT_SERVICE_STATUS'
 
-type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
+// Confirming a verdict appeal, or taking a confirmation back, is not
+// announced: its outcome stays with the court of appeals until it is released.
+// Releasing it completes an áfrýjun, not a kæra, so it is announced as an
+// event of its own.
+type UnannouncedAppealCaseTransition =
+  | AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE
+  | AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+
+type AppealCaseEvent =
+  | Exclude<AppealCaseTransition, UnannouncedAppealCaseTransition>
+  | 'COMPLETE_VERDICT_APPEAL'
+  | 'CREATE_APPEAL'
 
 type Event = CaseEvent | AppealCaseEvent
 
@@ -71,6 +82,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.ASK_FOR_REVIEW]: ':mag: Beðið um yfirlestur',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [AppealCaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  COMPLETE_VERDICT_APPEAL: ':white_check_mark: Áfrýjun lokið',
   [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
@@ -159,8 +171,14 @@ export class EventService {
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
           }`
         : ''
-      const courtOfAppealsText = theCase.appealCase?.appealCaseNumber
-        ? `\n>Landsréttur *${theCase.appealCase?.appealCaseNumber}*`
+      // A verdict appeal event is about the verdict appeal, never the ruling
+      // appeal the case may also have.
+      const appealCaseNumber =
+        event === 'COMPLETE_VERDICT_APPEAL'
+          ? theCase.verdictAppealCase?.appealCaseNumber
+          : theCase.appealCase?.appealCaseNumber
+      const courtOfAppealsText = appealCaseNumber
+        ? `\n>Landsréttur *${appealCaseNumber}*`
         : ''
       const courtDateText =
         event === 'SCHEDULE_COURT_DATE' || event === 'SCHEDULE_ARRAIGNMENT_DATE'
