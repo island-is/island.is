@@ -308,7 +308,6 @@ const BulkCompleteCaseLists: FC<Props> = ({
                       loadingIndicator={LoadingIndicator}
                       fadeInNewRows
                       fixedLayout
-                      sortable={staged.length > 0}
                     />
                     {staged.length === 0 && (
                       <EmptyList text="Engin mál valin – smelltu á mál til að velja það" />
@@ -338,7 +337,6 @@ const BulkCompleteCaseLists: FC<Props> = ({
                 loadingIndicator={LoadingIndicator}
                 fadeInNewRows
                 fixedLayout
-                sortable={source.length > 0}
               />
               {source.length === 0 && <EmptyList text="Öll mál valin" />}
             </div>

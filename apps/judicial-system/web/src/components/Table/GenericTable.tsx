@@ -10,7 +10,7 @@ import { useLocalStorage } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
-import { Icon, Text } from '@island.is/island-ui/core'
+import { Icon } from '@island.is/island-ui/core'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import { ContextMenu } from '@island.is/judicial-system-web/src/components'
 import {
@@ -54,8 +54,6 @@ interface GenericTableProps<Cell> {
   // rather than sizing to their content, so tables with the same columns line
   // up with each other.
   fixedLayout?: boolean
-  // When false, the column titles are plain text, with no sort buttons.
-  sortable?: boolean
 }
 
 const GenericTable = <Cell,>({
@@ -65,7 +63,6 @@ const GenericTable = <Cell,>({
   loadingIndicator: LoadingIndicator,
   fadeInNewRows = false,
   fixedLayout = false,
-  sortable = true,
 }: GenericTableProps<Cell>) => {
   const reduceMotion = useReducedMotion()
   // Rows mounted before this is set are the ones the table started with.
@@ -118,42 +115,32 @@ const GenericTable = <Cell,>({
                 className={styles.th}
                 style={fixedLayout && c.width ? { width: c.width } : undefined}
                 aria-sort={
-                  !sortable
-                    ? undefined
-                    : sortConfig?.column === idx
-                    ? sortConfig.direction
-                    : 'none'
+                  sortConfig?.column === idx ? sortConfig.direction : 'none'
                 }
               >
-                {sortable ? (
-                  <SortButton
-                    title={c.title}
-                    onClick={() =>
-                      setSortConfig({
-                        column: idx,
-                        direction:
-                          sortConfig &&
-                          sortConfig.column === idx &&
-                          sortConfig.direction === 'ascending'
-                            ? 'descending'
-                            : 'ascending',
-                      })
-                    }
-                    sortAsc={
-                      sortConfig?.column === idx &&
-                      sortConfig?.direction === 'ascending'
-                    }
-                    sortDes={
-                      sortConfig?.column === idx &&
-                      sortConfig?.direction === 'descending'
-                    }
-                    isActive={sortConfig?.column === idx}
-                  />
-                ) : (
-                  <Text as="span" fontWeight="regular">
-                    {c.title}
-                  </Text>
-                )}
+                <SortButton
+                  title={c.title}
+                  onClick={() =>
+                    setSortConfig({
+                      column: idx,
+                      direction:
+                        sortConfig &&
+                        sortConfig.column === idx &&
+                        sortConfig.direction === 'ascending'
+                          ? 'descending'
+                          : 'ascending',
+                    })
+                  }
+                  sortAsc={
+                    sortConfig?.column === idx &&
+                    sortConfig?.direction === 'ascending'
+                  }
+                  sortDes={
+                    sortConfig?.column === idx &&
+                    sortConfig?.direction === 'descending'
+                  }
+                  isActive={sortConfig?.column === idx}
+                />
               </th>
             ))}
             {

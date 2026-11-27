@@ -188,7 +188,7 @@ describe('BulkCompleteCaseLists', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('shows the staging columns without sort buttons while nothing is staged', async () => {
+  it('shows the staging columns with their sort buttons while nothing is staged', async () => {
     const { container } = renderLists()
     await turnOnSelection()
 
@@ -199,11 +199,8 @@ describe('BulkCompleteCaseLists', () => {
       within(stagingTable).getAllByRole('columnheader', { hidden: true }),
     ).toHaveLength(columns.length + 1)
     expect(
-      within(stagingTable).getByText('Málsnúmer', { ignore: 'button *' }),
-    ).toBeInTheDocument()
-    expect(
-      within(stagingTable).queryByRole('button', { name: /Raða eftir dálki/ }),
-    ).not.toBeInTheDocument()
+      within(stagingTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
+    ).toHaveLength(columns.length)
     expect(
       within(sourceTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
     ).toHaveLength(columns.length)
@@ -233,8 +230,8 @@ describe('BulkCompleteCaseLists', () => {
     const sourceTable = container.querySelectorAll('table')[1]
     expect(screen.getByText('Öll mál valin')).toBeInTheDocument()
     expect(
-      within(sourceTable).queryByRole('button', { name: /Raða eftir dálki/ }),
-    ).not.toBeInTheDocument()
+      within(sourceTable).getAllByRole('button', { name: /Raða eftir dálki/ }),
+    ).toHaveLength(columns.length)
     expect(screen.getByLabelText('Velja mál til að ljúka')).toBeChecked()
 
     await user.click(
