@@ -71,13 +71,15 @@ export const SdfPaymentPendingField = ({ dispatch }: FieldRendererProps) => {
   const [submitError, setSubmitError] = useState(false)
   const hasSubmitted = useRef(false)
 
+  // Resolves with whether the transition worked. When it did not, the shell
+  // shows the message and this field offers to retry or to leave.
   const transition = useCallback(
-    async (event: DefaultEvents) => {
-      try {
-        await dispatch?.('SUBMIT', undefined, undefined, event)
-      } catch {
+    async (event: DefaultEvents): Promise<boolean> => {
+      const succeeded = await dispatch?.('SUBMIT', undefined, undefined, event)
+      if (succeeded === false) {
         setSubmitError(true)
       }
+      return succeeded !== false
     },
     [dispatch],
   )
@@ -90,7 +92,9 @@ export const SdfPaymentPendingField = ({ dispatch }: FieldRendererProps) => {
     if (getRedirectStatus() === 'cancelled') {
       stopPolling()
       hasSubmitted.current = true
-      transition(DefaultEvents.ABORT).then(removeCancelledFromHref)
+      transition(DefaultEvents.ABORT).then((succeeded) => {
+        if (succeeded) removeCancelledFromHref()
+      })
       return
     }
 

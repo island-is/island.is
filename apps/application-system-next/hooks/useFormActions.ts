@@ -163,6 +163,9 @@ export const useFormActions = (
     [],
   )
 
+  // Runs an action. Resolves once the request has settled: with `false` when it
+  // failed (the message is then in `error`), otherwise `true`, including when a
+  // later move made its result obsolete.
   const dispatch = useCallback(
     async (
       actionType: string,
@@ -171,7 +174,7 @@ export const useFormActions = (
       event?: string,
       refetchTemplateApiActions?: string[],
       refetchTargets?: string[],
-    ) => {
+    ): Promise<boolean> => {
       setError(null)
       const mergedAnswers = { ...answersRef.current, ...extraAnswers }
       const targets =
@@ -187,46 +190,51 @@ export const useFormActions = (
 
       updatePendingRefetchTargets(targets, 1)
 
-      startTransition(async () => {
-        try {
-          const result = await gqlExecuteAction(
-            applicationId,
-            actionType,
-            claimedScreenId,
-            Object.keys(mergedAnswers).length > 0 ? mergedAnswers : undefined,
-            localeRef.current,
-            fieldIds,
-            event,
-            refetchTemplateApiActions,
-          )
-          if (isSuperseded()) {
-            return
+      return new Promise<boolean>((resolve) => {
+        startTransition(async () => {
+          let succeeded = true
+          try {
+            const result = await gqlExecuteAction(
+              applicationId,
+              actionType,
+              claimedScreenId,
+              Object.keys(mergedAnswers).length > 0 ? mergedAnswers : undefined,
+              localeRef.current,
+              fieldIds,
+              event,
+              refetchTemplateApiActions,
+            )
+            if (isSuperseded()) {
+              return
+            }
+            showScreen(
+              result,
+              getHistoryAction({
+                source: 'navigation',
+                currentId: claimedScreenId,
+                responseId: result.page.id,
+                hasNotice: !!result.notice,
+              }),
+            )
+            // Always merge; never replace with result.answers alone — it only contains
+            // fields present on the current page in the DB snapshot, and would drop keys
+            // needed for client-side clientShowWhen on the page we navigate to.
+            answersRef.current = {
+              ...answersRef.current,
+              ...(result.answers ?? {}),
+            }
+            setAnswerSnapshot(answersRef.current)
+            forceRender((n) => n + 1)
+          } catch (e) {
+            if (!isSuperseded()) {
+              succeeded = false
+              setError(e instanceof Error ? e.message : 'Action failed')
+            }
+          } finally {
+            updatePendingRefetchTargets(targets, -1)
+            resolve(succeeded)
           }
-          showScreen(
-            result,
-            getHistoryAction({
-              source: 'navigation',
-              currentId: claimedScreenId,
-              responseId: result.page.id,
-              hasNotice: !!result.notice,
-            }),
-          )
-          // Always merge; never replace with result.answers alone — it only contains
-          // fields present on the current page in the DB snapshot, and would drop keys
-          // needed for client-side clientShowWhen on the page we navigate to.
-          answersRef.current = {
-            ...answersRef.current,
-            ...(result.answers ?? {}),
-          }
-          setAnswerSnapshot(answersRef.current)
-          forceRender((n) => n + 1)
-        } catch (e) {
-          if (!isSuperseded()) {
-            setError(e instanceof Error ? e.message : 'Action failed')
-          }
-        } finally {
-          updatePendingRefetchTargets(targets, -1)
-        }
+        })
       })
     },
     [applicationId, updatePendingRefetchTargets, showScreen, takeTurn],

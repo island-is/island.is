@@ -7,7 +7,7 @@ export type SdfFormDispatch = (
   event?: string,
   refetchTemplateApiActions?: string[],
   refetchTargets?: string[],
-) => void | Promise<void>
+) => Promise<boolean>
 
 export interface FormRendererProps {
   components: SdfComponentData[]

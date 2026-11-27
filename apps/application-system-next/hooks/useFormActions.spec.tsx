@@ -63,8 +63,9 @@ describe('useFormActions', () => {
       wrapper,
     })
 
+    let dispatched: Promise<boolean> = Promise.resolve(true)
     await act(async () => {
-      await result.current.dispatch(
+      dispatched = result.current.dispatch(
         'REFETCH',
         undefined,
         undefined,
@@ -78,10 +79,94 @@ describe('useFormActions', () => {
 
     await act(async () => {
       resolveAction(screen)
-      await Promise.resolve()
+      await dispatched
     })
 
     expect(result.current.pendingRefetchTargets).toEqual([])
+  })
+
+  describe('what dispatch resolves with', () => {
+    it('waits for the request and resolves true when it worked', async () => {
+      let resolveAction: (value: SdfScreen) => void = () => undefined
+      ;(executeAction as jest.Mock).mockReturnValue(
+        new Promise<SdfScreen>((resolve) => {
+          resolveAction = resolve
+        }),
+      )
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      let settled: boolean | undefined
+      await act(async () => {
+        result.current.dispatch('NEXT_PAGE').then((value) => {
+          settled = value
+        })
+      })
+
+      expect(settled).toBeUndefined()
+
+      await act(async () => {
+        resolveAction(screen)
+      })
+
+      expect(settled).toBe(true)
+    })
+
+    it('resolves false and publishes the message when the request fails', async () => {
+      ;(executeAction as jest.Mock).mockRejectedValue(new Error('conflict'))
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      let outcome: boolean | undefined
+      await act(async () => {
+        outcome = await result.current.dispatch(
+          'SUBMIT',
+          undefined,
+          undefined,
+          'SUBMIT',
+        )
+      })
+
+      expect(outcome).toBe(false)
+      expect(result.current.error).toBe('conflict')
+    })
+
+    it('resolves true, without an error, when a later move made the failure obsolete', async () => {
+      let rejectFirst: (reason: Error) => void = () => undefined
+      ;(executeAction as jest.Mock)
+        .mockReturnValueOnce(
+          new Promise<SdfScreen>((_resolve, reject) => {
+            rejectFirst = reject
+          }),
+        )
+        .mockResolvedValueOnce({
+          ...screen,
+          page: { ...screen.page, id: 'page-2', index: 1 },
+        })
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      let first: Promise<boolean> = Promise.resolve(false)
+      await act(async () => {
+        first = result.current.dispatch('NEXT_PAGE')
+      })
+      await act(async () => {
+        await result.current.dispatch('NEXT_PAGE')
+      })
+
+      let outcome: boolean | undefined
+      await act(async () => {
+        rejectFirst(new Error('too late'))
+        outcome = await first
+      })
+
+      expect(outcome).toBe(true)
+      expect(result.current.error).toBeNull()
+      expect(result.current.screen.page.id).toBe('page-2')
+    })
   })
 
   describe('screen navigation', () => {
@@ -222,7 +307,8 @@ describe('useFormActions', () => {
         })
 
         await act(async () => {
-          await result.current.nextPage()
+          // Its response is still pending, so it is not awaited.
+          void result.current.nextPage()
         })
         window.history.replaceState(null, '', '/?screen=page-0')
         await act(async () => {
@@ -251,7 +337,8 @@ describe('useFormActions', () => {
         })
 
         await act(async () => {
-          await result.current.refetch()
+          // Its response is still pending, so it is not awaited.
+          void result.current.refetch()
         })
         await act(async () => {
           await result.current.nextPage()
@@ -281,10 +368,12 @@ describe('useFormActions', () => {
         })
 
         await act(async () => {
-          await result.current.nextPage()
+          // Its response is still pending, so it is not awaited.
+          void result.current.nextPage()
         })
         await act(async () => {
-          await result.current.refetch()
+          // Its response is still pending, so it is not awaited.
+          void result.current.refetch()
         })
         await act(async () => {
           nextPageResponse.resolve(page2)
@@ -313,7 +402,8 @@ describe('useFormActions', () => {
         })
 
         await act(async () => {
-          await result.current.nextPage()
+          // Its response is still pending, so it is not awaited.
+          void result.current.nextPage()
         })
         await act(async () => {
           await result.current.refetch()

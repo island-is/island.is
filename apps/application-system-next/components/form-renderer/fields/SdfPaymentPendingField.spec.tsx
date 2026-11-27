@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { SdfPaymentPendingField } from './SdfPaymentPendingField'
 import type { FieldRendererProps } from '../types'
@@ -11,26 +11,36 @@ jest.mock('@apollo/client', () => ({
 }))
 
 jest.mock('@island.is/island-ui/core', () => ({
-  AlertMessage: () => null,
+  AlertMessage: ({ title }: { title?: string }) => <div>{title}</div>,
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  Button: ({ children }: { children?: React.ReactNode }) => (
-    <button>{children}</button>
-  ),
+  Button: ({
+    children,
+    onClick,
+  }: {
+    children?: React.ReactNode
+    onClick?: () => void
+  }) => <button onClick={onClick}>{children}</button>,
   LoadingDots: () => null,
   Text: ({ children }: { children?: React.ReactNode }) => (
     <span>{children}</span>
   ),
 }))
 
+// Every message is a descriptor whose id is its key, so a test can find the text.
+const messagesByKey = () =>
+  new Proxy({}, { get: (_target, key) => ({ id: String(key) }) })
+
 jest.mock('@island.is/application/core', () => ({
-  coreErrorMessages: {},
-  coreMessages: {},
+  coreErrorMessages: messagesByKey(),
+  coreMessages: messagesByKey(),
 }))
 
 jest.mock('@island.is/application/graphql', () => ({ PAYMENT_STATUS: {} }))
 
 jest.mock('@island.is/localization', () => ({
-  useLocale: () => ({ formatMessage: () => '' }),
+  useLocale: () => ({
+    formatMessage: (message?: { id?: string }) => message?.id ?? '',
+  }),
 }))
 
 jest.mock('../../ApplicationContext', () => ({
@@ -102,5 +112,35 @@ describe('SdfPaymentPendingField', () => {
         'SUBMIT',
       ),
     )
+  })
+  it('offers to retry or leave when the SUBMIT fails, and retries', async () => {
+    // A new object on every render, as the query returns after it is polled again.
+    mockUseQuery.mockImplementation(() => ({
+      data: {
+        applicationPaymentStatus: { fulfilled: true, paymentUrl: PAYMENT_URL },
+      },
+      error: undefined,
+    }))
+    window.history.replaceState(null, '', '/sdf/slug/id?done=&screen=pay')
+    const dispatch = jest.fn().mockResolvedValue(false)
+
+    renderField(dispatch)
+
+    expect(await screen.findByText('paymentSubmitFailed')).toBeTruthy()
+    expect(dispatch).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(screen.getByText('paymentSubmitRetryButtonCaption'))
+
+    await waitFor(() => expect(dispatch).toHaveBeenCalledTimes(2))
+  })
+
+  it('keeps the cancelled param and shows the error when ABORT fails', async () => {
+    window.history.replaceState(null, '', '/sdf/slug/id?cancelled=&screen=pay')
+    const dispatch = jest.fn().mockResolvedValue(false)
+
+    renderField(dispatch)
+
+    expect(await screen.findByText('paymentSubmitFailed')).toBeTruthy()
+    expect(window.location.search).toBe('?cancelled=&screen=pay')
   })
 })
