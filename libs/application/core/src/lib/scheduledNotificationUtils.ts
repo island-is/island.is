@@ -12,7 +12,7 @@ import { dateFormat } from '@island.is/shared/constants'
 
 // date-fns formats using the server's local time; this carries a date's UTC
 // year/month/day into a local Date so formatting doesn't depend on server TZ.
-const toUTCDateOnly = (date: Date) =>
+export const toUTCDateOnly = (date: Date) =>
   new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
 
 const localizedDateArgs = (
