@@ -325,7 +325,7 @@ describe('InfoCardClosedIndictment', () => {
       const verdictAppeal = {
         id: 'verdict-appeal',
         appealType: AppealCaseType.VERDICT,
-        appealState: AppealCaseState.COMPLETED,
+        appealState: AppealCaseState.READY_TO_COMPLETE,
         appealCaseNumber: 'L-300/2026',
         appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
       }
@@ -336,12 +336,30 @@ describe('InfoCardClosedIndictment', () => {
           verdictAppealCase: appeal,
         } as unknown as WorkingCase)
 
-      it('shows the outcome to the Court of Appeals', async () => {
+      it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
+        'shows the outcome to the Court of Appeals in state %s',
+        async (appealState) => {
+          mockAppealCaseIdQuery = 'verdict-appeal'
+
+          renderClosedIndictment(
+            caseWithAppeal({ ...verdictAppeal, appealState }),
+            UserRole.COURT_OF_APPEALS_JUDGE,
+          )
+
+          await screen.findByText('L-300/2026')
+          expect(screen.getByText('Lyktir')).toBeInTheDocument()
+          expect(screen.getByText('Staðfesting')).toBeInTheDocument()
+        },
+      )
+
+      it('shows the outcome to a prosecutor once the appeal is completed', async () => {
         mockAppealCaseIdQuery = 'verdict-appeal'
 
         renderClosedIndictment(
-          caseWithAppeal(verdictAppeal),
-          UserRole.COURT_OF_APPEALS_JUDGE,
+          caseWithAppeal({
+            ...verdictAppeal,
+            appealState: AppealCaseState.COMPLETED,
+          }),
         )
 
         await screen.findByText('L-300/2026')
@@ -349,7 +367,7 @@ describe('InfoCardClosedIndictment', () => {
         expect(screen.getByText('Staðfesting')).toBeInTheDocument()
       })
 
-      it('does not show the outcome to a prosecutor', async () => {
+      it('does not show the outcome to a prosecutor before the appeal is completed', async () => {
         mockAppealCaseIdQuery = 'verdict-appeal'
 
         renderClosedIndictment(caseWithAppeal(verdictAppeal))

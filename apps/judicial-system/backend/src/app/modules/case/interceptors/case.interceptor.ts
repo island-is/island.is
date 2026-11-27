@@ -1007,8 +1007,8 @@ const transformCase = (
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
   // Non-defence keeps every deadline, but still gets server `isExpired` so
-  // the web does not fall back to the browser clock. Outcome masking (main)
-  // spreads last and may strip statementDeadlines when COMPLETED is hidden.
+  // the web does not fall back to the browser clock. Outcome masking spreads
+  // last and leaves the statement deadlines as they are.
   const verdictAppealCaseOverride = theCase.verdictAppealCase
     ? {
         verdictAppealCase: {

@@ -1,5 +1,8 @@
 import type { InstitutionUser } from '@island.is/judicial-system/types'
-import { isCourtOfAppealsUser } from '@island.is/judicial-system/types'
+import {
+  isCourtOfAppealsUser,
+  isVerdictAppealConfirmed,
+} from '@island.is/judicial-system/types'
 import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
@@ -8,9 +11,9 @@ import {
 import { getVerdictAppealRulingDecisionLabel } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealSummary/VerdictAppealSummary.logic'
 
 /**
- * Whether the card shows how a verdict appeal ended, which it does once the
- * court has confirmed the appeal. Only the Court of Appeals sees it: the
- * outcome is not for other users' eyes.
+ * Whether the card shows how a verdict appeal ended. The Court of Appeals sees
+ * it once the court has confirmed the appeal (ready to complete or completed);
+ * every other user only once the appeal is completed and its outcome released.
  */
 export const shouldShowVerdictAppealOutcome = (
   appealCase:
@@ -21,7 +24,8 @@ export const shouldShowVerdictAppealOutcome = (
 ): boolean =>
   Boolean(
     appealCase?.appealType === AppealCaseType.VERDICT &&
-      appealCase.appealState === AppealCaseState.COMPLETED &&
-      getVerdictAppealRulingDecisionLabel(appealCase) &&
-      isCourtOfAppealsUser(user),
+      (isCourtOfAppealsUser(user)
+        ? isVerdictAppealConfirmed(appealCase)
+        : appealCase.appealState === AppealCaseState.COMPLETED) &&
+      getVerdictAppealRulingDecisionLabel(appealCase),
   )

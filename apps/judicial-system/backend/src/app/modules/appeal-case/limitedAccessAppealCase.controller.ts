@@ -29,6 +29,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseTransition,
   AppealCaseType,
   indictmentCases,
   investigationCases,
@@ -239,9 +240,19 @@ export class LimitedAccessAppealCaseController {
     // this handler has returned - as it was when the handler committed a
     // transaction of its own. Still fire and forget: a failed announcement is
     // logged, not returned to the caller.
-    registerAfterCommit(() =>
-      this.eventService.postEvent(dto.transition, theCase),
-    )
+    const transition = dto.transition
+
+    // This check exists only to narrow the transition to the events the event
+    // service accepts: no limited access user may confirm a verdict appeal,
+    // and no user may take a confirmation back.
+    if (
+      transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      transition !== AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+    ) {
+      registerAfterCommit(() =>
+        this.eventService.postEvent(transition, theCase),
+      )
+    }
 
     return result.appealCase
   }

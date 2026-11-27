@@ -32,6 +32,7 @@ import {
   CaseFileCategory,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useFileList,
   useS3Upload,
@@ -40,7 +41,10 @@ import {
 import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useAppealCourtSession from '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  applyAppealCaseUpdate,
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { getVerdictAppealDefenderCaseNumber } from '../VerdictAppealDefender/VerdictAppealDefender.logic'
@@ -55,6 +59,8 @@ import {
   toAppealCourtSessionDraft,
   verdictAppealStatuses,
   verdictAppealStatusLabels,
+  withReturnedAppealState,
+  withRulingDocumentChanged,
 } from './VerdictAppealStatus.logic'
 
 /**
@@ -80,6 +86,10 @@ import {
  * holds the ruling document's uploads, the way the district court's
  * conclusion does, so a document uploaded or removed under "Lokið" is still
  * so when the court picks another status and comes back.
+ *
+ * Changing the status, how the appeal ended or its document after the court
+ * has confirmed it on the summary takes the appeal back to be confirmed again,
+ * and the working case follows.
  *
  * Not gated behind the feature flag, for the reason the defender step gives:
  * the stepper section this page belongs to only renders for a verdict appeal,
@@ -199,27 +209,29 @@ const VerdictAppealStatus = () => {
       return true
     }
 
-    const updated = await updateAppealCase(
-      workingCase.id,
-      verdictAppealCase.id,
-      { verdictAppealStatus: status },
-    )
+    const caseId = workingCase.id
+    const appealCaseId = verdictAppealCase.id
+    const updated = await updateAppealCase(caseId, appealCaseId, {
+      verdictAppealStatus: status,
+    })
 
     if (!updated) {
       return false
     }
 
     // Written into the working case so the page opens on it when the court
-    // comes back, without a refetch.
+    // comes back, without a refetch, together with the state the save left
+    // the appeal in.
     setWorkingCase((previous) =>
-      previous.verdictAppealCase
-        ? {
-            ...previous,
-            verdictAppealCase: {
-              ...previous.verdictAppealCase,
+      previous.id === caseId
+        ? withReturnedAppealState(
+            applyAppealCaseUpdate(previous, appealCaseId, {
               verdictAppealStatus: status,
-            },
-          }
+            }),
+            caseId,
+            appealCaseId,
+            updated.appealState,
+          )
         : previous,
     )
 
@@ -431,6 +443,56 @@ const VerdictAppealStatus = () => {
     }
   }
 
+  // The backend takes a confirmed appeal back when its ruling document
+  // changes, and the working case follows without a refetch. The page
+  // outlives a case change, so an operation that ends after the court has
+  // moved on must not touch the other case.
+  const followRulingDocumentChange = (caseId: string) =>
+    setWorkingCase((previous) =>
+      previous.id === caseId ? withRulingDocumentChanged(previous) : previous,
+    )
+
+  // An upload that stored nothing changed nothing on the appeal.
+  const uploadRulingDocument = async (files: File[]) => {
+    // The appeal takes one ruling document. The upload box still accepts a
+    // drop with a document listed, so that is turned away here until the
+    // listed one is removed.
+    if (rulingFiles.length > 0) {
+      return
+    }
+
+    const caseId = workingCase.id
+    const result = await handleUpload(
+      addUploadFiles(files, {
+        category: CaseFileCategory.VERDICT_APPEAL_RULING,
+      }),
+      updateUploadFile,
+    )
+
+    if (result !== 'NONE_SUCCEEDED') {
+      followRulingDocumentChange(caseId)
+    }
+  }
+
+  const retryRulingDocument = async (file: TUploadFile) => {
+    const caseId = workingCase.id
+    const result = await handleRetry(file, updateUploadFile)
+
+    if (result !== 'NONE_SUCCEEDED') {
+      followRulingDocumentChange(caseId)
+    }
+  }
+
+  // The callback runs only once a stored file has been removed.
+  const removeRulingDocument = (file: TUploadFile) => {
+    const caseId = workingCase.id
+
+    return handleRemove(file, (removed) => {
+      removeUploadFile(removed)
+      followRulingDocumentChange(caseId)
+    })
+  }
+
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
   const caseNumber = getVerdictAppealDefenderCaseNumber(workingCase)
 
@@ -505,23 +567,9 @@ const VerdictAppealStatus = () => {
           <Box paddingTop={5}>
             <RegisterConclusion
               rulingFiles={rulingFiles}
-              onUpload={(files) => {
-                // The appeal takes one ruling document. The upload box still
-                // accepts a drop with a document listed, so that is turned
-                // away here until the listed one is removed.
-                if (rulingFiles.length > 0) {
-                  return
-                }
-
-                handleUpload(
-                  addUploadFiles(files, {
-                    category: CaseFileCategory.VERDICT_APPEAL_RULING,
-                  }),
-                  updateUploadFile,
-                )
-              }}
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
+              onUpload={uploadRulingDocument}
+              onRemove={removeRulingDocument}
+              onRetry={retryRulingDocument}
               onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
