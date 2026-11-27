@@ -6,7 +6,7 @@ DOCKER_TAG=$2
 IMAGE=$3
 DOCKER_REGISTRY=$4
 # "true" when the feature gets its own identity-server stack (the
-# ids-deploy-feature PR label, or a pre-release branch). Default: dev's IDS.
+# ids-deploy-feature PR label). Default: dev's IDS.
 WITH_IDS=${5:-false}
 
 GIT_ROOT="$(git rev-parse --show-toplevel)"

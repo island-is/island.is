@@ -537,9 +537,9 @@ jobs:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-          # Own identity-server stack: opt-in via the ids-deploy-feature label,
-          # always for pre-release branches.
-          WITH_IDS: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' || needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
+          # Own identity-server stack: opt-in via the ids-deploy-feature label only.
+          # Pre-release branches deploy against the dev identity-server.
+          WITH_IDS: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         run: |
           IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
           ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY" "$WITH_IDS"
@@ -593,7 +593,7 @@ jobs:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           # Tells helm-values whether to create the feature's identity-server
           # application-sets. Same rule as the values generation above.
-          WITH_IDS: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' || needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
+          WITH_IDS: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         run: |
           repo_owner="island-is"
           repository="helm-values"
@@ -605,7 +605,7 @@ jobs:
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\", \"with_ids\":\"$WITH_IDS\"}}"
       - name: Get token for identity-server.web
         id: get-ids-token
-        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' || needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
+        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         shell: bash
         working-directory: monorepo
         env:
@@ -615,7 +615,7 @@ jobs:
           node ./scripts/ci/docker/get-github-token.mjs
 
       - name: Dispatch IDS feature deploy to identity-server.web
-        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' || needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
+        if: ${{ needs.prepare.outputs.IDS_FEATURE_DEPLOY == 'true' }}
         env:
           IDS_WEB_TOKEN: ${{ steps.get-ids-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
