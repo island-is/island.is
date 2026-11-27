@@ -40,6 +40,7 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
     policeCaseNumbers: ['007-2026-1'],
     rulingDate: new Date('2026-05-01T00:00:00.000Z'),
     prosecutorsOffice: { name: 'Lögreglustjórinn á höfuðborgarsvæðinu' },
+    appealProsecutor: { nationalId: '1111111119' },
     defendants: [
       {
         id: defendantId,
@@ -128,6 +129,7 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
           },
           { code: 'RVG_DOCUMENT_ID', value: serviceId },
           { code: 'RECEIVER_SSN', value: '0000000000' },
+          { code: 'PROSECUTOR_SSN', value: '1111111119' },
         ]),
       }),
     )

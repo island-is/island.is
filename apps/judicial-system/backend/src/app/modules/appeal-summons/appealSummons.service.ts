@@ -710,6 +710,15 @@ export class AppealSummonsService {
               },
             ]
           : []),
+        // Appeal prosecutor kennitala (not the district case prosecutor).
+        ...(theCase.appealProsecutor?.nationalId
+          ? [
+              {
+                code: 'PROSECUTOR_SSN',
+                value: theCase.appealProsecutor.nationalId,
+              },
+            ]
+          : []),
       ],
     })
 
