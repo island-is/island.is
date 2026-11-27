@@ -38,6 +38,7 @@ export class EstatesResolver {
     name: 'estates',
     nullable: true,
   })
+  @Audit()
   async estates(@CurrentUser() user: User): Promise<EstatesCollection> {
     return this.estatesService.getEstates(user)
   }
@@ -46,6 +47,7 @@ export class EstatesResolver {
     name: 'estate',
     nullable: true,
   })
+  @Audit()
   async estate(
     @CurrentUser() user: User,
     @Args('input') input: CaseInput,

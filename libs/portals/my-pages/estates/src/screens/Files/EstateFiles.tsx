@@ -50,14 +50,14 @@ export const EstateFiles = () => {
 
   useDebounce(
     () => {
-      if (searchTouched.current) {
+      if (searchTouched.current && !loading) {
         setAnnouncement(
           formatMessage(em.resultCount, { count: filtered.length }),
         )
       }
     },
     500,
-    [search],
+    [search, filtered.length, loading],
   )
 
   return (

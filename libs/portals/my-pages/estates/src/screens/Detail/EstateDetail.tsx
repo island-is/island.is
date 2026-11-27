@@ -311,20 +311,31 @@ export const EstateDetail = () => {
                               }
                               iconVariant="small"
                             >
-                              <AlertMessage
-                                type="info"
-                                message={step.information ?? ''}
-                                action={
-                                  step.action?.url ? (
-                                    <LinkButton
-                                      to={step.action.url}
-                                      text={step.action.label ?? ''}
-                                      variant="text"
-                                      icon="open"
-                                    />
-                                  ) : undefined
-                                }
-                              />
+                              {step.information ? (
+                                <AlertMessage
+                                  type="info"
+                                  message={step.information}
+                                  action={
+                                    step.action?.url ? (
+                                      <LinkButton
+                                        to={step.action.url}
+                                        text={step.action.label ?? ''}
+                                        variant="text"
+                                        icon="open"
+                                      />
+                                    ) : undefined
+                                  }
+                                />
+                              ) : (
+                                step.action?.url && (
+                                  <LinkButton
+                                    to={step.action.url}
+                                    text={step.action.label ?? ''}
+                                    variant="text"
+                                    icon="open"
+                                  />
+                                )
+                              )}
                             </AccordionItem>
                           ) : (
                             <Text fontWeight="semiBold" lineHeight="lg">
