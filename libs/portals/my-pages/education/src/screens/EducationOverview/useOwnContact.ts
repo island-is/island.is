@@ -3,7 +3,6 @@ import { findProblemInApolloError } from '@island.is/shared/problem'
 import {
   EducationOwnContactDocument,
   useEducationOwnContactQuery,
-  useEducationProfileContactQuery,
   useEducationUpdateOwnContactMutation,
 } from './EducationOverview.generated'
 import { toMmsError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/mmsError'
@@ -29,27 +28,7 @@ export const clearedOwnContactFields = (
     (field) => stored[field].trim() !== '' && next[field].trim() === '',
   )
 
-export const suggestOwnContact = (
-  stored: OwnContactInput,
-  profile: { email?: string | null; mobilePhoneNumber?: string | null } | null,
-): { values: OwnContactInput; suggested: OwnContactField[] } => {
-  const fromProfile: OwnContactInput = {
-    email: profile?.email?.trim() ?? '',
-    phone: toE164(profile?.mobilePhoneNumber ?? '') ?? '',
-  }
-  const suggested = (['phone', 'email'] as const).filter(
-    (field) => stored[field].trim() === '' && fromProfile[field] !== '',
-  )
-  return {
-    values: {
-      phone: suggested.includes('phone') ? fromProfile.phone : stored.phone,
-      email: suggested.includes('email') ? fromProfile.email : stored.email,
-    },
-    suggested,
-  }
-}
-
-export const ownContactFieldErrors =(error: unknown): OwnContactField[] => {
+export const ownContactFieldErrors = (error: unknown): OwnContactField[] => {
   if (!(error instanceof ApolloError)) return []
   const problem = findProblemInApolloError(error) as
     | { mmsFields?: unknown }
@@ -58,13 +37,6 @@ export const ownContactFieldErrors =(error: unknown): OwnContactField[] => {
   return fields.filter(
     (field): field is OwnContactField => field === 'email' || field === 'phone',
   )
-}
-
-export const useProfileContact = () => {
-  const { data, loading } = useEducationProfileContactQuery({
-    errorPolicy: 'all',
-  })
-  return { profile: data?.getUserProfile ?? null, loading }
 }
 
 export const useOwnContact = () => {

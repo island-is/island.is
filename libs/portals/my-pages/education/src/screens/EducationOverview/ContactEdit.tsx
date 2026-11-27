@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  AlertMessage,
   Box,
   Button,
   Input,
@@ -29,10 +28,8 @@ import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/Sec
 import {
   clearedOwnContactFields,
   ownContactFieldErrors,
-  suggestOwnContact,
   toE164,
   useOwnContact,
-  useProfileContact,
   type OwnContactField,
   type OwnContactInput,
 } from './useOwnContact'
@@ -44,24 +41,15 @@ const FIELD_INPUT: Record<OwnContactField, string> = {
 
 interface ContactFormProps {
   stored: OwnContactInput
-  initial: OwnContactInput
-  suggested: OwnContactField[]
   saving: boolean
   save: (input: OwnContactInput) => Promise<void>
   onDone: () => void
 }
 
-const ContactForm = ({
-  stored,
-  initial,
-  suggested,
-  saving,
-  save,
-  onDone,
-}: ContactFormProps) => {
+const ContactForm = ({ stored, saving, save, onDone }: ContactFormProps) => {
   const { formatMessage, lang } = useLocale()
-  const [phone, setPhone] = useState(initial.phone)
-  const [email, setEmail] = useState(initial.email)
+  const [phone, setPhone] = useState(stored.phone)
+  const [email, setEmail] = useState(stored.email)
   const [fieldErrors, setFieldErrors] = useState<OwnContactField[]>([])
   const [confirmClear, setConfirmClear] = useState(false)
   const saveButton = useRef<HTMLButtonElement>(null)
@@ -106,15 +94,6 @@ const ContactForm = ({
   return (
     <Box className={styles.formContainer}>
       <Stack space={3}>
-        {suggested.length > 0 && (
-          <AlertMessage
-            type="info"
-            title={formatMessage(om.suggestedTitle)}
-            message={formatMessage(om.suggestedMessage, {
-              fields: suggested.length > 1 ? 'both' : suggested[0],
-            })}
-          />
-        )}
         <PhoneInput
           backgroundColor="blue"
           name={FIELD_INPUT.phone}
@@ -194,12 +173,11 @@ export const ContactEdit = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { contact, loading, error, saving, save } = useOwnContact()
-  const { profile, loading: profileLoading } = useProfileContact()
 
   const goBack = () => navigate(EducationPaths.EducationOverview)
 
   const renderContent = () => {
-    if (loading || profileLoading) return <CardLoader />
+    if (loading) return <CardLoader />
     if (error) return <SectionError error={error} />
     if (!contact) {
       return (
@@ -211,17 +189,12 @@ export const ContactEdit = () => {
       )
     }
 
-    const stored = {
-      phone: toE164(contact.phone ?? '') ?? '',
-      email: contact.email ?? '',
-    }
-    const { values, suggested } = suggestOwnContact(stored, profile)
-
     return (
       <ContactForm
-        stored={stored}
-        initial={values}
-        suggested={suggested}
+        stored={{
+          phone: toE164(contact.phone ?? '') ?? '',
+          email: contact.email ?? '',
+        }}
         saving={saving}
         save={save}
         onDone={goBack}

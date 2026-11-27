@@ -522,29 +522,4 @@ export const educationOverviewMessages = defineMessages({
     defaultMessage: 'Skrá upplýsingar',
     description: 'Button that opens the contact information edit screen',
   },
-  suggestedTitle: {
-    id: 'sp.education-overview:suggested-title',
-    defaultMessage: 'Tillaga úr prófílnum þínum',
-    description:
-      'Title of the notice shown when fields are prefilled from the user profile',
-  },
-  suggestedMessage: {
-    id: 'sp.education-overview:suggested-message',
-    defaultMessage:
-      '{fields, select, phone {Símanúmerið er sótt} email {Netfangið er sótt} other {Símanúmerið og netfangið eru sótt}} úr prófílnum þínum á Mínum síðum. Þú getur breytt upplýsingunum og þær eru ekki vistaðar hjá MMS fyrr en þú velur Staðfesta.',
-    description:
-      'Shown when empty contact fields are prefilled from the user profile; nothing is saved until the user confirms (contract v0.4 §7.3)',
-  },
-  suggestedOverviewMessage: {
-    id: 'sp.education-overview:suggested-overview-message',
-    defaultMessage:
-      '{fields, select, phone {Símanúmerið er sótt úr prófílnum þínum á Mínum síðum og er ekki vistað} email {Netfangið er sótt úr prófílnum þínum á Mínum síðum og er ekki vistað} other {Símanúmerið og netfangið eru sótt úr prófílnum þínum á Mínum síðum og eru ekki vistuð}} hjá MMS. Veldu Skrá upplýsingar og staðfestu til að vista.',
-    description:
-      'Shown on the overview when empty contact fields display values from the user profile that are not yet saved at MMS (contract v0.4 §7.3)',
-  },
-  notRegistered: {
-    id: 'sp.education-overview:not-registered',
-    defaultMessage: 'Ekki skráð',
-    description: 'Shown when a contact value is not recorded',
-  },
 })

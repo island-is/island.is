@@ -4,7 +4,6 @@ import { GraphQLError } from 'graphql'
 import {
   clearedOwnContactFields,
   ownContactFieldErrors,
-  suggestOwnContact,
   toE164,
 } from './useOwnContact'
 
@@ -76,38 +75,5 @@ describe('ownContactFieldErrors', () => {
 
   it('returns nothing for errors that are not from Apollo', () => {
     expect(ownContactFieldErrors(new Error('boom'))).toEqual([])
-  })
-})
-
-describe('suggestOwnContact', () => {
-  const empty = { phone: '', email: '' }
-  const profile = { email: 'a@example.com', mobilePhoneNumber: '+354-5812345' }
-
-  it('fills empty fields from the profile', () => {
-    expect(suggestOwnContact(empty, profile)).toEqual({
-      values: { phone: '+3545812345', email: 'a@example.com' },
-      suggested: ['phone', 'email'],
-    })
-  })
-
-  it('keeps stored values', () => {
-    const stored = { phone: '+3546912345', email: '' }
-    expect(suggestOwnContact(stored, profile)).toEqual({
-      values: { phone: '+3546912345', email: 'a@example.com' },
-      suggested: ['email'],
-    })
-  })
-
-  it('suggests nothing without a profile', () => {
-    expect(suggestOwnContact(empty, null)).toEqual({
-      values: empty,
-      suggested: [],
-    })
-  })
-
-  it('ignores empty profile values', () => {
-    expect(
-      suggestOwnContact(empty, { email: ' ', mobilePhoneNumber: null }),
-    ).toEqual({ values: empty, suggested: [] })
   })
 })

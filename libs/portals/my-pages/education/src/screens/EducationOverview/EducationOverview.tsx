@@ -2,47 +2,41 @@ import {
   AlertMessage,
   Box,
   Button,
-  Divider,
   Icon,
+  Input,
+  PhoneInput,
+  Stack,
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  InfoLine,
   IntroWrapper,
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
-import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
 import { useNavigate } from 'react-router-dom'
 import { educationOverviewMessages as om } from '../../lib/messages'
 import { EducationPaths } from '../../lib/paths'
+import * as styles from '../PrimarySchool/PrimarySchoolOverview/keyInfo/edit/editForm.css'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
 import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
-import {
-  suggestOwnContact,
-  toE164,
-  useOwnContact,
-  useProfileContact,
-} from './useOwnContact'
+import { toE164, useOwnContact } from './useOwnContact'
 
 export const EducationOverview = () => {
   useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const { sm } = useBreakpoint()
   const { contact, hasContact, loading, error } = useOwnContact()
-  const { profile, loading: profileLoading } = useProfileContact()
 
   const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
-  const notRegistered = formatMessage(om.notRegistered)
 
   const renderContent = () => {
-    if (loading || profileLoading) return <CardLoader />
+    if (loading) return <CardLoader />
     if (error) return <SectionError error={error} />
     if (!contact) {
       return (
@@ -58,10 +52,7 @@ export const EducationOverview = () => {
       )
     }
 
-    const { values, suggested } = suggestOwnContact(
-      { phone: toE164(contact.phone ?? '') ?? '', email: contact.email ?? '' },
-      profile,
-    )
+    const phone = toE164(contact.phone ?? '')
 
     return (
       <KeyInfoSection
@@ -80,52 +71,40 @@ export const EducationOverview = () => {
         }
       >
         <Text paddingBottom={2}>{formatMessage(om.contactDescription)}</Text>
-        {suggested.length > 0 && (
-          <Box paddingY={2}>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(om.suggestedTitle)}
-              message={formatMessage(om.suggestedOverviewMessage, {
-                fields: suggested.length > 1 ? 'both' : suggested[0],
-              })}
-              action={
-                <Button size="small" nowrap onClick={goToEdit}>
-                  {formatMessage(om.registerButton)}
-                </Button>
-              }
-            />
-          </Box>
-        )}
-        {!hasContact && suggested.length === 0 && (
+        {!hasContact && (
           <Box paddingY={2}>
             <AlertMessage
               type="info"
               title={formatMessage(om.registeredTitle)}
               message={formatMessage(om.registeredMessage)}
               action={
-                <Button size="small" nowrap onClick={goToEdit}>
+                <Button variant="text" size="small" nowrap onClick={goToEdit}>
                   {formatMessage(om.registerButton)}
                 </Button>
               }
             />
           </Box>
         )}
-        <InfoLine
-          label={m.telNumber}
-          content={
-            values.phone
-              ? formatPhoneNumberWithIcelandicCountryCode(values.phone)
-              : notRegistered
-          }
-          paddingY={3}
-        />
-        <Divider />
-        <InfoLine
-          label={m.email}
-          content={values.email || notRegistered}
-          paddingY={3}
-        />
-        <Divider />
+        <Box className={styles.formContainer} paddingY={2}>
+          <Stack space={3}>
+            <PhoneInput
+              name="overview-contact-phone"
+              size="xs"
+              locale={lang}
+              label={formatMessage(m.telNumber)}
+              value={phone ?? ''}
+              readOnly
+            />
+            <Input
+              name="overview-contact-email"
+              type="email"
+              size="xs"
+              label={formatMessage(m.email)}
+              value={contact.email ?? ''}
+              readOnly
+            />
+          </Stack>
+        </Box>
         <Box display="flex" alignItems="center" columnGap={1} paddingTop={2}>
           <Icon
             icon="informationCircle"

@@ -11,10 +11,3 @@ mutation EducationUpdateOwnContact($input: EducationUpdateOwnContactInput!) {
     phone
   }
 }
-
-query EducationProfileContact {
-  getUserProfile {
-    email
-    mobilePhoneNumber
-  }
-}
