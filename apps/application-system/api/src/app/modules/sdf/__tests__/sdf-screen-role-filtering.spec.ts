@@ -322,3 +322,188 @@ describe('SdfScreenService getScreen — role filtering holds at the render laye
     expect(JSON.stringify(screen)).not.toContain('top secret')
   })
 })
+
+describe('SdfScreenService — texts and display values are built from what the role may read', () => {
+  const user = { nationalId: '111111-3000' } as never
+
+  const buildScenario = () => {
+    const application = {
+      id: '00000000-0000-0000-0000-000000000005',
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
+      applicant: '111111-3000',
+      assignees: [],
+      applicantActors: [],
+      state: 'draft',
+      status: ApplicationStatus.DRAFT,
+      answers: {
+        visibleField: 'ok to see',
+        restrictedField: 'top secret',
+      },
+      externalData: {
+        visibleProvider: { status: 'success', data: 'shown' },
+        restrictedProvider: { status: 'success', data: 'hidden' },
+      },
+      attachments: {},
+      created: new Date(),
+      modified: new Date(),
+      name: 'Role filtering text app',
+      institution: 'Test institution',
+      progress: 0,
+      pruned: false,
+    } as unknown as Application
+
+    const keysOf = (values: Record<string, unknown>) =>
+      Object.keys(values).sort().join(',')
+
+    const form = buildForm({
+      id: 'form',
+      title: 'Form',
+      children: [
+        buildSection({
+          id: 'section',
+          title: 'Section',
+          children: [
+            buildMultiField({
+              id: 'page',
+              title: 'Page',
+              children: [
+                buildTextField({
+                  id: 'visibleField',
+                  // A text that is a function of the application.
+                  title: (app: Application) =>
+                    `answers: ${keysOf(app.answers)}`,
+                }),
+                buildDisplayField({
+                  id: 'display',
+                  title: 'Display',
+                  value: (answers, externalData) =>
+                    `answers: ${keysOf(answers)} | external: ${keysOf(
+                      externalData,
+                    )}`,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    const template = createApplicationTemplate({
+      // The name is a function of the application too.
+      name: (app: Application) => `name: ${keysOf(app.answers)}`,
+      stateMachineConfig: {
+        initial: 'draft',
+        states: {
+          draft: {
+            meta: {
+              name: 'draft',
+              status: 'draft',
+              roles: [
+                {
+                  id: 'applicant',
+                  formLoader: () => Promise.resolve(form),
+                  read: {
+                    answers: ['visibleField'],
+                    externalData: ['visibleProvider'],
+                  },
+                  write: { answers: ['visibleField'] },
+                },
+              ],
+            },
+          },
+        },
+      },
+    })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
+
+    // A resolver that calls a function text with the application it was made
+    // for, so the test sees what the service handed it.
+    const createResolverMock = jest.fn(async (forApplication: Application) => ({
+      resolve: (value: unknown) =>
+        typeof value === 'function'
+          ? String((value as (app: Application) => unknown)(forApplication))
+          : typeof value === 'string'
+          ? value
+          : '',
+      format: (message: unknown) =>
+        typeof message === 'string'
+          ? message
+          : (message as { defaultMessage?: string })?.defaultMessage ?? '',
+    }))
+    const applicationService = { update: jest.fn() }
+
+    const service = new SdfScreenService(
+      createLoggerStub() as never,
+      applicationService as never,
+      {
+        findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
+      } as never,
+      { createResolver: createResolverMock } as never,
+      {} as never,
+      { performActionOnApplication: jest.fn() } as never,
+      {} as never,
+    )
+
+    // Every application a resolver was made for.
+    const resolvedFor = () =>
+      createResolverMock.mock.calls.map(([forApplication]) => forApplication)
+
+    return { service, application, resolvedFor }
+  }
+
+  it('gives the screen texts and the application name only readable data', async () => {
+    const { service, application, resolvedFor } = buildScenario()
+
+    const screen = await service.getScreen(application.id, 'page', 'is', user)
+
+    expect(screen.header.applicationName).toBe('name: visibleField')
+    expect(JSON.stringify(screen)).toContain('answers: visibleField')
+    expect(JSON.stringify(screen)).not.toContain('restrictedField')
+    for (const forApplication of resolvedFor()) {
+      expect(forApplication.answers).not.toHaveProperty('restrictedField')
+    }
+  })
+
+  it('computes display values from readable answers and external data only', async () => {
+    const { service, application, resolvedFor } = buildScenario()
+
+    const result = await service.validateFields(
+      application.id,
+      { visibleField: 'changed' },
+      ['visibleField'],
+      'is',
+      user,
+      'page',
+    )
+
+    expect(result.displayValues).toEqual({
+      display: 'answers: visibleField | external: visibleProvider',
+    })
+    for (const forApplication of resolvedFor()) {
+      expect(forApplication.answers).not.toHaveProperty('restrictedField')
+      expect(forApplication.externalData).not.toHaveProperty(
+        'restrictedProvider',
+      )
+    }
+  })
+
+  it('builds the resolver used to validate and save from readable data only', async () => {
+    const { service, application, resolvedFor } = buildScenario()
+
+    await service.persistAnswersAndAdvance(
+      application.id,
+      { visibleField: 'changed' },
+      'is',
+      user,
+      'page',
+    )
+
+    expect(resolvedFor().length).toBeGreaterThan(0)
+    for (const forApplication of resolvedFor()) {
+      expect(forApplication.answers).not.toHaveProperty('restrictedField')
+      expect(forApplication.externalData).not.toHaveProperty(
+        'restrictedProvider',
+      )
+    }
+  })
+})

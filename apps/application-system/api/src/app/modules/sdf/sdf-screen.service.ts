@@ -257,7 +257,7 @@ export class SdfScreenService {
       const currentScreen = screens[resolvedIndex]
 
       const resolver = await this.i18nResolverService.createResolver(
-        application as Application,
+        filteredApplication as Application,
         locale,
       )
       const navigableSections = getNavigableSectionsInForm(
@@ -355,6 +355,23 @@ export class SdfScreenService {
       bffUser,
       screens,
     }
+  }
+
+  // A resolver that gives a text which is a function of the application only
+  // what the role may read, as the screen itself is built from.
+  private createResolverFor(
+    application: ApplicationWithAttachments,
+    roleInState: RoleInState,
+    locale: Locale,
+  ): Promise<FormTextResolver> {
+    const { answers, externalData } = this.filterDataByRole(
+      application as Application,
+      roleInState,
+    )
+    return this.i18nResolverService.createResolver(
+      { ...application, answers, externalData } as Application,
+      locale,
+    )
   }
 
   private resolveRoleInState(
@@ -475,7 +492,7 @@ export class SdfScreenService {
 
     const applicationName = getApplicationNameTranslationString(
       context.template,
-      context.application as Application,
+      context.filteredApplication as Application,
       resolver.format,
     )
     const institutionName = context.template.institution
@@ -685,13 +702,8 @@ export class SdfScreenService {
     const template = await getApplicationTemplateByTypeId(application.typeId)
 
     return this.withApplicationInfo(application, template, async () => {
-      const role = template.mapUserToRole(
-        user.nationalId,
-        application as Application,
-      )
-      if (!role) {
-        throw new ForbiddenException('Access denied')
-      }
+      const roleInState = this.resolveRoleInState(application, template, user)
+      const role = roleInState.id
 
       const writableAnswers = this.dropUnwritableAnswers(
         application,
@@ -729,8 +741,13 @@ export class SdfScreenService {
         application as Application,
         template,
       )
-      const formatResolver = await this.i18nResolverService.createResolver(
-        application as Application,
+      const workingApplication = toWorkingApplication(
+        application,
+        mergedAnswers,
+      )
+      const formatResolver = await this.createResolverFor(
+        workingApplication,
+        roleInState,
         locale,
       )
 
@@ -767,8 +784,12 @@ export class SdfScreenService {
         }
       }
 
+      const readable = this.filterDataByRole(
+        workingApplication as Application,
+        roleInState,
+      )
       const displayValues = this.computeDisplayValues(
-        application,
+        readable.externalData,
         await this.fieldScopeScreen(
           application,
           template,
@@ -777,7 +798,7 @@ export class SdfScreenService {
           claimedScreenId,
           workingScreens[claim.index],
         ),
-        mergedAnswers,
+        readable.answers,
         formatResolver,
       )
 
@@ -791,8 +812,9 @@ export class SdfScreenService {
     })
   }
 
+  // The answers and external data are what the role may read.
   private computeDisplayValues(
-    application: ApplicationWithAttachments,
+    externalData: ExternalData,
     currentScreen: FormScreen,
     mergedAnswers: Record<string, unknown>,
     resolver: FormTextResolver,
@@ -820,7 +842,6 @@ export class SdfScreenService {
 
     if (displayFields.length === 0) return results
 
-    const externalData = application.externalData ?? {}
     for (const field of displayFields) {
       const id = field.id as string | undefined
       if (!id) continue
@@ -931,7 +952,7 @@ export class SdfScreenService {
         application,
         mergedAnswers,
         writableAnswers,
-        locale,
+        await this.createResolverFor(application, roleInState, locale),
       )
       if (validationErrors.length > 0) {
         const screen = await this.getScreen(
@@ -1215,7 +1236,7 @@ export class SdfScreenService {
     application: ApplicationWithAttachments,
     mergedAnswers: FormValue,
     newAnswers: Record<string, unknown> | undefined,
-    locale: Locale,
+    formatResolver: FormTextResolver,
   ): Promise<ValidationErrorDto[]> {
     const errors: ValidationErrorDto[] = []
     if (!currentScreen) return errors
@@ -1235,10 +1256,6 @@ export class SdfScreenService {
     const helper = new ApplicationTemplateHelper(
       application as Application,
       template,
-    )
-    const formatResolver = await this.i18nResolverService.createResolver(
-      application as Application,
-      locale,
     )
 
     if (template.dataSchema) {
@@ -1369,7 +1386,7 @@ export class SdfScreenService {
         application,
         submitMergedAnswers,
         writableAnswers,
-        locale,
+        await this.createResolverFor(application, roleInState, locale),
       )
       if (validationErrors.length > 0) {
         const screen = await this.getScreen(
@@ -1395,7 +1412,7 @@ export class SdfScreenService {
         application,
         submitMergedAnswers,
         writableAnswers,
-        locale,
+        await this.createResolverFor(application, roleInState, locale),
         bffUser,
       )
       if (invalidScreen) {
@@ -1539,7 +1556,7 @@ export class SdfScreenService {
     application: ApplicationWithAttachments,
     mergedAnswers: FormValue,
     writableAnswers: Record<string, unknown>,
-    locale: Locale,
+    formatResolver: FormTextResolver,
     bffUser: BffUser,
   ): Promise<{ id: string; errors: ValidationErrorDto[] } | undefined> {
     for (const screen of screens.slice(0, index)) {
@@ -1552,7 +1569,7 @@ export class SdfScreenService {
         application,
         mergedAnswers,
         writableAnswers,
-        locale,
+        formatResolver,
       )
       if (errors.length > 0) {
         return {
