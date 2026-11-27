@@ -12,7 +12,11 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  FamilyTypes,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/enums'
 import {
   removeAllDependencies,
   removeParentDependency,
@@ -820,7 +824,11 @@ export const controlReducer = (
         ...activeItem,
         data: {
           ...currentData,
-          isPartOfMultiset: !currentData?.isPartOfMultiset,
+          isPartOfMultiset:
+            currentData.fieldType === FieldTypesEnum.FAMILY &&
+            currentData.fieldSettings?.familyType === FamilyTypes.CHILD
+              ? false
+              : !currentData?.isPartOfMultiset,
         },
       }
       action.payload.update(newActive)
@@ -1536,6 +1544,12 @@ export const controlReducer = (
       const { property, value, update } = action.payload
       const newField = {
         ...field,
+        isPartOfMultiset:
+          field.fieldType === FieldTypesEnum.FAMILY &&
+          property === 'familyType' &&
+          value === FamilyTypes.CHILD
+            ? false
+            : field.isPartOfMultiset,
         fieldSettings: {
           ...field.fieldSettings,
           [property]: value,

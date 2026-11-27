@@ -1,11 +1,11 @@
 import {
-  FormSystemForm,
-  FormSystemFormResponse,
   FormSystemOption,
   FormSystemOrganizationAdmin,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import {
+  FormListItem,
+  FormsQueryResponse,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
   GET_ORGANIZATION_TITLE,
@@ -13,10 +13,6 @@ import {
 } from '@island.is/form-system/graphql'
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import { removeTypename } from '../../lib/utils/removeTypename'
-
-export interface FormsLoaderQueryResponse {
-  formSystemForms: FormSystemFormResponse
-}
 
 export interface AdminLoaderQueryResponse {
   formSystemOrganizationAdmin: FormSystemOrganizationAdmin
@@ -28,7 +24,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       new URL(request.url).searchParams.get('organizationNationalId') ||
       userInfo?.profile.nationalId
     const { data: dataForms, error: errorData } =
-      await client.query<FormsLoaderQueryResponse>({
+      await client.query<FormsQueryResponse>({
         query: GET_FORMS,
         variables: {
           input: {
@@ -62,8 +58,11 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     }
 
     const forms = dataForms.formSystemForms?.forms
-      ?.filter((form) => form !== null)
-      .map((form) => removeTypename(form)) as FormSystemForm[]
+      ?.filter((form): form is FormListItem => form !== null)
+      .map((form) => removeTypename(form))
+    if (!forms) {
+      throw new Error('Missing forms list')
+    }
 
     // Safe organizations mapping (handles undefined)
     const organizationsRaw = dataForms.formSystemForms?.organizations ?? []

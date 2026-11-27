@@ -1,27 +1,23 @@
-import { Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Query, ResolveField, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Audit } from '@island.is/nest/audit'
-import { PenaltyPointsService } from '../services/penaltyPoints.service'
+
 import { DrivingLicensePenaltyPoints } from '../models/penalty/drivingLicensePenaltyPoints.model'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { PenaltyPointsService } from '../services/penaltyPoints.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.isDriversDeprivationsEnabled)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => DrivingLicensePenaltyPoints)
 export class PenaltyPointsResolver {
   constructor(private readonly penaltyPointsService: PenaltyPointsService) {}

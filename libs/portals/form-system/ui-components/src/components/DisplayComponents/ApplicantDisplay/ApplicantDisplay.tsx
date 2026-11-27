@@ -18,8 +18,8 @@ const applicantTypesWithoutContactDetails = new Set([
 ])
 
 const baseApplicantValues = [
-  'nationalId',
   'name',
+  'nationalId',
   'email',
   'phoneNumber',
 ] as const

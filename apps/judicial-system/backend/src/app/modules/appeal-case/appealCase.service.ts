@@ -78,6 +78,7 @@ import {
 import { appealCaseModuleConfig } from './appealCase.config'
 import {
   changedLockedCompletedVerdictAppealFields,
+  changesConfirmedVerdictAppealOutcome,
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
@@ -1139,6 +1140,25 @@ export class AppealCaseService {
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
+    // The court of appeals confirmed a verdict appeal with the outcome on
+    // record then, so a change to it has the appeal confirmed again. It goes
+    // back to APPEALED in the same write, with everything recorded kept.
+    // Nothing is announced: the outcome was never released.
+    const takesConfirmationBack =
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.READY_TO_COMPLETE &&
+      changesConfirmedVerdictAppealOutcome(appealCase, update)
+
+    if (takesConfirmationBack) {
+      const { appealCaseUpdate } = transitionAppealCase(
+        AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+        theCase,
+        appealCase,
+      )
+
+      Object.assign(data, appealCaseUpdate)
+    }
+
     let updatedAppealCase = appealCase
 
     // Sequelize reports an empty update as affecting no rows, which the
@@ -1151,14 +1171,11 @@ export class AppealCaseService {
       })
     }
 
-    // The confirmed copy of a confirmed verdict appeal's ruling document is
-    // stamped with this date, so a new date has it stamped again.
-    if (
-      isVerdictAppealConfirmed(appealCase) &&
-      update.appealRulingDate &&
-      update.appealRulingDate.getTime() !==
-        appealCase.appealRulingDate?.getTime()
-    ) {
+    // An appeal whose confirmation is taken back is no longer confirmed, so
+    // the stamped copy of its ruling document is not trusted either. That
+    // covers a new date of conclusion, which the copy is stamped with. A
+    // completed appeal keeps its copy: its outcome cannot change.
+    if (takesConfirmationBack) {
       await this.fileService.invalidateVerdictAppealRulingConfirmation(
         theCase.id,
         transaction,
@@ -1452,6 +1469,14 @@ export class AppealCaseService {
     transaction: Transaction,
     defendantId?: string,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // Taking a confirmation back follows from the court changing what it
+    // confirmed, which the backend applies itself; no user requests it.
+    if (transition === AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE) {
+      throw new ForbiddenException(
+        `The appeal transition ${transition} cannot be requested`,
+      )
+    }
+
     // Withdrawing a verdict appeal is per defendant, the same way filing one is.
     if (
       transition === AppealCaseTransition.WITHDRAW_APPEAL &&

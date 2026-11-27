@@ -8,12 +8,32 @@ import {
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/enums'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
+import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
 import { PreviewStepOrGroup } from './PreviewStepOrGroup'
 
 jest.mock('./PreviewStepOrGroup.css', () => ({}))
+jest.mock('./components/PreviewViewport', () => ({
+  PreviewViewport: ({
+    children,
+    mobile,
+  }: {
+    children: ReactNode
+    mobile: boolean
+  }) => (
+    <div data-testid="preview-viewport" data-mobile={mobile}>
+      {children}
+    </div>
+  ),
+}))
 jest.mock('@apollo/client/react', () => ({ useQuery: () => ({}) }))
 jest.mock('@island.is/localization', () => ({
   LocaleContext: jest.requireActual('react').createContext({
@@ -53,6 +73,7 @@ jest.mock('@island.is/form-system/ui', () => ({
     continue: { defaultMessage: 'Continue' },
     back: { defaultMessage: 'Back' },
     preview: { defaultMessage: 'Preview' },
+    mobilePreview: { defaultMessage: 'Farsímasýn' },
     previewApplicationBanner: {
       defaultMessage: 'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
     },
@@ -86,7 +107,11 @@ jest.mock('@island.is/island-ui/core', () => {
     GridRow: Container,
     Text: Container,
     Stack: Container,
-    Header: () => <header data-testid="preview-header" />,
+    Header: ({ headerItems }: { headerItems: ReactNode }) => (
+      <header data-testid="preview-header">{headerItems}</header>
+    ),
+    Hidden: Container,
+    Icon: () => null,
     RadioButton: ({
       label,
       ...props
@@ -111,8 +136,15 @@ jest.mock('@island.is/island-ui/core', () => {
       children,
       onClick,
       disabled,
+      'aria-pressed': pressed,
+      'aria-label': label,
     }: ButtonHTMLAttributes<HTMLButtonElement>) => (
-      <button onClick={onClick} disabled={disabled}>
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        aria-pressed={pressed}
+        aria-label={label}
+      >
         {children}
       </button>
     ),
@@ -253,6 +285,7 @@ const renderPreview = (
   enforceRestrictions: boolean,
   allowProceedOnValidationFail?: boolean,
   previewForm = form,
+  contextOverrides: Partial<React.ContextType<typeof ControlContext>> = {},
 ) =>
   render(
     <ControlContext.Provider
@@ -263,6 +296,7 @@ const renderPreview = (
             activeItem: { type: 'Screen', data: { id: 'last' } },
           },
           setSelectStatus: jest.fn(),
+          ...contextOverrides,
         } as unknown as React.ContextType<typeof ControlContext>
       }
     >
@@ -272,6 +306,81 @@ const renderPreview = (
       />
     </ControlContext.Provider>,
   )
+
+it('keeps settings navigation unchanged when opening and closing an applicant preview', () => {
+  const setSelectStatus = jest.fn()
+  const { unmount } = renderPreview(false, undefined, form, {
+    inSettings: true,
+    setSelectStatus,
+    control: {
+      form,
+      activeItem: {
+        type: 'Section',
+        data: { id: 'applicants', sectionType: SectionTypes.PARTIES },
+      },
+    } as React.ContextType<typeof ControlContext>['control'],
+  })
+
+  expect(screen.getByTestId('preview-header')).toBeTruthy()
+  expect(setSelectStatus).not.toHaveBeenCalled()
+
+  unmount()
+  expect(setSelectStatus).not.toHaveBeenCalled()
+})
+
+it('retains the selection-navigation lifecycle for previews outside settings', () => {
+  const setSelectStatus = jest.fn()
+  const { unmount } = renderPreview(false, undefined, form, {
+    inSettings: false,
+    setSelectStatus,
+  })
+
+  expect(setSelectStatus).toHaveBeenCalledWith(
+    NavbarSelectStatus.ON_WITHOUT_SELECT,
+  )
+
+  unmount()
+  expect(setSelectStatus).toHaveBeenLastCalledWith(NavbarSelectStatus.OFF)
+})
+
+it('places the preview controls inside the form header', () => {
+  renderPreview(false)
+  const header = within(screen.getByTestId('preview-header'))
+
+  expect(header.getByRole('button', { name: 'Farsímasýn' })).toBeTruthy()
+  expect(header.getByRole('button', { name: /english/i })).toBeTruthy()
+  expect(header.getByRole('button', { name: 'Loka forskoðun' })).toBeTruthy()
+})
+
+it('toggles mobile view without resetting entered values or the current screen', async () => {
+  renderPreview(true)
+  fireEvent.change(screen.getByRole('textbox', { name: 'required' }), {
+    target: { value: 'Saved preview value' },
+  })
+
+  const toggle = screen.getByRole('button', { name: 'Farsímasýn' })
+  expect(toggle.getAttribute('aria-pressed')).toBe('false')
+  fireEvent.click(toggle)
+  expect(toggle.getAttribute('aria-pressed')).toBe('true')
+  expect(
+    screen.getByTestId('preview-viewport').getAttribute('data-mobile'),
+  ).toBe('true')
+  expect(screen.getByRole('textbox', { name: 'required' })).toHaveProperty(
+    'value',
+    'Saved preview value',
+  )
+
+  fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  await waitFor(() => expect(screen.getByText('Last screen')).toBeTruthy())
+  fireEvent.click(toggle)
+  expect(toggle.getAttribute('aria-pressed')).toBe('false')
+  expect(screen.getByText('Last screen')).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: 'Back' }))
+  expect(screen.getByRole('textbox', { name: 'required' })).toHaveProperty(
+    'value',
+    'Saved preview value',
+  )
+})
 
 it.each([false, true])(
   'shows the warning below the header in restricted preview: %s',

@@ -1,7 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Checkbox, Select, Stack } from '@island.is/island-ui/core'
+import { Box, Select, Text } from '@island.is/island-ui/core'
 import { FamilyTypes } from '@island.is/form-system/enums'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import { ControlContext } from '../../../../../../../context/ControlContext'
 
@@ -21,69 +21,55 @@ export const FamilySettings = () => {
       (option) => option.value === currentItem.fieldSettings?.familyType,
     ) ?? null
 
+  useEffect(() => {
+    if (
+      !control.isReadOnly &&
+      currentItem.isPartOfMultiset &&
+      selected?.value === FamilyTypes.CHILD
+    ) {
+      controlDispatch({
+        type: 'CHANGE_IS_PART_OF_MULTI',
+        payload: { update: updateActiveItem },
+      })
+    }
+  }, [
+    control.isReadOnly,
+    controlDispatch,
+    currentItem.isPartOfMultiset,
+    selected?.value,
+    updateActiveItem,
+  ])
+
   return (
-    <Stack space={2}>
-      <Box width="half">
-        <Select
-          name="familyType"
-          label="Tegund fjölskyldumeðlims"
-          placeholder="Veldu tegund fjölskyldumeðlims"
-          backgroundColor="blue"
-          options={familyTypeOptions}
-          value={selected}
-          isDisabled={control.isReadOnly}
-          onChange={(option) => {
-            controlDispatch({
-              type: 'SET_ANY_FIELD_SETTING',
-              payload: {
-                property: 'familyType',
-                value: option?.value,
-                update: updateActiveItem,
-              },
-            })
-          }}
-        />
-      </Box>
-      {currentItem.fieldSettings?.familyType === FamilyTypes.CHILD && (
-        <Stack space={2}>
-          <Checkbox
-            name="showBiologicalChildren"
-            large
-            label="Sýna kynbörn"
-            subLabel="Sýnir kynbörn viðkomandi samkvæmt Þjóðskrá, óháð forsjá."
-            checked={currentItem.fieldSettings?.showBiologicalChildren ?? true}
-            disabled={control.isReadOnly}
-            onChange={(event) =>
-              controlDispatch({
-                type: 'SET_ANY_FIELD_SETTING',
-                payload: {
-                  property: 'showBiologicalChildren',
-                  value: event.target.checked,
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-          <Checkbox
-            name="showChildrenInCustody"
-            large
-            label="Sýna börn í forsjá"
-            subLabel="Sýnir börn sem viðkomandi fer með forsjá yfir samkvæmt Þjóðskrá, óháð skyldleika."
-            checked={currentItem.fieldSettings?.showChildrenInCustody ?? true}
-            disabled={control.isReadOnly}
-            onChange={(event) =>
-              controlDispatch({
-                type: 'SET_ANY_FIELD_SETTING',
-                payload: {
-                  property: 'showChildrenInCustody',
-                  value: event.target.checked,
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </Stack>
+    <Box width="half">
+      <Select
+        name="familyType"
+        label="Tegund fjölskyldumeðlims"
+        placeholder="Veldu tegund fjölskyldumeðlims"
+        backgroundColor="blue"
+        options={familyTypeOptions}
+        value={selected}
+        isDisabled={control.isReadOnly}
+        onChange={(option) => {
+          controlDispatch({
+            type: 'SET_ANY_FIELD_SETTING',
+            payload: {
+              property: 'familyType',
+              value: option?.value,
+              update: updateActiveItem,
+            },
+          })
+        }}
+      />
+      {selected?.value === FamilyTypes.CHILD && (
+        <Box marginTop={2}>
+          <Text variant="small">
+            Í listanum birtast börn sem umsækjandi fer með forsjá yfir samkvæmt
+            Þjóðskrá. Börn sem umsækjandi fer ekki með forsjá yfir birtast ekki
+            í listanum.
+          </Text>
+        </Box>
       )}
-    </Stack>
+    </Box>
   )
 }

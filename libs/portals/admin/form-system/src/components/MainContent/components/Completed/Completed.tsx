@@ -14,7 +14,6 @@ import {
   Input,
   Stack,
   Text,
-  GridRow as Row,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +21,7 @@ import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { AdditionalInfo } from './components/AdditionalInfo'
 
-export const Completed = () => {
+export const Completed = ({ onPreview }: { onPreview: () => void }) => {
   const {
     control,
     formUpdate,
@@ -97,11 +96,14 @@ export const Completed = () => {
 
   return (
     <>
-      <Row>
-        <Box marginLeft={1}>
-          <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
+      <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box display="flex" justifyContent="flexStart">
+          <Button variant="ghost" size="small" onClick={onPreview}>
+            {formatMessage(m.preview)}
+          </Button>
         </Box>
-      </Row>
+        <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
+      </Box>
       <Box marginTop={3}>
         <Checkbox
           label={formatMessage(m.enableApplicationPdfDownload)}

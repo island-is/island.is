@@ -3,10 +3,12 @@ import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import { getProsecutionVerdictAppealDate } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  AppealCaseState,
   AppealCourtSessionType,
   VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 // Where the Court of Appeals stands with a verdict appeal, as the court words
 // each status on its own page.
@@ -164,4 +166,50 @@ export const getVerdictAppealStatusHeaderLines = (
   }
 
   return Array.from(new Set(lines))
+}
+
+/**
+ * The working case with the state a save on the appeal returned. Changing how
+ * a confirmed appeal ended takes it back in the same request, and the response
+ * says so; the working case follows without a refetch, so the summary asks for
+ * confirmation again. Only the state is written: the values the save sent are
+ * already in the working case, and a later edit may have moved past them.
+ *
+ * The pages that save outlive a case change, so a response for a case the
+ * court has left changes nothing, and nor does one that carries no state.
+ */
+export const withReturnedAppealState = (
+  workingCase: WorkingCase,
+  caseId: string,
+  appealCaseId: string,
+  appealState: AppealCaseState | null | undefined,
+): WorkingCase =>
+  workingCase.id === caseId && appealState
+    ? applyAppealCaseUpdate(workingCase, appealCaseId, { appealState })
+    : workingCase
+
+/**
+ * The working case once the ruling document has been uploaded or removed. The
+ * court confirmed the appeal with the document it had then, so the backend
+ * takes a confirmed appeal back when a new one is stored or the old one
+ * removed. Neither request returns the appeal, so the working case follows
+ * here: a confirmed verdict appeal goes back to APPEALED, and an appeal in any
+ * other state is left as it is.
+ */
+export const withRulingDocumentChanged = (
+  workingCase: WorkingCase,
+): WorkingCase => {
+  const verdictAppealCase = workingCase.verdictAppealCase
+
+  if (verdictAppealCase?.appealState !== AppealCaseState.READY_TO_COMPLETE) {
+    return workingCase
+  }
+
+  return {
+    ...workingCase,
+    verdictAppealCase: {
+      ...verdictAppealCase,
+      appealState: AppealCaseState.APPEALED,
+    },
+  }
 }

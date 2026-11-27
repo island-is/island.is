@@ -6,14 +6,29 @@ import {
 
 import {
   getStatementFileCategories,
+  getStatementUploadFileRepresentative,
   getStatementUploadHeaderLine,
   getStatementUploadParty,
   isPartyStatementFile,
 } from './VerdictAppealStatementUpload.logic'
 
 const theCase = {
-  defendants: [{ id: 'd1', name: 'Gervimaður Jónsson' }],
-  civilClaimants: [{ id: 'c1', name: 'Fyrsti Kröfuhafi' }],
+  defendants: [
+    {
+      id: 'd1',
+      name: 'Gervimaður Jónsson',
+      appealDefenderName: 'Verjandi Vilhjálmsdóttir',
+      defenderName: 'Héraðsverjandi',
+    },
+  ],
+  civilClaimants: [
+    {
+      id: 'c1',
+      name: 'Fyrsti Kröfuhafi',
+      appealSpokespersonName: 'Lóa Lögmaður',
+      spokespersonName: 'Gamli Réttargæslumaður',
+    },
+  ],
   appealProsecutor: { id: 'p1', name: 'Sækjandi Sækjandason' },
   verdictAppealCase: {
     id: 'appeal',
@@ -151,5 +166,34 @@ describe('getStatementUploadHeaderLine', () => {
     expect(
       getStatementUploadHeaderLine({ roleLabel: 'Ákæruvaldið', name: '' }),
     ).toBe('Ákæruvaldið')
+  })
+})
+
+describe('getStatementUploadFileRepresentative', () => {
+  it('stamps the appeal defender for a defendant upload', () => {
+    expect(
+      getStatementUploadFileRepresentative(theCase, {
+        role: 'DEFENDANT',
+        ids: { defendantId: 'd1' },
+      }),
+    ).toBe('Verjandi Vilhjálmsdóttir')
+  })
+
+  it('stamps the appeal spokesperson for a civil-claimant upload', () => {
+    expect(
+      getStatementUploadFileRepresentative(theCase, {
+        role: 'CIVIL_CLAIMANT',
+        ids: { civilClaimantId: 'c1' },
+      }),
+    ).toBe('Lóa Lögmaður')
+  })
+
+  it('stamps the appeal prosecutor for a prosecution upload', () => {
+    expect(
+      getStatementUploadFileRepresentative(theCase, {
+        role: 'PROSECUTION',
+        ids: {},
+      }),
+    ).toBe('Sækjandi Sækjandason')
   })
 })

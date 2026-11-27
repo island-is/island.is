@@ -1,13 +1,22 @@
 import sanitizeHtml from 'sanitize-html'
 
 /**
- * The equality plan as it arrives from the applicant, in one of its two
- * representations.
+ * GraphQL error title for a plan PDF DMR refused on the presigned path (not a
+ * PDF, empty, over 4 MB, report no longer editable). The form shows its own
+ * message under it. The equality-report template keeps its own copy of this
+ * string.
+ */
+export const EQUALITY_PLAN_REJECTED = 'DoeEqualityPlanRejected'
+
+/**
+ * The equality plan as it arrives from the applicant: HTML, an inline PDF, or
+ * the key of a PDF already uploaded to DMR's presigned URL.
  */
 export type EqualityContentInput = {
   equalityReportContent?: string
   equalityReportPdf?: string
   equalityReportPdfFilename?: string
+  equalityReportPdfKey?: string
 }
 
 /** The body forwarded to DMR. */
@@ -15,6 +24,7 @@ export type EqualityContentBody = {
   equalityReportContent?: string
   equalityReportPdf?: string
   equalityReportPdfFilename?: string
+  equalityReportPdfKey?: string
 }
 
 /**
@@ -53,12 +63,24 @@ const sanitizeEqualityReportContent = (base64Content: string): string => {
  * tested directly: this project's tsconfig is stricter than the shared
  * libraries it would otherwise pull into the type graph.
  *
- * Passing both kinds at once is left to DMR to reject rather than second-
- * guessed here, so the either/or rule has one definition and one error message.
+ * Passing HTML and an inline PDF at once is left to DMR to reject rather than
+ * second-guessed here, so the either/or rule has one definition and one error
+ * message. A presigned key is the exception: it wins and goes alone, because a
+ * refused key request can fail the upload with it.
  */
 export const buildEqualityContentBody = (
   input: EqualityContentInput,
 ): EqualityContentBody => {
+  // A key travels alone with its filename. DMR refuses a key beside any
+  // inline content, and the key is single use, so a 400 here would cost the
+  // applicant their upload.
+  if (input.equalityReportPdfKey) {
+    return {
+      equalityReportPdfKey: input.equalityReportPdfKey,
+      equalityReportPdfFilename: input.equalityReportPdfFilename,
+    }
+  }
+
   if (input.equalityReportPdf) {
     return {
       equalityReportPdf: input.equalityReportPdf,

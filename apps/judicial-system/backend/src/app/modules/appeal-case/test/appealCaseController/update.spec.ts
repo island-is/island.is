@@ -609,34 +609,6 @@ describe('AppealCaseController - Update', () => {
       ).not.toHaveBeenCalled()
     })
 
-    // The confirmed copy of the ruling document is stamped with this date.
-    it.each([AppealCaseState.READY_TO_COMPLETE])(
-      'should have the ruling document stamped again when the date of a %s verdict appeal changes',
-      async (appealState) => {
-        const appealCase = {
-          id: appealCaseId,
-          caseId,
-          appealType: AppealCaseType.VERDICT,
-          appealState,
-          appealRulingDate: new Date('2024-01-05T00:00:00Z'),
-        } as AppealCase
-
-        const then = await givenWhenThen(theCase, appealCase, {
-          appealRulingDate: enteredDate,
-        })
-
-        expect(then.error).toBeUndefined()
-        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
-          appealCaseId,
-          { appealRulingDate: enteredDate },
-          { transaction },
-        )
-        expect(
-          mockFileService.invalidateVerdictAppealRulingConfirmation,
-        ).toHaveBeenCalledWith(caseId, transaction)
-      },
-    )
-
     it.each([AppealCaseState.READY_TO_COMPLETE, AppealCaseState.COMPLETED])(
       'should leave the ruling document alone when a %s verdict appeal is sent the date it has',
       async (appealState) => {
@@ -702,6 +674,171 @@ describe('AppealCaseController - Update', () => {
 
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('a confirmed verdict appeal is changed', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const confirmedAppealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.READY_TO_COMPLETE,
+      appealCaseNumber: '1/2024',
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      appealRulingType: AppealRulingType.VERDICT,
+      appealConclusion: 'Conclusion',
+      appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+    } as AppealCase
+
+    it.each<[string, UpdateAppealCaseDto]>([
+      ['status', { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }],
+      ['outcome', { appealRulingDecision: AppealCaseRulingDecision.CHANGED }],
+      ['ruling type', { appealRulingType: AppealRulingType.RULING }],
+      ['conclusion', { appealConclusion: 'Another conclusion' }],
+      [
+        'date of conclusion',
+        { appealRulingDate: new Date('2024-01-10T00:00:00Z') },
+      ],
+    ])(
+      'should take the confirmation back in the same write when its %s changes',
+      async (_, update) => {
+        const mockFindById =
+          mockAppealCaseRepositoryService.findById as jest.Mock
+        mockFindById.mockResolvedValueOnce({
+          ...confirmedAppealCase,
+          ...update,
+          appealState: AppealCaseState.APPEALED,
+        })
+
+        const then = await givenWhenThen(theCase, confirmedAppealCase, update)
+
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          appealCaseId,
+          { ...update, appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).toHaveBeenCalledTimes(1)
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).toHaveBeenCalledWith(caseId, transaction)
+        expect(then.result.appealState).toBe(AppealCaseState.APPEALED)
+        // Nothing is announced: the outcome was never released.
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+        expect(transactionContext?.afterCommit).toHaveLength(0)
+      },
+    )
+
+    // The court's pages send the outcome and the ruling type together, so a
+    // field sent again with the value it has is no change.
+    it('should keep the confirmation when the fields are sent with the values they have', async () => {
+      const update = {
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingType: AppealRulingType.VERDICT,
+        appealConclusion: 'Conclusion',
+        appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+      }
+
+      const then = await givenWhenThen(theCase, confirmedAppealCase, update)
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        update,
+        { transaction },
+      )
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+
+    it.each<[string, UpdateAppealCaseDto]>([
+      ['appeal case number', { appealCaseNumber: '2/2024' }],
+      ['assistant', { appealAssistantId: uuid() }],
+      ['bench', { appealJudgeIds: [uuid(), uuid(), uuid()] }],
+    ])(
+      'should keep the confirmation when the %s changes',
+      async (_, update) => {
+        if (update.appealAssistantId) {
+          const mockFindById = mockUserService.findById as jest.Mock
+          mockFindById.mockResolvedValueOnce({
+            id: update.appealAssistantId,
+            role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+          })
+        }
+
+        const then = await givenWhenThen(theCase, confirmedAppealCase, update)
+
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalledWith(
+          appealCaseId,
+          expect.objectContaining({ appealState: expect.anything() }),
+          expect.anything(),
+        )
+        expect(
+          mockFileService.invalidateVerdictAppealRulingConfirmation,
+        ).not.toHaveBeenCalled()
+      },
+    )
+
+    it('should leave a verdict appeal that is not confirmed in its state', async () => {
+      const appealCase = {
+        ...confirmedAppealCase,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealConclusion: 'Another conclusion',
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealConclusion: 'Another conclusion' },
+        { transaction },
+      )
+      expect(
+        mockFileService.invalidateVerdictAppealRulingConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should leave a ruling appeal in its state', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.RULING,
+        appealState: AppealCaseState.RECEIVED,
+        appealConclusion: 'Conclusion',
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      } as AppealCase
+
+      const then = await givenWhenThen(
+        { id: caseId, type: CaseType.CUSTODY } as Case,
+        appealCase,
+        {
+          appealConclusion: 'Another conclusion',
+          appealRulingDecision: AppealCaseRulingDecision.CHANGED,
+        },
+      )
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        {
+          appealConclusion: 'Another conclusion',
+          appealRulingDecision: AppealCaseRulingDecision.CHANGED,
+        },
+        { transaction },
+      )
       expect(
         mockFileService.invalidateVerdictAppealRulingConfirmation,
       ).not.toHaveBeenCalled()

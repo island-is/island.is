@@ -44,6 +44,7 @@ const mockUpdateAppealCase = jest.fn()
 let mockIsUpdatingAppealCase = false
 const mockHandleUpload = jest.fn()
 const mockHandleRemove = jest.fn()
+const mockHandleRetry = jest.fn()
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealCase',
@@ -82,7 +83,7 @@ jest.mock(
     default: () => ({
       handleUpload: mockHandleUpload,
       handleRemove: mockHandleRemove,
-      handleRetry: jest.fn(),
+      handleRetry: mockHandleRetry,
     }),
   }),
 )
@@ -99,6 +100,13 @@ jest.mock('next/router', () => ({
       push: mockPush,
     }
   },
+}))
+
+// next/head renders nothing under jest, so the page title is rendered in
+// place, where React hoists it into the document head.
+jest.mock('next/head', () => ({
+  __esModule: true,
+  default: ({ children }: PropsWithChildren) => children,
 }))
 
 const theCase = {
@@ -184,6 +192,18 @@ const uploadSucceeds = async (
   return 'ALL_SUCCEEDED'
 }
 
+// Marks each file failed, the way the hook does when nothing was stored.
+const uploadFails = async (
+  files: TUploadFile[],
+  updateFile: (file: TUploadFile, newId?: string) => void,
+) => {
+  for (const file of files) {
+    updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
+  }
+
+  return 'NONE_SUCCEEDED'
+}
+
 const removeSucceeds = async (
   file: TUploadFile,
   callback?: (file: TUploadFile) => void,
@@ -238,6 +258,10 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
       }}
     >
       {children}
+      {/* What the page has written back to the appeal's state. */}
+      <output data-testid="verdictAppealState">
+        {workingCase.verdictAppealCase?.appealState}
+      </output>
     </FormContext.Provider>
   )
 }
@@ -314,6 +338,13 @@ describe('VerdictAppealStatus', () => {
     mockHandleUpload.mockImplementation(uploadSucceeds)
     mockHandleRemove.mockReset()
     mockHandleRemove.mockImplementation(removeSucceeds)
+    mockHandleRetry.mockReset()
+    mockHandleRetry.mockImplementation(
+      (
+        file: TUploadFile,
+        updateFile: (file: TUploadFile, newId?: string) => void,
+      ) => uploadSucceeds([file], updateFile),
+    )
   })
 
   it('names the case and who appealed', () => {
@@ -848,6 +879,160 @@ describe('VerdictAppealStatus', () => {
     })
   })
 
+  // Changing what a confirmed appeal was confirmed with takes it back on the
+  // backend, and the working case follows so the summary asks for
+  // confirmation again.
+  describe('a confirmed appeal', () => {
+    const appealIn = (c: WorkingCase, appealState: AppealCaseState) =>
+      ({
+        ...c,
+        verdictAppealCase: { ...c.verdictAppealCase, appealState },
+      } as unknown as WorkingCase)
+    const appealState = () =>
+      screen.getByTestId('verdictAppealState').textContent
+
+    it('takes the state the status save returns', async () => {
+      mockUpdateAppealCase.mockResolvedValue({
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.APPEALED,
+      })
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    it('keeps its state when the status save returns none', async () => {
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      await waitFor(() => expect(mockPush).toHaveBeenCalled())
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it('keeps its state when the status could not be saved', async () => {
+      mockUpdateAppealCase.mockResolvedValue(undefined)
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it('is taken back once a document is uploaded', async () => {
+      const { container } = renderPage(
+        appealIn(
+          finishedCaseWithoutDocument,
+          AppealCaseState.READY_TO_COMPLETE,
+        ),
+      )
+
+      await chooseRulingDocument(container)
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    it('keeps its state when the upload fails, and is taken back once a retry succeeds', async () => {
+      mockHandleUpload.mockImplementation(uploadFails)
+      const { container } = renderPage(
+        appealIn(
+          finishedCaseWithoutDocument,
+          AppealCaseState.READY_TO_COMPLETE,
+        ),
+      )
+
+      await chooseRulingDocument(container)
+
+      const retry = await screen.findByRole('button', { name: 'Reyna aftur' })
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+
+      await userEvent.click(retry)
+
+      expect(mockHandleRetry).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'nyr-domur.pdf' }),
+        expect.any(Function),
+      )
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    it('keeps its state when a retry fails', async () => {
+      mockHandleUpload.mockImplementation(uploadFails)
+      mockHandleRetry.mockImplementation(
+        (
+          file: TUploadFile,
+          updateFile: (file: TUploadFile, newId?: string) => void,
+        ) => uploadFails([file], updateFile),
+      )
+      const { container } = renderPage(
+        appealIn(
+          finishedCaseWithoutDocument,
+          AppealCaseState.READY_TO_COMPLETE,
+        ),
+      )
+
+      await chooseRulingDocument(container)
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Reyna aftur' }),
+      )
+
+      await waitFor(() => expect(mockHandleRetry).toHaveBeenCalled())
+      expect(
+        await screen.findByRole('button', { name: 'Reyna aftur' }),
+      ).toBeInTheDocument()
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it('is taken back once the document is removed', async () => {
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+      )
+
+      await waitFor(() => expect(appealState()).toBe(AppealCaseState.APPEALED))
+    })
+
+    // A failed removal never calls back.
+    it('keeps its state when the removal fails', async () => {
+      mockHandleRemove.mockResolvedValue(undefined)
+      renderPage(appealIn(finishedCase, AppealCaseState.READY_TO_COMPLETE))
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+      )
+
+      await waitFor(() => expect(mockHandleRemove).toHaveBeenCalled())
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+      expect(appealState()).toBe(AppealCaseState.READY_TO_COMPLETE)
+    })
+
+    it.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+      'leaves an appeal that is %s as it is after a removal and an upload',
+      async (state) => {
+        const { container } = renderPage(appealIn(finishedCase, state))
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Fjarlægja skrá' }),
+        )
+        await waitFor(() =>
+          expect(
+            screen.queryByText('domur-landsrettar.pdf'),
+          ).not.toBeInTheDocument(),
+        )
+        await chooseRulingDocument(container)
+        expect(await screen.findByText('nyr-domur.pdf')).toBeInTheDocument()
+
+        expect(appealState()).toBe(state)
+      },
+    )
+  })
+
   describe('a booked session', () => {
     const openMenu = async () => {
       await userEvent.click(
@@ -1010,5 +1195,11 @@ describe('VerdictAppealStatus', () => {
         screen.getByText('12.12.2026 kl. 14:00 · Dómsalur 1'),
       ).toBeInTheDocument()
     })
+  })
+
+  it('sets its own tab title', () => {
+    renderPage()
+
+    expect(document.title).toBe('Staða og lyktir - Réttarvörslugátt')
   })
 })

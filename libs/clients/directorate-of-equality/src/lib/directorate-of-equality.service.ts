@@ -46,6 +46,7 @@ import {
   listApplicationDraftRoles,
   listApplicationDraftRolesWithSteps,
   presignApplicationEqualityAttachment,
+  presignApplicationEqualityPlan,
   presignApplicationImportUpload,
   submitApplicationReportComment,
   submitApplicationReportDraft,
@@ -202,6 +203,18 @@ export class DirectorateOfEqualityClientService {
   ): Promise<ApplicationReportDetailDto> {
     return this.unwrap(user, () =>
       editApplicationEqualityContent({ path: { providerId }, body }),
+    )
+  }
+
+  // The plan PDF, uploaded like a fylgiskjal: the browser PUTs to the URL and
+  // the key goes back as `equalityReportPdfKey` on updateDraft or
+  // editEqualityContent. Single use; DMR deletes the object once stored.
+  async presignEqualityPlan(
+    user: User,
+    providerId: string,
+  ): Promise<PresignUploadResponseDto> {
+    return this.unwrap(user, () =>
+      presignApplicationEqualityPlan({ path: { providerId } }),
     )
   }
 

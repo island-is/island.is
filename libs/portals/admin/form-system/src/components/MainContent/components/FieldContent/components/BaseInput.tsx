@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FamilyTypes, FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Accordion,
@@ -220,7 +220,11 @@ export const BaseInput = () => {
       {/* Required checkbox */}
       {screen?.isMulti &&
         currentItem.fieldType !== FieldTypesEnum.FILE &&
-        currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
+        currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY &&
+        !(
+          currentItem.fieldType === FieldTypesEnum.FAMILY &&
+          currentItem.fieldSettings?.familyType === FamilyTypes.CHILD
+        ) && (
           <Row>
             <Column span="5/10">
               <Checkbox

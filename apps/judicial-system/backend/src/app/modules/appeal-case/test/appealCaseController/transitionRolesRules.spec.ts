@@ -72,6 +72,29 @@ describe('AppealCaseController - transition rules for confirming a verdict appea
   })
 })
 
+// The backend takes a confirmation back itself when the court changes what it
+// confirmed, so no rule lets a user ask for it.
+describe('AppealCaseController - transition rules for taking a confirmation back', () => {
+  const dtoFieldValues = (rule: RolesRule) =>
+    (rule as { dtoFieldValues?: string[] }).dtoFieldValues ?? []
+
+  it.each([
+    ['court of appeals judge', courtOfAppealsJudgeTransitionRule],
+    ['court of appeals registrar', courtOfAppealsRegistrarTransitionRule],
+    ['court of appeals assistant', courtOfAppealsAssistantTransitionRule],
+    ['prosecutor', prosecutorTransitionRule],
+    ['prosecutor representative', prosecutorRepresentativeTransitionRule],
+    ['defender', defenderTransitionRule],
+    ['district court judge', districtCourtJudgeTransitionRule],
+    ['district court registrar', districtCourtRegistrarTransitionRule],
+    ['public prosecutor staff', publicProsecutorStaffTransitionRule],
+  ])('should not let a %s take a confirmation back', (_, rule) => {
+    expect(dtoFieldValues(rule)).not.toContain(
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+    )
+  })
+})
+
 describe('AppealCaseController - transition withdrawal rules', () => {
   describe('prosecution', () => {
     const prosecutor = {
