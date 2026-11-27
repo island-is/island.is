@@ -1,7 +1,9 @@
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCourtSessionType,
   AppealEventType,
+  AppealRulingType,
   CaseFileCategory,
   CaseType,
   InstitutionType,
@@ -13,6 +15,7 @@ import {
 import { AppealCase, AppealEventLog, Case, CaseFile } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  changesConfirmedVerdictAppealOutcome,
   currentAppealCourtSession,
   findAppealCaseOfCaseFile,
   hasStandingVerdictAppeal,
@@ -927,5 +930,62 @@ describe('verdict appeal progress', () => {
     )
 
     expect(next?.sessionType).toBe(AppealCourtSessionType.MAIN_HEARING)
+  })
+})
+
+describe('changesConfirmedVerdictAppealOutcome', () => {
+  const confirmed = {
+    verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Conclusion',
+    appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+  } as AppealCase
+
+  it('is no change when nothing is sent', () => {
+    expect(changesConfirmedVerdictAppealOutcome(confirmed, {})).toBe(false)
+  })
+
+  it('is no change when every field is sent with the value it has', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome(confirmed, {
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingType: AppealRulingType.VERDICT,
+        appealConclusion: 'Conclusion',
+        // Another instance naming the same moment.
+        appealRulingDate: new Date('2024-01-05T00:00:00Z'),
+      }),
+    ).toBe(false)
+  })
+
+  it.each([
+    ['status', { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }],
+    ['outcome', { appealRulingDecision: AppealCaseRulingDecision.CHANGED }],
+    ['ruling type', { appealRulingType: AppealRulingType.RULING }],
+    ['conclusion', { appealConclusion: 'Another conclusion' }],
+    ['conclusion cleared', { appealConclusion: null }],
+    [
+      'date of conclusion',
+      { appealRulingDate: new Date('2024-01-06T00:00:00Z') },
+    ],
+  ])('is a change when the %s differs', (_, update) => {
+    expect(changesConfirmedVerdictAppealOutcome(confirmed, update)).toBe(true)
+  })
+
+  it('is a change when a field with no value on record is given one', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome({} as AppealCase, {
+        appealConclusion: 'Conclusion',
+      }),
+    ).toBe(true)
+  })
+
+  it('is no change when a field with no value on record is cleared', () => {
+    expect(
+      changesConfirmedVerdictAppealOutcome({} as AppealCase, {
+        appealConclusion: null,
+      }),
+    ).toBe(false)
   })
 })

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -7,6 +6,7 @@ import { useRouter } from 'next/router'
 import { Box, PdfViewer, Text } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   FormContentContainer,
@@ -28,7 +28,6 @@ import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useApp
 import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
 import * as styles from '@island.is/judicial-system-web/src/utils/styles/modalPdfPreview.css'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -37,7 +36,6 @@ import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/Verdic
 import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDate from './VerdictAppealRulingDate'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
-import type { VerdictAppealConfirmationTarget } from './VerdictAppealSummary.logic'
 import {
   canConfirmVerdictAppeal,
   getConfirmableVerdictAppealRulingFile,
@@ -56,16 +54,20 @@ import {
  * confirms its own verdict. It marks the appeal ready to complete and sends
  * nothing: the parties do not see the outcome until it is released, which
  * completes the appeal. Once confirmed, the page shows the appeal as it ended
- * and offers nothing more to do; it can still be corrected on the status
- * step.
+ * and offers nothing more to do. Correcting how it ended, here or on the
+ * status step, takes it back, and the page then offers to confirm it again.
  */
 const VerdictAppealSummary = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    refreshCase,
+  } = useContext(FormContext)
   // Read directly rather than through the shared resolver, for the reason
   // the overview gives.
   const verdictAppealCase = workingCase.verdictAppealCase
-  const { formatMessage } = useIntl()
   const router = useRouter()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
   const { getFileUrl, fileNotFound, dismissFileNotFound } = useFileList({
@@ -89,6 +91,9 @@ const VerdictAppealSummary = () => {
   const currentTargetRef = useRef(
     getVerdictAppealConfirmationTarget(workingCase),
   )
+  // Counts the visits to an appeal: it goes up each time the page moves to
+  // another case or appeal, also when it comes back to one it showed before.
+  const visitRef = useRef(0)
   const caseId = workingCase.id
   const appealCaseId = verdictAppealCase?.id
 
@@ -97,6 +102,7 @@ const VerdictAppealSummary = () => {
   // even while a confirmation is under way: that request is for the appeal
   // left behind and does not touch the one now on the page.
   useEffect(() => {
+    visitRef.current += 1
     currentTargetRef.current = { caseId, appealCaseId }
     setIsConfirming(false)
     setRulingUrl(undefined)
@@ -106,8 +112,18 @@ const VerdictAppealSummary = () => {
     setIsPdfLoading(true)
   }, [caseId, appealCaseId])
 
-  const isStillOnPage = (started: VerdictAppealConfirmationTarget) =>
-    isSameVerdictAppealConfirmationTarget(started, currentTargetRef.current)
+  // Marks the start of a request and returns a check of whether its response
+  // still answers for the page: the appeal on the page is the one the request
+  // began for, in the same visit. Leaving for another appeal and coming back
+  // is a new visit, so a response from the earlier one does not act on it.
+  const startRequest = () => {
+    const started = getVerdictAppealConfirmationTarget(workingCase)
+    const visit = visitRef.current
+
+    return () =>
+      visit === visitRef.current &&
+      isSameVerdictAppealConfirmationTarget(started, currentTargetRef.current)
+  }
 
   const statusUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE}/${workingCase.id}`,
@@ -153,14 +169,14 @@ const VerdictAppealSummary = () => {
       return
     }
 
-    const started = getVerdictAppealConfirmationTarget(workingCase)
+    const isStillOnPage = startRequest()
 
     setIsFetchingRulingUrl(true)
 
     try {
       const url = await getFileUrl(rulingFile.id)
 
-      if (!url || !isStillOnPage(started)) {
+      if (!url || !isStillOnPage()) {
         return
       }
 
@@ -169,7 +185,7 @@ const VerdictAppealSummary = () => {
     } finally {
       // Moving to another appeal has already cleared this, and a fetch begun
       // there since must keep it.
-      if (isStillOnPage(started)) {
+      if (isStillOnPage()) {
         setIsFetchingRulingUrl(false)
       }
     }
@@ -177,16 +193,21 @@ const VerdictAppealSummary = () => {
 
   // Confirms the appeal and closes the modal, staying in it when that fails.
   // The transition writes the confirmed appeal into the working case, so the
-  // page then shows it as confirmed. It writes only to the appeal it was sent
-  // for, so when the user has moved to another appeal meanwhile, nothing on
-  // the page changes. The lock is held until the request ends, so no other
-  // appeal is confirmed while it runs.
+  // page then shows it as confirmed. The write is let through only while the
+  // visit the confirmation began in is still on the page. When the user has
+  // moved to another appeal meanwhile, nothing on the page changes. When they
+  // have come back to this one, the case was fetched again on the way: that
+  // fetch may have read the appeal before it was confirmed, and the appeal
+  // may have been changed since, so the late response is neither trusted nor
+  // ignored, and the case is fetched once more. The lock is held until the
+  // request ends, so no other appeal is confirmed while it runs.
   const confirmAppeal = async () => {
     if (!verdictAppealCase || isConfirmingAppealRef.current) {
       return
     }
 
     const started = getVerdictAppealConfirmationTarget(workingCase)
+    const isStillOnPage = startRequest()
 
     isConfirmingAppealRef.current = true
     setIsConfirmingAppeal(true)
@@ -196,10 +217,27 @@ const VerdictAppealSummary = () => {
         workingCase.id,
         verdictAppealCase.id,
         AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE,
-        setWorkingCase,
+        (update) => {
+          if (isStillOnPage()) {
+            setWorkingCase(update)
+          }
+        },
       )
 
-      if (!confirmed || !isStillOnPage(started)) {
+      if (!confirmed) {
+        return
+      }
+
+      if (!isStillOnPage()) {
+        if (
+          isSameVerdictAppealConfirmationTarget(
+            started,
+            currentTargetRef.current,
+          )
+        ) {
+          refreshCase()
+        }
+
         return
       }
     } finally {
@@ -236,7 +274,7 @@ const VerdictAppealSummary = () => {
         notFound={caseNotFound}
         onNavigationTo={navigateTo}
       >
-        <PageHeader title={titleForCase(formatMessage, workingCase)} />
+        <PageHeader title={titles.courtOfAppeal.verdictAppeal.summary} />
         <FormContentContainer>
           <div className={stack({ gap: 5 })}>
             <Box>
@@ -334,7 +372,7 @@ const VerdictAppealSummary = () => {
                   onClick: confirmAppeal,
                   isLoading: isTransitioningAppealCase,
                   isDisabled: !hasReviewed || isPdfLoading || pdfError,
-                  dataTestId: 'confirmCompleteAppealButton',
+                  dataTestId: 'confirmVerdictAppealButton',
                 },
               ]}
               footerCheckbox={{

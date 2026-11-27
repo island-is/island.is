@@ -30,8 +30,9 @@ type AppealTransition = (
 
 // A verdict appeal takes its own route: it is never received nor reopened.
 // The court of appeals confirms how it ended from the state it is filed in
-// (APPEALED -> READY_TO_COMPLETE), and it is completed when the outcome is
-// released (READY_TO_COMPLETE -> COMPLETED). Each rule therefore names the
+// (APPEALED -> READY_TO_COMPLETE), goes back when the court changes what it
+// confirmed (READY_TO_COMPLETE -> APPEALED), and it is completed when the
+// outcome is released (READY_TO_COMPLETE -> COMPLETED). Each rule therefore names the
 // states it applies from for a verdict appeal separately; an empty list refuses
 // the transition for that kind of appeal altogether.
 interface AppealCaseRule {
@@ -65,6 +66,19 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
         transition: (): AppealTransitionResult => ({
           caseUpdate: {},
           appealCaseUpdate: { appealState: AppealCaseState.READY_TO_COMPLETE },
+        }),
+      },
+    ],
+    [
+      AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE,
+      {
+        fromAppealStates: [],
+        fromVerdictAppealStates: [AppealCaseState.READY_TO_COMPLETE],
+        // The court changed what it confirmed, so it has to confirm the
+        // appeal again. Everything it recorded is kept.
+        transition: (): AppealTransitionResult => ({
+          caseUpdate: {},
+          appealCaseUpdate: { appealState: AppealCaseState.APPEALED },
         }),
       },
     ],

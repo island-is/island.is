@@ -96,6 +96,12 @@ export class ApplicationJsonDto {
   @IsString()
   slug!: string
 
+  @ApiPropertyOptional({ type: LanguageType })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  formName?: LanguageType
+
   @ApiProperty()
   @IsBoolean()
   isTest!: boolean

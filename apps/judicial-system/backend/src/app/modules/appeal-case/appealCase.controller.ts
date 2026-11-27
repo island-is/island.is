@@ -349,8 +349,13 @@ export class AppealCaseController {
 
     // Confirming a verdict appeal is not announced: its outcome stays with
     // the court of appeals until it is released. Releasing it completes an
-    // áfrýjun, which is announced apart from a completed kæra.
-    if (transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE) {
+    // áfrýjun, which is announced apart from a completed kæra. Taking a
+    // confirmation back is refused by the service and is checked here only to
+    // narrow the type.
+    if (
+      transition !== AppealCaseTransition.MARK_APPEAL_READY_TO_COMPLETE &&
+      transition !== AppealCaseTransition.UNMARK_APPEAL_READY_TO_COMPLETE
+    ) {
       const event =
         transition === AppealCaseTransition.COMPLETE_APPEAL &&
         appealCase.appealType === AppealCaseType.VERDICT

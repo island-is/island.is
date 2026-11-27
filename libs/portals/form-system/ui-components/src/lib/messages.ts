@@ -686,6 +686,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða skjá',
     description: 'Preview',
   },
+  mobilePreview: {
+    id: 'form.system:mobile-preview',
+    defaultMessage: 'Farsímasýn',
+    description: 'Toggle the form preview between desktop and mobile viewports',
+  },
   lastModified: {
     id: 'form.system:last-modified',
     defaultMessage: 'Síðast breytt',

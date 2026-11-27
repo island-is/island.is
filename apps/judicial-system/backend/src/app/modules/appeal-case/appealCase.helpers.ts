@@ -244,6 +244,60 @@ export const isVerdictAppealOver = (
   appealCase.appealState === AppealCaseState.COMPLETED ||
   appealCase.appealState === AppealCaseState.WITHDRAWN
 
+// What the court of appeals confirms when it confirms how a verdict appeal
+// ended, apart from the ruling document itself.
+type ConfirmedVerdictAppealOutcome = Pick<
+  AppealCase,
+  | 'verdictAppealStatus'
+  | 'appealRulingDecision'
+  | 'appealRulingType'
+  | 'appealConclusion'
+  | 'appealRulingDate'
+>
+
+type ConfirmedVerdictAppealOutcomeUpdate = {
+  [Key in keyof ConfirmedVerdictAppealOutcome]?:
+    | ConfirmedVerdictAppealOutcome[Key]
+    | null
+}
+
+const toComparable = (
+  value: string | Date | null | undefined,
+): string | number | null => {
+  if (value === null || value === undefined) {
+    return null
+  }
+
+  return value instanceof Date ? value.getTime() : value
+}
+
+// Whether an update changes any part of a verdict appeal's outcome that the
+// court of appeals confirms. A field left out is no change, and neither is one
+// sent again with the value already stored: the court's pages resend fields
+// they did not touch. Dates are compared by the moment they name.
+export const changesConfirmedVerdictAppealOutcome = (
+  appealCase: ConfirmedVerdictAppealOutcome,
+  update: ConfirmedVerdictAppealOutcomeUpdate,
+): boolean => {
+  const fields: (keyof ConfirmedVerdictAppealOutcome)[] = [
+    'verdictAppealStatus',
+    'appealRulingDecision',
+    'appealRulingType',
+    'appealConclusion',
+    'appealRulingDate',
+  ]
+
+  return fields.some((field) => {
+    const next = update[field]
+
+    if (next === undefined) {
+      return false
+    }
+
+    return toComparable(next) !== toComparable(appealCase[field])
+  })
+}
+
 // The session the court of appeals holds next: the earliest one still ahead.
 export const nextAppealCourtSession = (
   appealCase: Pick<AppealCase, 'courtSessions'>,
