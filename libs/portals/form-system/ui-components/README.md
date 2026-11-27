@@ -60,7 +60,9 @@ standard red "Vantar gildi" indicator. Optional empty selections display
 The obsolete child `isDropdown` setting is ignored and excluded from child
 field settings; assets and payment fields still support it. Required child
 fields show a black asterisk after the field name and require at least one
-selected child. Optional fields permit an empty selection. Empty
+selected child. Optional fields permit an empty selection.
+Selection validation errors are announced and associated with the checkbox group
+until the selection becomes valid. Empty
 lists and lookup failures are displayed explicitly. Lookup failures keep the
 field name and table headers visible, with the error message inside the table
 body, without overwriting selected values. Child fields use mock

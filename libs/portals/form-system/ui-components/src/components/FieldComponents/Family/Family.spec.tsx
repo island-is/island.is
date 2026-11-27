@@ -32,6 +32,7 @@ import { hasFieldValueError } from '../../../lib/hasFieldValueError'
 import { initializeField } from '../../../lib/fieldTypes'
 import { NationalIdDisplay } from '../../DisplayComponents/NationalIdDisplay/NationalIdDisplay'
 import { Family } from './Family'
+import { ChildrenTable } from './ChildrenTable'
 
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({
@@ -83,8 +84,8 @@ jest.mock('@island.is/island-ui/core', () => ({
   AlertMessage: ({ title }: { title: string }) => (
     <div role="alert">{title}</div>
   ),
-  InputError: ({ errorMessage }: { errorMessage: string }) => (
-    <div role="alert">{errorMessage}</div>
+  InputError: ({ id, errorMessage }: { id?: string; errorMessage: string }) => (
+    <div id={id}>{errorMessage}</div>
   ),
   Table: {
     Table: ({ children, ...props }: TableHTMLAttributes<HTMLTableElement>) => (
@@ -602,6 +603,40 @@ it.each<{
   },
 )
 
+it('associates selection errors with the group and announces updates until validation succeeds', () => {
+  const props = {
+    label: 'Children',
+    members: [{ name: 'Child', nationalId: '0101202989' }],
+    onSelectionChange: jest.fn(),
+  }
+  const { rerender } = render(<ChildrenTable {...props} />)
+  const group = screen.getByRole('group', { name: 'Children' })
+
+  expect(group.hasAttribute('aria-describedby')).toBe(false)
+  expect(group.hasAttribute('aria-invalid')).toBe(false)
+
+  rerender(<ChildrenTable {...props} validationMessage="Select a child" />)
+
+  const error = screen.getByText('Select a child')
+  const errorId = error.id
+  expect(errorId).not.toBe('')
+  expect(group.getAttribute('aria-describedby')).toBe(errorId)
+  expect(group.getAttribute('aria-invalid')).toBe('true')
+  expect(error.parentElement?.getAttribute('aria-live')).toBe('polite')
+  expect(error.parentElement?.getAttribute('aria-atomic')).toBe('true')
+
+  rerender(<ChildrenTable {...props} validationMessage="Selection required" />)
+
+  expect(screen.getByText('Selection required').id).toBe(errorId)
+  expect(group.getAttribute('aria-describedby')).toBe(errorId)
+
+  rerender(<ChildrenTable {...props} />)
+
+  expect(group.hasAttribute('aria-describedby')).toBe(false)
+  expect(group.hasAttribute('aria-invalid')).toBe(false)
+  expect(document.getElementById(errorId)).toBeNull()
+})
+
 it.each([false, true])(
   'requires at least one child and clears the error after selection in preview=%s',
   async (isPreview) => {
@@ -635,16 +670,18 @@ it.each([false, true])(
     await waitFor(() =>
       expect(validationResult).toHaveBeenLastCalledWith(false),
     )
-    expect(screen.getByRole('alert').textContent).toBe(
-      'Veldu að minnsta kosti eitt barn.',
-    )
+    expect(screen.getByText('Veldu að minnsta kosti eitt barn.')).toBeTruthy()
     expect(dispatch).toHaveBeenLastCalledWith({
       type: 'SET_FIELD_VALUES',
       payload: { id: 'family', values: [] },
     })
 
     fireEvent.click(screen.getAllByRole('checkbox')[0])
-    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull())
+    await waitFor(() =>
+      expect(
+        screen.queryByText('Veldu að minnsta kosti eitt barn.'),
+      ).toBeNull(),
+    )
     fireEvent.click(screen.getByRole('button', { name: 'Validate' }))
     await waitFor(() => expect(validationResult).toHaveBeenLastCalledWith(true))
     expect(dispatch).toHaveBeenLastCalledWith({
@@ -684,9 +721,7 @@ it.each([false, true])(
       expect(validationResult).toHaveBeenLastCalledWith(!isRequired),
     )
     if (isRequired) {
-      expect(screen.getByRole('alert').textContent).toBe(
-        'Veldu að minnsta kosti eitt barn.',
-      )
+      expect(screen.getByText('Veldu að minnsta kosti eitt barn.')).toBeTruthy()
     } else {
       expect(screen.queryByRole('alert')).toBeNull()
     }
