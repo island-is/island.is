@@ -1,0 +1,75 @@
+name: OIDC ECR check
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/oidc-ecr-check.yml'
+  push:
+    branches:
+      - 'sindriii/oidc-ecr-check'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-west-1
+  PR_ROLE: arn:aws:iam::821090935708:role/github-action-monorepo-ecr-pr
+  RELEASE_ROLE: arn:aws:iam::821090935708:role/github-action-monorepo-ecr-release
+
+jobs:
+  pr-role:
+    runs-on: arc-shared
+    timeout-minutes: 5
+    steps:
+      - name: Show trigger
+        run: |
+          echo "event_name=${{ github.event_name }}"
+          echo "ref=${{ github.ref }}"
+
+      - name: Assume PR role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.PR_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: oidc-ecr-check-pr
+          role-duration-seconds: 900
+
+      - name: Caller identity
+        run: aws sts get-caller-identity
+
+      - name: ECR auth token expiry
+        run: aws ecr get-authorization-token --query 'authorizationData[0].expiresAt' --output text
+
+      - name: Describe ECR repository
+        run: aws ecr describe-repositories --repository-names web --query 'repositories[0].repositoryName' --output text
+
+  release-role-refused:
+    runs-on: arc-shared
+    timeout-minutes: 5
+    steps:
+      - name: Show trigger
+        run: |
+          echo "event_name=${{ github.event_name }}"
+          echo "ref=${{ github.ref }}"
+
+      - name: Try to assume release role
+        id: assume
+        continue-on-error: true
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.RELEASE_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: oidc-ecr-check-release
+          role-duration-seconds: 900
+
+      - name: Verify release role was refused
+        env:
+          OUTCOME: ${{ steps.assume.outcome }}
+        run: |
+          if [[ "$OUTCOME" == 'failure' ]]; then
+            echo "OK: AWS refused the release role for this subject."
+          else
+            echo "FAIL: release role was assumed (outcome=$OUTCOME). Trust policy is too broad." >&2
+            exit 1
+          fi
