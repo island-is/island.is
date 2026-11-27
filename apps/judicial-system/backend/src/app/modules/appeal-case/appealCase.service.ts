@@ -1111,6 +1111,17 @@ export class AppealCaseService {
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
+    // Verdict appeals cannot use RECEIVE_APPEAL yet, but assigning the CoA
+    // case number still queues the same "móttaka" robot mail as kærumál.
+    // Stamp the received date here so that mail is not sent with null.
+    if (
+      update.appealCaseNumber &&
+      update.appealCaseNumber !== appealCase.appealCaseNumber &&
+      !appealCase.appealReceivedByCourtDate
+    ) {
+      data.appealReceivedByCourtDate = nowFactory()
+    }
+
     let updatedAppealCase = appealCase
 
     // Sequelize reports an empty update as affecting no rows, which the
