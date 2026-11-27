@@ -77,9 +77,7 @@ export const EstateDetail = () => {
     ? formatMessage(em.estateManager)
     : estate?.representative?.text
 
-  const latestDocuments = [...(estate?.documents ?? [])]
-    .sort((a, b) => (b.documentDate ?? '').localeCompare(a.documentDate ?? ''))
-    .slice(0, 3)
+  const latestDocuments = (estate?.documents ?? []).slice(0, 3)
 
   return (
     <IntroWrapper

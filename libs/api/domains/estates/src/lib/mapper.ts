@@ -182,6 +182,10 @@ export const mapToEstatesCase = (
           : undefined,
         requestAction: mapAction(d.requestAction, locale),
       }))
-      .filter(isDefined),
+      .filter(isDefined)
+      .sort(
+        (a, b) =>
+          (b.documentDate?.getTime() ?? 0) - (a.documentDate?.getTime() ?? 0),
+      ),
   }
 }
