@@ -16,6 +16,7 @@ export enum Features {
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   homeSupport = 'isHomeSupportEnabled',
+  machineLicenseCardReissue = 'isMachineLicenseCardReissueEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
   legalGazette = 'isLegalGazetteEnabled',

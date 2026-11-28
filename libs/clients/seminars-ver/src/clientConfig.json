@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Námskeið",
     "description": "Vefþjónusta til þess að fletta upp á og skrá í námskeið.",
@@ -20,6 +20,44 @@
     }
   ],
   "paths": {
+    "/api/AdrLicense": {
+      "get": {
+        "tags": ["AdrLicense"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdrLicenseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Company": {
       "get": {
         "tags": ["Company"],
@@ -29,6 +67,15 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -49,6 +96,17 @@
     "/api/Course": {
       "get": {
         "tags": ["Course"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -74,6 +132,15 @@
             "name": "courseId",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -107,6 +174,17 @@
     "/api/Individual": {
       "post": {
         "tags": ["Individual"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -153,9 +231,107 @@
         }
       }
     },
+    "/api/IssueLicenseApplication": {
+      "post": {
+        "tags": ["IssueLicenseApplication"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueLicenseApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PaymentRecieved/{paymentId}": {
+      "get": {
+        "tags": ["PaymentRecieved"],
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRecievedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Registration": {
       "post": {
         "tags": ["Registration"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -188,10 +364,210 @@
           }
         }
       }
+    },
+    "/api/WorkMachineLicense": {
+      "get": {
+        "tags": ["WorkMachineLicense"],
+        "summary": "Gets the work machine license information for the current user.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkMachineLicenseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WorkMachineLicenseOrderApplication": {
+      "post": {
+        "tags": ["WorkMachineLicenseOrderApplication"],
+        "summary": "Orders a work machine license for the current user.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkMachineLicenseOrderApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WorkMachineLicenseRenewalApplication": {
+      "post": {
+        "tags": ["WorkMachineLicenseRenewalApplication"],
+        "summary": "Order a work machine license renewal for the current user.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "ApplicationId of the application calling the endpoint",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkMachineLicenseRenewalApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "addressedTo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdrLicenseDto": {
+        "type": "object",
+        "properties": {
+          "hasLicenseToPurchase": {
+            "type": "boolean"
+          },
+          "hasLicenseRightsToRenew": {
+            "type": "boolean"
+          },
+          "mustSendPicture": {
+            "type": "boolean"
+          },
+          "adrRights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdrRightDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdrRightDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CompanyDTO": {
         "type": "object",
         "properties": {
@@ -328,6 +704,24 @@
         },
         "additionalProperties": false
       },
+      "FileUploadDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "extension": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "IndividualCourseValidationDto": {
         "type": "object",
         "properties": {
@@ -363,6 +757,37 @@
           "errorCode": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IssueLicenseApplicationDto": {
+        "type": "object",
+        "properties": {
+          "sendToLegalAddress": {
+            "type": "boolean"
+          },
+          "sendToAddress": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "licenseType": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "adrPhoto": {
+            "$ref": "#/components/schemas/FileUploadDto"
           }
         },
         "additionalProperties": false
@@ -403,6 +828,15 @@
           "paymentExplanation": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentRecievedDto": {
+        "type": "object",
+        "properties": {
+          "paymentRecieved": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -467,6 +901,119 @@
               }
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineLicenseDto": {
+        "type": "object",
+        "properties": {
+          "hasLicenseToPurchase": {
+            "type": "boolean"
+          },
+          "hasLicenseRightsToRenew": {
+            "type": "boolean"
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "workMachineRightsDtos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkMachineRightDto"
+            },
+            "nullable": true
+          },
+          "workMachineRightsRenewedDtos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkMachineRightDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineLicenseOrderApplicationDto": {
+        "type": "object",
+        "properties": {
+          "sendToLegalAddress": {
+            "type": "boolean"
+          },
+          "sendToAddress": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "applicationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineLicenseRenewalApplicationDto": {
+        "type": "object",
+        "properties": {
+          "sendToLegalAddress": {
+            "type": "boolean"
+          },
+          "sendToAddress": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "wouldLikePlasticCard": {
+            "type": "boolean"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applicationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicalCertificate": {
+            "$ref": "#/components/schemas/FileUploadDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineRightDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryNameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasTeachingRights": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
