@@ -8,6 +8,7 @@ import { documentsModule } from '@island.is/portals/my-pages/documents'
 import { educationModule } from '@island.is/portals/my-pages/education'
 import { educationCareerModule } from '@island.is/portals/my-pages/education-career'
 import { educationStudentAssessmentModule } from '@island.is/portals/my-pages/education-student-assessment'
+import { estatesModule } from '@island.is/portals/my-pages/estates'
 import { financeModule } from '@island.is/portals/my-pages/finance'
 import { healthModule } from '@island.is/portals/my-pages/health'
 import {
@@ -56,4 +57,5 @@ export const modules: PortalModule[] = [
   signatureCollectionModule,
   petitionsModule,
   lawAndOrderModule,
+  estatesModule,
 ]

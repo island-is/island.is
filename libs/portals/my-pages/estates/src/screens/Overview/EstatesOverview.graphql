@@ -1,0 +1,10 @@
+query EstatesOverview {
+  estates {
+    data {
+      id
+      nameOfDeceased
+      isFinished
+    }
+    totalCount
+  }
+}

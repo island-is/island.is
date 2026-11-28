@@ -6,13 +6,67 @@ import {
   DirectorateOfEqualityClientModule,
 } from '@island.is/clients/directorate-of-equality'
 import {
-  DocumentsClientModule,
+  DistrictCommissionersLicensesClientConfig,
+  DistrictCommissionersLicensesClientModule,
+} from '@island.is/clients/district-commissioners-licenses'
+import {
   DocumentClientConfig,
+  DocumentsClientModule,
 } from '@island.is/clients/documents'
+import {
+  EstatesClientConfig,
+  EstatesClientModule,
+} from '@island.is/clients/estates'
 import {
   FinanceClientConfig,
   FinanceClientModule,
 } from '@island.is/clients/finance'
+import {
+  HealthDirectorateHealthClientConfig,
+  HealthDirectorateHealthModule,
+} from '@island.is/clients/health-directorate'
+import {
+  HmsRentalAgreementClientConfig,
+  HmsRentalAgreementClientModule,
+} from '@island.is/clients/hms-rental-agreement'
+import {
+  RightsPortalClientConfig,
+  RightsPortalClientModule,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { MMSClientConfig, MMSClientModule } from '@island.is/clients/mms'
+import {
+  PrimarySchoolClientConfig,
+  PrimarySchoolClientModule,
+} from '@island.is/clients/mms/primary-school'
+import {
+  RegulationsClientConfig,
+  RegulationsClientModule,
+} from '@island.is/clients/regulations'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientModule,
+} from '@island.is/clients/regulations-admin'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
+  UniversityCareersClientModule,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
+import {
+  VehiclesClientConfig,
+  VehiclesClientModule,
+} from '@island.is/clients/vehicles'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
+import {
+  WorkMachinesClientConfig,
+  WorkMachinesClientModule,
+} from '@island.is/clients/work-machines'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -25,72 +79,22 @@ import {
 } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
+import { environment } from '../environments'
 import { DirectorateOfEqualityController } from './modules/directorate-of-equality/directorate-of-equality.controller'
 import { DocumentController } from './modules/documents/document.controller'
-import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
-import { FinanceDocumentController } from './modules/finance-documents/document.controller'
-import { environment } from '../environments'
-import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
-import { EducationController } from './modules/education-documents/education-document.controller'
 import { EducationDocumentsConfig } from './modules/education-documents/education-document.config'
-import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
-import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
-import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import { EducationController } from './modules/education-documents/education-document.controller'
+import { EstatesDocumentsController } from './modules/estates-documents/estates-documents.controller'
+import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { HealthConversationsAttachmentController } from './modules/health/conversations-attachment.controller'
+import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
-import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
-
-import {
-  VehiclesClientConfig,
-  VehiclesClientModule,
-} from '@island.is/clients/vehicles'
-import {
-  AgriculturalUniversityOfIcelandCareerClientConfig,
-  BifrostUniversityCareerClientConfig,
-  HolarUniversityCareerClientConfig,
-  UniversityCareersClientModule,
-  UniversityOfAkureyriCareerClientConfig,
-  UniversityOfIcelandCareerClientConfig,
-  IcelandUniversityOfTheArtsCareerClientConfig,
-} from '@island.is/clients/university-careers'
-import {
-  RegulationsClientConfig,
-  RegulationsClientModule,
-} from '@island.is/clients/regulations'
-import {
-  RegulationsAdminClientConfig,
-  RegulationsAdminClientModule,
-} from '@island.is/clients/regulations-admin'
-import {
-  WorkMachinesClientConfig,
-  WorkMachinesClientModule,
-} from '@island.is/clients/work-machines'
-import {
-  RightsPortalClientConfig,
-  RightsPortalClientModule,
-} from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import {
-  HealthDirectorateHealthModule,
-  HealthDirectorateHealthClientConfig,
-} from '@island.is/clients/health-directorate'
-import {
-  DistrictCommissionersLicensesClientConfig,
-  DistrictCommissionersLicensesClientModule,
-} from '@island.is/clients/district-commissioners-licenses'
-import {
-  HmsRentalAgreementClientConfig,
-  HmsRentalAgreementClientModule,
-} from '@island.is/clients/hms-rental-agreement'
-import {
-  PrimarySchoolClientConfig,
-  PrimarySchoolClientModule,
-} from '@island.is/clients/mms/primary-school'
+import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { RentalAgreementsController } from './modules/rental-agreements/rental-agreements.controller'
+import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
 import { VmstAttachmentController } from './modules/vmst-attachments/vmst-attachment.controller'
-import {
-  VmstUnemploymentClientConfig,
-  VmstUnemploymentClientModule,
-} from '@island.is/clients/vmst-unemployment'
+import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
 @Module({
   controllers: [
     DocumentController,
@@ -105,6 +109,7 @@ import {
     OccupationalLicensesController,
     RentalAgreementsController,
     VmstAttachmentController,
+    EstatesDocumentsController,
     DirectorateOfEqualityController,
   ],
   imports: [
@@ -126,6 +131,7 @@ import {
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
     VmstUnemploymentClientModule,
+    EstatesClientModule,
     DirectorateOfEqualityClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -153,6 +159,7 @@ import {
         PrimarySchoolClientConfig,
         VmstUnemploymentClientConfig,
         EducationDocumentsConfig,
+        EstatesClientConfig,
         DirectorateOfEqualityClientConfig,
       ],
     }),

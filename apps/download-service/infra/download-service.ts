@@ -6,6 +6,7 @@ import {
   DistrictCommissionersLicenses,
   DistrictCommissionersPCard,
   Education,
+  Estates,
   Finance,
   HealthDirectorateHealthService,
   HealthInsurance,
@@ -84,6 +85,7 @@ export const serviceSetup = (services: {
       RentalService,
       MmsPrimarySchool,
       VMSTUnemployment,
+      Estates,
       DirectorateOfEquality,
     )
     .ingress({

@@ -10,6 +10,7 @@ import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { directorateOfEqualityNavigation } from '@island.is/portals/my-pages/directorate-of-equality'
 import { documentsNavigation } from '@island.is/portals/my-pages/documents'
 import { educationNavigation } from '@island.is/portals/my-pages/education'
+import { estatesNavigation } from '@island.is/portals/my-pages/estates'
 import { financeNavigation } from '@island.is/portals/my-pages/finance'
 import { healthNavigation } from '@island.is/portals/my-pages/health'
 import {
@@ -82,5 +83,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     airDiscountNavigation,
     educationNavigation,
     lawAndOrderNavigation,
+    estatesNavigation,
   ],
 }

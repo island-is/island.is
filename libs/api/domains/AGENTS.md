@@ -27,7 +27,7 @@ NestJS modules (resolvers, services, models, mappers) merged into the shared Gra
 
 ## Schema
 
-- Every `@ObjectType`, `@InputType`, `registerEnumType`, query and mutation name carries the module prefix (none when the type is the module name, e.g. `Identity`); the class name may be shorter if the decorator string sets it. A query is named after its type (plural for lists); a mutation is verb first (`createProjectXUser`).
+- Every `@ObjectType`, `@InputType`, `registerEnumType`, query and mutation name carries the module prefix, used once: a name that already is the module name or its singular takes none (`Identity`, `identity`, `createIdentity`; `Estate` in `estates`, never `EstatesEstate`); the class name may be shorter if the decorator string sets it. A query is named after its type (plural for lists); a mutation is verb first (`createProjectXUser`).
 - A root query returning an unbounded list returns a `PaginatedResponse` (`@island.is/nest/pagination`) subclass.
 - New GraphQL enum values (the TS enum keys) are ALL_CAPS.
 - A kennitala field is named `nationalId`, in the form `##########` (no hyphen).
