@@ -1,0 +1,1898 @@
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ForbiddenException,
+  ConflictException,
+} from '@nestjs/common'
+import { withCodeOwner } from '@island.is/infra-tracing'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
+import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationTemplateHelper,
+  coreErrorMessages,
+  coreMessages,
+  getFormExpressionDependencies,
+  getValueViaPath,
+  resolveFormItemId,
+} from '@island.is/application/core'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  Application,
+  ApplicationRole,
+  ApplicationWithAttachments,
+  ExternalData,
+  FieldTypes,
+  Form,
+  FormExpression,
+  FormItemTypes,
+  FormValue,
+  ReadWriteValues,
+  RoleInState,
+  StaticText,
+  SubmitField,
+  TemplateApi,
+} from '@island.is/application/types'
+import {
+  convertFormToScreens,
+  getNavigableSectionsInForm,
+  moveToScreen,
+  canGoBack,
+  FormScreen,
+  ExternalDataProviderScreen,
+  getFormNodeFieldIds,
+} from '@island.is/application/screen-compiler'
+import type { User } from '@island.is/auth-nest-tools'
+import type { BffUser, Locale } from '@island.is/shared/types'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+
+import { ApplicationActionService } from '../application/application-action.service'
+import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
+import { ApplicationValidationService } from '../application/tools/applicationTemplateValidation.service'
+import { getApplicationNameTranslationString } from '../application/utils/application'
+import { isNewActor } from '../application/utils/delegationUtils'
+import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
+import { mapScreenToComponents } from './screen-mapper'
+import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
+import pick from 'lodash/pick'
+import { applyResolvedFieldDefaults } from './field-default-persistence'
+import { applyFlatAnswers } from './apply-flat-answers'
+import {
+  changedAnswerKeys,
+  keysOutsideFields,
+  keysWithIssues,
+  owningId,
+  zodIssuesForFields,
+} from './answer-validation'
+import { stripEmptyFormValue } from './strip-empty-answers'
+import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
+import { buildStepper } from './stepper-builder'
+import { buildFooterButtons } from './footer-builder'
+import {
+  findScreenIndex,
+  resolveClaimedScreen,
+  resumeIndex,
+  toApplicationSnapshot,
+  toWorkingApplication,
+} from './screen-position'
+import {
+  ScreenDto,
+  PageDto,
+  SdfNoticeCode,
+  ValidationErrorDto,
+  ValidateResponseDto,
+} from './dto/screen.dto'
+import { SdfActionType } from './dto/action.dto'
+import { createSdfProblem } from './problem-details'
+import { type ZodIssue, ZodIssueCode } from 'zod'
+
+try {
+  const { setFileScope } = require('@vanilla-extract/css/fileScope')
+  setFileScope('sdf-server-shim', 'application-system-api')
+} catch {
+  // vanilla-extract not available; CSS-free templates still work
+}
+
+interface AdapterOptions {
+  application?: ApplicationWithAttachments
+  // When true, the caller has already checked the claimed screen is shown, so
+  // `application` is used to render it without checking again.
+  claimedScreenChecked?: boolean
+  // Added to the screen returned.
+  notice?: SdfNoticeCode
+}
+
+const noticeMessages = {
+  [SdfNoticeCode.SCREEN_UNAVAILABLE]: coreMessages.screenUnavailableNotice,
+}
+
+type ApplicationTemplate = Awaited<
+  ReturnType<typeof getApplicationTemplateByTypeId>
+>
+
+type ScreenWithDescription = FormScreen & {
+  description?: Parameters<FormTextResolver['resolve']>[0]
+}
+
+/**
+ * Locates the footer submit field for a screen so the footer can reuse its
+ * (translatable) action label, mirroring legacy `ScreenFooter`. External-data
+ * provider screens carry it directly; multi-field/repeater screens hold it
+ * among their children; a submit field can also be the screen itself.
+ *
+ * Only `placement: 'footer'` submit fields inform the footer label — legacy
+ * renders `placement: 'screen'` submit buttons inline, not in the footer.
+ */
+function getScreenSubmitField(
+  screen: FormScreen | undefined,
+): SubmitField | undefined {
+  if (!screen) return undefined
+
+  const isFooterSubmit = (field: SubmitField | undefined): boolean =>
+    !!field && field.placement !== 'screen'
+
+  const direct = (screen as { submitField?: SubmitField }).submitField
+  if (isFooterSubmit(direct)) return direct
+
+  if ((screen as { type?: unknown }).type === FieldTypes.SUBMIT) {
+    const self = screen as unknown as SubmitField
+    return isFooterSubmit(self) ? self : undefined
+  }
+
+  const children = (screen as { children?: unknown }).children
+  if (Array.isArray(children)) {
+    const submit = children.find(
+      (child) => (child as { type?: unknown })?.type === FieldTypes.SUBMIT,
+    ) as SubmitField | undefined
+    if (isFooterSubmit(submit)) return submit
+  }
+
+  return undefined
+}
+
+const isExternalDataProviderScreen = (
+  screen: FormScreen | undefined,
+): screen is ExternalDataProviderScreen =>
+  !!screen &&
+  'type' in screen &&
+  screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
+const isLastNavigableScreen = (screens: FormScreen[], index: number) =>
+  !screens.slice(index + 1).some((screen) => screen.isNavigable)
+
+interface ScreenRenderContext {
+  application: ApplicationWithAttachments
+  /**
+   * Anything that renders field content (screen/field mappers,
+   * extractPageAnswers) must use this instead of `application` directly —
+   * it carries the role-filtered answers/externalData, not the raw ones.
+   */
+  filteredApplication: ApplicationWithAttachments
+  template: ApplicationTemplate
+  roleInState: RoleInState
+  form: Form
+  bffUser: BffUser
+  screens: FormScreen[]
+}
+
+@Injectable()
+export class SdfScreenService {
+  private readonly logger: Logger
+
+  constructor(
+    @Inject(LOGGER_PROVIDER) logger: Logger,
+    private readonly applicationService: ApplicationService,
+    private readonly applicationAccessService: ApplicationAccessService,
+    private readonly i18nResolverService: I18nResolverService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly applicationActionService: ApplicationActionService,
+    private readonly applicationValidationService: ApplicationValidationService,
+  ) {
+    this.logger = logger.child({ context: 'SdfScreenService' })
+  }
+
+  /**
+   * Runs `callback` with the application and template ids, and the template's
+   * code owner, attached to everything logged inside it and to the active trace.
+   */
+  private withApplicationInfo<R>(
+    application: Pick<ApplicationWithAttachments, 'id'>,
+    template: ApplicationTemplate,
+    callback: () => R,
+  ): R {
+    return withCodeOwner(template.codeOwner, () =>
+      withLoggingContext(
+        { templateId: template.type, applicationId: application.id },
+        callback,
+      ),
+    )
+  }
+
+  private async requireApplicationForUser(
+    applicationId: string,
+    user: User,
+    config?: { shouldThrowIfPruned?: boolean },
+  ): Promise<ApplicationWithAttachments> {
+    const application =
+      await this.applicationAccessService.findOneByIdAndNationalId(
+        applicationId,
+        user,
+        config,
+      )
+    return application as ApplicationWithAttachments
+  }
+
+  /**
+   * The screen with the id `claimedScreenId` when it is shown, otherwise the
+   * screen to resume on. Nothing is saved.
+   */
+  async getScreen(
+    applicationId: string,
+    claimedScreenId: string | undefined,
+    locale: Locale,
+    user: User,
+    options: AdapterOptions = {},
+  ): Promise<ScreenDto> {
+    const context = await this.resolveScreenRenderContext(
+      applicationId,
+      locale,
+      user,
+      options,
+    )
+    const { application, filteredApplication, form, bffUser, screens } = context
+
+    return this.withApplicationInfo(application, context.template, async () => {
+      const checkedIndex =
+        options.claimedScreenChecked && claimedScreenId
+          ? findScreenIndex(
+              screens,
+              claimedScreenId,
+              application as Application,
+              bffUser,
+            )
+          : -1
+      const resolvedIndex =
+        checkedIndex >= 0
+          ? checkedIndex
+          : this.resolveScreenIndex(
+              screens,
+              filteredApplication,
+              application,
+              bffUser,
+              claimedScreenId,
+            )
+      const currentScreen = screens[resolvedIndex]
+
+      const resolver = await this.i18nResolverService.createResolver(
+        filteredApplication as Application,
+        locale,
+      )
+      const navigableSections = getNavigableSectionsInForm(
+        form,
+        filteredApplication.answers,
+        filteredApplication.externalData,
+        bffUser,
+      )
+      const stepper = buildStepper(
+        navigableSections,
+        currentScreen?.sectionIndex ?? 0,
+        currentScreen?.subSectionIndex ?? 0,
+        resolver,
+      )
+
+      const page = this.buildPage(
+        currentScreen,
+        resolvedIndex,
+        resolver,
+        filteredApplication,
+        bffUser,
+      )
+
+      const footer = this.buildFooter(
+        context,
+        currentScreen,
+        resolvedIndex,
+        isLastNavigableScreen(screens, resolvedIndex),
+        resolver,
+      )
+
+      const header = this.buildHeader(context, currentScreen, resolver)
+
+      const pageAnswers = this.extractPageAnswers(
+        currentScreen,
+        filteredApplication,
+      )
+
+      return {
+        applicationId,
+        header,
+        stepper,
+        page,
+        footer,
+        locale,
+        answers: Object.keys(pageAnswers).length > 0 ? pageAnswers : undefined,
+        ...(options.notice && {
+          notice: {
+            code: options.notice,
+            message: resolver.resolve(noticeMessages[options.notice]),
+          },
+        }),
+      }
+    })
+  }
+
+  private async resolveScreenRenderContext(
+    applicationId: string,
+    locale: Locale,
+    user: User,
+    options: AdapterOptions,
+  ): Promise<ScreenRenderContext> {
+    const application =
+      options.application ??
+      (await this.requireApplicationForUser(applicationId, user))
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    const roleInState = this.resolveRoleInState(application, template, user)
+    const form = await this.loadForm(roleInState, application)
+
+    // Security-critical: filter answers/external data by role before rendering.
+    const { answers: filteredAnswers, externalData: filteredExternalData } =
+      this.filterDataByRole(application, roleInState)
+    const filteredApplication: ApplicationWithAttachments = {
+      ...application,
+      answers: filteredAnswers,
+      externalData: filteredExternalData,
+    }
+
+    const bffUser = this.buildBffUser(user, locale)
+    const screens = convertFormToScreens(
+      form,
+      filteredAnswers,
+      filteredExternalData,
+      bffUser,
+    )
+
+    return {
+      application,
+      filteredApplication,
+      template,
+      roleInState,
+      form,
+      bffUser,
+      screens,
+    }
+  }
+
+  // A resolver that gives a text which is a function of the application only
+  // what the role may read, as the screen itself is built from.
+  private createResolverFor(
+    application: ApplicationWithAttachments,
+    roleInState: RoleInState,
+    locale: Locale,
+  ): Promise<FormTextResolver> {
+    const { answers, externalData } = this.filterDataByRole(
+      application as Application,
+      roleInState,
+    )
+    return this.i18nResolverService.createResolver(
+      { ...application, answers, externalData } as Application,
+      locale,
+    )
+  }
+
+  private resolveRoleInState(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    user: User,
+  ): RoleInState {
+    const role = template.mapUserToRole(user.nationalId, application)
+    if (!role) {
+      throw new ForbiddenException('Access denied')
+    }
+
+    const helper = new ApplicationTemplateHelper(application, template)
+
+    const stateInfo = helper.getApplicationStateInformation(application.state)
+    if (!stateInfo) {
+      throw new Error(`No state information for state ${application.state}`)
+    }
+
+    const roleInState = stateInfo.roles?.find((r) => r.id === role)
+    if (!roleInState) {
+      throw new ForbiddenException(
+        `Role ${role} not found in state ${application.state}`,
+      )
+    }
+
+    return roleInState
+  }
+
+  private buildBffUser(user: User, locale: Locale): BffUser {
+    return {
+      scopes: user.scope ?? [],
+      profile: {
+        sid: user.sid ?? '',
+        nationalId: user.nationalId,
+        name: '',
+        idp: '',
+        subjectType: 'person',
+        delegationType: user.delegationType,
+        actor: user.actor
+          ? { nationalId: user.actor.nationalId, name: '' }
+          : undefined,
+        locale,
+        iss: '',
+      },
+    }
+  }
+
+  // The index of the claimed screen when it is shown; otherwise, or when no id
+  // is given, the index to resume on. A claim that is not shown is logged.
+  private resolveScreenIndex(
+    screens: FormScreen[],
+    filteredApplication: ApplicationWithAttachments,
+    application: ApplicationWithAttachments,
+    bffUser: BffUser,
+    claimedId?: string,
+  ): number {
+    if (claimedId) {
+      const claim = resolveClaimedScreen(
+        screens,
+        claimedId,
+        application as Application,
+        bffUser,
+      )
+      if (claim.valid) {
+        return claim.index
+      }
+      this.logger.warn('SDF screen request fell back to resume', {
+        claimedScreenId: claimedId.slice(0, 200),
+      })
+    }
+
+    return resumeIndex(screens, filteredApplication, bffUser)
+  }
+
+  private buildFooter(
+    context: ScreenRenderContext,
+    currentScreen: FormScreen,
+    resolvedIndex: number,
+    isLastScreen: boolean,
+    resolver: FormTextResolver,
+  ): ScreenDto['footer'] {
+    const buttons = isLastScreen
+      ? buildFooterButtons(
+          context.roleInState.actions,
+          context.filteredApplication.answers,
+          context.filteredApplication.externalData,
+          context.bffUser,
+          resolver,
+          getScreenSubmitField(currentScreen),
+        )
+      : [
+          {
+            id: 'next',
+            text: resolver.resolve(
+              currentScreen?.nextButtonText ?? coreMessages.buttonNext,
+            ),
+            variant: 'PRIMARY',
+            actionType: 'NEXT_PAGE',
+          },
+        ]
+
+    return {
+      buttons,
+      canGoBack: canGoBack(context.screens, resolvedIndex),
+    }
+  }
+
+  private buildHeader(
+    context: ScreenRenderContext,
+    currentScreen: FormScreen,
+    resolver: FormTextResolver,
+  ): ScreenDto['header'] {
+    const screen = currentScreen as ScreenWithDescription
+    const description = screen.description
+      ? resolver.resolve(screen.description)
+      : undefined
+
+    const applicationName = getApplicationNameTranslationString(
+      context.template,
+      context.filteredApplication as Application,
+      resolver.format,
+    )
+    const institutionName = context.template.institution
+      ? resolver.format(context.template.institution)
+      : context.application.institution ?? undefined
+
+    return {
+      title: resolver.resolve(currentScreen?.title || context.form.title),
+      description,
+      applicationName,
+      institutionName,
+      logo: context.form.logo?.name,
+    }
+  }
+
+  private extractPageAnswers(
+    currentScreen: FormScreen,
+    application: ApplicationWithAttachments,
+  ): Record<string, unknown> {
+    const pageFieldIds = new Set([
+      ...getFormNodeFieldIds(currentScreen),
+      ...this.extractClientExpressionAnswerIds(currentScreen),
+    ])
+    const pageAnswers: Record<string, unknown> = {}
+    const storedAnswers = application.answers ?? {}
+
+    for (const fieldId of pageFieldIds) {
+      const value = getValueViaPath(storedAnswers, fieldId)
+      if (value !== undefined) {
+        pageAnswers[fieldId] = value
+      }
+    }
+
+    return pageAnswers
+  }
+
+  private extractClientExpressionAnswerIds(node: unknown): string[] {
+    const ids = new Set<string>()
+
+    const visit = (value: unknown) => {
+      if (typeof value !== 'object' || value === null) {
+        return
+      }
+
+      const record = value as Record<string, unknown>
+      for (const expressionKey of ['clientShowWhen', 'clientValueExpression']) {
+        idsForExpression(record[expressionKey]).forEach((id) => ids.add(id))
+      }
+
+      const children = record.children
+      if (Array.isArray(children)) {
+        children.forEach(visit)
+      }
+    }
+
+    const idsForExpression = (expression: unknown): string[] =>
+      getFormExpressionDependencies(expression as FormExpression | undefined)
+
+    visit(node)
+
+    return Array.from(ids)
+  }
+
+  async handleRefetch(
+    applicationId: string,
+    answers: Record<string, unknown> | undefined,
+    refetchTemplateApiActions: string[] | undefined,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+  ): Promise<ScreenDto> {
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+    )
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    return this.withApplicationInfo(application, template, async () => {
+      const role = template.mapUserToRole(
+        user.nationalId,
+        application as Application,
+      )
+      if (!role) {
+        throw new ForbiddenException('Access denied')
+      }
+
+      const writableAnswers = this.dropUnwritableAnswers(
+        application,
+        this.getWritePermissions(application, template, role),
+        answers,
+      )
+      const mergedAnswers = applyFlatAnswers(
+        application.answers,
+        writableAnswers,
+      )
+
+      // Whether the screen the client is on is shown is judged against the saved
+      // data with this request's answers, as for the other actions. What the
+      // actions below fetch is only shown, never counted.
+      const screens = await this.buildScreens(
+        toWorkingApplication(application, mergedAnswers),
+        template,
+        locale,
+        user,
+      )
+      const claim = screens
+        ? resolveClaimedScreen(
+            screens,
+            claimedScreenId,
+            application as Application,
+            this.buildBffUser(user, locale),
+          )
+        : undefined
+      if (!screens || !claim?.valid) {
+        return this.resumeWithNotice(
+          applicationId,
+          SdfActionType.REFETCH,
+          claimedScreenId,
+          locale,
+          user,
+        )
+      }
+
+      let workingApplication = toWorkingApplication(application, mergedAnswers)
+
+      const helper = new ApplicationTemplateHelper(
+        workingApplication as Application,
+        template,
+      )
+      const apisFromRole = helper.getApisFromRoleInState(role)
+
+      const requested = (refetchTemplateApiActions ?? []).filter(Boolean)
+      if (requested.length > 0) {
+        const apisToRun = apisFromRole.filter((api) =>
+          requested.includes(api.action),
+        )
+        if (apisToRun.length > 0) {
+          const result =
+            await this.applicationActionService.performEphemeralActionOnApplication(
+              workingApplication,
+              template,
+              user,
+              apisToRun,
+              locale,
+              SdfActionType.REFETCH,
+            )
+          if (result.hasError) {
+            throw new Error(
+              typeof result.error === 'string'
+                ? result.error
+                : 'Template API failed during REFETCH',
+            )
+          }
+          const updatedApplication = toApplicationSnapshot(
+            result.updatedApplication,
+          )
+          workingApplication = {
+            ...workingApplication,
+            ...updatedApplication,
+            id: updatedApplication.id ?? workingApplication.id,
+            typeId: updatedApplication.typeId ?? workingApplication.typeId,
+            applicant:
+              updatedApplication.applicant ?? workingApplication.applicant,
+            assignees:
+              updatedApplication.assignees ?? workingApplication.assignees,
+            applicantActors:
+              updatedApplication.applicantActors ??
+              workingApplication.applicantActors,
+            state: updatedApplication.state ?? workingApplication.state,
+            status: updatedApplication.status ?? workingApplication.status,
+            answers: updatedApplication.answers ?? workingApplication.answers,
+            externalData:
+              updatedApplication.externalData ??
+              workingApplication.externalData,
+            attachments:
+              updatedApplication.attachments ?? workingApplication.attachments,
+            created: updatedApplication.created ?? workingApplication.created,
+            modified:
+              updatedApplication.modified ?? workingApplication.modified,
+          }
+        }
+      }
+
+      // The claim was judged above against saved data. What the actions fetched
+      // is only shown, so it must not move the user to another screen.
+      return this.getScreen(applicationId, claimedScreenId, locale, user, {
+        application: workingApplication,
+        claimedScreenChecked: true,
+      })
+    })
+  }
+
+  async validateFields(
+    applicationId: string,
+    answers: Record<string, unknown>,
+    fieldIds: string[],
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+  ): Promise<ValidateResponseDto> {
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+    )
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    return this.withApplicationInfo(application, template, async () => {
+      const roleInState = this.resolveRoleInState(application, template, user)
+      const role = roleInState.id
+
+      const writableAnswers = this.dropUnwritableAnswers(
+        application,
+        this.getWritePermissions(application, template, role),
+        answers,
+      )
+      const errors: ValidationErrorDto[] = []
+      const mergedAnswers = applyFlatAnswers(
+        application.answers,
+        writableAnswers,
+      )
+
+      // There is nothing to validate or compute for a screen that is not shown,
+      // judged against the saved data with this request's answers. The next
+      // action the client sends from it is told so.
+      const workingScreens = await this.buildScreens(
+        toWorkingApplication(application, mergedAnswers),
+        template,
+        locale,
+        user,
+      )
+      const claim = workingScreens
+        ? resolveClaimedScreen(
+            workingScreens,
+            claimedScreenId,
+            application as Application,
+            this.buildBffUser(user, locale),
+          )
+        : undefined
+      if (!workingScreens || !claim?.valid) {
+        return { errors: [] }
+      }
+
+      const helper = new ApplicationTemplateHelper(
+        application as Application,
+        template,
+      )
+      const workingApplication = toWorkingApplication(
+        application,
+        mergedAnswers,
+      )
+      const formatResolver = await this.createResolverFor(
+        workingApplication,
+        roleInState,
+        locale,
+      )
+
+      if (template.dataSchema && fieldIds.length > 0) {
+        try {
+          for (const issue of zodIssuesForFields(
+            template.dataSchema,
+            mergedAnswers,
+            fieldIds,
+          )) {
+            this.addError(
+              errors,
+              owningId(issue.path.join('.'), fieldIds),
+              this.resolveZodIssueMessage(issue, formatResolver),
+            )
+          }
+        } catch (e) {
+          this.logger.warn('Validation error', e)
+        }
+      }
+
+      if (fieldIds.length > 0) {
+        const validatorErrors = await helper.applyAnswerValidators(
+          applyFlatAnswers({}, writableAnswers),
+          (descriptor, values) => formatResolver.resolve(descriptor as any),
+        )
+        if (validatorErrors) {
+          for (const [path, message] of Object.entries(validatorErrors)) {
+            this.addError(errors, owningId(path, fieldIds), message)
+          }
+        }
+      }
+
+      const readable = this.filterDataByRole(
+        workingApplication as Application,
+        roleInState,
+      )
+      const displayValues = this.computeDisplayValues(
+        readable.externalData,
+        await this.fieldScopeScreen(
+          application,
+          template,
+          locale,
+          user,
+          claimedScreenId,
+          workingScreens[claim.index],
+        ),
+        readable.answers,
+        formatResolver,
+      )
+
+      return {
+        errors,
+        displayValues:
+          displayValues && Object.keys(displayValues).length > 0
+            ? displayValues
+            : undefined,
+      }
+    })
+  }
+
+  // The answers and external data are what the role may read.
+  private computeDisplayValues(
+    externalData: ExternalData,
+    currentScreen: FormScreen,
+    mergedAnswers: Record<string, unknown>,
+    resolver: FormTextResolver,
+  ): Record<string, string> {
+    const results: Record<string, string> = {}
+
+    const displayFields: Array<Record<string, unknown>> = []
+    const maybeScreen = currentScreen as unknown as Record<string, unknown>
+    if (
+      'type' in maybeScreen &&
+      maybeScreen.type === FormItemTypes.MULTI_FIELD
+    ) {
+      const children = (maybeScreen.children ?? []) as Array<
+        Record<string, unknown>
+      >
+      for (const child of children) {
+        if (child.type === FieldTypes.DISPLAY) displayFields.push(child)
+      }
+    } else if (
+      'type' in maybeScreen &&
+      maybeScreen.type === FieldTypes.DISPLAY
+    ) {
+      displayFields.push(maybeScreen)
+    }
+
+    if (displayFields.length === 0) return results
+
+    for (const field of displayFields) {
+      const id = field.id as string | undefined
+      if (!id) continue
+      if (field.clientValueExpression !== undefined) continue
+      const valueFn = field.value
+      if (typeof valueFn !== 'function') continue
+      try {
+        const computed = (
+          valueFn as (answers: unknown, externalData: unknown) => unknown
+        )(mergedAnswers, externalData)
+        const resolved = resolver.resolve(computed as any)
+        if (resolved != null) {
+          results[id] = String(resolved)
+        }
+      } catch (e) {
+        this.logger.debug(
+          `computeDisplayValues: closure threw for field ${id}`,
+          e,
+        )
+      }
+    }
+
+    return results
+  }
+
+  async persistAnswersAndAdvance(
+    applicationId: string,
+    answers: Record<string, unknown>,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+  ): Promise<ScreenDto> {
+    // A pruned application is read-only, as in legacy `update`.
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+      { shouldThrowIfPruned: true },
+    )
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    return this.withApplicationInfo(application, template, async () => {
+      const roleInState = this.resolveRoleInState(application, template, user)
+      const role = roleInState.id
+
+      const write = this.getWritePermissions(application, template, role)
+      const writableAnswers = this.dropUnwritableAnswers(
+        application,
+        write,
+        answers,
+      )
+      const mergedAnswers = applyFlatAnswers(
+        application.answers,
+        writableAnswers,
+      )
+      const bffUser = this.buildBffUser(user, locale)
+
+      // Whether the screen the client is on is shown is judged against the saved
+      // data with this request's answers.
+      const workingScreens = await this.buildScreens(
+        toWorkingApplication(application, mergedAnswers),
+        template,
+        locale,
+        user,
+      )
+      const claim = workingScreens
+        ? resolveClaimedScreen(
+            workingScreens,
+            claimedScreenId,
+            application as Application,
+            bffUser,
+          )
+        : undefined
+      if (!workingScreens || !claim?.valid) {
+        return this.resumeWithNotice(
+          applicationId,
+          SdfActionType.NEXT_PAGE,
+          claimedScreenId,
+          locale,
+          user,
+        )
+      }
+
+      const currentScreen = await this.fieldScopeScreen(
+        application,
+        template,
+        locale,
+        user,
+        claimedScreenId,
+        workingScreens[claim.index],
+      )
+
+      applyResolvedFieldDefaults(
+        currentScreen,
+        mergedAnswers,
+        application as Application,
+        locale,
+        new Set(Object.keys(writableAnswers)),
+        (fieldId) => isAnswerKeyWritable(write, fieldId),
+      )
+
+      // Validation, the error screen and routing use the writable answers as
+      // sent, so a cleared field reaches the schema as `''` and the template's
+      // own messages apply. Empty strings are stripped only when saving.
+      const formatResolver = await this.createResolverFor(
+        application,
+        roleInState,
+        locale,
+      )
+      await this.assertChangedAnswersAreValid(
+        applicationId,
+        currentScreen,
+        template,
+        application,
+        mergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
+      const validationErrors = await this.validateScreenAnswers(
+        currentScreen,
+        template,
+        application,
+        mergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
+      if (validationErrors.length > 0) {
+        const screen = await this.getScreen(
+          applicationId,
+          claimedScreenId,
+          locale,
+          user,
+          {
+            application: toWorkingApplication(application, mergedAnswers),
+          },
+        )
+        screen.page.errors = validationErrors
+        return screen
+      }
+
+      const applicantActors: string[] =
+        isNewActor(application, user) && !!user.actor?.nationalId
+          ? [...application.applicantActors, user.actor.nationalId]
+          : application.applicantActors
+
+      // The providers store their results on `application`, so the screens are
+      // compiled again afterwards to decide what follows.
+      let nextScreens = workingScreens
+      if (isExternalDataProviderScreen(currentScreen)) {
+        await this.runScreenDataProviders(
+          currentScreen,
+          application,
+          template,
+          roleInState,
+          user,
+          locale,
+        )
+        nextScreens =
+          (await this.buildScreens(
+            toWorkingApplication(application, mergedAnswers),
+            template,
+            locale,
+            user,
+          )) ?? workingScreens
+      }
+
+      await this.applicationService.update(applicationId, {
+        answers: stripEmptyFormValue(mergedAnswers),
+        applicantActors,
+      })
+
+      return this.getScreen(
+        applicationId,
+        this.adjacentScreenId(
+          nextScreens,
+          claim.index,
+          true,
+          application,
+          bffUser,
+        ),
+        locale,
+        user,
+      )
+    })
+  }
+
+  private async buildScreens(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    locale: Locale,
+    user: User,
+  ): Promise<FormScreen[] | undefined> {
+    const role = template.mapUserToRole(
+      user.nationalId,
+      application as Application,
+    )
+    if (!role) return undefined
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const roleInState = helper.getRoleInState(role)
+    if (!roleInState?.formLoader) return undefined
+
+    const form = await roleInState.formLoader({
+      featureFlagClient: this.featureFlagService,
+    } as any)
+
+    return this.compileScreens(
+      form,
+      application,
+      roleInState,
+      this.buildBffUser(user, locale),
+    )
+  }
+
+  // Compiles the form against the application's data as the role may read it.
+  private compileScreens(
+    form: Form,
+    application: ApplicationWithAttachments,
+    roleInState: RoleInState,
+    bffUser: BffUser,
+  ): FormScreen[] {
+    const { answers, externalData } = this.filterDataByRole(
+      application as Application,
+      roleInState,
+    )
+    return convertFormToScreens(form, answers, externalData, bffUser)
+  }
+
+  // The screen whose fields are validated and given defaults for the claimed
+  // screen. It comes from the saved data; `workingScreen`, the same screen as
+  // the saved data plus the request's answers show it, stands in when the saved
+  // data does not show it.
+  private async fieldScopeScreen(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+    workingScreen: FormScreen,
+  ): Promise<FormScreen> {
+    const storedScreens = await this.buildScreens(
+      application,
+      template,
+      locale,
+      user,
+    )
+    const storedClaim = storedScreens
+      ? resolveClaimedScreen(
+          storedScreens,
+          claimedScreenId,
+          application as Application,
+          this.buildBffUser(user, locale),
+        )
+      : undefined
+
+    return storedScreens && storedClaim?.valid
+      ? storedScreens[storedClaim.index]
+      : workingScreen
+  }
+
+  // The id of the next shown screen after the one at `index`, or before it when
+  // not moving forward. When there is none that way, it is that screen's own id.
+  private adjacentScreenId(
+    screens: FormScreen[],
+    index: number,
+    isMovingForward: boolean,
+    application: ApplicationWithAttachments,
+    bffUser: BffUser,
+  ): string {
+    const adjacentIndex = moveToScreen(
+      screens,
+      isMovingForward ? index + 1 : index - 1,
+      isMovingForward,
+    )
+    return resolveFormItemId(
+      screens[screens[adjacentIndex]?.isNavigable ? adjacentIndex : index],
+      application as Application,
+      bffUser,
+    )
+  }
+
+  // Saves nothing and returns the screen to resume on, with a notice that the
+  // screen the client acted on is not available.
+  private async resumeWithNotice(
+    applicationId: string,
+    action: SdfActionType,
+    claimedScreenId: string,
+    locale: Locale,
+    user: User,
+  ): Promise<ScreenDto> {
+    this.logger.warn('SDF action fell back to resume', {
+      action,
+      claimedScreenId: claimedScreenId.slice(0, 200),
+    })
+
+    return this.getScreen(applicationId, undefined, locale, user, {
+      notice: SdfNoticeCode.SCREEN_UNAVAILABLE,
+    })
+  }
+
+  async goToPreviousPage(
+    applicationId: string,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+  ): Promise<ScreenDto> {
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+    )
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    return this.withApplicationInfo(application, template, async () => {
+      const screens = await this.buildScreens(
+        application,
+        template,
+        locale,
+        user,
+      )
+      const bffUser = this.buildBffUser(user, locale)
+      const claim = screens
+        ? resolveClaimedScreen(
+            screens,
+            claimedScreenId,
+            application as Application,
+            bffUser,
+          )
+        : undefined
+      if (!screens || !claim?.valid) {
+        return this.resumeWithNotice(
+          applicationId,
+          SdfActionType.PREV_PAGE,
+          claimedScreenId,
+          locale,
+          user,
+        )
+      }
+
+      return this.getScreen(
+        applicationId,
+        this.adjacentScreenId(
+          screens,
+          claim.index,
+          false,
+          application,
+          bffUser,
+        ),
+        locale,
+        user,
+      )
+    })
+  }
+
+  /**
+   * Runs the providers that the data-provider `screen` declares and the role
+   * may run, and returns whether any ran. Throws if one fails.
+   */
+  private async runScreenDataProviders(
+    screen: ExternalDataProviderScreen,
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    roleInState: RoleInState,
+    user: User,
+    locale: Locale,
+  ): Promise<boolean> {
+    const apisFromRole = roleInState.api ?? []
+    const templateApis = (screen.dataProviders ?? [])
+      .filter((p) => p.action)
+      .map((p) => apisFromRole.find((a) => a.actionId === p.action))
+      .filter(Boolean) as TemplateApi[]
+    if (templateApis.length === 0) return false
+
+    this.assertApisWritePermitted(
+      application as Application,
+      user,
+      roleInState,
+      templateApis,
+    )
+
+    const result =
+      await this.applicationActionService.performActionOnApplication(
+        application,
+        template,
+        user,
+        templateApis,
+        locale,
+        'SUBMIT',
+      )
+    if (result.hasError) {
+      throw new Error(
+        typeof result.error === 'string'
+          ? result.error
+          : 'Failed to fetch external data',
+      )
+    }
+    return true
+  }
+
+  private async validateScreenAnswers(
+    currentScreen: FormScreen | undefined,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    newAnswers: Record<string, unknown> | undefined,
+    formatResolver: FormTextResolver,
+  ): Promise<ValidationErrorDto[]> {
+    const errors: ValidationErrorDto[] = []
+    if (!currentScreen) return errors
+
+    const fieldIds = this.screenFieldIds(currentScreen)
+
+    if (fieldIds.length === 0) return errors
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+
+    if (template.dataSchema) {
+      try {
+        for (const issue of zodIssuesForFields(
+          template.dataSchema,
+          mergedAnswers,
+          fieldIds,
+        )) {
+          this.addError(
+            errors,
+            owningId(issue.path.join('.'), fieldIds),
+            this.resolveZodIssueMessage(issue, formatResolver),
+          )
+        }
+      } catch (e) {
+        this.logger.warn('Zod validation error during screen validation', e)
+      }
+    }
+
+    const validatorErrors = await helper.applyAnswerValidators(
+      applyFlatAnswers({}, newAnswers),
+      (descriptor, values) => formatResolver.resolve(descriptor as any),
+    )
+    if (validatorErrors) {
+      for (const [path, message] of Object.entries(validatorErrors)) {
+        this.addError(errors, owningId(path, fieldIds), message)
+      }
+    }
+
+    return errors
+  }
+
+  // The ids of the fields whose answers belong to the screen.
+  private screenFieldIds(currentScreen: FormScreen): string[] {
+    const isExternalDataProvider =
+      'type' in currentScreen &&
+      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
+    // An id that is a function is not a key the answers can be looked up by.
+    return isExternalDataProvider
+      ? typeof currentScreen.id === 'string' && currentScreen.id
+        ? [currentScreen.id]
+        : []
+      : getFormNodeFieldIds(currentScreen as any)
+  }
+
+  // Adds an error to a field once, however many issues inside it say the same.
+  private addError(
+    errors: ValidationErrorDto[],
+    componentId: string | undefined,
+    message: string,
+  ): void {
+    if (
+      componentId !== undefined &&
+      !errors.some(
+        (error) =>
+          error.componentId === componentId && error.message === message,
+      )
+    ) {
+      errors.push({ componentId, message })
+    }
+  }
+
+  /**
+   * The request is refused when it changes an answer that is not on the
+   * screen and the schema or an answer validator does not accept it. The
+   * client sends every answer it holds, so only the ones that differ from
+   * the stored answers count: a stale or cleared value from an earlier screen
+   * must not stop the user.
+   */
+  private async assertChangedAnswersAreValid(
+    applicationId: string,
+    currentScreen: FormScreen,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    writableAnswers: Record<string, unknown>,
+    formatResolver: FormTextResolver,
+  ): Promise<void> {
+    const offScreenKeys = keysOutsideFields(
+      changedAnswerKeys(application.answers ?? {}, writableAnswers),
+      this.screenFieldIds(currentScreen),
+    )
+    if (offScreenKeys.length === 0) {
+      return
+    }
+
+    const issuePaths: string[] = []
+    if (template.dataSchema) {
+      try {
+        const result = template.dataSchema.safeParse(mergedAnswers)
+        if (!result.success) {
+          issuePaths.push(
+            ...result.error.issues.map((issue) => issue.path.join('.')),
+          )
+        }
+      } catch (e) {
+        // Most likely an answer of a shape the schema does not expect. Which
+        // answer is not known, so all the changed ones are refused.
+        this.logger.warn('Zod validation error during answer validation', e)
+        issuePaths.push(...offScreenKeys)
+      }
+    }
+
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const validatorErrors = await helper.applyAnswerValidators(
+      applyFlatAnswers({}, pick(writableAnswers, offScreenKeys)),
+      (descriptor) => formatResolver.resolve(descriptor as any),
+    )
+    issuePaths.push(...Object.keys(validatorErrors ?? {}))
+
+    const invalidKeys = keysWithIssues(issuePaths, offScreenKeys)
+    if (invalidKeys.length > 0) {
+      this.logger.warn('SDF refused changed answers that are not valid', {
+        keys: invalidKeys,
+      })
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/invalid-answers',
+          title: 'Invalid answers',
+          status: 400,
+          detail: `The request changes answers that are not on the screen and are not valid: ${invalidKeys.join(
+            ', ',
+          )}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+  }
+
+  async handleSubmit(
+    applicationId: string,
+    event: string,
+    answers: Record<string, unknown> | undefined,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+  ): Promise<ScreenDto> {
+    // A pruned application is read-only, as in legacy `submitApplication`.
+    let application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+      { shouldThrowIfPruned: true },
+    )
+    const checkedState = application.state
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    return this.withApplicationInfo(application, template, async () => {
+      // Checked against the stored application, so answers in this request
+      // cannot change the role
+      await this.applicationValidationService.validateIncomingEvent(
+        application as Application,
+        event,
+        user,
+      )
+
+      const roleInState = this.resolveRoleInState(application, template, user)
+      const role = roleInState.id
+
+      const writableAnswers = this.dropUnwritableAnswers(
+        application,
+        this.getWritePermissions(application, template, role),
+        answers,
+      )
+      // The writable answers are validated as sent, so a cleared field reaches
+      // the schema as `''` and the template's own messages apply. Empty strings
+      // are stripped only when saving.
+      const submitMergedAnswers = applyFlatAnswers(
+        application.answers,
+        writableAnswers,
+      )
+      const bffUser = this.buildBffUser(user, locale)
+
+      // Whether the screen the client is on is shown, and whether it is the last
+      // one, is judged against the saved data with this request's answers.
+      const workingScreens = await this.buildScreens(
+        toWorkingApplication(application, submitMergedAnswers),
+        template,
+        locale,
+        user,
+      )
+      const claim = workingScreens
+        ? resolveClaimedScreen(
+            workingScreens,
+            claimedScreenId,
+            application as Application,
+            bffUser,
+          )
+        : undefined
+      if (!workingScreens || !claim?.valid) {
+        return this.resumeWithNotice(
+          applicationId,
+          SdfActionType.SUBMIT,
+          claimedScreenId,
+          locale,
+          user,
+        )
+      }
+      if (!isLastNavigableScreen(workingScreens, claim.index)) {
+        throw new ConflictException(
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
+            title: 'Submit not on last screen',
+            status: 409,
+            detail: 'The screen is not the last screen',
+            instance: `/sdf/${applicationId}/action`,
+          }),
+        )
+      }
+
+      const currentScreen = await this.fieldScopeScreen(
+        application,
+        template,
+        locale,
+        user,
+        claimedScreenId,
+        workingScreens[claim.index],
+      )
+      const formatResolver = await this.createResolverFor(
+        application,
+        roleInState,
+        locale,
+      )
+      await this.assertChangedAnswersAreValid(
+        applicationId,
+        currentScreen,
+        template,
+        application,
+        submitMergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
+      const validationErrors = await this.validateScreenAnswers(
+        currentScreen,
+        template,
+        application,
+        submitMergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
+      if (validationErrors.length > 0) {
+        const screen = await this.getScreen(
+          applicationId,
+          claimedScreenId,
+          locale,
+          user,
+          {
+            application: toWorkingApplication(application, submitMergedAnswers),
+          },
+        )
+        screen.page.errors = validationErrors
+        return screen
+      }
+
+      // The rest of the form is checked too. The answers on this screen are
+      // valid, so they are saved before the user is sent to the first screen
+      // that is not.
+      const invalidScreen = await this.firstInvalidScreenBefore(
+        workingScreens,
+        claim.index,
+        template,
+        application,
+        submitMergedAnswers,
+        writableAnswers,
+        formatResolver,
+        bffUser,
+      )
+      if (invalidScreen) {
+        await this.saveSubmittedAnswers(
+          applicationId,
+          application,
+          writableAnswers,
+          submitMergedAnswers,
+          user,
+        )
+        const screen = await this.getScreen(
+          applicationId,
+          invalidScreen.id,
+          locale,
+          user,
+        )
+        screen.page.errors = invalidScreen.errors
+        return screen
+      }
+
+      // A data-provider screen can be the last one, left with SUBMIT instead of
+      // NEXT_PAGE, so its providers run here too.
+      const ranDataProviders = isExternalDataProviderScreen(currentScreen)
+        ? await this.runScreenDataProviders(
+            currentScreen,
+            application,
+            template,
+            roleInState,
+            user,
+            locale,
+          )
+        : false
+
+      const savedAnswers = await this.saveSubmittedAnswers(
+        applicationId,
+        application,
+        writableAnswers,
+        submitMergedAnswers,
+        user,
+      )
+      if (savedAnswers || ranDataProviders) {
+        application = await this.requireApplicationForUser(applicationId, user)
+        // The event was checked against the state loaded first, so the re-read
+        // copy must still be in that state. This only compares the two loads;
+        // the state can still change before or during changeState.
+        if (application.state !== checkedState) {
+          throw new ConflictException(
+            createSdfProblem({
+              type: 'https://island.is/problems/application-system/sdf/state-changed',
+              title: 'State changed',
+              status: 409,
+              detail: `State changed from "${checkedState}" to "${application.state}" during the request`,
+              instance: `/sdf/${applicationId}/action`,
+            }),
+          )
+        }
+      }
+
+      const applicationSnapshot = toApplicationSnapshot(
+        application,
+      ) as ApplicationWithAttachments
+
+      const result = await this.applicationActionService.changeState(
+        applicationSnapshot,
+        template,
+        event,
+        user,
+        locale,
+      )
+
+      if (result.hasError) {
+        const reason =
+          typeof result.error === 'string'
+            ? result.error
+            : JSON.stringify(result.error ?? {})
+        this.logger.error(
+          `SDF SUBMIT failed to transition on event "${event}": ${reason}`,
+        )
+        throw new Error(
+          `State transition failed for event "${event}": ${reason}`,
+        )
+      }
+
+      // No transition matched this event (e.g. every guard failed). Legacy
+      // returns the unchanged application silently; here we reject instead of
+      // returning the screen as if it had succeeded. The state's onExit
+      // actions have already run (as in legacy): guards may depend on data they
+      // fetch, so this can't be checked before them.
+      if (!result.hasChanged && !result.hasMatchedTransition) {
+        this.logger.warn(
+          `SDF SUBMIT: no transition for event "${event}" from state "${application.state}"`,
+        )
+        throw new ConflictException(
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/event-not-handled',
+            title: 'Event not handled',
+            status: 409,
+            detail: `Event "${event}" does not lead to a new state from "${application.state}"`,
+            instance: `/sdf/${applicationId}/action`,
+          }),
+        )
+      }
+
+      // The new state may have a different form, so no screen is asked for.
+      return this.getScreen(applicationId, undefined, locale, user)
+    })
+  }
+
+  // Saves the writable answers, merged with the saved ones, and records a new
+  // delegated actor. Returns whether anything was saved.
+  private async saveSubmittedAnswers(
+    applicationId: string,
+    application: ApplicationWithAttachments,
+    writableAnswers: Record<string, unknown>,
+    mergedAnswers: FormValue,
+    user: User,
+  ): Promise<boolean> {
+    const hasAnswers = Object.keys(writableAnswers).length > 0
+    const actorToRecord = isNewActor(application, user)
+      ? user.actor?.nationalId
+      : undefined
+    if (!hasAnswers && !actorToRecord) {
+      return false
+    }
+
+    await this.applicationService.update(applicationId, {
+      ...(hasAnswers && { answers: stripEmptyFormValue(mergedAnswers) }),
+      ...(actorToRecord && {
+        applicantActors: [...application.applicantActors, actorToRecord],
+      }),
+    })
+    return true
+  }
+
+  // The first shown screen before `index` whose answers do not validate, with
+  // its errors.
+  private async firstInvalidScreenBefore(
+    screens: FormScreen[],
+    index: number,
+    template: ApplicationTemplate,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    writableAnswers: Record<string, unknown>,
+    formatResolver: FormTextResolver,
+    bffUser: BffUser,
+  ): Promise<{ id: string; errors: ValidationErrorDto[] } | undefined> {
+    for (const screen of screens.slice(0, index)) {
+      if (!screen.isNavigable) {
+        continue
+      }
+      const errors = await this.validateScreenAnswers(
+        screen,
+        template,
+        application,
+        mergedAnswers,
+        writableAnswers,
+        formatResolver,
+      )
+      if (errors.length > 0) {
+        return {
+          id: resolveFormItemId(screen, application as Application, bffUser),
+          errors,
+        }
+      }
+    }
+
+    return undefined
+  }
+
+  private async loadForm(
+    roleInState: RoleInState,
+    application: ApplicationWithAttachments,
+  ) {
+    if (!roleInState.formLoader) {
+      throw new Error('No formLoader defined for role in current state')
+    }
+    const featureFlagClient = this.featureFlagService
+    const form = await roleInState.formLoader({ featureFlagClient } as any)
+
+    if (!form) {
+      throw new Error(
+        `formLoader for role "${roleInState.id}" in state "${application.state}" returned undefined. ` +
+          `Check that the form module exports the form correctly.`,
+      )
+    }
+
+    if (!form.children) {
+      throw new Error(
+        `Form loaded for role "${roleInState.id}" has no children array. ` +
+          `Expected a Form object with children, got: ${JSON.stringify(
+            Object.keys(form),
+          )}`,
+      )
+    }
+
+    return form
+  }
+
+  private filterDataByRole(
+    application: Application,
+    roleInState: RoleInState,
+  ): { answers: FormValue; externalData: ExternalData } {
+    const { read, write } = roleInState
+
+    // Returns deep copies: the filtered data is handed to screen building and
+    // field mappers, which may modify it, and those changes must not reach
+    // the application.
+    if (read === 'all' || write === 'all') {
+      return {
+        answers: cloneDeep(application.answers),
+        externalData: cloneDeep(application.externalData),
+      }
+    }
+
+    const filteredAnswers: FormValue = {}
+    const filteredExternalData: ExternalData = {}
+
+    const readObj = typeof read === 'object' ? read : undefined
+    const writeObj = typeof write === 'object' ? write : undefined
+
+    const readAnswerKeys = readObj?.answers ?? []
+    const writeAnswerKeys = writeObj?.answers ?? []
+    const answerKeys = [...new Set([...readAnswerKeys, ...writeAnswerKeys])]
+
+    for (const key of answerKeys) {
+      if (key in application.answers) {
+        filteredAnswers[key] = cloneDeep(application.answers[key])
+      }
+    }
+
+    const readExtKeys = readObj?.externalData ?? []
+    const writeExtKeys = writeObj?.externalData ?? []
+    const externalDataKeys = [...new Set([...readExtKeys, ...writeExtKeys])]
+
+    for (const key of externalDataKeys) {
+      if (key in application.externalData) {
+        filteredExternalData[key] = cloneDeep(application.externalData[key])
+      }
+    }
+
+    return { answers: filteredAnswers, externalData: filteredExternalData }
+  }
+
+  /** The role's `write` permissions in the application's current state. */
+  private getWritePermissions(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    role: ApplicationRole,
+  ): ReadWriteValues | undefined {
+    return new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    ).getWritableAnswersAndExternalData(role)
+  }
+
+  /**
+   * Returns the answers whose keys `write` allows. Logs the keys of the other
+   * answers whose value differs from the stored one.
+   *
+   * Not an error: clients send back answers the role can only read.
+   */
+  private dropUnwritableAnswers(
+    application: ApplicationWithAttachments,
+    write: ReadWriteValues | undefined,
+    answers: Record<string, unknown> | undefined,
+  ): Record<string, unknown> {
+    const { writable, forbidden } = splitWritableAnswers(write, answers)
+    const storedAnswers = application.answers ?? {}
+    const changedKeys = Object.keys(forbidden).filter(
+      (key) => !isEqual(forbidden[key], getValueViaPath(storedAnswers, key)),
+    )
+    if (changedKeys.length > 0) {
+      this.logger.warn('SDF dropped changed answers the role may not write', {
+        keys: changedKeys,
+      })
+    }
+    return writable
+  }
+
+  /**
+   * Guards a persisting template-API run against a role's declared
+   * `write.externalData` list — the write-side counterpart to
+   * `filterDataByRole` above, and the same check legacy always runs
+   * (`validateIncomingExternalDataProviders`) before persisting external
+   * data on a role's behalf. Without this, a role could trigger a
+   * persisting fetch for a data provider it was never granted write access
+   * to, even though it could never read the result back afterwards.
+   */
+  private assertApisWritePermitted(
+    application: Application,
+    user: User,
+    roleInState: RoleInState,
+    apis: TemplateApi[],
+  ): void {
+    const { write } = roleInState
+    if (write === 'all') {
+      return
+    }
+
+    const permittedDataProviders = write?.externalData ?? []
+    const illegalDataProviders = apis
+      .map((api) => api.resolveExternalDataId(application, user.nationalId))
+      .filter((resolvedId) => !permittedDataProviders.includes(resolvedId))
+
+    if (illegalDataProviders.length > 0) {
+      throw new ForbiddenException(
+        `Current role is not permitted to trigger the following data providers: ${illegalDataProviders.join(
+          ', ',
+        )}`,
+      )
+    }
+  }
+
+  private buildPage(
+    screen: FormScreen,
+    index: number,
+    resolver: FormTextResolver,
+    application: Application,
+    user?: BffUser,
+  ): PageDto {
+    const components = mapScreenToComponents(
+      screen,
+      resolver,
+      application,
+      user,
+    )
+    return {
+      id: resolveFormItemId(screen, application, user),
+      index,
+      sectionIndex: screen.sectionIndex ?? 0,
+      subSectionIndex: screen.subSectionIndex ?? 0,
+      components,
+      errors: [],
+    }
+  }
+
+  private resolveZodIssueMessage(
+    issue: ZodIssue,
+    resolver: FormTextResolver,
+  ): string {
+    const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/
+    const isDefaultZodMessage = issue.message === 'Invalid input'
+    let message = resolver.resolve(coreErrorMessages.defaultError)
+
+    if (issue.code === ZodIssueCode.custom) {
+      const params = (issue as { params?: unknown }).params as
+        | Record<string, unknown>
+        | undefined
+      const paramId = params?.id
+      if (typeof paramId === 'string' && namespaceRegex.test(paramId)) {
+        message = resolver.resolve(params as StaticText)
+      } else if (!isDefaultZodMessage) {
+        message = issue.message
+      }
+    }
+
+    return message
+  }
+}

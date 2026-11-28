@@ -26,7 +26,8 @@ export const getSlugFromType = (type: ApplicationTypes) => {
 
 /**
  * Builds the citizen-facing link to an application,
- * e.g. `https://island.is/umsoknir/<slug>/<id>`.
+ * e.g. `https://island.is/umsoknir/<slug>/<id>`, or
+ * `https://island.is/umsoknir/sdf/<slug>/<id>` for a server-driven application.
  * `clientLocationOrigin` is expected to already include the `/umsoknir` path
  * (as the CLIENT_LOCATION_ORIGIN environment variable does).
  */
@@ -42,5 +43,11 @@ export const getApplicationLink = (
     )
   }
 
-  return `${clientLocationOrigin.replace(/\/$/, '')}/${slug}/${application.id}`
+  const sdfSegment = ApplicationConfigurations[application.typeId]?.useSdf
+    ? '/sdf'
+    : ''
+
+  return `${clientLocationOrigin.replace(/\/$/, '')}${sdfSegment}/${slug}/${
+    application.id
+  }`
 }

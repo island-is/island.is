@@ -1,0 +1,205 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Query,
+  Body,
+  ParseUUIDPipe,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common'
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiOperation,
+} from '@nestjs/swagger'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { ApplicationScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
+
+import { SdfScreenService } from './sdf-screen.service'
+import { ExecuteActionDto, SdfActionType } from './dto/action.dto'
+import { ScreenDto, ValidateResponseDto } from './dto/screen.dto'
+import { createSdfProblem, SdfProblemDetailsDto } from './problem-details'
+import { DelegationGuard } from '../application/guards/delegation.guard'
+
+@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
+@ApiTags('sdf')
+@ApiBearerAuth()
+@Controller('sdf')
+export class SdfController {
+  constructor(private readonly sdfScreenService: SdfScreenService) {}
+
+  @Scopes(ApplicationScope.read)
+  @Get(':applicationId/screen')
+  @ApiOperation({
+    summary: 'Get an SDF screen',
+    description:
+      'Compiles the current application state and form AST into a server-driven screen payload.',
+  })
+  @ApiParam({ name: 'applicationId', type: String })
+  @ApiQuery({
+    name: 'screen',
+    required: false,
+    type: String,
+    description:
+      'The id of the screen to show. Omit it, or give an id that is not shown, to get the screen to resume on.',
+  })
+  @ApiQuery({ name: 'locale', required: false, type: String })
+  @ApiOkResponse({ type: ScreenDto })
+  @ApiBadRequestResponse({
+    description: 'Invalid screen request.',
+    type: SdfProblemDetailsDto,
+  })
+  async getScreen(
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
+    @Query('screen') screen?: string,
+    @Query('locale') locale?: string,
+    @CurrentUser() user?: User,
+  ): Promise<ScreenDto> {
+    return this.sdfScreenService.getScreen(
+      applicationId,
+      // A repeated query parameter arrives as an array, which names no screen.
+      typeof screen === 'string' ? screen : undefined,
+      (locale ?? 'is') as Locale,
+      user!,
+    )
+  }
+
+  @Scopes(ApplicationScope.write)
+  @Post(':applicationId/action')
+  @ApiOperation({
+    summary: 'Execute an SDF action',
+    description:
+      'Executes navigation, validation, submit, or side-effect-free refetch actions for an SDF application.',
+  })
+  @ApiParam({ name: 'applicationId', type: String })
+  @ApiOkResponse({ type: ScreenDto })
+  @ApiBadRequestResponse({
+    description: 'Invalid action request.',
+    type: SdfProblemDetailsDto,
+  })
+  @ApiConflictResponse({
+    description: "The request conflicts with the application's current state.",
+    type: SdfProblemDetailsDto,
+  })
+  async executeAction(
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
+    @Body() dto: ExecuteActionDto,
+    @CurrentUser() user?: User,
+  ): Promise<ScreenDto | ValidateResponseDto> {
+    const locale = (dto.locale ?? 'is') as Locale
+
+    switch (dto.actionType) {
+      case SdfActionType.VALIDATE:
+        // fieldIds may be empty when the caller only wants recomputed
+        // displayValues (no error surface). In that case validation is skipped
+        // and only the displayValues map is returned.
+        return this.sdfScreenService.validateFields(
+          applicationId,
+          dto.answers ?? {},
+          dto.fieldIds ?? [],
+          locale,
+          user!,
+          this.requireScreen(dto, applicationId),
+        )
+
+      case SdfActionType.NEXT_PAGE:
+        return this.sdfScreenService.persistAnswersAndAdvance(
+          applicationId,
+          dto.answers ?? {},
+          locale,
+          user!,
+          this.requireScreen(dto, applicationId),
+        )
+
+      case SdfActionType.PREV_PAGE:
+        return this.sdfScreenService.goToPreviousPage(
+          applicationId,
+          locale,
+          user!,
+          this.requireScreen(dto, applicationId),
+        )
+
+      case SdfActionType.REFETCH:
+        return this.sdfScreenService.handleRefetch(
+          applicationId,
+          dto.answers,
+          dto.refetchTemplateApiActions,
+          locale,
+          user!,
+          this.requireScreen(dto, applicationId),
+        )
+
+      case SdfActionType.SUBMIT:
+        // Like legacy `UpdateApplicationStateDto.event` (@IsNotEmpty): a state
+        // transition needs an explicit event. Never guess one — a SUBMIT
+        // fallback would fire a transition the client never asked for.
+        return this.sdfScreenService.handleSubmit(
+          applicationId,
+          this.requireEvent(dto, applicationId),
+          dto.answers,
+          locale,
+          user!,
+          this.requireScreen(dto, applicationId),
+        )
+
+      default:
+        throw new BadRequestException(
+          createSdfProblem({
+            type: 'https://island.is/problems/application-system/sdf/unknown-action',
+            title: 'Unknown action type',
+            status: 400,
+            detail: `Unknown actionType: ${dto.actionType}`,
+            instance: `/sdf/${applicationId}/action`,
+          }),
+        )
+    }
+  }
+
+  // `screen` is optional on the DTO because only some action types use it; the
+  // ones that do must reject a missing or empty value.
+  private requireScreen(dto: ExecuteActionDto, applicationId: string): string {
+    if (!dto.screen) {
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/bad-request',
+          title: 'Bad request',
+          status: 400,
+          detail: `screen is required for ${dto.actionType}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+    return dto.screen
+  }
+
+  // `event` is optional on the DTO because only some action types use it;
+  // the ones that do must reject a missing or empty value.
+  private requireEvent(dto: ExecuteActionDto, applicationId: string): string {
+    if (!dto.event) {
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/bad-request',
+          title: 'Bad request',
+          status: 400,
+          detail: `event is required for ${dto.actionType}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+    return dto.event
+  }
+}

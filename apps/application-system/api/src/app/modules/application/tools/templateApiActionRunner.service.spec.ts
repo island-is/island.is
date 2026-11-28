@@ -281,6 +281,31 @@ describe('TemplateApi Action runner', () => {
     expect(result.externalData.testAction3?.data).toEqual({ key: 'second' })
   })
 
+  // SDF's REFETCH relies on this: the actions run, but nothing is written to
+  // the database.
+  it('runEphemeral runs actions without persisting external data', async () => {
+    const application = createApplication()
+    const auth = createCurrentUser()
+
+    const templateApi = defineTemplateApi({ action: 'testAction' })
+
+    const performActionSpy = jest
+      .spyOn(templateAPIService, 'performAction')
+      .mockResolvedValueOnce({ success: true, response: { key: 'value' } })
+
+    const result = await runner.runEphemeral(
+      application,
+      [templateApi],
+      auth,
+      'en',
+      jest.fn(),
+    )
+
+    expect(performActionSpy).toHaveBeenCalledTimes(1)
+    expect(result.externalData.testAction?.data).toEqual({ key: 'value' })
+    expect(applicationService.updateExternalData).not.toHaveBeenCalled()
+  })
+
   afterEach(() => {
     jest.clearAllMocks()
   })

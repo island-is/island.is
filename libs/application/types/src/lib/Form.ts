@@ -112,6 +112,9 @@ export interface Form {
 }
 
 export interface FormLoaderArgs {
+  // Left as `unknown` because the callers pass different objects (the browser's
+  // flag client, the API's `FeatureFlagService`, and `getValue`-only stubs).
+  // A form loader casts it to `FeatureFlagClient` before use.
   featureFlagClient: unknown
 }
 

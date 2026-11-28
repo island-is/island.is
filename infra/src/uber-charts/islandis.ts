@@ -8,6 +8,7 @@ import {
   serviceSetup as appSystemApiSetup,
   workerSetup as appSystemApiWorkerSetup,
 } from '../../../apps/application-system/api/infra/application-system-api'
+import { serviceSetup as appSystemNextSetup } from '../../../apps/application-system-next/infra/application-system-next'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 // Portals
@@ -148,6 +149,10 @@ const api = apiSetup({
   paymentsApi: paymentsService,
   formSystemService: formSystemApi,
   paymentFlowUpdateHandlerService,
+})
+
+const appSystemNext = appSystemNextSetup({
+  api,
 })
 
 const adminPortal = adminPortalSetup()
@@ -337,6 +342,7 @@ export const Services: EnvironmentServices = {
     formSystemWorker,
     formSystemWeb,
     paymentFlowUpdateHandlerService,
+    appSystemNext,
   ],
 }
 

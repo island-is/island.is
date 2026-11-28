@@ -14,6 +14,13 @@ export interface StateChangeResult {
   error?: ProviderErrorReason | StaticText
   hasError: boolean
   hasChanged: boolean
+  // Only set when the state machine ran without error but the state did not
+  // change: false when no transition handled the event (e.g. every guard
+  // failed), true for a matched self-transition that XState reports as
+  // unchanged (no XState actions or context updates, such as an `assign` in
+  // `entry`; meta.onEntry/onExit don't count). Undefined otherwise, so check
+  // `hasError` and `hasChanged` first.
+  hasMatchedTransition?: boolean
   application: Application
 }
 
