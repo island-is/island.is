@@ -17,6 +17,37 @@ export const table = style({
   width: '100%',
 })
 
+// Column widths come from the header cells and the table's width, not from
+// the content, so two tables with the same columns line up whatever rows each
+// one holds. Below its minimum width the table scrolls in its wrapper rather
+// than squeezing the columns.
+export const fixedLayoutTable = style({
+  tableLayout: 'fixed',
+  width: '100%',
+  minWidth: 1100,
+})
+
+// Body text longer than its column wraps between words. Header cells keep
+// the `th` nowrap.
+globalStyle(`${fixedLayoutTable} td`, {
+  overflowWrap: 'break-word',
+})
+
+const menuTriggerSize = 34
+const menuColumnWidth = 64
+
+// The column of the row menu fits its trigger and no more.
+export const fixedLayoutMenuColumn = style({
+  boxSizing: 'border-box',
+  width: menuColumnWidth,
+})
+
+// Scoped to the table so it outranks the cell padding set further down.
+globalStyle(`${fixedLayoutTable} ${fixedLayoutMenuColumn}`, {
+  paddingLeft: (menuColumnWidth - menuTriggerSize) / 2,
+  paddingRight: (menuColumnWidth - menuTriggerSize) / 2,
+})
+
 export const thead = style({
   background: theme.color.blue100,
   textAlign: 'left',
