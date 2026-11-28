@@ -710,6 +710,14 @@ export class AppealSummonsService {
               },
             ]
           : []),
+        ...(theCase.appealProsecutor?.nationalId
+          ? [
+              {
+                code: 'PROSECUTOR_SSN',
+                value: theCase.appealProsecutor.nationalId,
+              },
+            ]
+          : []),
       ],
     })
 
