@@ -41,6 +41,7 @@ export class NotificationsService {
       limit: input?.limit,
       before: input?.before,
       after: input?.after,
+      includeUnsent: input?.includeUnsent,
     })
 
     if (!notifications.data) {

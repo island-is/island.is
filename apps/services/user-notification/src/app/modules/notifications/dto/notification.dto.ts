@@ -12,7 +12,7 @@ import {
   IsBoolean,
   IsIn,
 } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import type { Locale } from '@island.is/shared/types'
 import {
   HNIPP_TEMPLATE_PRIORITY_TYPES,
@@ -31,6 +31,17 @@ export class ExtendedPaginationDto extends PaginationDto {
   })
   @IsString()
   locale!: Locale
+
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Include notifications that were not sent (wasSent=false) because of the recipient priority or category settings',
+    type: 'boolean',
+    default: false,
+  })
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  includeUnsent?: boolean
 }
 
 class ArgItem {
