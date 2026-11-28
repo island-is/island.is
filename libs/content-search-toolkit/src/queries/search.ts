@@ -104,6 +104,16 @@ export const searchQuery = (
                   type: 'best_fields',
                 },
               },
+              // Lets the last word be partly typed
+              {
+                match_bool_prefix: {
+                  title: {
+                    query: queryString,
+                    operator: 'and',
+                    boost: 10,
+                  },
+                },
+              },
               {
                 nested: {
                   path: 'tags',
