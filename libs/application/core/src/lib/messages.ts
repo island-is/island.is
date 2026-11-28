@@ -146,6 +146,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
     description: 'Failed to create application of type: {type}',
   },
+  alertBannerCloseLabel: {
+    id: 'application.system:alertBanner.closeLabel',
+    defaultMessage: 'Loka',
+    description: 'Close label for alert banners',
+  },
   nationalId: {
     id: 'application.system:nationalId',
     defaultMessage: 'Kennitala',

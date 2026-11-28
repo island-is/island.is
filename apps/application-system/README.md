@@ -138,6 +138,17 @@ It is as simple as:
 yarn nx test application-system-form
 ```
 
+## Alert banners
+
+Each application type can show an alert banner, configured in Contentful with an
+`applicationSettingsType` entry (fields: `internalTitle`, `applicationType` and
+a reference to an `alertBanner` entry). `applicationType` is the
+`ApplicationTypes` value, or `*` for all application types.
+
+The banner is shown on `/umsoknir/{slug}` and inside the application in every
+state. `showAlertBanner`, `bannerVariant`, `isDismissable` and
+`dismissedForDays` are read from the referenced `alertBanner` entry.
+
 ## Code owners and maintainers
 
-- [Norda](https://github.com/orgs/island-is/teams/norda/members)
+- [Origo](https://github.com/orgs/island-is/teams/origo/members)

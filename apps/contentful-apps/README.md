@@ -22,3 +22,9 @@ We are both hosting the contentful-apps server on dev and prod. Ideally we like 
 The Translation namespace content type utilizes the contentful app located here: `/apps/contentful-apps/pages/fields/translation-namespace-json-field.tsx`.
 
 It is responsible of translations for namespaces for your application. It works in pair with the [localization](/libs/localization/README.md) library.
+
+## Application type app
+
+The `applicationType` field of the `applicationSettingsType` content type uses the app located here: `/apps/contentful-apps/pages/fields/application-type-field.tsx`.
+
+It lists every application type from `ApplicationConfigurations` in `@island.is/application/types` (plus `*` for all application types), so the options stay in sync with the application system. See the [application system README](/apps/application-system/README.md#alert-banners).
