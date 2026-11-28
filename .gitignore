@@ -193,3 +193,7 @@ charts/bootstrap
 .github/instructions/nx.instructions.md
 
 .claude/worktrees
+**/.claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/agent-memory-local/
+CLAUDE.local.md

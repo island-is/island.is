@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(**/.env.secret)",
+      "Read(**/.envrc.private)",
+      "Read(**/nx_cloud_access_token.txt)",
+      "Bash(kubectl apply*)",
+      "Bash(kubectl * apply*)",
+      "Bash(kubectl delete*)",
+      "Bash(kubectl * delete*)",
+      "Bash(kubectl patch*)",
+      "Bash(kubectl * patch*)",
+      "Bash(kubectl edit*)",
+      "Bash(kubectl * edit*)",
+      "Bash(kubectl scale*)",
+      "Bash(kubectl * scale*)",
+      "Bash(kubectl rollout*)",
+      "Bash(kubectl * rollout*)",
+      "Bash(helm install*)",
+      "Bash(helm upgrade*)",
+      "Bash(helm uninstall*)",
+      "Bash(helm rollback*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr merge*)",
+      "Bash(*sequelize-cli db*)",
+      "Bash(*nx run *:migrate*)",
+      "Bash(*nx run *:seed*)",
+      "Bash(*nx run *:dev-init*)",
+      "Bash(*nx run-many * migrate*)",
+      "Bash(*psql *)",
+      "Bash(*pg_restore*)",
+      "Bash(*drop-postgres-schema*)",
+      "Bash(*run-db-proxy*)",
+      "Bash(yarn proxies*)"
+    ]
+  }
+}
