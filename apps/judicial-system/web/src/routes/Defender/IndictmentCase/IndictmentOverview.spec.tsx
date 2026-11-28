@@ -32,11 +32,15 @@ import {
 
 import IndictmentOverview from './IndictmentOverview'
 
+const mockRouterPush = jest.fn()
+
 jest.mock('next/router', () => ({
+  __esModule: true,
+  default: { push: (...args: unknown[]) => mockRouterPush(...args) },
   useRouter() {
     return {
       pathname: '',
-      push: jest.fn(),
+      push: mockRouterPush,
     }
   },
 }))
@@ -588,6 +592,72 @@ describe('Defender IndictmentOverview', () => {
       expect(menuButtonOf(timelineCards[0])).toBeInTheDocument()
       expect(menuButtonOf(timelineCards[1])).not.toBeInTheDocument()
       expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('asks for confirmation before sending a statement after the deadline', async () => {
+      mockRouterPush.mockClear()
+
+      const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'own_client_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: true,
+            },
+          ],
+        },
+      })
+      const [ownClient, ...others] = theCase.defendants ?? []
+
+      renderOverview({
+        ...theCase,
+        defendants: ownClient
+          ? [
+              {
+                ...ownClient,
+                isAppealDefenderConfirmed: true,
+                appealDefenderNationalId: defenderNationalId,
+              },
+              ...others,
+            ]
+          : [],
+      })
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText(
+          '• Frestur til að skila greinargerð rann út 14.09.2026',
+        ),
+      ).toBeInTheDocument()
+
+      const menuButton = menuButtonOf(timelineCards[0])
+
+      if (!menuButton) {
+        throw new Error('The card has no menu')
+      }
+
+      await userEvent.click(menuButton)
+      await userEvent.click(await screen.findByText('Senda greinargerð'))
+
+      expect(
+        await screen.findByText('Frestur til að skila greinargerð er liðinn'),
+      ).toBeInTheDocument()
+      expect(mockRouterPush).not.toHaveBeenCalled()
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Já, senda greinargerð' }),
+      )
+
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        `/verjandi/akaera/greinargerd/${theCase.id}?defendantId=own_client_id`,
+      )
     })
 
     it('replaces the deadline with the sent date once the statement is filed', async () => {
