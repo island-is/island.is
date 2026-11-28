@@ -1,6 +1,6 @@
 import {
+  buildCustomField,
   buildMultiField,
-  buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
 import * as m from '../../../../lib/messages'
@@ -14,15 +14,19 @@ export const employmentCapabilityField = buildMultiField({
     buildTitleField({
       title: m.questions.employmentCapabilityTitle,
     }),
-    buildTextField({
-      id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_CAPABILITY}.capability`,
-      title: m.questions.employmentCapabilityLabel,
-      variant: 'number',
-      maxLength: 3,
-      min: 0,
-      max: 100,
-      required: true,
-      width: 'full',
-    }),
+    buildCustomField(
+      {
+        id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_CAPABILITY}.capability`,
+        component: 'RestrictedNumericInput',
+        childInputIds: [
+          `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_CAPABILITY}.capability`,
+        ],
+      },
+      {
+        min: 0,
+        max: 100,
+        label: m.questions.employmentCapabilityLabel,
+      },
+    ),
   ],
 })
