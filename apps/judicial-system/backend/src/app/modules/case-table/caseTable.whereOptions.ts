@@ -28,6 +28,7 @@ import {
   courtOfAppealsCasesInProgressWhereOptions,
   courtOfAppealsVerdictAppealsCompletedWhereOptions,
   courtOfAppealsVerdictAppealsInProgressWhereOptions,
+  courtOfAppealsVerdictAppealsReadyToCompleteWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
   defenceIndictmentsAppealedWhereOptions,
@@ -146,6 +147,8 @@ export const caseTableWhereOptions: Record<
     courtOfAppealsCasesCompletedWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS]:
     courtOfAppealsVerdictAppealsInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE]:
+    courtOfAppealsVerdictAppealsReadyToCompleteWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]:
     courtOfAppealsVerdictAppealsCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:

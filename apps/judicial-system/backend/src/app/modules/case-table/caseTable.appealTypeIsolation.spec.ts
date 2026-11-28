@@ -178,6 +178,7 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     // 'RULING' is absent.
     it.each([
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     ])('selects only verdict appeals in %s', async (tableType) => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)
@@ -221,6 +222,7 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     // condition must still be there.
     it.each([
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     ])('requires a sent appeal summons in %s itself', async (tableType) => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)
@@ -245,6 +247,7 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
       CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE,
       CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
     ])('joins every association %s filters on', async (tableType) => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)

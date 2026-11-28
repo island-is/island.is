@@ -4,6 +4,7 @@ import {
   courtOfAppealsCasesInProgress,
   courtOfAppealsVerdictAppealsCompleted,
   courtOfAppealsVerdictAppealsInProgress,
+  courtOfAppealsVerdictAppealsReadyToComplete,
 } from './caseTables/courtOfAppeals'
 import {
   defenceIndictmentsAppealed,
@@ -83,6 +84,8 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   COURT_OF_APPEALS_CASES_COMPLETED: courtOfAppealsCasesCompleted,
   COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS:
     courtOfAppealsVerdictAppealsInProgress,
+  COURT_OF_APPEALS_VERDICT_APPEALS_READY_TO_COMPLETE:
+    courtOfAppealsVerdictAppealsReadyToComplete,
   COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED:
     courtOfAppealsVerdictAppealsCompleted,
   DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS: districtCourtRequestCasesInProgress,
