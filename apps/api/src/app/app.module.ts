@@ -278,6 +278,8 @@ import {
 import { CustomsGeneralDomainModule } from '@island.is/api/domains/customs-general'
 import { CustomsGeneralClientConfig } from '@island.is/clients/rsk/customs/general'
 
+// TODO: Remove this comment
+
 const environment = getConfig
 
 @Module({
