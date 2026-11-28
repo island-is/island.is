@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { token } from '../../utils'
 import { Typography } from '../typography/typography'
@@ -55,6 +55,8 @@ export function VehicleCard({
   label,
   minHeight,
 }: VehicleCardProps) {
+  const theme = useTheme()
+
   return (
     <Host minHeight={minHeight}>
       <Content>
@@ -71,7 +73,16 @@ export function VehicleCard({
         {label && <Label>{label}</Label>}
       </Content>
       <Icon>
-        <Image source={chevronForward} style={{ width: 24, height: 24 }} />
+        <Image
+          source={chevronForward}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: theme.isDark
+              ? theme.tokens.foreground.primaryMinimal
+              : undefined,
+          }}
+        />
       </Icon>
     </Host>
   )

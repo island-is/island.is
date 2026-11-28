@@ -104,6 +104,7 @@ export const TextField = ({
             ref={inputRef}
             readOnly={readOnly}
             placeholderTextColor={theme.tokens.foreground.primaryMinimal}
+            keyboardAppearance={theme.isDark ? 'dark' : 'light'}
             {...rest}
             // Android vertically centers multiline inputs by default; keep
             // the text (and placeholder) at the top like iOS does.

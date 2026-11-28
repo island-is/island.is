@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { Image } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import clockIcon from '@/assets/icons/clock.png'
 import { HealthDirectorateMedicineHistoryItem } from '@/graphql/types/schema'
 import { router } from 'expo-router'
-import { theme, Typography } from '@/ui'
+import { Typography } from '@/ui'
 import chevronForward from '@/assets/icons/chevron-forward.png'
 
 const Card = styled.TouchableOpacity`
@@ -46,6 +46,7 @@ type MedicineHistoryCardProps = {
 }
 
 export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
+  const theme = useTheme()
   const intl = useIntl()
   const handlePress = useCallback(() => {
     router.navigate({
@@ -58,7 +59,11 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
     <Card onPress={handlePress}>
       <CardLeft>
         <CardHeaderRow>
-          <Icon source={clockIcon} size={theme.spacing[2]} />
+          <Icon
+            source={clockIcon}
+            size={theme.spacing[2]}
+            tintColor={theme.tokens.foreground.brand}
+          />
           <Typography variant="body3">
             {medicine.lastDispensationDate
               ? intl.formatMessage(
@@ -85,7 +90,13 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
             { count: medicine.dispensationCount?.toString() ?? '' },
           )}
         </Typography>
-        <Icon source={chevronForward} size={theme.spacing[3]} />
+        <Icon
+          source={chevronForward}
+          size={theme.spacing[3]}
+          tintColor={
+            theme.isDark ? theme.tokens.foreground.primaryMinimal : undefined
+          }
+        />
       </CardRight>
     </Card>
   )

@@ -60,7 +60,16 @@ export function FilterChip({
       {closable && (
         <Image
           source={closeIcon}
-          style={{ width: 16, height: 16, marginTop: 1 }}
+          style={{
+            width: 16,
+            height: 16,
+            marginTop: 1,
+            tintColor: tokenColor(
+              active
+                ? (t) => t.interactive.foreground.invert
+                : (t) => t.interactive.foreground.primary,
+            ),
+          }}
         />
       )}
     </Host>

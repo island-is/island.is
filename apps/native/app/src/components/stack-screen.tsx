@@ -55,7 +55,12 @@ function mapAndroidHeaderItem(
         {item.icon ? (
           <Image
             source={item.icon?.type === 'image' ? item.icon.source : undefined}
-            style={{ width: 24, height: 24, marginHorizontal: 8 }}
+            style={{
+              width: 24,
+              height: 24,
+              marginHorizontal: 8,
+              tintColor: item.tintColor,
+            }}
           />
         ) : (
           <Text

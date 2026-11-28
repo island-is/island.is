@@ -131,7 +131,10 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
             >
               <FormattedMessage id="health.medicineDelegation.readMore" />
             </Typography>
-            <Image source={externalLinkIcon} />
+            <Image
+              tintColor={theme.tokens.foreground.brand}
+              source={externalLinkIcon}
+            />
           </ReadMoreButton>
           <View
             style={{

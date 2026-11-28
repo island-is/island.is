@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image } from 'react-native'
 
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import infoBubbleIcon from '../../../assets/icons/info-bubble.png'
 import { Typography } from '../typography/typography'
 
@@ -32,10 +32,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
 }) => {
+  const theme = useTheme()
   return (
     <Host>
       <ImageWrapper>
-        <Image source={infoBubbleIcon} />
+        <Image
+          source={infoBubbleIcon}
+          style={{ tintColor: theme.tokens.foreground.brand }}
+        />
       </ImageWrapper>
       <Typography variant="heading3">{title}</Typography>
       <Typography variant="body2">{description}</Typography>

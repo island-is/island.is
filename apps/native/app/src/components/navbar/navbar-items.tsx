@@ -2,7 +2,6 @@ import { OfflineIcon } from '../offline/offline-icon'
 import { router } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { NetworkStatus } from '@apollo/client'
-import { theme } from '../../ui'
 
 export function navbarOfflineItem(
   networkStatus?: NetworkStatus | NetworkStatus[],
@@ -19,7 +18,8 @@ export function navbarCloseItem(): NativeStackHeaderItem {
     type: 'button',
     label: 'Close',
     icon: { type: 'sfSymbol', name: 'xmark' },
-    tintColor: theme.tokens.interactive.foreground.primary,
+    // No tintColor: the navigation theme's `primary` paints it, so it
+    // follows light/dark. A value here would pin it to one theme.
     onPress: () => router.back(),
   }
 }

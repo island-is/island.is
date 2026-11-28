@@ -21,16 +21,14 @@ const androidShape = (shape: DynamicColorShape, props: StyledProps<any>) => {
 
 const FORCE_NORMAL = false
 
-export function dynamicColor<T>(
-  dynamicProps: DynamicColorProps<T>,
-  onlyAuto = false,
-) {
+export function dynamicColor<T>(dynamicProps: DynamicColorProps<T>) {
   // fix typing of (string & {})
   const input: string | DynamicColorFn<T> | DynamicColorShape = dynamicProps
 
   return (props: StyledProps<T>) => {
-    const force =
-      FORCE_NORMAL || (onlyAuto && props.theme.appearanceMode !== 'automatic')
+    // DynamicColorIOS follows the device, so it can only be used when the
+    // user has not picked a mode of their own.
+    const force = FORCE_NORMAL || props.theme.appearanceMode !== 'automatic'
     if (Platform.OS === 'android' || force) {
       if (typeof input === 'string') {
         return input
@@ -71,11 +69,10 @@ export function dynamicColor<T>(
 export function useDynamicColor() {
   const theme = useTheme()
   const res = (tuple: DynamicColorIOSTuple) => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' && theme.appearanceMode === 'automatic') {
       return DynamicColorIOS(tuple)
-    } else {
-      return theme.isDark ? tuple.dark : tuple.light
     }
+    return theme.isDark ? tuple.dark : tuple.light
   }
   res.theme = theme
   return res

@@ -114,6 +114,8 @@ export default function SettingsScreen() {
     dismissed,
     locale,
     setLocale,
+    appearanceMode,
+    setAppearanceMode,
     hasAcceptedBiometrics,
     useBiometrics,
     setUseBiometrics,
@@ -377,7 +379,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -398,7 +404,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -421,7 +431,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -520,7 +534,13 @@ export default function SettingsScreen() {
               accessory={
                 <Image
                   source={chevronForward}
-                  style={{ width: 24, height: 24 }}
+                  style={{
+                    tintColor: theme.isDark
+                      ? theme.tokens.foreground.primaryMinimal
+                      : undefined,
+                    width: 24,
+                    height: 24,
+                  }}
                 />
               }
             />
@@ -603,7 +623,13 @@ export default function SettingsScreen() {
                 accessory={
                   <Image
                     source={chevronForward}
-                    style={{ width: 24, height: 24 }}
+                    style={{
+                      tintColor: theme.isDark
+                        ? theme.tokens.foreground.primaryMinimal
+                        : undefined,
+                      width: 24,
+                      height: 24,
+                    }}
                   />
                 }
               />
@@ -655,11 +681,73 @@ export default function SettingsScreen() {
               accessory={
                 <Image
                   source={chevronForward}
-                  style={{ width: 24, height: 24 }}
+                  style={{
+                    tintColor: theme.isDark
+                      ? theme.tokens.foreground.primaryMinimal
+                      : undefined,
+                    width: 24,
+                    height: 24,
+                  }}
                 />
               }
             />
           </PressableHighlight>
+        </TableViewGroup>
+
+        {/* Appearance */}
+        <TableViewGroup
+          header={intl.formatMessage({
+            id: 'settings.accessibilityLayout.groupTitle',
+          })}
+        >
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.sytemDarkMode',
+            })}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) =>
+                    setAppearanceMode(
+                      value ? 'automatic' : theme.isDark ? 'dark' : 'light',
+                    )
+                  }
+                  value={appearanceMode === 'automatic'}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
+                  trackColor={{
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
+                  }}
+                />
+              </View>
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.darkMode',
+            })}
+            disabled={appearanceMode === 'automatic'}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) =>
+                    setAppearanceMode(value ? 'dark' : 'light')
+                  }
+                  disabled={appearanceMode === 'automatic'}
+                  value={theme.isDark}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
+                  trackColor={{
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
+                  }}
+                />
+              </View>
+            }
+          />
         </TableViewGroup>
 
         {/* About */}

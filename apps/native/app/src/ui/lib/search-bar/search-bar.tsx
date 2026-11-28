@@ -101,12 +101,8 @@ export function SearchBar(props: SearchBarProps) {
               : pressed.current.interpolate({
                   inputRange: [0, 1],
                   outputRange: [
-                    theme.isDark
-                      ? 'rgba(255, 255, 255, 0.10)'
-                      : theme.tokens.app.background.neutral,
-                    theme.isDark
-                      ? 'rgba(255, 255, 255, 0.16)'
-                      : theme.tokens.app.background.neutralActive,
+                    theme.tokens.app.background.neutral,
+                    theme.tokens.app.background.neutralActive,
                   ],
                   extrapolate: 'clamp',
                 }),

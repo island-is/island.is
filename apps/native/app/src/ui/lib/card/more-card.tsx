@@ -66,7 +66,11 @@ export const MoreCard = ({
       onPress={onPress}
     >
       <Host small={small} filled={filled}>
-        <Image source={icon} style={{ width: 24, height: 24 }} />
+        <Image
+          source={icon}
+          style={{ width: 24, height: 24 }}
+          tintColor={theme.tokens.foreground.brand}
+        />
         <Title
           ellipsizeMode="tail"
           numberOfLines={1}

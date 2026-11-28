@@ -446,7 +446,13 @@ export default function HomeScreen() {
             {
               type: 'custom',
               element: (
-                <Image source={require('@/assets/logo/home-logo.png')} />
+                <Image
+                  source={
+                    theme.isDark
+                      ? require('@/assets/logo/home-logo-dark.png')
+                      : require('@/assets/logo/home-logo.png')
+                  }
+                />
               ),
               hidesSharedBackground: true,
             },
@@ -469,7 +475,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </LiquidGlass>
                   ) : (
@@ -483,7 +493,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </View>
                   )}

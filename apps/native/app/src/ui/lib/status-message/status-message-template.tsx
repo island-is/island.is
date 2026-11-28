@@ -208,6 +208,7 @@ export const StatusMessageTemplate = ({
                 {detailLink.text}
               </Typography>
               <Icon
+                tintColor={theme.tokens.foreground.brand}
                 style={{ width: theme.spacing[2], height: theme.spacing[2] }}
                 source={externalLinkIcon}
               />

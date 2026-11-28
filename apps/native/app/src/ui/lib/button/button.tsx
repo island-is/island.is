@@ -282,7 +282,9 @@ export function Button({
             source={icon}
             resizeMode="center"
             style={{
-              ...(variant === 'utilityFilled' ? { tintColor: textColor } : {}),
+              ...(theme.isDark || variant === 'utilityFilled'
+                ? { tintColor: textColor }
+                : {}),
               ...iconStyle,
             }}
           />
