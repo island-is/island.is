@@ -18,9 +18,13 @@ import * as styles from './FixedNav.css'
 
 interface Props {
   organizationSearchFilter?: string
+  projectSearchFilter?: string
 }
 
-export const FixedNav = ({ organizationSearchFilter }: Props) => {
+export const FixedNav = ({
+  organizationSearchFilter,
+  projectSearchFilter,
+}: Props) => {
   const [show, setShow] = useState<boolean>(false)
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -100,7 +104,7 @@ export const FixedNav = ({ organizationSearchFilter }: Props) => {
                 size="medium"
                 activeLocale={activeLocale}
                 placeholder={
-                  organizationSearchFilter
+                  organizationSearchFilter || projectSearchFilter
                     ? activeLocale === 'is'
                       ? 'Leita'
                       : 'Search'
@@ -109,6 +113,7 @@ export const FixedNav = ({ organizationSearchFilter }: Props) => {
                 autocomplete={true}
                 autosuggest={false}
                 organization={organizationSearchFilter}
+                project={projectSearchFilter}
               />
             </Box>
             <Box marginLeft={[1, 1, 1, 2]}>

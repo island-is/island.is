@@ -63,6 +63,18 @@ export const pathIsProjectPage = (pathname: string) => {
   return Boolean(typeResolver(path)?.type?.startsWith('project'))
 }
 
+export const extractProjectSlugFromPathname = (pathname: string) => {
+  if (!pathIsProjectPage(pathname)) {
+    return ''
+  }
+  const segments = pathname
+    .split(/[?#]/)[0]
+    .split('/')
+    .filter((x) => x)
+  const localeSegment = isLocale(segments[0]) ? segments[0] : ''
+  return (localeSegment ? segments[2] : segments[1]) ?? ''
+}
+
 export const getHeaderNavigationPropsFromUrl = (
   url: string | undefined,
   locale: Locale,
@@ -75,6 +87,7 @@ export const getHeaderNavigationPropsFromUrl = (
 
   return {
     organizationSearchFilter,
+    projectSearchFilter: extractProjectSlugFromPathname(pathname),
     showHeaderNavigation:
       !organizationSearchFilter && !pathIsProjectPage(pathname),
   }

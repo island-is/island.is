@@ -31,6 +31,7 @@ export default {
     'course',
   ],
   nestedContentTypes: [
+    'projectSubpage',
     'alertBanner',
     'anchorPageList',
     'organizationPage',

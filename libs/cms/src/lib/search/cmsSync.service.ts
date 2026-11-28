@@ -278,6 +278,20 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       )
     }
 
+    // Project subpages are indexed as part of their project page, so they go when it goes
+    if (document.sys.contentType.sys.id === 'projectPage') {
+      const subpageIds = await this.fetchIdsFromElasticsearch(
+        elasticIndex,
+        ['webProjectSubpage'],
+        [{ key: document.sys.id, type: 'referencedBy' }],
+      )
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(subpageIds),
+      )
+    }
+
     return this.elasticService.deleteByIds(elasticIndex, [document.sys.id])
   }
 }

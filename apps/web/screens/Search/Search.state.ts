@@ -7,6 +7,7 @@ export interface SearchReducerState {
     type?: string[]
     category?: string[]
     organization?: string[]
+    project?: string[]
   }
   searchLocked?: boolean
 }
@@ -29,6 +30,7 @@ export const initialState: SearchReducerState = {
     type: [],
     category: [],
     organization: [],
+    project: [],
   },
   searchLocked: true,
 }

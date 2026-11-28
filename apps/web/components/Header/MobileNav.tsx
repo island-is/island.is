@@ -64,6 +64,7 @@ interface MobileNavPanelProps {
   // we'd rather surface the failure than serve stale hardcoded links.
   data?: HeaderNavData
   organizationSearchFilter?: string
+  projectSearchFilter?: string
   searchPlaceholder?: string
   // Fires whenever the panel's open state changes — used by Header to
   // forward isOpen to MobileNavMenuButton (for the X/menu icon swap) and
@@ -87,6 +88,7 @@ export const MobileNavPanel = forwardRef<
     {
       data,
       organizationSearchFilter,
+      projectSearchFilter,
       searchPlaceholder,
       onOpenChange,
       triggerRefs,
@@ -287,6 +289,7 @@ export const MobileNavPanel = forwardRef<
         autocomplete={true}
         autosuggest={true}
         organization={organizationSearchFilter}
+        project={projectSearchFilter}
       />
     )
 

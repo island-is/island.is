@@ -38,6 +38,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
         }
+        ... on ProjectSubpage {
+          id
+          title
+          slug
+          projectSlug
+        }
         ... on OrganizationPage {
           id
           title
@@ -287,6 +293,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           subtitle
+        }
+        ... on ProjectSubpage {
+          id
+          title
+          slug
+          projectSlug
         }
 
         ... on Link {

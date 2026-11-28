@@ -34,6 +34,7 @@ import {
   News,
   OrganizationParentSubpage,
   OrganizationSubpage,
+  ProjectSubpage,
   QuerySearchResultsArgs,
   SearchableContentTypes,
   SearchableTags,
@@ -94,6 +95,7 @@ const useSearch = (
   term?: string,
   autocomplete?: boolean,
   organization?: string,
+  project?: string,
 ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
@@ -112,6 +114,13 @@ const useSearch = (
       })
       return
     }
+
+    const tags = [
+      ...(organization
+        ? [{ key: organization, type: SearchableTags.Organization }]
+        : []),
+      ...(project ? [{ key: project, type: SearchableTags.Project }] : []),
+    ]
 
     dispatch({ type: 'startLoading' })
     const thisTimerId =
@@ -137,12 +146,14 @@ const useSearch = (
                   SearchableContentTypes['WebManual'],
                   SearchableContentTypes['WebOrganizationParentSubpage'],
                   SearchableContentTypes['WebCourse'],
+                  // Subpages of project pages are only searchable from within their project
+                  ...(project
+                    ? [SearchableContentTypes.WebProjectSubpage]
+                    : []),
                 ],
                 highlightResults: false,
                 useQuery: 'suggestions',
-                tags: organization
-                  ? [{ key: organization, type: SearchableTags.Organization }]
-                  : undefined,
+                tags: tags.length > 0 ? tags : undefined,
               },
             },
           })
@@ -178,7 +189,11 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (onRouting?: () => void, organization?: string) => {
+const useSubmit = (
+  onRouting?: () => void,
+  organization?: string,
+  project?: string,
+) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -194,6 +209,10 @@ const useSubmit = (onRouting?: () => void, organization?: string) => {
 
       if (organization) {
         query.organization = organization
+      }
+
+      if (project) {
+        query.project = project
       }
 
       Router.push({
@@ -212,7 +231,7 @@ const useSubmit = (onRouting?: () => void, organization?: string) => {
         onRouting()
       }
     },
-    [Router, linkResolver, onRouting, organization],
+    [Router, linkResolver, onRouting, organization, project],
   )
 }
 
@@ -231,6 +250,7 @@ interface SearchInputProps {
   skipContext?: boolean
   quickContentLabel?: string
   organization?: string
+  project?: string
 }
 
 export const SearchInput = forwardRef<
@@ -254,13 +274,20 @@ export const SearchInput = forwardRef<
       quickContentLabel,
       dataTestId,
       organization,
+      project,
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
-    const search = useSearch(locale, searchTerm, autocomplete, organization)
+    const search = useSearch(
+      locale,
+      searchTerm,
+      autocomplete,
+      organization,
+      project,
+    )
 
-    const onSubmit = useSubmit(undefined, organization)
+    const onSubmit = useSubmit(undefined, organization, project)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
@@ -412,6 +439,7 @@ type SearchResultItem =
   | SubArticle
   | OrganizationSubpage
   | OrganizationParentSubpage
+  | ProjectSubpage
   | Course
 
 type ResultsProps = {
@@ -479,6 +507,11 @@ const Results = ({
 
                 if (typename === 'organizationsubpage') {
                   variables = (item as OrganizationSubpage).url
+                }
+
+                if (typename === 'projectsubpage') {
+                  const { projectSlug, slug } = item as ProjectSubpage
+                  variables = [projectSlug ?? '', slug]
                 }
 
                 let href: string | undefined
