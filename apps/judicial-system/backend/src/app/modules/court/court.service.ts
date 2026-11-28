@@ -936,27 +936,25 @@ export class CourtService {
   async updateAppealCaseWithAssignedRoles(
     user: User,
     caseId: string,
-    appealCaseNumber?: string,
-    appealAssistantNationalId?: string,
-    appealAssistantName?: string,
-    appealJudge1NationalId?: string,
-    appealJudge1Name?: string,
-    appealJudge2NationalId?: string,
-    appealJudge2Name?: string,
-    appealJudge3NationalId?: string,
-    appealJudge3Name?: string,
+    appealCaseNumber: string | undefined,
+    appealAssistantNationalId: string | undefined,
+    appealAssistantName: string | undefined,
+    // Presiding judge first; numbered appealJudgeN* keys for the robot.
+    appealJudges: { nationalId?: string; name?: string }[],
   ): Promise<unknown> {
+    const judgeFields = Object.fromEntries(
+      appealJudges.flatMap((judge, index) => [
+        [`appealJudge${index + 1}NationalId`, judge.nationalId],
+        [`appealJudge${index + 1}Name`, judge.name],
+      ]),
+    )
+
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - aðilar`
       const content = JSON.stringify({
         appealAssistantNationalId,
         appealAssistantName,
-        appealJudge1NationalId,
-        appealJudge1Name,
-        appealJudge2NationalId,
-        appealJudge2Name,
-        appealJudge3NationalId,
-        appealJudge3Name,
+        ...judgeFields,
       })
 
       return await this.sendToRobot(
@@ -975,12 +973,7 @@ export class CourtService {
           appealCaseNumber,
           appealAssistantNationalId,
           appealAssistantName,
-          appealJudge1NationalId,
-          appealJudge1Name,
-          appealJudge2NationalId,
-          appealJudge2Name,
-          appealJudge3NationalId,
-          appealJudge3Name,
+          ...judgeFields,
         },
         error,
       )
