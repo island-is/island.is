@@ -491,11 +491,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
     contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
   },
-  [ApplicationTypes.LEGAL_GAZETTE]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
-  },
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
