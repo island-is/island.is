@@ -14,10 +14,10 @@ import { ApolloProvider } from '@apollo/client'
 import {
   authStore,
   checkIsAuthenticated,
+  isAppLockEnabled,
   readAuthorizeResult,
 } from '../stores/auth-store'
-import { getNextOnboardingStep, isOnboarded } from '../utils/onboarding'
-import { config } from '../config'
+import { waitForPreferences } from '../stores/preferences-store'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -36,7 +36,6 @@ import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans
 import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
 import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
 import { ensureDeviceUnlockCanary } from '../utils/device-unlock-canary'
-import { runAttestationCheck } from '../lib/attestation-check'
 import { useDatadogViewTracking } from '../hooks/use-datadog-view-tracking'
 
 export { ErrorBoundary } from 'expo-router'
@@ -79,25 +78,23 @@ export default function RootLayout() {
         // Seed the canary the lock screen uses to detect device unlocks.
         void ensureDeviceUnlockCanary()
 
-        // 1. Restore auth tokens from keychain
+        // Startup may log out, which resets the preferences: they have to
+        // have loaded first, or the saved ones would overwrite the reset.
+        await waitForPreferences()
+
+        // 1. Restore who is signed in from the keychain
         await readAuthorizeResult()
 
-        // 2. Validate token: check required scopes, refresh if needed, fetch userinfo.
-        //    Mirrors getAppRoot -> checkIsAuthenticated() from the old app.
-        //    Will clear authorizeResult (→ redirect to /login) if token is invalid.
+        // 2. A native login starts locked; without one the app goes to /login.
         const isAuthenticated = await checkIsAuthenticated()
 
-        // 3. If authenticated, resolve async onboarding state (e.g. checks biometric
-        //    hardware availability and auto-completes that step if absent).
-        //    Mirrors getAppRoot -> getOnboardingScreens() from the old app.
-        //    The reactive Redirect in (tabs)/_layout then drives routing.
+        // 3. Stamp a past timestamp so the auth-layout mount effect pushes the
+        //    lock on cold start. Past grace forces an unlock (biometrics or
+        //    electronic ID) rather than auto-unlock. Post-login mounts don't
+        //    hit this path so the stamp stays undefined → no lock right after
+        //    login. Onboarding only follows a login, so a restart skips it.
         if (isAuthenticated) {
-          await getNextOnboardingStep()
-          // Stamp a past timestamp so the auth-layout mount effect pushes the
-          // lock on cold start. Past grace forces auth (PIN/biometric) rather
-          // than auto-unlock. Post-login mounts don't hit this path so the
-          // stamp stays undefined → no lock right after login.
-          if (isOnboarded() && !config.isTestingApp) {
+          if (isAppLockEnabled()) {
             authStore.setState({
               lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
               biometricAutoPromptedForCurrentLock: false,
@@ -112,7 +109,6 @@ export default function RootLayout() {
         console.warn('App init failed:', e)
       } finally {
         setAppReady(true)
-        runAttestationCheck()
       }
     }
     init()
@@ -129,9 +125,9 @@ export default function RootLayout() {
 
     // Defer splash hide until the lock mounts (avoids tab flash); 2s fallback
     // so the splash never hangs.
-    const { authorizeResult } = authStore.getState()
+    const { authorizeResult, nativeUser } = authStore.getState()
     const willPushLockScreen =
-      !!authorizeResult && isOnboarded() && !config.isTestingApp
+      (!!authorizeResult || !!nativeUser) && isAppLockEnabled()
 
     if (!willPushLockScreen) {
       SplashScreen.hideAsync().catch(() => {})

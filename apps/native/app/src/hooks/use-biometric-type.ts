@@ -7,6 +7,17 @@ import iris from '@/assets/icons/iris-16.png'
 
 export function useBiometricType(type: AuthenticationType[] = []) {
   const intl = useIntl()
+  // Android lists sensors, not their strength: face unlock is often weak and
+  // can't unlock the app, while fingerprint sensors are strong.
+  if (
+    Platform.OS === 'android' &&
+    type.includes(AuthenticationType.FINGERPRINT)
+  ) {
+    return {
+      text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }),
+      icon: finger,
+    }
+  }
   if (type.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     if (Platform.OS === 'ios') {
       return {

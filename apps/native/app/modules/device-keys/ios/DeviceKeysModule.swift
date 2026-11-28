@@ -327,8 +327,33 @@ public class DeviceKeysModule: Module {
     case .serverUnavailable?:
       return exception("ATTESTATION_UNAVAILABLE", "App Attest is unavailable, try again later")
     default:
-      return exception(code, "\(description): \(error?.localizedDescription ?? "unknown error")")
+      return exception(code, withSystemCode("\(description): \(error?.localizedDescription ?? "unknown error")", error))
     }
+  }
+
+  // The system's own code for an error, for IAS's attestation error reports,
+  // which take a code and never a message: "DCError 3", "OSStatus -25293".
+  private static func systemCode(_ error: Error?) -> String? {
+    guard let error = error as NSError? else {
+      return nil
+    }
+    switch error.domain {
+    case DCError.errorDomain:
+      return "DCError \(error.code)"
+    case NSOSStatusErrorDomain:
+      return "OSStatus \(error.code)"
+    default:
+      return "\(error.domain) \(error.code)"
+    }
+  }
+
+  // Expo passes on only the code and the message, so the system code goes in
+  // brackets at the end of the message, where the JS client reads it.
+  private static func withSystemCode(_ message: String, _ error: Error?) -> String {
+    guard let code = systemCode(error) else {
+      return message
+    }
+    return "\(message) [\(code)]"
   }
 
   // MARK: - Keychain items
@@ -381,7 +406,7 @@ public class DeviceKeysModule: Module {
     guard let error = error?.takeRetainedValue() else {
       return exception("FAILED", description)
     }
-    return exception("FAILED", "\(description): \(error.localizedDescription)")
+    return exception("FAILED", withSystemCode("\(description): \(error.localizedDescription)", error as Error))
   }
 
   private static func exception(for error: Error?) -> Exception {

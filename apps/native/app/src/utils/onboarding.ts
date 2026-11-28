@@ -1,23 +1,46 @@
-import { hasHardwareAsync } from 'expo-local-authentication'
-import { Platform } from 'react-native'
+import { supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { preferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
+import { hasStrongBiometricHardwareAsync } from './biometrics'
 
-export function isOnboarded() {
+type OnboardingStep = 'biometrics' | 'notifications' | 'privacy'
+
+/**
+ * The first step not done yet, or null when onboarding is done.
+ * `hasBiometrics`: biometrics that can unlock the app, also when they're
+ * turned off for it. iOS then says there's no hardware, and the step says
+ * where to turn them on, so only a phone without any skips it.
+ */
+function getFirstStepLeft(hasBiometrics: boolean): OnboardingStep | null {
   const {
-    hasOnboardedNotifications,
     hasOnboardedBiometrics,
-    hasOnboardedPinCode,
+    hasOnboardedNotifications,
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
+  if (hasBiometrics && !hasOnboardedBiometrics) {
+    return 'biometrics'
+  }
+  if ((isIos || androidIsVersion33OrAbove()) && !hasOnboardedNotifications) {
+    return 'notifications'
+  }
+  if (!hasOnboardedPrivacy) {
+    return 'privacy'
+  }
+  return null
+}
 
-  return (
-    hasOnboardedBiometrics &&
-    (Platform.OS === 'android' || hasOnboardedNotifications) &&
-    hasOnboardedPinCode &&
-    hasOnboardedPrivacy
+/**
+ * The onboarding step to come back to after an unlock, for someone who left
+ * part way through. That includes biometrics: turning them on for the app in
+ * the phone's settings restarts the app.
+ */
+export function getUnfinishedOnboardingStep(): OnboardingStep | null {
+  const { authenticationTypes, hasStrongBiometricHardware } = uiStore.getState()
+  return getFirstStepLeft(
+    hasStrongBiometricHardware || (isIos && authenticationTypes.length > 0),
   )
 }
 
@@ -25,41 +48,14 @@ export function isOnboarded() {
  * Returns the next onboarding step that needs to be completed,
  * or null if onboarding is done.
  */
-export async function getNextOnboardingStep(): Promise<
-  'pin-code' | 'biometrics' | 'notifications' | 'privacy' | null
-> {
-  const {
-    hasOnboardedNotifications,
-    hasOnboardedBiometrics,
-    hasOnboardedPinCode,
-    hasOnboardedPrivacy,
-  } = preferencesStore.getState()
-
-  if (!hasOnboardedPinCode) {
-    return 'pin-code'
-  }
-
-  const hasHardware = await hasHardwareAsync()
-  if (hasHardware) {
-    if (!hasOnboardedBiometrics) {
-      return 'biometrics'
-    }
-  } else {
-    // No biometric hardware — skip that step
+export async function getNextOnboardingStep(): Promise<OnboardingStep | null> {
+  const hasBiometrics =
+    (await hasStrongBiometricHardwareAsync()) ||
+    (isIos && (await supportedAuthenticationTypesAsync()).length > 0)
+  if (!hasBiometrics) {
     preferencesStore.setState({ hasOnboardedBiometrics: true })
   }
-
-  if (isIos || androidIsVersion33OrAbove()) {
-    if (!hasOnboardedNotifications) {
-      return 'notifications'
-    }
-  }
-
-  if (!hasOnboardedPrivacy) {
-    return 'privacy'
-  }
-
-  return null
+  return getFirstStepLeft(hasBiometrics)
 }
 
 /**
@@ -74,9 +70,7 @@ export async function nextOnboardingStep() {
     return
   }
 
-  if (step === 'pin-code') {
-    router.replace('/(auth)/onboarding/pin')
-  } else if (step === 'biometrics') {
+  if (step === 'biometrics') {
     router.replace('/(auth)/onboarding/biometrics')
   } else if (step === 'notifications') {
     router.replace('/(auth)/onboarding/notifications')

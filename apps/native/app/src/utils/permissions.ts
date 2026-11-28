@@ -7,6 +7,7 @@ import { PermissionsAndroid } from 'react-native'
 import {
   clearLockScreenSuppression,
   suppressLockScreen,
+  whileSystemDialog,
 } from '../stores/auth-store'
 import { preferencesStore } from '../stores/preferences-store'
 import { androidIsVersion33OrAbove } from './versions-check'
@@ -64,7 +65,9 @@ export const requestNotificationsPermission = async () => {
 
   markPermissionRequested()
 
-  const authStatus = await requestPermission(app.messaging())
+  const authStatus = await whileSystemDialog(() =>
+    requestPermission(app.messaging()),
+  )
 
   return isAuthorized(authStatus)
 }
@@ -128,7 +131,8 @@ export const ensureNotificationsPermission =
 
     markPermissionRequested()
 
-    return isAuthorized(await requestPermission(app.messaging()))
-      ? 'granted'
-      : 'denied'
+    const authStatus = await whileSystemDialog(() =>
+      requestPermission(app.messaging()),
+    )
+    return isAuthorized(authStatus) ? 'granted' : 'denied'
   }

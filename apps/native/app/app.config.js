@@ -27,8 +27,8 @@ export default ({ config }) => {
       image: `${getIconFolder()}/splashscreen.png`,
     },
     ios: {
-      googleServicesFile: `./assets/firebase/${getGoogleServicesFile()}`,
       ...config.ios,
+      googleServicesFile: `./assets/firebase/${getGoogleServicesFile()}`,
       entitlements: {
         ...config.ios.entitlements,
         'com.apple.security.application-groups': [
@@ -67,12 +67,6 @@ export default ({ config }) => {
           backgroundColor: '#ffffff',
           image: `${getIconFolder()}/splashscreen.png`,
           imageWidth: 200,
-        },
-      ],
-      [
-        'react-native-app-auth',
-        {
-          redirectUrls: [`${getUniqueIdentifier()}.auth://oauth`],
         },
       ],
       './plugins/with-island-app',
