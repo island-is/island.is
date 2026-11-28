@@ -99,6 +99,29 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
         key,
         undefined,
         false,
+        undefined,
+      )
+    })
+
+    it('should ask S3 for the renamed display filename', async () => {
+      const renamedFile = {
+        id: fileId,
+        key,
+        name: 'kkslsls.pdf',
+        userGeneratedFilename: 'Gagn',
+        isKeyAccessible: true,
+      } as CaseFile
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+
+      await givenWhenThen(caseId, theCase, fileId, renamedFile)
+
+      expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+        undefined,
+        false,
+        'Gagn.pdf',
       )
     })
   })

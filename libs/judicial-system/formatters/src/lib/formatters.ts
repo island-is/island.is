@@ -54,6 +54,66 @@ export const stripPdfExtension = (
   fileName: string | null | undefined,
 ): string => (fileName ?? '').replace(/\.pdf$/i, '')
 
+/**
+ * Download / zip entry name for a case file.
+ * Prefer the edited display name, but keep the original file extension when
+ * the display name has none (rename UI often strips ".pdf").
+ */
+export const caseFileDownloadName = (
+  name: string,
+  userGeneratedFilename?: string | null,
+): string => {
+  const display = userGeneratedFilename?.trim()
+
+  if (!display) {
+    return name
+  }
+
+  const extensionMatch = /\.[^.]+$/.exec(name)
+
+  if (!extensionMatch) {
+    return display
+  }
+
+  const extension = extensionMatch[0]
+
+  if (display.toLowerCase().endsWith(extension.toLowerCase())) {
+    return display
+  }
+
+  return `${display}${extension}`
+}
+
+/**
+ * Keep a zip entry as a single path segment so unzip cannot write outside the
+ * extraction directory via `/`, `\` or `..` in a renamed display name.
+ */
+export const sanitizeZipEntryName = (name: string): string => {
+  const flattened = name
+    .replace(/\\/g, '/')
+    .split('/')
+    .filter((segment) => segment !== '' && segment !== '.' && segment !== '..')
+    .join('_')
+
+  return flattened || 'file'
+}
+
+/** S3 ResponseContentDisposition value so Save-as uses the display filename. */
+export const buildInlineContentDisposition = (filename: string): string => {
+  // Quoted-string fallback: escape \ then " so \" cannot end the token early.
+  const fallback = filename
+    .replace(/[^\x20-\x7E]/g, '_')
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+  // RFC 8187 attr-char excludes ' ( ) *; encodeURIComponent leaves them.
+  const encoded = encodeURIComponent(filename).replace(
+    /['()*]/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  )
+
+  return `inline; filename="${fallback}"; filename*=UTF-8''${encoded}`
+}
+
 export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern = 'dd.MM.yyyy',

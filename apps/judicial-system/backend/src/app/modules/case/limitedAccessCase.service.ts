@@ -7,6 +7,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import {
+  caseFileDownloadName,
+  sanitizeZipEntryName,
+} from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
@@ -212,6 +216,33 @@ export class LimitedAccessCaseService {
     return this.findById(theCase.id, { transaction, user })
   }
 
+  private withUniqueZipEntryNames(
+    files: { data: Buffer; name: string }[],
+  ): { data: Buffer; name: string }[] {
+    const used = new Set<string>()
+
+    return files.map((file) => {
+      // Sanitize before uniqueness so suffixes apply to the final entry name.
+      let name = sanitizeZipEntryName(file.name)
+
+      if (used.has(name)) {
+        const extensionMatch = /\.[^.]+$/.exec(name)
+        const extension = extensionMatch?.[0] ?? ''
+        const stem = extension ? name.slice(0, -extension.length) : name
+        let suffix = 2
+
+        do {
+          name = `${stem} (${suffix})${extension}`
+          suffix += 1
+        } while (used.has(name))
+      }
+
+      used.add(name)
+
+      return { ...file, name }
+    })
+  }
+
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const sinc: Uint8Array[] = []
@@ -273,7 +304,7 @@ export class LimitedAccessCaseService {
     try {
       await this.tryAddFileToFilesToZip(
         this.fileService.getCaseFileFromS3(theCase, file),
-        file.name,
+        caseFileDownloadName(file.name, file.userGeneratedFilename),
         filesToZip,
       )
     } catch (error) {
@@ -479,6 +510,6 @@ export class LimitedAccessCaseService {
 
     await Promise.all(promises)
 
-    return this.zipFiles(filesToZip)
+    return this.zipFiles(this.withUniqueZipEntryNames(filesToZip))
   }
 }

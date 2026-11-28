@@ -9,7 +9,9 @@ import {
 import {
   applyDativeCaseToCourtName,
   applyGenitiveCaseToCourtName,
+  buildInlineContentDisposition,
   capitalize,
+  caseFileDownloadName,
   containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
@@ -28,6 +30,7 @@ import {
   readableIndictmentSubtypes,
   resolveAppealCaseName,
   sanitize,
+  sanitizeZipEntryName,
   splitStringByComma,
   stripPdfExtension,
   trimOrUndefined,
@@ -42,6 +45,62 @@ describe('stripPdfExtension', () => {
   it('leaves names without a pdf extension alone', () => {
     expect(stripPdfExtension('Greinargerð')).toBe('Greinargerð')
     expect(stripPdfExtension('skyrsla.docx')).toBe('skyrsla.docx')
+  })
+})
+
+describe('caseFileDownloadName', () => {
+  it('uses the original name when no display name is set', () => {
+    expect(caseFileDownloadName('kkslsls.pdf')).toBe('kkslsls.pdf')
+    expect(caseFileDownloadName('kkslsls.pdf', '  ')).toBe('kkslsls.pdf')
+  })
+
+  it('prefers the display name and restores a missing extension', () => {
+    expect(caseFileDownloadName('kkslsls.pdf', 'Gagn')).toBe('Gagn.pdf')
+    expect(caseFileDownloadName('kkslsls.pdf', 'Gagn.pdf')).toBe('Gagn.pdf')
+  })
+})
+
+describe('sanitizeZipEntryName', () => {
+  it('leaves ordinary names unchanged', () => {
+    expect(sanitizeZipEntryName('Gagn.pdf')).toBe('Gagn.pdf')
+  })
+
+  it('removes traversal segments and directory separators', () => {
+    expect(sanitizeZipEntryName('folder/../../outside.pdf')).toBe(
+      'folder_outside.pdf',
+    )
+    expect(sanitizeZipEntryName('a\\b.pdf')).toBe('a_b.pdf')
+  })
+
+  it('falls back when the name is only traversal', () => {
+    expect(sanitizeZipEntryName('../..')).toBe('file')
+  })
+})
+
+describe('buildInlineContentDisposition', () => {
+  it('includes ASCII fallback and RFC 5987 filename*', () => {
+    expect(buildInlineContentDisposition('Gagn.pdf')).toBe(
+      `inline; filename="Gagn.pdf"; filename*=UTF-8''Gagn.pdf`,
+    )
+    expect(buildInlineContentDisposition('Á.pdf')).toBe(
+      `inline; filename="_.pdf"; filename*=UTF-8''${encodeURIComponent(
+        'Á.pdf',
+      )}`,
+    )
+  })
+
+  it('escapes backslashes and quotes in the ASCII fallback', () => {
+    expect(buildInlineContentDisposition('a\\"b.pdf')).toBe(
+      `inline; filename="a\\\\\\"b.pdf"; filename*=UTF-8''${encodeURIComponent(
+        'a\\"b.pdf',
+      )}`,
+    )
+  })
+
+  it('percent-encodes RFC 8187 reserved characters in filename*', () => {
+    expect(buildInlineContentDisposition('Á (1).pdf')).toBe(
+      `inline; filename="_ (1).pdf"; filename*=UTF-8''%C3%81%20%281%29.pdf`,
+    )
   })
 })
 

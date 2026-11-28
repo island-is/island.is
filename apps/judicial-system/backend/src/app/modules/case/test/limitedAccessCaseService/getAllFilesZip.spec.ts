@@ -428,6 +428,85 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
+    it('should zip renamed case files under the display name', async () => {
+      const renamedFile = makeAccessibleFile({
+        name: 'kkslsls.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const unchangedFile = makeAccessibleFile({
+        name: 'original.pdf',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [renamedFile, unchangedFile],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'Gagn.pdf' },
+          { data: pdfBuffer, name: 'original.pdf' },
+        ]),
+      )
+      expect(zipFilesSpy).not.toHaveBeenCalledWith(
+        expect.arrayContaining([{ data: pdfBuffer, name: 'kkslsls.pdf' }]),
+      )
+    })
+
+    it('should disambiguate duplicate display names in the zip', async () => {
+      const first = makeAccessibleFile({
+        name: 'one.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const second = makeAccessibleFile({
+        name: 'two.pdf',
+        userGeneratedFilename: 'Gagn',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [first, second],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'Gagn.pdf' },
+          { data: pdfBuffer, name: 'Gagn (2).pdf' },
+        ]),
+      )
+    })
+
+    it('should sanitize path traversal out of zip entry names before uniqueness', async () => {
+      const traversalName = makeAccessibleFile({
+        name: 'stored.pdf',
+        userGeneratedFilename: 'folder/../../outside',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [traversalName],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          { data: pdfBuffer, name: 'folder_outside.pdf' },
+        ]),
+      )
+      expect(zipFilesSpy).not.toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            data: pdfBuffer,
+            name: 'folder/../../outside.pdf',
+          },
+        ]),
+      )
+    })
+
     it('should include case files from cases merged into this case', async () => {
       const mergedFile = makeAccessibleFile({
         name: 'merged-case-file.pdf',
