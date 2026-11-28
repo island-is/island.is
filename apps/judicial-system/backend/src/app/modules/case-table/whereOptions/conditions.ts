@@ -1,6 +1,8 @@
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  AppealCaseState,
+  AppealCaseType,
   DefendantEventType,
   EventType,
   IndictmentCaseReviewDecision,
@@ -202,3 +204,26 @@ export const buildIsConfirmedVerdictAppealAdvocateCondition = (
     )
   `)
 }
+
+// The court of appeals has completed the verdict appeal of this case. Completed
+// is the state in which the outcome is out: the court confirms a verdict appeal
+// first and completes it when it releases the outcome, so from here on the
+// public prosecution has a court of appeals verdict to work with.
+//
+// A withdrawn appeal is not a completed one. An appeal of a ruling (appeal
+// type RULING) is kept out by the appeal type; a verdict appeal the court
+// concludes with a ruling rather than a judgment is admitted like any other.
+//
+// Correlated to "Case".id, so it can be asked from a where on the case and
+// from a where on a defendants include alike, and survives the subSELECT that
+// a LIMIT forces.
+export const buildHasCompletedVerdictAppealCondition = (exists: boolean) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."appeal_type" = '${AppealCaseType.VERDICT}'
+        AND ac."appeal_state" = '${AppealCaseState.COMPLETED}'
+    )
+  `)

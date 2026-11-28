@@ -1,6 +1,9 @@
 import { Model, ModelStatic, WhereOptions } from 'sequelize'
 
-import { DefendantEventType } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  DefendantEventType,
+} from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
@@ -192,6 +195,11 @@ export type CaseTableRowCase = Omit<
   // only so that a bare case can still stand in for a row where nothing reads
   // the appeal.
   appealSource?: RowAppealSource
+  // The verdict appeal the court of appeals has completed, on a list that
+  // holds cases come back from it. Beside `appeal` rather than in it: such a
+  // row is about the case again, not about the appeal, so it opens and acts as
+  // any other row of its list does - the appeal is only there to be read.
+  completedVerdictAppeal?: AppealCase | null
 }
 
 export type CaseWhereOptions = {
@@ -352,25 +360,52 @@ export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target[key] = copyIncludeNode(value as IncludeTreeNode) as CaseIncludes[K]
 }
 
-export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
-  cs.flatMap((c) => {
-    const jsonCase = toRow(c)
+const expandCaseWithDefendants = (c: Case): CaseTableRowCase[] => {
+  const jsonCase = toRow(c)
 
-    return (c.defendants ?? [])
-      .filter(
-        // Defendants whose indictment was cancelled or dismissed (completed for
-        // some) do not receive a verdict or a review decision, so they should
-        // not get their own row in these per-defendant case tables.
-        (d) =>
-          !DefendantEventLog.getEventLogByEventType(
-            [
-              DefendantEventType.INDICTMENT_CANCELLED,
-              DefendantEventType.INDICTMENT_DISMISSED,
-            ],
-            d.eventLogs,
-          ),
-      )
-      .map((d) => ({ ...jsonCase, defendants: [d] }))
+  return (c.defendants ?? [])
+    .filter(
+      // Defendants whose indictment was cancelled or dismissed (completed for
+      // some) do not receive a verdict or a review decision, so they should
+      // not get their own row in these per-defendant case tables.
+      (d) =>
+        !DefendantEventLog.getEventLogByEventType(
+          [
+            DefendantEventType.INDICTMENT_CANCELLED,
+            DefendantEventType.INDICTMENT_DISMISSED,
+          ],
+          d.eventLogs,
+        ),
+    )
+    .map((d) => ({ ...jsonCase, defendants: [d] }))
+}
+
+export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
+  cs.flatMap(expandCaseWithDefendants)
+
+/**
+ * One row per defendant, each carrying the case's verdict appeal if the court
+ * of appeals has completed it.
+ *
+ * Completed is decided here and nowhere else, so nothing that reads the row
+ * has to trust how a list joined the association. A defendant still in review
+ * while a co-defendant's appeal is before the court gets a row without it. So
+ * does a row whose appeal state was never fetched: the column that shows the
+ * appeal asks for the state itself, and without it there is nothing to show.
+ */
+export const expandCasesWithDefendantsAfterVerdictAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] =>
+  cs.flatMap((c) => {
+    const completedVerdictAppeal =
+      c.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+        ? c.verdictAppealCase.toJSON()
+        : undefined
+
+    return expandCaseWithDefendants(c).map((row) => ({
+      ...row,
+      completedVerdictAppeal,
+    }))
   })
 
 /**
