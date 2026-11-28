@@ -51,6 +51,7 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+      id-token: 'write'
   tests:
     needs:
       - prepare
@@ -75,6 +76,4 @@ jobs:
         uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
