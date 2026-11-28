@@ -31,17 +31,24 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   const labelId = 'sliceTitle-' + slice.id
 
   const { titleHeading, childHeading } = extractHeadingLevels(slice)
+  const showTitle = Boolean(slice.showTitle && slice.title)
+  const titleVariant = titleHeading === 'h2' ? 'h2' : 'h3'
 
   return (
     <section
       key={slice.id}
       id={slice.id}
-      aria-labelledby={slice.showTitle && slice.title ? labelId : undefined}
+      aria-labelledby={showTitle ? labelId : undefined}
     >
       {slice.hasBorderAbove && <BorderAbove />}
       <Box>
-        {slice.showTitle && slice.title && (
-          <Text variant="h2" as={titleHeading} marginBottom={2} id={labelId}>
+        {showTitle && (
+          <Text
+            variant={titleVariant}
+            as={titleHeading}
+            marginBottom={2}
+            id={labelId}
+          >
             {slice.title}
           </Text>
         )}
@@ -58,7 +65,7 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
             </Box>
           ))}
         {slice.type === 'accordion_minimal' && (
-          <Box paddingTop={4}>
+          <Box paddingTop={showTitle ? 4 : 0}>
             <Accordion singleExpand={false}>
               {(slice.accordionItems ?? []).map((item) => (
                 <AccordionItem
