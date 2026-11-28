@@ -531,6 +531,9 @@
       "@island.is/application/templates/iceland-health/health-insurance-declaration": [
         "libs/application/templates/iceland-health/health-insurance-declaration/src/index.ts"
       ],
+      "@island.is/application/templates/iceland-health/speech-therapy-waiting-list-registration": [
+        "libs/application/templates/iceland-health/speech-therapy-waiting-list-registration/src/index.ts"
+      ],
       "@island.is/application/templates/id-card": [
         "libs/application/templates/id-card/src/index.ts"
       ],
@@ -905,6 +908,9 @@
       ],
       "@island.is/clients/icelandic-health-insurance/rights-portal": [
         "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-health-insurance/speech-therapy": [
+        "libs/clients/icelandic-health-insurance/speech-therapy/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
