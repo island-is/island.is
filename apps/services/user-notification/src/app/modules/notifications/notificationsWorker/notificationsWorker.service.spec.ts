@@ -17,6 +17,7 @@ import {
 import {
   ActorProfileDto,
   BlockedCategoryDto,
+  BlockedSenderDto,
   UserProfileDto,
   UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
   V2UsersApi,
@@ -92,6 +93,21 @@ let mockBlockedCategories: BlockedCategoryDto[] = []
 // onlyActionablePriorityNotifications never leaks into the actor profile
 let mockActorOnlyActionable = false
 let mockActorBlockedCategories: BlockedCategoryDto[] = []
+let mockActorBlockedSenders: BlockedSenderDto[] = []
+let mockBlockedSenders: BlockedSenderDto[] = []
+
+// The actor profile preferences the tests toggle. Shared by the default actor
+// profile mock and the overrides that outlive their tests, so none of them
+// can silently drop a preference.
+const getMockActorPreferences = (include?: string[]) => ({
+  onlyActionablePriorityNotifications: mockActorOnlyActionable,
+  ...(include?.includes(UserProfileInclude.NotificationSettings)
+    ? {
+        blockedCategories: mockActorBlockedCategories,
+        blockedSenders: mockActorBlockedSenders,
+      }
+    : {}),
+})
 
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
@@ -108,7 +124,11 @@ export const MockV2UsersApi = {
 
       return Promise.resolve(
         include?.includes(UserProfileInclude.NotificationSettings)
-          ? { ...userProfile, blockedCategories: mockBlockedCategories }
+          ? {
+              ...userProfile,
+              blockedCategories: mockBlockedCategories,
+              blockedSenders: mockBlockedSenders,
+            }
           : userProfile,
       )
     },
@@ -128,10 +148,7 @@ export const MockV2UsersApi = {
 
       return Promise.resolve({
         ...profile,
-        onlyActionablePriorityNotifications: mockActorOnlyActionable,
-        ...(include?.includes(UserProfileInclude.NotificationSettings)
-          ? { blockedCategories: mockActorBlockedCategories }
-          : {}),
+        ...getMockActorPreferences(include),
       })
     },
   ),
@@ -1101,10 +1118,7 @@ describe('NotificationsWorkerService', () => {
             documentNotifications: profile?.documentNotifications ?? false,
             // This override persists for later tests, so it must keep
             // honouring what the actor profile preference tests toggle
-            onlyActionablePriorityNotifications: mockActorOnlyActionable,
-            ...(include?.includes(UserProfileInclude.NotificationSettings)
-              ? { blockedCategories: mockActorBlockedCategories }
-              : {}),
+            ...getMockActorPreferences(include),
           } as ActorProfileDto)
         })
 
@@ -1578,8 +1592,40 @@ describe('NotificationsWorkerService', () => {
       }
     }
 
+    // Sends with the given blocking flags overridden; true, false or an error
+    // to reject the lookup with. Other flags keep their mocked values.
+    const sendWithFlags = async (
+      flags: { categories?: boolean | Error; senders?: boolean | Error },
+      options?: Parameters<typeof send>[0],
+    ) => {
+      const overrides = new Map<Features, boolean | Error | undefined>([
+        [Features.isNotificationBlockedCategoriesEnabled, flags.categories],
+        [Features.isNotificationBlockedSendersEnabled, flags.senders],
+      ])
+      const featureFlagService = app.get(FeatureFlagService)
+      const getValue = featureFlagService.getValue.bind(featureFlagService)
+      const getValueSpy = jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation((feature, defaultValue, user) => {
+          const override = overrides.get(feature)
+          if (override instanceof Error) {
+            return Promise.reject(override)
+          }
+          return override === undefined
+            ? getValue(feature, defaultValue, user)
+            : Promise.resolve(override)
+        })
+
+      try {
+        await send(options)
+      } finally {
+        getValueSpy.mockRestore()
+      }
+    }
+
     afterEach(() => {
       mockBlockedCategories = []
+      mockBlockedSenders = []
     })
 
     it('should not deliver when the sender and category are blocked', async () => {
@@ -1592,50 +1638,35 @@ describe('NotificationsWorkerService', () => {
       expectIncludesSettings(true)
     })
 
-    it('should ignore blocked categories when the feature flag is disabled', async () => {
-      const featureFlagService = app.get(FeatureFlagService)
-      const getValue = featureFlagService.getValue.bind(featureFlagService)
-      const getValueSpy = jest
-        .spyOn(featureFlagService, 'getValue')
-        .mockImplementation((feature, defaultValue, user) =>
-          feature === Features.isNotificationBlockedCategoriesEnabled
-            ? Promise.resolve(false)
-            : getValue(feature, defaultValue, user),
-        )
+    it('should ignore blocked categories when the feature flags are disabled', async () => {
       mockCategory('Heilbrigðismál')
       block(senderId, 'heilbrigdismal')
 
-      try {
-        await send()
-      } finally {
-        getValueSpy.mockRestore()
-      }
+      await sendWithFlags({ categories: false, senders: false })
 
       await expectDelivered(true)
       expectIncludesSettings(false)
     })
 
-    it('should deliver without blocked categories when the feature flag lookup fails', async () => {
-      const featureFlagService = app.get(FeatureFlagService)
-      const getValue = featureFlagService.getValue.bind(featureFlagService)
-      const getValueSpy = jest
-        .spyOn(featureFlagService, 'getValue')
-        .mockImplementation((feature, defaultValue, user) =>
-          feature === Features.isNotificationBlockedCategoriesEnabled
-            ? Promise.reject(new Error('feature flag service unavailable'))
-            : getValue(feature, defaultValue, user),
-        )
+    it('should deliver without notification settings when the feature flag lookups fail', async () => {
+      const error = new Error('feature flag service unavailable')
       mockCategory('Heilbrigðismál')
       block(senderId, 'heilbrigdismal')
 
-      try {
-        await send()
-      } finally {
-        getValueSpy.mockRestore()
-      }
+      await sendWithFlags({ categories: error, senders: error })
 
       await expectDelivered(true)
       expectIncludesSettings(false)
+    })
+
+    it('should ignore blocked categories when only the senders feature flag is enabled', async () => {
+      mockCategory('Heilbrigðismál')
+      block(senderId, 'heilbrigdismal')
+
+      await sendWithFlags({ categories: false })
+
+      await expectDelivered(true)
+      expectIncludesSettings(true)
     })
 
     it('should match a dashed sender id', async () => {
@@ -1696,6 +1727,33 @@ describe('NotificationsWorkerService', () => {
 
       await expectDelivered(true)
       expectIncludesSettings(false)
+    })
+
+    describe('Blocked senders', () => {
+      beforeEach(() => {
+        mockCategory('Heilbrigðismál')
+        mockBlockedSenders = [{ senderId }]
+      })
+
+      it('should not deliver when the sender is blocked', async () => {
+        await send()
+
+        await expectDelivered(false)
+        expectIncludesSettings(true)
+      })
+
+      it('should deliver when the senders feature flag is disabled', async () => {
+        await sendWithFlags({ senders: false })
+
+        await expectDelivered(true)
+      })
+
+      it('should deliver urgent notifications even when the sender is blocked', async () => {
+        await send({ urgent: true })
+
+        await expectDelivered(true)
+        expectIncludesSettings(false)
+      })
     })
 
     it('should still send SMS for templates with smsDelivery ALWAYS but no email or push', async () => {
@@ -1846,6 +1904,32 @@ describe('NotificationsWorkerService', () => {
           (call) => call[0],
         )
         expect(calledNumbers).toContain(delegate.mobilePhoneNumber)
+      })
+    })
+
+    describe('blocked senders', () => {
+      const senderId = createNationalId('company')
+
+      beforeEach(() => {
+        mockActorBlockedSenders = [{ senderId }]
+      })
+
+      afterEach(() => {
+        mockActorBlockedSenders = []
+      })
+
+      it('should not email the delegate when the actor profile blocks the sender', async () => {
+        const actorNotification = await sendToActor({ senderId })
+
+        expect(actorNotification?.wasSent).toBe(false)
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+      })
+
+      it('should email the delegate for urgent notifications despite the block', async () => {
+        const actorNotification = await sendToActor({ senderId, urgent: true })
+
+        expect(actorNotification?.wasSent).toBe(true)
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
       })
     })
   })

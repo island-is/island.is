@@ -2145,6 +2145,7 @@ describe('GET/POST v2/actor/actor-profiles/.from-national-id/notification-settin
           categoryLabel,
         },
       ],
+      blockedSenders: [],
     })
 
     // The delegate's own settings are separate
@@ -2165,6 +2166,41 @@ describe('GET/POST v2/actor/actor-profiles/.from-national-id/notification-settin
       .set('X-Param-From-National-Id', fromNationalId)
 
     expect(afterRes.body.blockedCategories).toEqual([])
+  })
+
+  it("should block and unblock a sender without touching the actor profile's categories", async () => {
+    mockDelegations([fromNationalId])
+    const category = { senderId, category: 'almennt' }
+
+    await server
+      .post(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+      .send({
+        categories: [{ ...category, blocked: true, categoryLabel }],
+        senders: [{ senderId, blocked: true }],
+      })
+      .expect(204)
+
+    const blockedRes = await server
+      .get(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+
+    expect(blockedRes.body.blockedSenders).toEqual([{ senderId }])
+    expect(blockedRes.body.blockedCategories).toHaveLength(1)
+
+    await server
+      .post(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+      .send({ senders: [{ senderId, blocked: false }] })
+      .expect(204)
+
+    const unblockedRes = await server
+      .get(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+
+    expect(unblockedRes.body.blockedSenders).toEqual([])
+    // Unblocking the sender restores the earlier category choices
+    expect(unblockedRes.body.blockedCategories).toHaveLength(1)
   })
 
   it('should return 400 when the delegation does not exist', async () => {

@@ -11,10 +11,12 @@ import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
 import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
 import { Emails } from '../src/app/user-profile/models/emails.model'
 import { ActorBlockedNotification } from '../src/app/user-profile/models/actorBlockedNotification.model'
+import { ActorBlockedNotificationSender } from '../src/app/user-profile/models/actorBlockedNotificationSender.model'
 import {
   BlockedNotification,
   CategoryLabel,
 } from '../src/app/user-profile/models/blockedNotification.model'
+import { BlockedNotificationSender } from '../src/app/user-profile/models/blockedNotificationSender.model'
 import { uuid } from 'uuidv4'
 
 export class FixtureFactory {
@@ -194,6 +196,21 @@ export class FixtureFactory {
     })
   }
 
+  async createBlockedNotificationSender({
+    nationalId,
+    senderId,
+  }: {
+    nationalId: string
+    senderId: string
+  }) {
+    const blockedNotificationSenderModel = this.get(BlockedNotificationSender)
+
+    return blockedNotificationSenderModel.create<BlockedNotificationSender>({
+      nationalId,
+      senderId,
+    })
+  }
+
   async createActorProfile({
     toNationalId,
     fromNationalId,
@@ -234,6 +251,21 @@ export class FixtureFactory {
       senderId,
       category,
       categoryLabel,
+    })
+  }
+
+  async createActorBlockedNotificationSender({
+    actorProfileId,
+    senderId,
+  }: {
+    actorProfileId: string
+    senderId: string
+  }) {
+    return this.get(
+      ActorBlockedNotificationSender,
+    ).create<ActorBlockedNotificationSender>({
+      actorProfileId,
+      senderId,
     })
   }
 }

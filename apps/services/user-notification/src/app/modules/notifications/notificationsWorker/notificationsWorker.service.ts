@@ -60,6 +60,12 @@ import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
 import { DECEASED_STATUS, INACTIVE_COMPANY_STATUS } from './helpers'
 
+// Which kinds of notification blocks are enabled for the recipient
+interface EnabledBlocks {
+  categories: boolean
+  senders: boolean
+}
+
 const getOnBehalfOfLabel = (
   onBehalfOf: string,
   onBehalfOfNationalId: string | undefined,
@@ -178,11 +184,12 @@ export class NotificationsWorkerService {
   }
 
   /**
-   * The user's blocked categories are only needed (and fetched together with
-   * the user profile) for non-urgent notifications with a valid sender id
-   * while the feature flag is enabled.
+   * Which kinds of blocks to apply. The user's notification settings are only
+   * needed (and fetched together with the user profile) for non-urgent
+   * notifications with a valid sender id, and while at least one of the
+   * blocked categories and blocked senders feature flags is enabled.
    */
-  private async shouldIncludeBlockedCategories({
+  private async getEnabledBlocks({
     nationalId,
     senderId,
     urgent,
@@ -192,58 +199,101 @@ export class NotificationsWorkerService {
     senderId?: string
     urgent?: boolean
     messageId: string
-  }): Promise<boolean> {
+  }): Promise<EnabledBlocks> {
+    const none = { categories: false, senders: false }
+
     if (urgent || !senderId) {
-      return false
+      return none
     }
 
     if (!isValidSenderId(normalizeKennitala(senderId))) {
-      return false
+      return none
     }
 
-    try {
-      return await this.featureFlagService.getValue(
+    const [categories, senders] = await Promise.all([
+      this.isFlagEnabled(
         Features.isNotificationBlockedCategoriesEnabled,
-        false,
-        { nationalId } as User,
-      )
+        nationalId,
+        messageId,
+      ),
+      this.isFlagEnabled(
+        Features.isNotificationBlockedSendersEnabled,
+        nationalId,
+        messageId,
+      ),
+    ])
+
+    return { categories, senders }
+  }
+
+  // Fail open: a flag that can't be read counts as off, so the notification
+  // is still sent.
+  private async isFlagEnabled(
+    feature: Features,
+    nationalId: string,
+    messageId: string,
+  ): Promise<boolean> {
+    try {
+      return await this.featureFlagService.getValue(feature, false, {
+        nationalId,
+      } as User)
     } catch (error: unknown) {
       this.logger.warn(
-        'Failed to check blocked categories feature flag, proceeding with notification',
-        { messageId, error: getErrorMessage(error) },
+        'Failed to check blocked notifications feature flag, proceeding with notification',
+        { messageId, feature, error: getErrorMessage(error) },
       )
       return false
     }
   }
 
-  // Whether the recipient has blocked the notification's sender and category.
-  private isCategoryBlocked({
+  // Whether the recipient has blocked the notification's sender, or the
+  // sender's category. Each kind of block applies only while its flag is on.
+  private isBlocked({
     userProfile,
     senderId,
     category,
+    enabledBlocks,
     messageId,
   }: {
-    userProfile?: Pick<UserProfileDto, 'blockedCategories'>
+    userProfile?: Pick<UserProfileDto, 'blockedCategories' | 'blockedSenders'>
     senderId?: string
     category: string | null
+    enabledBlocks: EnabledBlocks
     messageId: string
   }): boolean {
-    // Only present when blocked categories were requested with the profile
-    if (!userProfile?.blockedCategories || !senderId) {
+    if (!senderId) {
       return false
     }
 
     const normalizedSenderId = normalizeKennitala(senderId)
+
+    // Only present when notification settings were requested with the profile
+    const senderBlocked =
+      enabledBlocks.senders &&
+      (userProfile?.blockedSenders ?? []).some(
+        (blockedSender) => blockedSender.senderId === normalizedSenderId,
+      )
+
+    if (senderBlocked) {
+      this.logger.info('Notification not sent because sender is blocked', {
+        messageId,
+        senderId: normalizedSenderId,
+      })
+      return true
+    }
+
     // Templates without a category are presented to users as 'almennt'
     const effectiveCategory = category ?? DEFAULT_CATEGORY
 
-    const blocked = userProfile.blockedCategories.some(
-      (blockedCategory) =>
-        blockedCategory.senderId === normalizedSenderId &&
-        blockedCategory.category === effectiveCategory,
-    )
+    const categoryBlocked =
+      enabledBlocks.categories &&
+      (userProfile?.blockedCategories ?? []).some(
+        (blockedCategory) =>
+          blockedCategory.senderId === normalizedSenderId &&
+          blockedCategory.category === effectiveCategory,
+      )
 
-    if (blocked) {
+    if (categoryBlocked) {
       this.logger.info('Notification not sent because category is blocked', {
         messageId,
         senderId: normalizedSenderId,
@@ -251,7 +301,7 @@ export class NotificationsWorkerService {
       })
     }
 
-    return blocked
+    return categoryBlocked
   }
 
   private async handleActorNotification(
@@ -268,9 +318,9 @@ export class NotificationsWorkerService {
       return
     }
 
-    // Blocked categories are the actor profile's own, and the feature flag is
-    // evaluated for the delegate (the recipient).
-    const includeBlockedCategories = await this.shouldIncludeBlockedCategories({
+    // Blocks are the actor profile's own, and the feature flags are evaluated
+    // for the delegate (the recipient).
+    const enabledBlocks = await this.getEnabledBlocks({
       nationalId: args.recipient,
       senderId: args.senderId,
       urgent: args.urgent,
@@ -278,7 +328,7 @@ export class NotificationsWorkerService {
     })
 
     let actorProfile: ActorProfileDto | undefined
-    if (includeBlockedCategories) {
+    if (enabledBlocks.categories || enabledBlocks.senders) {
       try {
         actorProfile =
           await this.userProfileApi.userProfileControllerGetActorProfile({
@@ -287,8 +337,8 @@ export class NotificationsWorkerService {
             include: [ActorProfileInclude.NotificationSettings],
           })
       } catch {
-        // Fail open: blocked categories are optional, so retry without them
-        // rather than dropping the notification.
+        // Fail open: notification settings are optional, so retry without
+        // them rather than dropping the notification.
         this.logger.warn(
           'Failed to fetch actor profile with notification settings, retrying without',
           { messageId },
@@ -382,10 +432,11 @@ export class NotificationsWorkerService {
         urgent: args.urgent,
         messageId,
       }) &&
-      !this.isCategoryBlocked({
+      !this.isBlocked({
         userProfile: actorProfile,
         senderId: args.senderId,
         category: toTemplateCategory(template.hnippCategoryIs),
+        enabledBlocks,
         messageId,
       })
 
@@ -521,17 +572,17 @@ export class NotificationsWorkerService {
 
     let userProfile: UserProfileDto | undefined
     let locale: Locale = 'is'
+    let enabledBlocks: EnabledBlocks = { categories: false, senders: false }
 
     if (!isCompany(nationalId)) {
-      const includeBlockedCategories =
-        await this.shouldIncludeBlockedCategories({
-          nationalId,
-          senderId: args.senderId,
-          urgent: args.urgent,
-          messageId,
-        })
+      enabledBlocks = await this.getEnabledBlocks({
+        nationalId,
+        senderId: args.senderId,
+        urgent: args.urgent,
+        messageId,
+      })
 
-      if (includeBlockedCategories) {
+      if (enabledBlocks.categories || enabledBlocks.senders) {
         try {
           userProfile =
             await this.userProfileApi.userProfileControllerFindUserProfile({
@@ -539,7 +590,7 @@ export class NotificationsWorkerService {
               include: [UserProfileInclude.NotificationSettings],
             })
         } catch {
-          // Fail open: blocked categories are optional, so retry with the
+          // Fail open: notification settings are optional, so retry with the
           // plain profile rather than dropping the notification.
           this.logger.warn(
             'Failed to fetch user profile with notification settings, retrying without',
@@ -605,7 +656,8 @@ export class NotificationsWorkerService {
     // This allows users to quickly ignore notifications that are not urgent or actionable.
     // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
     // buildSmsPayload), so wasSent describes push/email delivery.
-    // Users can also block a sender's category; urgent notifications bypass both.
+    // Users can also block a sender or a sender's category; urgent
+    // notifications bypass all of these.
     const shouldSendNotification =
       this.shouldDeliverByPriority({
         profile: userProfile,
@@ -613,10 +665,11 @@ export class NotificationsWorkerService {
         urgent: args.urgent,
         messageId,
       }) &&
-      !this.isCategoryBlocked({
+      !this.isBlocked({
         userProfile,
         senderId: args.senderId,
         category: toTemplateCategory(template.hnippCategoryIs),
+        enabledBlocks,
         messageId,
       })
 
