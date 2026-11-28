@@ -64,11 +64,17 @@ export const subsidiariesSubSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              messages.aboutTheCompany.subsidiaries.tableHeaderName,
-              messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
+            columns: [
+              {
+                header: messages.aboutTheCompany.subsidiaries.tableHeaderName,
+                value: 'name',
+              },
+              {
+                header:
+                  messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
+                value: 'nationalId',
+              },
             ],
-            rows: ['name', 'nationalId'],
           },
           condition: (answers) =>
             getValueViaPath(answers, 'subsidiaries.includesSubsidiaries') ===

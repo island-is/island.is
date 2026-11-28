@@ -11,6 +11,6 @@ export const generateMonthInput = (label: MessageDescriptor): RepeaterItem => {
     displayInTable: false,
     currency: true,
     suffix: '',
-    condition: (_, activeField) => monthInputCondition(activeField),
+    condition: ({ row: activeField }) => monthInputCondition(activeField),
   }
 }

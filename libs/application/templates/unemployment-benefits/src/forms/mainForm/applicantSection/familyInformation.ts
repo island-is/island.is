@@ -5,11 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { applicant as applicantMessages } from '../../../lib/messages'
-import {
-  ApplicantChildCustodyInformationV3,
-  Application,
-  ExternalData,
-} from '@island.is/application/types'
+import { ApplicantChildCustodyInformationV3 } from '@island.is/application/types'
 
 export const familyInformationSubSection = buildSubSection({
   id: 'familyInformationSubSection',
@@ -21,7 +17,7 @@ export const familyInformationSubSection = buildSubSection({
       children: [
         buildFieldsRepeaterField({
           id: 'familyInformation.children',
-          minRows: (_, externalData: ExternalData) => {
+          minRows: ({ application: { externalData } }) => {
             const children =
               getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                 externalData,
@@ -42,11 +38,7 @@ export const familyInformationSubSection = buildSubSection({
               readonly: true,
               component: 'input',
               width: 'half',
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const children =
                   getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,
@@ -62,11 +54,7 @@ export const familyInformationSubSection = buildSubSection({
               readonly: true,
               component: 'input',
               width: 'half',
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const children =
                   getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,

@@ -44,11 +44,18 @@ export const participantsSection = buildSection({
           },
 
           table: {
-            header: [
-              participantMessages.labels.name,
-              participantMessages.labels.nationalId,
-              participantMessages.labels.email,
-              participantMessages.labels.phoneNumber,
+            rowProps: ({ row }) => ({ disabled: row.disabled === 'true' }),
+            columns: [
+              { header: participantMessages.labels.name, value: 'name' },
+              {
+                header: participantMessages.labels.nationalId,
+                value: 'nationalId',
+              },
+              { header: participantMessages.labels.email, value: 'email' },
+              {
+                header: participantMessages.labels.phoneNumber,
+                value: 'phoneNumber',
+              },
             ],
           },
           fields: {

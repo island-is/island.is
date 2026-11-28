@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isContractWork } from '../../../utils/conditions'
@@ -16,7 +15,7 @@ import {
 import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import {
   getContractWorkDefaults,
   toContractWorkRow,
@@ -61,14 +60,8 @@ export const contractWorkSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getContractWorkDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            contractWorkValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(
-            contractWorkValidationProps.persistedPath,
-          ),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -77,19 +70,19 @@ export const contractWorkSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerContractWork[${index}].workEnds`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             workEnds: {
               component: 'date',
               label: m.application.workEnds,
               width: 'half',
               required: true,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.contractJobStart
                 if (fromDate) {
                   return new Date(fromDate)
@@ -102,22 +95,24 @@ export const contractWorkSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderJobStart,
-              m.application.tableHeaderWorkEnds,
+            columns: [
+              {
+                header: m.application.tableHeaderJobStart,
+                value: ({ row }) => formatIsDate(row.contractJobStart ?? ''),
+              },
+              {
+                header: m.application.tableHeaderWorkEnds,
+                value: ({ row }) => formatIsDate(row.workEnds ?? ''),
+              },
             ],
-            rows: ['contractJobStart', 'workEnds'],
-            format: {
-              contractJobStart: formatIsDate,
-              workEnds: formatIsDate,
-            },
+            rowProps: buildPersistedRowProps(
+              contractWorkValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

@@ -144,7 +144,11 @@ export const accordionSubsection = buildSubSection({
                     },
                   },
                   table: {
-                    header: ['Name', 'Role', 'Email'],
+                    columns: [
+                      { header: 'Name', value: 'name' },
+                      { header: 'Role', value: 'role' },
+                      { header: 'Email', value: 'email' },
+                    ],
                   },
                 }),
               ],

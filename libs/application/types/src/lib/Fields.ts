@@ -100,32 +100,26 @@ export type RepeaterFields =
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
-type TableRepeaterOptions =
-  | RepeaterOption[]
-  | ((
-      application: Application,
-      activeField?: Record<string, string>,
-      locale?: Locale,
-      formatMessage?: FormatMessage,
-    ) => RepeaterOption[] | [])
+export type RepeaterFieldContext = {
+  application: Application
+  locale: Locale
+  formatMessage: FormatMessage
+}
 
-type MaybeWithApplicationAndActiveField<T> =
+export type RepeaterRowContext = RepeaterFieldContext & { index: number }
+
+export type RepeaterItemContext = RepeaterRowContext & {
+  row?: Record<string, string>
+  apolloClient: ApolloClient<object>
+}
+
+export type MaybeWithRepeaterItemContext<T> =
   | T
-  | ((application: Application, activeField?: Record<string, string>) => T)
+  | ((ctx: RepeaterItemContext) => T)
 
-type MaybeWithApplicationAndActiveFieldAndIndex<T> =
-  | T
-  | ((
-      application: Application,
-      activeField?: Record<string, string>,
-      index?: number,
-    ) => T)
+type MaybeWithRepeaterFieldContext<T> = T | ((ctx: RepeaterFieldContext) => T)
 
-type MaybeWithIndex<T> = T | ((index: number) => T)
-
-type MaybeWithIndexAndApplication<T> =
-  | T
-  | ((index: number, application: Application) => T)
+type MaybeWithRepeaterRowContext<T> = T | ((ctx: RepeaterRowContext) => T)
 
 export type MaybeWithAnswersAndExternalData<T> =
   | T
@@ -148,22 +142,21 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: MaybeWithIndex<StaticText>
+  label?: StaticText | ((ctx: Pick<RepeaterItemContext, 'index'>) => StaticText)
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
   customNationalIdLabel?: StaticText
-  placeholder?: MaybeWithApplicationAndActiveField<StaticText>
-  options?: TableRepeaterOptions
+  placeholder?: MaybeWithRepeaterItemContext<StaticText>
+  options?: MaybeWithRepeaterItemContext<RepeaterOption[]>
   filterOptions?: (
     options: RepeaterOption[],
-    answers: FormValue,
-    index: number,
+    ctx: RepeaterItemContext,
   ) => RepeaterOption[]
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
-  required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<boolean>
+  required?: MaybeWithRepeaterItemContext<boolean>
+  condition?: MaybeWithRepeaterItemContext<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -171,34 +164,29 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
-  disabled?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
-  isClearable?: MaybeWithApplicationAndActiveField<boolean>
-  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
-  index?: MaybeWithApplicationAndActiveField<number>
+  readonly?: MaybeWithRepeaterItemContext<boolean>
+  disabled?: MaybeWithRepeaterItemContext<boolean>
+  isClearable?: MaybeWithRepeaterItemContext<boolean>
+  defaultValue?:
+    | ((ctx: RepeaterItemContext) => unknown)
+    | string
+    | number
+    | boolean
+    | null
+    | readonly unknown[]
+    | Record<string, unknown>
+  index?: MaybeWithRepeaterItemContext<number>
   updateValueObj?: {
-    valueModifier: (
-      application: Application,
-      activeField?: Record<string, string>,
-    ) => unknown
-    watchValues:
-      | string
-      | string[]
-      | ((
-          activeField?: Record<string, string>,
-        ) => string | string[] | undefined)
+    valueModifier: (ctx: RepeaterItemContext) => unknown
+    watchValues: MaybeWithRepeaterItemContext<string | string[] | undefined>
   }
-  clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChange?: MaybeWithRepeaterItemContext<string[]>
   clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
         optionValue: RepeaterOptionValue,
-        application: Application,
-        index: number,
-        activeField?: Record<string, string>,
-        apolloClient?: ApolloClient<object>,
-        lang?: Locale,
+        ctx: RepeaterItemContext,
       ) => Promise<{ key: string; value: any }[]>)
 } & (
   | {
@@ -226,8 +214,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndActiveField<Date | undefined>
-      minDate?: MaybeWithApplicationAndActiveField<Date | undefined>
+      maxDate?: MaybeWithRepeaterItemContext<Date | undefined>
+      minDate?: MaybeWithRepeaterItemContext<Date | undefined>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -261,18 +249,18 @@ export type RepeaterItem = {
       isSearchable?: boolean
       loadOptions(
         c: AsyncSelectContext,
-        lang: Locale,
-        activeField?: Record<string, string>,
-        setValueAtIndex?: (key: string, value: any) => void,
+        ctx: RepeaterItemContext & {
+          setValueAtIndex: (key: string, value: any) => void
+        },
       ): Promise<Option[]>
-      updateOnSelect?: MaybeWithIndex<string[]>
+      updateOnSelect?: MaybeWithRepeaterItemContext<string[]>
       loadingError?: FormText
     }
   | { component: 'hiddenInput' }
   | {
       component: 'alertMessage'
-      title?: MaybeWithApplicationAndActiveField<StaticText>
-      message?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<StaticText>
+      title?: MaybeWithRepeaterItemContext<StaticText>
+      message?: MaybeWithRepeaterItemContext<StaticText>
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
@@ -856,6 +844,18 @@ export type ApplicationActionCardProps = Modify<
   }
 >
 
+export type TableRepeaterCellContext = RepeaterFieldContext & {
+  row: Record<string, string>
+  displayIndex: number
+}
+
+export type TableRepeaterColumn = {
+  header: StaticText
+  value:
+    | string
+    | ((ctx: TableRepeaterCellContext) => StaticText | StaticText[] | undefined)
+}
+
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER
   component: FieldComponents.TABLE_REPEATER
@@ -863,32 +863,15 @@ export type TableRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   cancelButtonText?: StaticText
   saveItemButtonText?: StaticText
-  getStaticTableData?: (application: Application) => Record<string, string>[]
+  getStaticTableData?: (ctx: RepeaterFieldContext) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
-  /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
+  /** Shown on hover when `rowProps` returns `canRemove: false`. No tooltip if omitted. */
   removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
-  /** Shown on hover when `canEditRow` returns false. No tooltip if omitted. */
+  /** Shown on hover when `rowProps` returns `canEdit: false`. No tooltip if omitted. */
   editButtonDisabledTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
-  /** Per row gate for the delete button. Defaults to every row being removable. */
-  canRemoveRow?: (
-    application: Application,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    row: Record<string, any>,
-    index: number,
-  ) => boolean
-  /**
-   * Per row gate for the edit button. Only applies when `editField` is true.
-   * Defaults to every row being editable.
-   */
-  canEditRow?: (
-    application: Application,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    row: Record<string, any>,
-    index: number,
-  ) => boolean
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -901,31 +884,14 @@ export type TableRepeaterField = BaseField & {
    */
   maxRows?: number
   table?: {
-    /**
-     * List of strings to render,
-     * or a function (answers, externalData) => StaticText[] for dynamic headers.
-     * If not provided it will be auto generated from the fields.
-     */
-    header?:
-      | StaticText[]
-      | ((answers: FormValue, externalData: ExternalData) => StaticText[])
-    /**
-     * List of field id's to render,
-     * or a function (answers, externalData) => string[] for dynamic rows.
-     * If not provided it will be auto generated from the fields.
-     */
-    rows?:
-      | string[]
-      | ((answers: FormValue, externalData: ExternalData) => string[])
-    format?: Record<
-      string,
-      (
-        value: string,
-        displayIndex: number,
-        application?: Application,
-        row?: Record<string, string>,
-      ) => string | StaticText
-    >
+    columns?: TableRepeaterColumn[]
+    rowProps?: (ctx: TableRepeaterCellContext) => {
+      disabled?: boolean
+      /** Gate for the delete button. Defaults to true. */
+      canRemove?: boolean
+      /** Gate for the edit button. Only applies when `editField` is true. Defaults to true. */
+      canEdit?: boolean
+    }
   }
   initActiveFieldIfEmpty?: boolean
   /**
@@ -938,23 +904,23 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: MaybeWithIndexAndApplication<StaticText>
+  formTitle?: MaybeWithRepeaterRowContext<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   hideRemoveButton?: boolean
-  hideAddButton?: MaybeWithApplication<boolean>
+  hideAddButton?: MaybeWithRepeaterFieldContext<boolean>
   displayTitleAsAccordion?: boolean
-  itemCondition?: MaybeWithIndexAndApplication<boolean>
+  itemCondition?: MaybeWithRepeaterRowContext<boolean>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: MaybeWithAnswersAndExternalData<number>
-  maxRows?: MaybeWithAnswersAndExternalData<number>
+  minRows?: MaybeWithRepeaterFieldContext<number>
+  maxRows?: MaybeWithRepeaterFieldContext<number>
 }
 
 export type AccordionItemTag = {

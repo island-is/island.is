@@ -69,9 +69,14 @@ export const Default = {
         },
 
         table: {
-          format: {
-            phone: (value) => value.replace(/^(.{3})/, '$1-'),
-          },
+          columns: [
+            { header: 'Name', value: 'name' },
+            { header: 'Email', value: 'email' },
+            {
+              header: 'Phone',
+              value: ({ row }) => row.phone?.replace(/^(.{3})/, '$1-'),
+            },
+          ],
         },
       }}
     />

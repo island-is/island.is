@@ -17,7 +17,6 @@ import {
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
-import { Application } from '@island.is/application/types'
 import { getRskOptions } from '../../../utils/getRskOptions'
 import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
 
@@ -76,21 +75,21 @@ export const currentSituationSubSection = buildSubSection({
         }),
         buildFieldsRepeaterField({
           id: 'currentSituation.currentSituationRepeater',
-          minRows: (answers) => {
+          minRows: ({ application: { answers } }) => {
             return isEmployedAtAll(answers) ? 1 : 0
           },
-          maxRows: (answers) => {
+          maxRows: ({ application: { answers } }) => {
             return isEmployed(answers) ? 1 : 10
           },
           marginTop: 0,
-          formTitle: (index) => {
+          formTitle: ({ index }) => {
             return {
               ...employmentMessages.currentSituation.labels
                 .jobRepeaterEmployment,
               values: { index: index + 1 },
             }
           },
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const employed = isEmployed(application.answers)
             return employed
           },
@@ -105,7 +104,7 @@ export const currentSituationSubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.employerSelectLabel,
-              options: (application, _, _locale, formatMessage) =>
+              options: ({ application, formatMessage }) =>
                 getRskOptions(application, formatMessage),
             },
             employer: {
@@ -119,7 +118,7 @@ export const currentSituationSubSection = buildSubSection({
               searchPersons: true,
               searchCompanies: true,
               required: true,
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 const nationalIdChosen = activeField?.nationalIdWithName
                   ? activeField?.nationalIdWithName
                   : ''
@@ -132,7 +131,7 @@ export const currentSituationSubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _activeField, locale) =>
+              options: ({ application, locale }) =>
                 getJobCodeOptions(application, locale),
             },
             percentage: {
@@ -147,16 +146,16 @@ export const currentSituationSubSection = buildSubSection({
               required: true,
               allowNegative: false,
               max: 100,
-              condition: (application) => hasEmployer(application.answers),
+              condition: ({ application }) => hasEmployer(application.answers),
             },
             predictedEndDate: {
               component: 'date',
               label: employmentMessages.currentSituation.labels.jobEndDate,
               width: 'half',
-              condition: (application) => isEmployed(application.answers),
+              condition: ({ application }) => isEmployed(application.answers),
               minDate: new Date(),
 
-              maxDate: (application: Application, _) => {
+              maxDate: ({ application }) => {
                 const maxDays =
                   getValueViaPath<string>(
                     application.externalData,
@@ -175,7 +174,7 @@ export const currentSituationSubSection = buildSubSection({
                 employmentMessages.currentSituation.labels.partTimeJobWorkHours,
               width: 'half',
               required: true,
-              condition: (application) =>
+              condition: ({ application }) =>
                 isEmployedPartTime(application.answers),
             },
             salary: {
@@ -185,7 +184,7 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               currency: true,
               required: true,
-              condition: (application) =>
+              condition: ({ application }) =>
                 isEmployedPartTime(application.answers),
             },
             estimatedSalary: {
@@ -194,7 +193,7 @@ export const currentSituationSubSection = buildSubSection({
               component: 'input',
               width: 'half',
               currency: true,
-              condition: (application) =>
+              condition: ({ application }) =>
                 isOccasionallyEmployed(application.answers),
             },
           },

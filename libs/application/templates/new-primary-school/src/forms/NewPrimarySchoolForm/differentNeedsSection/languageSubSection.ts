@@ -63,7 +63,7 @@ export const languageSubSection = buildSubSection({
           formTitleNumbering: 'none',
           addItemButtonText: differentNeedsMessages.language.addLanguage,
           removeItemButtonText: differentNeedsMessages.language.removeLanguage,
-          minRows: (answers) => {
+          minRows: ({ application: { answers } }) => {
             const { languageEnvironment } = getApplicationAnswers(answers)
 
             return languageEnvironment ===
@@ -77,13 +77,13 @@ export const languageSubSection = buildSubSection({
           fields: {
             code: {
               component: 'select',
-              label: (index) => ({
+              label: ({ index }) => ({
                 ...differentNeedsMessages.language.languageSelectionTitle,
                 values: { index: index + 1 },
               }),
               placeholder: sharedMessages.languagePlaceholder,
               width: 'full',
-              options: (application) => {
+              options: ({ application }) => {
                 const { languageEnvironment } = getApplicationAnswers(
                   application.answers,
                 )

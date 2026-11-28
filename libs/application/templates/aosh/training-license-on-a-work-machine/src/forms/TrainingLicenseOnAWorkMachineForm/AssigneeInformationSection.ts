@@ -14,8 +14,6 @@ import {
 } from '../../utils'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
 import { filterWorkMachineOptions } from '../../utils/filterWorkMachineOptions'
-import { Application } from '@island.is/application/types'
-
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
   title: assigneeInformation.general.sectionTitle,
@@ -31,12 +29,20 @@ export const assigneeInformationSection = buildSection({
           addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
           table: {
-            header: [
-              assigneeInformation.labels.company,
-              assigneeInformation.labels.assignee,
-              assigneeInformation.labels.workMachine,
+            columns: [
+              {
+                header: assigneeInformation.labels.company,
+                value: 'company.name',
+              },
+              {
+                header: assigneeInformation.labels.assignee,
+                value: 'assignee.name',
+              },
+              {
+                header: assigneeInformation.labels.workMachine,
+                value: 'workMachine',
+              },
             ],
-            rows: ['company.name', 'assignee.name', 'workMachine'],
           },
           initActiveFieldIfEmpty: true,
           fields: {
@@ -48,7 +54,7 @@ export const assigneeInformationSection = buildSection({
               customNameLabel: assigneeInformation.labels.companyName,
               customNationalIdLabel:
                 assigneeInformation.labels.companyNationalId,
-              clearOnChange: (index) => [
+              clearOnChange: ({ index }) => [
                 `assigneeInformation[${index}].company.name`,
               ],
             },
@@ -66,16 +72,13 @@ export const assigneeInformationSection = buildSection({
               customNameLabel: assigneeInformation.labels.assigneeName,
               customNationalIdLabel:
                 assigneeInformation.labels.assigneeNationalId,
-              clearOnChange: (index) => [
+              clearOnChange: ({ index }) => [
                 `assigneeInformation[${index}].assignee.name`,
               ],
             },
             isSameAsApplicant: {
               component: 'hiddenInput',
-              defaultValue: (
-                application: Application,
-                activeField?: Record<string, string>,
-              ) => {
+              defaultValue: ({ application, row: activeField }) => {
                 return isSameAsApplicant(application.answers, activeField)
               },
             },
@@ -83,7 +86,7 @@ export const assigneeInformationSection = buildSection({
               component: 'select',
               label: assigneeInformation.labels.workMachine,
               isMulti: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const certificateOfTenure = getValueViaPath<
                   TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
                 >(application.answers, 'certificateOfTenure')
@@ -108,7 +111,7 @@ export const assigneeInformationSection = buildSection({
                     }) ?? []
                 )
               },
-              filterOptions: (options, answers, index) =>
+              filterOptions: (options, { application: { answers }, index }) =>
                 filterWorkMachineOptions(options, answers, index),
             },
             alertMessage: {
@@ -117,7 +120,7 @@ export const assigneeInformationSection = buildSection({
               message: assigneeInformation.labels.isSameAsApplicantAlert,
               marginBottom: 0,
               marginTop: 0,
-              condition: (application, activeField) => {
+              condition: ({ application, row: activeField }) => {
                 return isSameAsApplicant(application.answers, activeField)
               },
             },

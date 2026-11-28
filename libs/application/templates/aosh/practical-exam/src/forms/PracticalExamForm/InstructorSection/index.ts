@@ -5,6 +5,7 @@ import {
   buildSection,
   buildTableRepeaterField,
   getValueViaPath,
+  coreMessages,
 } from '@island.is/application/core'
 import { instructor, shared } from '../../../lib/messages'
 import { submitInstructor } from '../../../utils/submitInstructor'
@@ -48,9 +49,19 @@ export const instructorSection = buildSection({
             },
           },
           table: {
-            format: {
-              phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
-            },
+            rowProps: ({ row }) => ({ disabled: row.disabled === 'true' }),
+            columns: [
+              { header: coreMessages.name, value: 'name' },
+              { header: coreMessages.nationalId, value: 'nationalId' },
+              { header: shared.labels.email, value: 'email' },
+              {
+                header: shared.labels.phone,
+                value: ({ row }) => {
+                  const value = row.phone ?? ''
+                  return `${value.slice(0, 3)}-${value.slice(3)}`
+                },
+              },
+            ],
           },
           onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
             const validationPaths = await submitInstructor(

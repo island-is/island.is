@@ -5,7 +5,6 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
@@ -21,7 +20,7 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import {
   getCapitalIncomeDefaults,
   toCapitalIncomeRow,
@@ -68,14 +67,8 @@ export const capitalIncomeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            capitalIncomeValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(
-            capitalIncomeValidationProps.persistedPath,
-          ),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -84,7 +77,7 @@ export const capitalIncomeSection = buildSubSection({
               label: m.application.paymentType,
               width: 'half',
               required: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const incomeTypes =
                   getValueViaPath<Array<{ id?: string; name?: string }>>(
                     application.externalData,
@@ -112,7 +105,7 @@ export const capitalIncomeSection = buildSubSection({
               largeButtons: false,
               width: 'half',
               defaultValue: PaymentFrequency.ONE_TIME,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerCapitalIncome[${index}].dateTo`,
               ],
               options: [
@@ -131,24 +124,24 @@ export const capitalIncomeSection = buildSubSection({
               label: m.application.dateFrom,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerCapitalIncome[${index}].dateTo`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              disabled: (_application, activeField) =>
+              disabled: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              placeholder: (_application, activeField) =>
+              placeholder: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.MONTHLY
                   ? m.application.indefinitePeriod
                   : '',
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
@@ -161,36 +154,45 @@ export const capitalIncomeSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderPaymentType,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderAmount,
-            ],
-            rows: ['paymentType', 'dateFrom', 'dateTo', 'amountPerMonth'],
-            format: {
-              paymentType: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const incomeTypes =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'incomeTypes.data.capitalIncomeTypes',
-                  ) ?? []
-                const type = incomeTypes.find((t) => t.id === value)
-                return type?.name ?? value
+            columns: [
+              {
+                header: m.application.tableHeaderPaymentType,
+                value: ({ row, application }) => {
+                  const value = row.paymentType ?? ''
+                  if (!value || !application) return ''
+                  const incomeTypes =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'incomeTypes.data.capitalIncomeTypes',
+                    ) ?? []
+                  const type = incomeTypes.find((t) => t.id === value)
+                  return type?.name ?? value
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: (value, _displayIndex, _application, row) =>
-                formatIsDateOrIndefinite(value, row?.paymentFrequency),
-              amountPerMonth: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => {
+                  const value = row.dateTo ?? ''
+                  return formatIsDateOrIndefinite(value, row?.paymentFrequency)
+                },
+              },
+              {
+                header: m.application.tableHeaderAmount,
+                value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
+              },
+            ],
+            rowProps: buildPersistedRowProps(
+              capitalIncomeValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

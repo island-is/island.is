@@ -1,7 +1,11 @@
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  TableRepeaterCellContext,
+} from '@island.is/application/types'
 import {
   buildCanEditRow,
   buildCanRemoveRow,
+  buildPersistedRowProps,
   isEntryEdited,
   splitPersisted,
 } from './reconcile'
@@ -263,4 +267,15 @@ describe('row gates', () => {
       expect(gate(application, {})).toBe(true)
     },
   )
+
+  it('greys out rows that failed income validation', () => {
+    const rowProps = buildPersistedRowProps(persistedPath)
+    const application = buildApplication()
+    const props = (row: Record<string, string>) =>
+      rowProps({ application, row } as unknown as TableRepeaterCellContext)
+
+    expect(props({ disabled: 'true' }).disabled).toBe(true)
+    expect(props({ disabled: 'false' }).disabled).toBe(false)
+    expect(props({}).disabled).toBe(false)
+  })
 })

@@ -41,9 +41,17 @@ export const applicantSubmitAccessAgreementSection = buildSection({
             ),
           marginTop: 0,
           width: 'full',
-          minRows: applicantSubmitAccessAgreementRepeaterMinRows,
-          maxRows: applicantSubmitAccessAgreementRepeaterMaxRows,
-          formTitle: (index) => ({
+          minRows: ({ application }) =>
+            applicantSubmitAccessAgreementRepeaterMinRows(
+              application.answers,
+              application.externalData,
+            ),
+          maxRows: ({ application }) =>
+            applicantSubmitAccessAgreementRepeaterMaxRows(
+              application.answers,
+              application.externalData,
+            ),
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),
@@ -55,10 +63,13 @@ export const applicantSubmitAccessAgreementSection = buildSection({
               component: 'select',
               width: 'full',
               label: m.assigneeDraft.umgengnissamningurSelectChildTitle,
-              options: (application) =>
+              options: ({ application }) =>
                 applicantSubmitAccessAgreementChildOptions(application),
               required: true,
-              filterOptions: (options, formValues, index) => {
+              filterOptions: (
+                options,
+                { application: { answers: formValues }, index },
+              ) => {
                 const answersObj = formValues as FormValue
                 const applicantRaw = getValueViaPath<string>(
                   answersObj,

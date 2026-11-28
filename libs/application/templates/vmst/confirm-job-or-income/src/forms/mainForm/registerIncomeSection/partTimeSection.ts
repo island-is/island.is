@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import {
@@ -21,9 +20,8 @@ import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
-  buildCanEditRow,
-  buildCanRemoveRow,
   buildEmployerSSNDelete,
+  buildPersistedRowProps,
 } from '../../../utils/reconcile'
 import {
   getPartTimeDefaults,
@@ -77,12 +75,8 @@ export const partTimeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPartTimeDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            partTimeValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(partTimeValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -99,19 +93,19 @@ export const partTimeSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerPartTime[${index}].jobEnd`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             jobEnd: {
               component: 'date',
               label: m.application.jobEnd,
               width: 'half',
               placeholder: m.application.indefinitePeriod,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.jobStart
                 if (fromDate) {
                   return new Date(fromDate)
@@ -144,40 +138,45 @@ export const partTimeSection = buildSubSection({
             // time causes an infinite update loop.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderNationalId,
-              m.application.tableHeaderCompany,
-              m.application.tableHeaderWorkPercentage,
-              m.application.tableHeaderJobStart,
-              m.application.tableHeaderEstimatedIncome,
-            ],
-            rows: [
-              'nationalId',
-              'company.name',
-              'workPercentage',
-              'jobStart',
-              'estimatedIncome',
-            ],
-            format: {
-              nationalId: (value) => {
-                if (!value) return ''
-                const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
+            columns: [
+              {
+                header: m.application.tableHeaderNationalId,
+                value: ({ row }) => {
+                  const value = row.nationalId ?? ''
+                  if (!value) return ''
+                  const clean = value.replace('-', '')
+                  return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
+                },
               },
-              jobStart: formatIsDate,
-              workPercentage: (value) => {
-                if (!value) return ''
-                return `${value}%`
+              {
+                header: m.application.tableHeaderCompany,
+                value: 'company.name',
               },
-              estimatedIncome: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderWorkPercentage,
+                value: ({ row }) => {
+                  const value = row.workPercentage ?? ''
+                  if (!value) return ''
+                  return `${value}%`
+                },
+              },
+              {
+                header: m.application.tableHeaderJobStart,
+                value: ({ row }) => formatIsDate(row.jobStart ?? ''),
+              },
+              {
+                header: m.application.tableHeaderEstimatedIncome,
+                value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
+              },
+            ],
+            rowProps: buildPersistedRowProps(
+              partTimeValidationProps.persistedPath,
+            ),
           },
         }),
         buildAlertMessageField({

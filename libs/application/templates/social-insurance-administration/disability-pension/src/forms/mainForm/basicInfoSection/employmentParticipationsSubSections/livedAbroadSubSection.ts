@@ -7,7 +7,7 @@ import {
   buildTableRepeaterField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import { SectionRouteEnum } from '../../../../types/routes'
 import { getApplicationExternalData, yesOrNoOptions } from '../../../../utils'
@@ -59,7 +59,7 @@ export const livedAbroadSubSection = buildMultiField({
           required: true,
           displayInTable: false,
           isSearchable: true,
-          options: (application: Application) => {
+          options: ({ application }) => {
             const { countries = [] } = getApplicationExternalData(
               application.externalData,
             )
@@ -80,7 +80,7 @@ export const livedAbroadSubSection = buildMultiField({
           placeholder: m.employmentParticipation.periodStartPlaceholder,
           required: true,
           width: 'half',
-          maxDate: (_, activeField) => {
+          maxDate: ({ row: activeField }) => {
             if (activeField?.periodEnd) {
               const end = parseISO(activeField.periodEnd)
               if (isValid(end)) return addDays(end, -1)
@@ -98,7 +98,7 @@ export const livedAbroadSubSection = buildMultiField({
           width: 'half',
           displayInTable: false,
           maxDate: () => new Date(),
-          minDate: (_, activeField) => {
+          minDate: ({ row: activeField }) => {
             if (activeField?.periodStart) {
               const start = parseISO(activeField.periodStart)
               if (isValid(start)) return addDays(start, 1)
@@ -109,7 +109,7 @@ export const livedAbroadSubSection = buildMultiField({
         period: {
           component: 'hiddenInput',
           updateValueObj: {
-            valueModifier: (_, activeField) => {
+            valueModifier: ({ row: activeField }) => {
               if (!activeField) {
                 return ''
               }
@@ -137,7 +137,7 @@ export const livedAbroadSubSection = buildMultiField({
         countryDisplay: {
           component: 'hiddenInput',
           updateValueObj: {
-            valueModifier: (application, activeField) => {
+            valueModifier: ({ application, row: activeField }) => {
               if (!activeField) {
                 return ''
               }
@@ -158,12 +158,17 @@ export const livedAbroadSubSection = buildMultiField({
         },
       },
       table: {
-        header: [
-          m.employmentParticipation.country,
-          m.employmentParticipation.abroadNationalId,
-          m.employmentParticipation.period,
+        columns: [
+          {
+            header: m.employmentParticipation.country,
+            value: 'countryDisplay',
+          },
+          {
+            header: m.employmentParticipation.abroadNationalId,
+            value: 'abroadNationalId',
+          },
+          { header: m.employmentParticipation.period, value: 'period' },
         ],
-        rows: ['countryDisplay', 'abroadNationalId', 'period'],
       },
     }),
   ],

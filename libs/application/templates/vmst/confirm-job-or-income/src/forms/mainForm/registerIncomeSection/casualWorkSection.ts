@@ -6,7 +6,6 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
@@ -18,9 +17,8 @@ import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
-  buildCanEditRow,
-  buildCanRemoveRow,
   buildEmployerSSNDelete,
+  buildPersistedRowProps,
 } from '../../../utils/reconcile'
 import {
   getCasualWorkDefaults,
@@ -79,12 +77,8 @@ export const casualWorkSection = buildSubSection({
           hideTableHeaderIfEmpty: true,
           marginTop: 2,
           defaultValue: getCasualWorkDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            casualWorkValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(casualWorkValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           fields: {
             company: {
@@ -100,19 +94,19 @@ export const casualWorkSection = buildSubSection({
               label: m.application.dateFrom,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerCasualWork[${index}].dateTo`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
               required: true,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
@@ -125,7 +119,7 @@ export const casualWorkSection = buildSubSection({
               label: m.application.workshiftPeriod,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const workshiftPeriods =
                   getValueViaPath<Array<WorkshiftPeriod>>(
                     application.externalData,
@@ -155,49 +149,55 @@ export const casualWorkSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderNationalId,
-              m.application.tableHeaderCompany,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderWorkshiftPeriod,
-              m.application.tableHeaderEstimatedIncome,
-            ],
-            rows: [
-              'nationalId',
-              'company.name',
-              'dateFrom',
-              'dateTo',
-              'workshiftPeriod',
-              'estimatedIncome',
-            ],
-            format: {
-              nationalId: (value) => {
-                if (!value) return ''
-                const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+            columns: [
+              {
+                header: m.application.tableHeaderNationalId,
+                value: ({ row }) => {
+                  const value = row.nationalId ?? ''
+                  if (!value) return ''
+                  const clean = value.replace('-', '')
+                  return `${clean.slice(0, 6)}-${clean.slice(6)}`
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: formatIsDate,
-              workshiftPeriod: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const workshiftPeriods =
-                  getValueViaPath<Array<WorkshiftPeriod>>(
-                    application.externalData,
-                    'workshiftPeriods.data',
-                  ) ?? []
-                const period = workshiftPeriods.find((p) => p.id === value)
-                return period?.name ?? value
+              {
+                header: m.application.tableHeaderCompany,
+                value: 'company.name',
               },
-              estimatedIncome: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => formatIsDate(row.dateTo ?? ''),
+              },
+              {
+                header: m.application.tableHeaderWorkshiftPeriod,
+                value: ({ row, application }) => {
+                  const value = row.workshiftPeriod ?? ''
+                  if (!value || !application) return ''
+                  const workshiftPeriods =
+                    getValueViaPath<Array<WorkshiftPeriod>>(
+                      application.externalData,
+                      'workshiftPeriods.data',
+                    ) ?? []
+                  const period = workshiftPeriods.find((p) => p.id === value)
+                  return period?.name ?? value
+                },
+              },
+              {
+                header: m.application.tableHeaderEstimatedIncome,
+                value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
+              },
+            ],
+            rowProps: buildPersistedRowProps(
+              casualWorkValidationProps.persistedPath,
+            ),
           },
         }),
         buildAlertMessageField({

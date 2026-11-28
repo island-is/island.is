@@ -6,10 +6,7 @@ import {
 } from '@island.is/application/core'
 import { jobHistory } from '../../lib/messages'
 import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
-import { Application } from '@island.is/application/types'
 import { isValidJob } from '../../utils/isValidJobCode'
-import { Locale } from '@island.is/shared/types'
-
 export const jobHistorySection = buildSection({
   id: 'jobHistorySection',
   title: jobHistory.general.sectionTitle,
@@ -40,11 +37,7 @@ export const jobHistorySection = buildSection({
               label: jobHistory.labels.jobName,
               width: 'half',
               required: true,
-              options: (
-                application: Application,
-                _activeField: Record<string, string> | undefined,
-                locale: Locale | undefined,
-              ) => {
+              options: ({ application, locale }) => {
                 const escoJobs = getValueViaPath<
                   GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
                 >(
@@ -75,7 +68,7 @@ export const jobHistorySection = buildSection({
               required: true,
               minYear: 1940,
               maxYear: new Date().getFullYear(),
-              minDate: (_, activeField) => {
+              minDate: ({ row: activeField }) => {
                 if (activeField?.startDate) {
                   const startDate = new Date(activeField.startDate as string)
                   const nextDay = new Date(startDate)

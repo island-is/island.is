@@ -30,7 +30,9 @@ export const confirmationSection = buildSection({
             },
           },
           table: {
-            header: [confirmation.companyNameLabel],
+            columns: [
+              { header: confirmation.companyNameLabel, value: 'companyName' },
+            ],
           },
         }),
         buildSubmitField({

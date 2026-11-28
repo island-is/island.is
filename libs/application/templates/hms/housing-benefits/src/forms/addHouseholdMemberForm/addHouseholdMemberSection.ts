@@ -50,7 +50,8 @@ export const addHouseholdMemberSection = buildSection({
             m.draftMessages.householdMembersSection.addMemberButton,
           editField: true,
           maxRows: 20,
-          getStaticTableData: getAddHouseholdMemberStaticTableData,
+          getStaticTableData: ({ application }) =>
+            getAddHouseholdMemberStaticTableData(application),
           defaultValue: getAddHouseholdMemberTableRepeaterDefaultValue,
           fields: {
             nationalIdWithName: {
@@ -61,11 +62,17 @@ export const addHouseholdMemberSection = buildSection({
             },
           },
           table: {
-            header: [
-              m.draftMessages.householdMembersSection.nameColumn,
-              m.draftMessages.householdMembersSection.nationalIdColumn,
+            columns: [
+              {
+                header: m.draftMessages.householdMembersSection.nameColumn,
+                value: 'name',
+              },
+              {
+                header:
+                  m.draftMessages.householdMembersSection.nationalIdColumn,
+                value: 'nationalId',
+              },
             ],
-            rows: ['name', 'nationalId'],
           },
         }),
         buildSubmitField({

@@ -41,10 +41,16 @@ export const siblingsSubSection = buildSubSection({
             },
           },
           table: {
-            format: {
-              nationalId: (value) => formatKennitala(value),
-            },
-            header: [sharedMessages.fullName, sharedMessages.nationalId],
+            columns: [
+              { header: sharedMessages.fullName, value: 'name' },
+              {
+                header: sharedMessages.nationalId,
+                value: ({ row }) => {
+                  const value = row.nationalId ?? ''
+                  return formatKennitala(value)
+                },
+              },
+            ],
           },
         }),
       ],

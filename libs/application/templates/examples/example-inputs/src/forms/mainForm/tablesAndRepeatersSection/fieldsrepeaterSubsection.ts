@@ -78,6 +78,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
             phone: {
               component: 'phone',
               label: 'Phone',
+              enableCountrySelector: true,
             },
             selectAsyncPrimary: {
               component: 'selectAsync',
@@ -117,7 +118,8 @@ export const fieldsRepeaterSubsection = buildSubSection({
             },
             inputWithIndexinLabel: {
               component: 'input',
-              label: (index) => `Regular input with index in label: ${index}`,
+              label: ({ index }) =>
+                `Regular input with index in label: ${index}`,
               width: 'full',
               type: 'text',
             },
