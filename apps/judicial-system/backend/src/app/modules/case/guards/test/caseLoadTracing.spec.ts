@@ -9,6 +9,7 @@ import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { runInRequestContext } from '../../../../test'
 import { CaseExistsGuard } from '../caseExists.guard'
 import { CaseExistsForUpdateGuard } from '../caseExistsForUpdate.guard'
+import { IndictmentCaseExistsForCivilClaimantGuard } from '../indictmentCaseExistsForCivilClaimant.guard'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 import { LimitedAccessCaseExistsForUpdateGuard } from '../limitedAccessCaseExistsForUpdate.guard'
@@ -159,5 +160,22 @@ describe('case load tracing', () => {
     )
 
     expectTraced('IndictmentCaseExistsForDefendantGuard', 'defendantIndictment')
+  })
+
+  it('IndictmentCaseExistsForCivilClaimantGuard loads the indictment for one civil claimant', async () => {
+    const { internalCaseService } = await createTestingCaseModule()
+    jest
+      .spyOn(internalCaseService, 'findByIdAndCivilClaimantNationalId')
+      .mockResolvedValue(theCase as never)
+
+    await activate(
+      new IndictmentCaseExistsForCivilClaimantGuard(internalCaseService),
+      { params: { caseId, civilClaimantNationalId: '0000000000' } },
+    )
+
+    expectTraced(
+      'IndictmentCaseExistsForCivilClaimantGuard',
+      'civilClaimantIndictment',
+    )
   })
 })

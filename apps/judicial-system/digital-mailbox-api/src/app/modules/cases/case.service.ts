@@ -19,8 +19,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../../app.config'
+import { UpdateAppealSummonsDto } from './dto/appealSummons.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
+import {
+  AppealSummonsRecipientRole,
+  AppealSummonsResponse,
+} from './models/appealSummons.response'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internal/internalCase.response'
@@ -28,6 +33,7 @@ import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { VerdictResponse } from './models/verdict.response'
+import { withTraceContext } from './traceContext'
 
 @Injectable()
 export class CaseService {
@@ -82,6 +88,38 @@ export class CaseService {
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
       this.updateSubpoenaInfo(caseId, nationalId, updateSubpoena, lang),
+      nationalId,
+    )
+  }
+
+  async getAppealSummons(
+    caseId: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<AppealSummonsResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_APPEAL_SUMMONS,
+      this.getAppealSummonsInfo(caseId, nationalId, lang),
+      nationalId,
+    )
+  }
+
+  async updateAppealSummons(
+    caseId: string,
+    nationalId: string,
+    updateAppealSummons: UpdateAppealSummonsDto,
+    lang?: string,
+  ): Promise<AppealSummonsResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.UPDATE_APPEAL_SUMMONS_COUNSEL,
+      this.updateAppealSummonsInfo(
+        caseId,
+        nationalId,
+        updateAppealSummons,
+        lang,
+      ),
       nationalId,
     )
   }
@@ -202,6 +240,129 @@ export class CaseService {
     )
   }
 
+  private async getAppealSummonsInfo(
+    caseId: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<AppealSummonsResponse> {
+    const caseData = await this.fetchCaseForAppealSummonsParty(
+      caseId,
+      nationalId,
+    )
+    const response = AppealSummonsResponse.fromInternalCaseResponse(
+      caseData,
+      nationalId,
+      lang,
+    )
+
+    if (!response) {
+      throw new NotFoundException(
+        `Appeal summons for case ${caseId} and authenticated user not found`,
+      )
+    }
+
+    return response
+  }
+
+  private async updateAppealSummonsInfo(
+    caseId: string,
+    nationalId: string,
+    counselAssignment: UpdateAppealSummonsDto,
+    lang?: string,
+  ): Promise<AppealSummonsResponse> {
+    const caseData = await this.fetchCaseForAppealSummonsParty(
+      caseId,
+      nationalId,
+    )
+    const existing = AppealSummonsResponse.fromInternalCaseResponse(
+      caseData,
+      nationalId,
+      lang,
+    )
+
+    if (!existing) {
+      throw new NotFoundException(
+        `Appeal summons for case ${caseId} and authenticated user not found`,
+      )
+    }
+
+    if (existing.counselInfo?.canEdit === false) {
+      throw new ForbiddenException(
+        'Appeal summons counsel choice can no longer be changed',
+      )
+    }
+
+    let chosenLawyer: {
+      name?: string
+      email?: string
+      phoneNumber?: string
+    } | null = null
+
+    if (counselAssignment.defenderChoice === DefenderChoice.CHOOSE) {
+      if (!counselAssignment.defenderNationalId) {
+        throw new BadRequestException(
+          'Defender national id is required for choice',
+        )
+      }
+
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/${counselAssignment.defenderNationalId}`,
+        withTraceContext({
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        }),
+      )
+
+      if (!res.ok) {
+        throw new NotFoundException(
+          'Selected lawyer was not found in the lawyer registry',
+        )
+      }
+
+      chosenLawyer = await res.json()
+
+      if (!chosenLawyer) {
+        throw new NotFoundException(
+          'Selected lawyer was not found in the lawyer registry',
+        )
+      }
+    }
+
+    const waived = counselAssignment.defenderChoice === DefenderChoice.WAIVE
+
+    if (
+      existing.data.recipientRole === AppealSummonsRecipientRole.CIVIL_CLAIMANT
+    ) {
+      await this.patchCivilClaimantCounsel(caseId, nationalId, {
+        hasAppealSpokesperson: !waived,
+        appealSpokespersonIsLawyer: waived ? null : true,
+        appealSpokespersonNationalId: waived
+          ? null
+          : counselAssignment.defenderNationalId,
+        appealSpokespersonName: waived ? null : chosenLawyer?.name,
+        appealSpokespersonEmail: waived ? null : chosenLawyer?.email,
+        appealSpokespersonPhoneNumber: waived
+          ? null
+          : chosenLawyer?.phoneNumber,
+      })
+    } else {
+      await this.patchDefendant(caseId, nationalId, {
+        isAppealDefenderWaived: waived,
+        appealDefenderNationalId: waived
+          ? null
+          : counselAssignment.defenderNationalId,
+        appealDefenderName: waived ? null : chosenLawyer?.name,
+        appealDefenderEmail: waived ? null : chosenLawyer?.email,
+        appealDefenderPhoneNumber: waived ? null : chosenLawyer?.phoneNumber,
+      })
+    }
+
+    return this.getAppealSummonsInfo(caseId, nationalId, lang)
+  }
+
   private async getVerdictInfo(
     caseId: string,
     nationalId: string,
@@ -266,6 +427,26 @@ export class CaseService {
     return response.json()
   }
 
+  // Resolves the authenticated user as defendant first, then civil claimant.
+  private async fetchCaseForAppealSummonsParty(
+    caseId: string,
+    nationalId: string,
+  ): Promise<InternalCaseResponse> {
+    try {
+      return await this.fetchCase(caseId, nationalId)
+    } catch (error) {
+      if (!(error instanceof NotFoundException)) {
+        throw error
+      }
+    }
+
+    const response = await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/civilClaimant/${nationalId}`,
+      'GET',
+    )
+    return response.json()
+  }
+
   private async patchDefendant(
     caseId: string,
     nationalId: string,
@@ -286,6 +467,18 @@ export class CaseService {
     } as InternalDefendantResponse
   }
 
+  private async patchCivilClaimantCounsel(
+    caseId: string,
+    nationalId: string,
+    updates: Record<string, unknown>,
+  ): Promise<void> {
+    await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/case/${caseId}/civil-claimant-counsel/${nationalId}`,
+      'PATCH',
+      updates,
+    )
+  }
+
   private async patchVerdictAppeal(
     caseId: string,
     nationalId: string,
@@ -304,14 +497,19 @@ export class CaseService {
     body?: unknown,
   ): Promise<Response> {
     try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.secretToken}`,
-        },
-        ...(typeof body !== 'undefined' ? { body: JSON.stringify(body) } : {}),
-      })
+      const response = await fetch(
+        url,
+        withTraceContext({
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          ...(typeof body !== 'undefined'
+            ? { body: JSON.stringify(body) }
+            : {}),
+        }),
+      )
 
       if (!response.ok) {
         await this.handleHttpError(response, url)

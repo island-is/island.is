@@ -51,7 +51,7 @@ export class VerdictResponse {
       CaseIndictmentRulingDecision.FINE
 
     const baseDate = getDefendantServiceDate({
-      verdict: defendant.verdict,
+      verdict: defendant?.verdict,
       fallbackDate: internalCase.rulingDate,
     })
 

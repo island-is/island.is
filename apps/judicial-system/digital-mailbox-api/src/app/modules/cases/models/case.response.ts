@@ -4,6 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   DateType,
   isSuccessfulServiceStatus,
+  isSuccessfulVerdictServiceStatus,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -24,6 +25,12 @@ class IndictmentCaseData {
   @ApiProperty({ type: Boolean })
   hasRulingBeenServed?: boolean
 
+  @ApiProperty({ type: Boolean })
+  hasAppealSummons?: boolean
+
+  @ApiProperty({ type: Boolean })
+  hasAppealSummonsBeenServed?: boolean
+
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
 }
@@ -40,7 +47,7 @@ export class CaseResponse {
     lang?: string,
   ): CaseResponse {
     const t = getTranslations(lang)
-    const defendant = internalCase.defendants[0] ?? {}
+    const defendant = internalCase.defendants?.[0] ?? {}
     const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
@@ -50,6 +57,22 @@ export class CaseResponse {
     const verdict = defendant.verdict?.externalPoliceDocumentId
       ? defendant.verdict
       : undefined
+
+    const appealSummonsServices = (
+      internalCase.verdictAppealCase?.appealSummonses ?? []
+    ).flatMap((summons) =>
+      (summons.services ?? []).filter(
+        (service) =>
+          Boolean(service.externalPoliceDocumentId) &&
+          Boolean(service.defendantId) &&
+          (!defendant.id || service.defendantId === defendant.id),
+      ),
+    )
+    const latestAppealSummonsService = [...appealSummonsServices].sort(
+      (a, b) =>
+        new Date(b.sentToServiceDate).getTime() -
+        new Date(a.sentToServiceDate).getTime(),
+    )[0]
 
     return {
       caseId: internalCase.id,
@@ -63,6 +86,14 @@ export class CaseResponse {
         hasRuling: Boolean(verdict),
         hasRulingBeenServed: verdict?.serviceStatus
           ? isSuccessfulServiceStatus(verdict.serviceStatus)
+          : false,
+        hasAppealSummons: Boolean(
+          latestAppealSummonsService?.externalPoliceDocumentId,
+        ),
+        hasAppealSummonsBeenServed: latestAppealSummonsService?.serviceStatus
+          ? isSuccessfulVerdictServiceStatus(
+              latestAppealSummonsService.serviceStatus,
+            )
           : false,
         groups: [
           {

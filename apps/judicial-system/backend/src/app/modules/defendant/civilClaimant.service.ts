@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -29,7 +30,9 @@ import {
   CaseFileRepositoryService,
   CivilClaimant,
   CivilClaimantRepositoryService,
+  UpdateCivilClaimant,
 } from '../repository'
+import { InternalUpdateCivilClaimantDto } from './dto/internalUpdateCivilClaimant.dto'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -226,6 +229,65 @@ export class CivilClaimantService {
     )
 
     return updatedCivilClaimant
+  }
+
+  // Digital-mailbox / outside APIs: only appeal-spokesperson fields the
+  // citizen may set. Staff updates go through update() with a real user.
+  // Confirmation is never accepted from this surface.
+  async updateRestricted(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+    update: InternalUpdateCivilClaimantDto,
+    transaction: Transaction,
+  ): Promise<CivilClaimant> {
+    const hasChosenSpokesperson = Boolean(
+      civilClaimant.hasAppealSpokesperson &&
+        civilClaimant.appealSpokespersonNationalId,
+    )
+    const hasWaivedSpokesperson =
+      civilClaimant.hasAppealSpokesperson === false &&
+      !civilClaimant.appealSpokespersonNationalId
+    const appealSpokespersonLocked =
+      Boolean(civilClaimant.isAppealSpokespersonConfirmed) ||
+      hasChosenSpokesperson ||
+      hasWaivedSpokesperson
+
+    if (appealSpokespersonLocked) {
+      throw new ForbiddenException(
+        'Appeal spokesperson choice can no longer be changed',
+      )
+    }
+
+    // Pick only the citizen-writable fields so undeclared body properties
+    // (including confirmation) cannot reach the repository.
+    const effectiveUpdate: UpdateCivilClaimant = {
+      hasAppealSpokesperson: update.hasAppealSpokesperson,
+      appealSpokespersonIsLawyer: update.appealSpokespersonIsLawyer,
+      appealSpokespersonNationalId: update.appealSpokespersonNationalId,
+      appealSpokespersonName: update.appealSpokespersonName,
+      appealSpokespersonEmail: update.appealSpokespersonEmail,
+      appealSpokespersonPhoneNumber: update.appealSpokespersonPhoneNumber,
+    }
+
+    const { numberOfAffectedRows, civilClaimants } =
+      await this.civilClaimantRepositoryService.updateByIdAndCase(
+        civilClaimant.id,
+        theCase.id,
+        effectiveUpdate,
+        { transaction },
+      )
+
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimant.id} of case ${theCase.id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update civil claimant ${civilClaimant.id} of case ${theCase.id}`,
+      )
+    }
+
+    return civilClaimants[0]
   }
 
   async deliverIndictmentCivilClaimantToCourt(

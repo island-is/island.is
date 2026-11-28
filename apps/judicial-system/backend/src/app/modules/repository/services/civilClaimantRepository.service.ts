@@ -19,6 +19,13 @@ export type UpdateCivilClaimant = {
   spokespersonPhoneNumber?: string
   caseFilesSharedWithSpokesperson?: boolean
   isSpokespersonConfirmed?: boolean
+  hasAppealSpokesperson?: boolean | null
+  appealSpokespersonIsLawyer?: boolean | null
+  appealSpokespersonNationalId?: string | null
+  appealSpokespersonName?: string | null
+  appealSpokespersonEmail?: string | null
+  appealSpokespersonPhoneNumber?: string | null
+  isAppealSpokespersonConfirmed?: boolean
   policeCaseNumbers?: string[]
   defendantIds?: string[]
 }

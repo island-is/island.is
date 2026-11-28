@@ -22,6 +22,7 @@ import {
   archivableCaseWhere,
   defendantIndictmentCaseInclude,
   defendantIndictmentCaseListInclude,
+  getCivilClaimantIndictmentCaseInclude,
   indictmentReviewCaseInclude,
   verdictAppealDeadlineCaseInclude,
 } from '../types/caseRepository.types'
@@ -399,6 +400,64 @@ describe('CaseRepositoryService - internal case reads', () => {
         expect.objectContaining({
           separate: true,
           order: [['created', 'DESC']],
+        }),
+      )
+    })
+
+    it('should not resolve police case numbers it did not read', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+    })
+
+    it('should not load civil claimants on the defendant mailbox include', () => {
+      expect(
+        included(defendantIndictmentCaseInclude, 'civilClaimants'),
+      ).toBeUndefined()
+    })
+  })
+
+  describe('findIndictmentCaseByIdAndCivilClaimantNationalId', () => {
+    const caseId = uuid()
+    const nationalId = '012345-6789'
+    let result: Case | null
+
+    beforeEach(async () => {
+      result =
+        await caseRepositoryService.findIndictmentCaseByIdAndCivilClaimantNationalId(
+          caseId,
+          nationalId,
+        )
+    })
+
+    it('should read one live indictment case for that civil claimant', () => {
+      expect(findOneOptions().where).toEqual({
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+        '$civilClaimants.national_id$': '0123456789',
+      })
+      expect(findOneOptions().include).toEqual(
+        getCivilClaimantIndictmentCaseInclude(nationalId),
+      )
+      expect(findOneOptions().attributes).toEqual([
+        'courtCaseNumber',
+        'id',
+        'state',
+        'indictmentRulingDecision',
+        'rulingDate',
+        'ruling',
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should scope civil claimants by national id and omit defendants', () => {
+      const include = findOneOptions().include as { as?: string }[]
+
+      expect(included(include, 'defendants')).toBeUndefined()
+      expect(included(include, 'civilClaimants')).toEqual(
+        expect.objectContaining({
+          required: true,
+          where: { national_id: '0123456789' },
         }),
       )
     })

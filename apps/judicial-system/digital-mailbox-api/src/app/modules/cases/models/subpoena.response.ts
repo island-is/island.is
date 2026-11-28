@@ -96,7 +96,7 @@ export class SubpoenaResponse {
   ): SubpoenaResponse {
     const t = getTranslations(lang)
 
-    const defendantInfo = internalCase.defendants.find(
+    const defendantInfo = (internalCase.defendants ?? []).find(
       (defendant) =>
         defendant.nationalId &&
         normalizeAndFormatNationalId(defendantNationalId).includes(
