@@ -1490,6 +1490,7 @@ describe('MeUserProfileController', () => {
         emailsId: email1.id,
         email: email1.email,
         emailVerified: email1.emailStatus === DataStatus.VERIFIED,
+        onlyActionablePriorityNotifications: false,
       })
       // Should default to true because we don't have a record for this delegation
       expect(res.body.data[1]).toStrictEqual({
@@ -1497,6 +1498,7 @@ describe('MeUserProfileController', () => {
         emailNotifications: true,
         email: null,
         emailVerified: false,
+        onlyActionablePriorityNotifications: false,
       })
 
       expect(
@@ -1622,6 +1624,7 @@ describe('MeUserProfileController', () => {
         emailsId: email1.id,
         email: email1.email,
         emailVerified: email1.emailStatus === DataStatus.VERIFIED,
+        onlyActionablePriorityNotifications: false,
       })
       expect(res.body.data[1]).toStrictEqual({
         fromNationalId: testNationalId2,
@@ -1629,6 +1632,7 @@ describe('MeUserProfileController', () => {
         emailsId: email2.id,
         email: email2.email,
         emailVerified: email2.emailStatus === DataStatus.VERIFIED,
+        onlyActionablePriorityNotifications: false,
       })
     })
 
@@ -1697,12 +1701,14 @@ describe('MeUserProfileController', () => {
         emailsId: null,
         email: null,
         emailVerified: false,
+        onlyActionablePriorityNotifications: false,
       })
       expect(res.body.data[1]).toStrictEqual({
         fromNationalId: testNationalId2,
         emailNotifications: true,
         email: null,
         emailVerified: false,
+        onlyActionablePriorityNotifications: false,
       })
 
       // Verify it used the correct parameters

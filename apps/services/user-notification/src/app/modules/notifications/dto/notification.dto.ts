@@ -139,7 +139,10 @@ export class RenderedNotificationDto {
   @ApiProperty({
     example: true,
     description:
-      'Whether the notification was delivered to the recipient, false if it was suppressed e.g. by the recipient only wanting actionable notifications',
+      "False only when the recipient's preferences suppressed the notification: they only want actionable notifications and it was neither actionable nor urgent, or they blocked the sender's category and it was not urgent. " +
+      'True otherwise, so it does not guarantee that anything was delivered: it stays true when push and email are turned off or the recipient has no profile. ' +
+      'It describes push, email and opt-in SMS: SMS for templates with smsDelivery ALWAYS bypasses these preferences, while smsDelivery OPT_IN SMS is subject to the same suppression. ' +
+      'Intended for metrics.',
   })
   @IsBoolean()
   wasSent!: boolean
@@ -331,6 +334,17 @@ export class ActorNotificationDto {
   @ApiProperty({ example: '@island.is/documents' })
   @IsString()
   scope!: string
+
+  @ApiProperty({
+    example: true,
+    description:
+      "False only when the delegate's actor profile suppressed the notification because they only want actionable notifications and it was neither actionable nor urgent. " +
+      'True otherwise, so it does not guarantee that anything was delivered: it stays true when email is turned off or the delegate has no email address. ' +
+      'It records the decision made when the row was first created and is not updated if the message is retried. ' +
+      'Intended for metrics.',
+  })
+  @IsBoolean()
+  wasSent!: boolean
 
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()

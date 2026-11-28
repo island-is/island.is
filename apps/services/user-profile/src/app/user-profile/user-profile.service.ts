@@ -47,6 +47,11 @@ import kennitala from 'kennitala'
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
 
+// Email notifications default to off for company delegations, on for personal
+export const getDefaultActorEmailNotifications = (
+  fromNationalId: string,
+): boolean => !kennitala.isCompany(fromNationalId)
+
 @Injectable()
 export class UserProfileService {
   private readonly metrics = new DogStatsD({ prefix: 'user-profile.' })
@@ -800,17 +805,14 @@ export class UserProfileService {
 
         if (!emailPreference) {
           const { email, emailVerified } = await loadPrimaryEmail()
-          // Default email notifications off for company delegations when no actor profile yet
-          const defaultEmailNotifications = kennitala.isCompany(
-            delegation.fromNationalId,
-          )
-            ? false
-            : true
           return {
             fromNationalId: delegation.fromNationalId,
-            emailNotifications: defaultEmailNotifications,
+            emailNotifications: getDefaultActorEmailNotifications(
+              delegation.fromNationalId,
+            ),
             email,
             emailVerified,
+            onlyActionablePriorityNotifications: false,
           }
         }
 
@@ -870,19 +872,29 @@ export class UserProfileService {
       ...(emailPreferences
         ? {
             emailNotifications: emailPreferences.emailNotifications,
-            email: emailPreferences.emails?.email,
-            emailVerified:
-              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
+            // Without a linked email, fall back to the user's primary email
+            // (same as getActorProfiles)
+            ...(emailPreferences.emails
+              ? {
+                  email: emailPreferences.emails.email,
+                  emailVerified:
+                    emailPreferences.emails.emailStatus === DataStatus.VERIFIED,
+                }
+              : {
+                  email: userProfile.email,
+                  emailVerified: userProfile.emailVerified,
+                }),
           }
         : {
-            emailNotifications: kennitala.isCompany(fromNationalId)
-              ? false
-              : true,
+            emailNotifications:
+              getDefaultActorEmailNotifications(fromNationalId),
             email: userProfile.email,
             emailVerified: userProfile.emailVerified,
           }),
       documentNotifications: userProfile.documentNotifications,
       locale: userProfile.locale,
+      onlyActionablePriorityNotifications:
+        emailPreferences?.onlyActionablePriorityNotifications ?? false,
     }
 
     return actorProfile
@@ -893,7 +905,7 @@ export class UserProfileService {
    * @param toNationalId - The national ID of the delegation recipient
    * @param fromNationalId - The national ID of the delegation sender
    * @param emailNotifications - Optional flag to enable/disable email notifications
-   * @param emailsId - Optional ID of the email record to associate with the profile
+   * @param emailsId - Optional ID of the email record to associate with the profile, null clears it
    * @returns Promise<MeActorProfileDto> - The created/updated actor profile
    * @throws NoContentException if delegation doesn't exist
    * @throws Error if email record doesn't exist or profile creation fails
@@ -903,11 +915,13 @@ export class UserProfileService {
     fromNationalId,
     emailNotifications,
     emailsId,
+    onlyActionablePriorityNotifications,
   }: {
     toNationalId: string
     fromNationalId: string
     emailNotifications?: boolean
-    emailsId?: string
+    emailsId?: string | null
+    onlyActionablePriorityNotifications?: boolean
   }): Promise<MeActorProfileDto> {
     // Verify delegation exists
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
@@ -935,19 +949,55 @@ export class UserProfileService {
         emailStatus = emailRecord.emailStatus
       }
 
-      // Default email notifications off for company delegations, on for personal
-      const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
-        ? false
-        : true
-      const resolvedEmailNotifications =
-        emailNotifications ?? defaultEmailNotifications
+      // Only persist the field when provided and the feature flag is enabled,
+      // so an omitted field never overwrites an existing value
+      const isOnlyPrioNotificationsEnabled = isDefined(
+        onlyActionablePriorityNotifications,
+      )
+        ? await this.featureFlagService.getValue(
+            Features.isOnlyActionablePriorityNotificationsEnabled,
+            false,
+          )
+        : false
+      const onlyPrioNotificationsUpdate =
+        isDefined(onlyActionablePriorityNotifications) &&
+        isOnlyPrioNotificationsEnabled
+          ? { onlyActionablePriorityNotifications }
+          : {}
 
-      // Create or update the actor profile
-      const [profile] = await this.delegationPreference.upsert({
-        toNationalId,
-        fromNationalId,
-        emailNotifications: resolvedEmailNotifications,
-        emailsId,
+      // Read, default and write in one transaction with a row lock. An omitted
+      // emailNotifications is never written for an existing row, so it keeps
+      // the stored value (also under concurrent updates); the default only
+      // applies when the row is created.
+      const profile = await this.sequelize.transaction(async (transaction) => {
+        const [row, created] = await this.delegationPreference.findOrCreate({
+          where: { toNationalId, fromNationalId },
+          defaults: {
+            toNationalId,
+            fromNationalId,
+            emailNotifications:
+              emailNotifications ??
+              getDefaultActorEmailNotifications(fromNationalId),
+            emailsId,
+            ...onlyPrioNotificationsUpdate,
+          },
+          transaction,
+          lock: transaction.LOCK.UPDATE,
+        })
+
+        if (created) {
+          return row
+        }
+
+        return row.update(
+          {
+            ...(isDefined(emailNotifications) && { emailNotifications }),
+            // null clears the linked email, undefined leaves it unchanged
+            ...(emailsId !== undefined && { emailsId }),
+            ...onlyPrioNotificationsUpdate,
+          },
+          { transaction },
+        )
       })
 
       if (!profile) {
@@ -959,17 +1009,19 @@ export class UserProfileService {
       if (isDefined(emailNotifications)) {
         this.metrics.increment('notification.setting.changed', 1, {
           setting: 'delegation_email',
-          value: resolvedEmailNotifications ? 'on' : 'off',
+          value: profile.emailNotifications ? 'on' : 'off',
         })
       }
 
       // Return the updated profile details
       return {
         fromNationalId,
-        emailNotifications: resolvedEmailNotifications,
+        emailNotifications: profile.emailNotifications,
         email,
         emailsId: profile.emailsId,
         emailVerified: emailStatus === DataStatus.VERIFIED,
+        onlyActionablePriorityNotifications:
+          profile.onlyActionablePriorityNotifications ?? false,
       } as MeActorProfileDto
     } catch (error) {
       // Log and rethrow any errors
