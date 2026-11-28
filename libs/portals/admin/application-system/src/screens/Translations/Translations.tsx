@@ -25,11 +25,7 @@ import {
 
 const PAGE_SIZE = 20
 
-interface TranslationsProps {
-  isSuperAdmin: boolean
-}
-
-const Translations = ({ isSuperAdmin }: TranslationsProps) => {
+const Translations = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const [searchValue, setSearchValue] = useState('')
@@ -45,7 +41,6 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
     error: sharedError,
   } = useGetApplicationSharedNamespaceListQuery({
     ssr: false,
-    skip: !isSuperAdmin,
   })
 
   const templates = data?.applicationTemplateList ?? []
@@ -63,15 +58,15 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  if (loading || (isSuperAdmin && sharedLoading)) {
+  if (loading || sharedLoading) {
     return (
-      <Box>
+      <Box marginTop={3}>
         <SkeletonLoader height={48} repeat={6} space={2} />
       </Box>
     )
   }
 
-  const listError = error ?? (isSuperAdmin ? sharedError : undefined)
+  const listError = error ?? sharedError
   if (listError) {
     const detail = getTranslationSaveErrorDetail(listError)
     const isForbidden = isTranslationAccessForbiddenError(listError)
@@ -100,7 +95,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
         </Text>
       </Box>
 
-      {isSuperAdmin && (
+      {sharedNamespaces.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" marginBottom={3}>
             {formatMessage(m.sharedTranslationSpaces)}
@@ -155,12 +150,6 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
               ))}
             </T.Body>
           </T.Table>
-
-          {sharedNamespaces.length === 0 && (
-            <Box marginTop={3}>
-              <Text>{formatMessage(m.notFound)}</Text>
-            </Box>
-          )}
 
           <Box marginTop={5}>
             <Divider />

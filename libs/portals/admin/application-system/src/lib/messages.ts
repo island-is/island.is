@@ -264,6 +264,20 @@ export const m = defineMessages({
     defaultMessage:
       'Þessi hluti umsóknarinnar inniheldur engin svæði sem hægt er að forskoða.',
   },
+  translationsLoadFailedTitle: {
+    id: 'admin-portal.application-system:translationsLoadFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja vistaða textastrengi',
+  },
+  translationsContentfulTokenRejected: {
+    id: 'admin-portal.application-system:translationsContentfulTokenRejected',
+    defaultMessage:
+      'Ekki tókst að ná sambandi við Contentful. Aðgangslykill kann að vera ógiltur, hafðu samband við Stafrænt Ísland fyrir aðstoð.',
+  },
+  translationsContentfulUnavailable: {
+    id: 'admin-portal.application-system:translationsContentfulUnavailable',
+    defaultMessage:
+      'Ekki tókst að ná sambandi við Contentful, reyndu aftur síðar.',
+  },
   translationWorkspacePanelOpen: {
     id: 'admin-portal.application-system:translationWorkspacePanelOpen',
     defaultMessage: 'Opna þýðingaborð',

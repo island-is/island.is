@@ -9,6 +9,7 @@ import {
   TranslationWorkspaceError,
   TranslationWorkspaceLoading,
   TranslationWorkspaceNotFound,
+  TranslationWorkspaceTranslationsWarning,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
 import { TranslationPublishConfirmModal } from '../../components/TranslationPublishConfirmModal/TranslationPublishConfirmModal'
@@ -41,6 +42,7 @@ export const TranslationWorkspace = () => {
     hasDraftChanges,
     isLoading,
     loadError,
+    translationsLoadError,
     refetchTranslations,
   } = useTranslationWorkspaceData(typeId)
 
@@ -202,6 +204,13 @@ export const TranslationWorkspace = () => {
 
     workspace = (
       <TranslationWorkspaceLayout
+        notice={
+          translationsLoadError && (
+            <TranslationWorkspaceTranslationsWarning
+              error={translationsLoadError}
+            />
+          )
+        }
         preview={
           <TranslationWorkspacePreviewArea
             previewScreens={previewScreens}

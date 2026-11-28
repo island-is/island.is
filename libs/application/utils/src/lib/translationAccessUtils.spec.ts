@@ -6,6 +6,7 @@ import {
 
 import {
   CORE_TRANSLATION_NAMESPACE,
+  canManageSharedTranslationNamespace,
   getAllowedTranslationTypeIds,
   getSharedTranslationNamespaces,
   getTypeIdsForNamespace,
@@ -203,6 +204,74 @@ describe('translationAccessUtils', () => {
         (entry) => entry.namespace === 'ra.application',
       )
       expect(rentalAgreementNamespace).toBeUndefined()
+    })
+  })
+
+  describe('canManageSharedTranslationNamespace', () => {
+    const tryggingastofnunUser = {
+      nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+      scope: [AdminPortalScope.applicationSystemInstitution],
+    }
+    const samgongustofaUser = {
+      nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+      scope: [AdminPortalScope.applicationSystemInstitution],
+    }
+
+    it('lets a super admin manage every shared namespace', () => {
+      expect(
+        canManageSharedTranslationNamespace(
+          superAdminUser,
+          CORE_TRANSLATION_NAMESPACE,
+        ),
+      ).toBe(true)
+      expect(
+        canManageSharedTranslationNamespace(
+          superAdminUser,
+          'uiForms.application',
+        ),
+      ).toBe(true)
+    })
+
+    it('lets an institution manage a namespace only its own apps use', () => {
+      expect(
+        canManageSharedTranslationNamespace(
+          tryggingastofnunUser,
+          'sia.application',
+        ),
+      ).toBe(true)
+    })
+
+    it('denies a namespace used by other institutions too', () => {
+      expect(
+        canManageSharedTranslationNamespace(
+          tryggingastofnunUser,
+          'uiForms.application',
+        ),
+      ).toBe(false)
+      expect(
+        canManageSharedTranslationNamespace(
+          samgongustofaUser,
+          'dla.application',
+        ),
+      ).toBe(false)
+    })
+
+    it('denies application.system to institutions', () => {
+      expect(
+        canManageSharedTranslationNamespace(
+          tryggingastofnunUser,
+          CORE_TRANSLATION_NAMESPACE,
+        ),
+      ).toBe(false)
+    })
+
+    it('narrows a super admin acting as an institution', () => {
+      expect(
+        canManageSharedTranslationNamespace(
+          superAdminActingAsInstitution,
+          'sia.application',
+        ),
+      ).toBe(false)
     })
   })
 

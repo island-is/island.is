@@ -68,6 +68,10 @@ export const getTranslationLoadErrorDetail = (
   error: ApolloError | Error,
 ): string => {
   if (error instanceof ApolloError) {
+    const problemDetail = findProblemInApolloError(error)?.detail
+    if (problemDetail) {
+      return problemDetail
+    }
     const fromGraphQl = error.graphQLErrors
       .map((graphQlError) => graphQlError.message)
       .filter(Boolean)
