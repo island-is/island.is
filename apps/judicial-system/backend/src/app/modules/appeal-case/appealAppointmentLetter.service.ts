@@ -13,12 +13,12 @@ import {
 import { buildAppealAppointmentLetter } from './appealAppointmentLetter'
 
 /**
- * Writes the letter appointing a party's advocate.
+ * Assembles the letter appointing a party's advocate.
  *
  * Two controllers serve the letter - the court of appeals and the prosecution
  * reach it through the ordinary case routes, an advocate through the limited
- * access ones - and both have to assemble it the same way, so the assembly
- * lives here rather than in either.
+ * access ones - and the defender zip reuses the same assembly, so it lives
+ * here rather than in any of those callers.
  */
 @Injectable()
 export class AppealAppointmentLetterService {
@@ -52,11 +52,14 @@ export class AppealAppointmentLetterService {
     }
   }
 
-  async write(
+  /**
+   * The appointment letter as a named PDF, or nothing when there is none to
+   * write for this party (no standing appeal, no confirmed advocate, etc.).
+   */
+  async getPdf(
     theCase: Case,
     party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
-    res: Response,
-  ): Promise<void> {
+  ): Promise<{ data: Buffer; name: string } | undefined> {
     const advocatePractice = await this.getAdvocatePractice(
       party.defendant?.appealDefenderNationalId ??
         party.civilClaimant?.appealSpokespersonNationalId,
@@ -78,9 +81,33 @@ export class AppealAppointmentLetterService {
     })
 
     if (!letter) {
+      return undefined
+    }
+
+    // Include the party name when present so two letters for the same
+    // advocate (different defendants) do not collide in a zip.
+    const partyName = letter.clientName ?? party.civilClaimant?.name
+    const fileName = partyName
+      ? `Skipunarbréf ${letter.advocateName} - ${partyName}.pdf`
+      : `Skipunarbréf ${letter.advocateName}.pdf`
+
+    return {
+      data: await createAppealAppointmentLetter(letter),
+      name: fileName,
+    }
+  }
+
+  async write(
+    theCase: Case,
+    party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
+    res: Response,
+  ): Promise<void> {
+    const file = await this.getPdf(theCase, party)
+
+    if (!file) {
       throw new NotFoundException('No appeal appointment letter to write')
     }
 
-    res.end(await createAppealAppointmentLetter(letter))
+    res.end(file.data)
   }
 }

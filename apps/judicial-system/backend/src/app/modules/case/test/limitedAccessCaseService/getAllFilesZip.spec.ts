@@ -14,6 +14,7 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { AppealAppointmentLetterService } from '../../../appeal-case/appealAppointmentLetter.service'
 import { FileService } from '../../../file'
 import {
   Case,
@@ -79,6 +80,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   let limitedAccessCaseService: LimitedAccessCaseService
   let mockPdfService: PdfService
   let mockFileService: FileService
+  let mockAppealAppointmentLetterService: AppealAppointmentLetterService
   let transaction: Transaction
   let zipFilesSpy: jest.SpyInstance
 
@@ -96,6 +98,11 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     mockPdfService = (
       limitedAccessCaseService as unknown as { pdfService: PdfService }
     ).pdfService
+    mockAppealAppointmentLetterService = (
+      limitedAccessCaseService as unknown as {
+        appealAppointmentLetterService: AppealAppointmentLetterService
+      }
+    ).appealAppointmentLetterService
     transaction = {} as Transaction
 
     zipFilesSpy = jest
@@ -117,6 +124,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     jest
       .spyOn(mockFileService, 'getCaseFileFromS3')
       .mockResolvedValue(pdfBuffer)
+    jest
+      .spyOn(mockAppealAppointmentLetterService, 'getPdf')
+      .mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -578,6 +588,83 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         theCase,
         otherCriminalRecord,
       )
+    })
+  })
+
+  describe('appeal appointment letters', () => {
+    it('should include the appointment letter for a defendant the defender represents', async () => {
+      const representedDefendant = makeDefendant({
+        id: 'defendant-1',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: defenderNationalId,
+        appealDefenderName: 'Þórður Már Jónsson',
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [representedDefendant],
+      })
+      const letterPdf = {
+        data: Buffer.from('skipunarbréf'),
+        name: 'Skipunarbréf Þórður Már Jónsson - Defendant.pdf',
+      }
+      ;(
+        mockAppealAppointmentLetterService.getPdf as jest.Mock
+      ).mockResolvedValue(letterPdf)
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockAppealAppointmentLetterService.getPdf).toHaveBeenCalledWith(
+        theCase,
+        { defendant: representedDefendant },
+      )
+      expect(zipFilesSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([letterPdf]),
+      )
+    })
+
+    it('should still request the letter for a district defender without case-file access', async () => {
+      const representedDefendant = makeDefendant({
+        id: 'defendant-1',
+        caseFilesSharedWithDefender: false,
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [representedDefendant],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).not.toHaveBeenCalled()
+      expect(mockAppealAppointmentLetterService.getPdf).toHaveBeenCalledWith(
+        theCase,
+        { defendant: representedDefendant },
+      )
+    })
+
+    it("should not request another defendant's appointment letter", async () => {
+      const representedDefendant = makeDefendant({
+        id: 'defendant-1',
+        appealDefenderNationalId: defenderNationalId,
+        isAppealDefenderConfirmed: true,
+      })
+      const otherDefendant = makeDefendant({
+        id: 'defendant-2',
+        defenderNationalId: '0202020202',
+        appealDefenderNationalId: '0202020202',
+        isAppealDefenderConfirmed: true,
+        appealDefenderName: 'Other Defender',
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [representedDefendant, otherDefendant],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockAppealAppointmentLetterService.getPdf).toHaveBeenCalledWith(
+        theCase,
+        { defendant: representedDefendant },
+      )
+      expect(
+        mockAppealAppointmentLetterService.getPdf,
+      ).not.toHaveBeenCalledWith(theCase, { defendant: otherDefendant })
     })
   })
 })

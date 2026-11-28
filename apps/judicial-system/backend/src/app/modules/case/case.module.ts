@@ -3,6 +3,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { SigningModule } from '@island.is/dokobit-signing'
 
 import {
+  AppealCaseModule,
   AwsS3Module,
   CourtModule,
   CourtSessionModule,
@@ -47,6 +48,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
     forwardRef(() => VictimModule),
+    forwardRef(() => AppealCaseModule),
   ],
   providers: [
     CaseService,
