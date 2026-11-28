@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { formatPhoneNumber } from '@island.is/shared/utils'
+import { formatPhoneNumberWithIcelandicCountryCode } from '@island.is/shared/utils'
 import { Passport, Service, Services } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
@@ -94,7 +94,7 @@ export const childsOverview = buildMultiField({
           application.answers,
           'childsPersonalInfo.guardian1.phoneNumber',
         )
-        return formatPhoneNumber(phone as string)
+        return formatPhoneNumberWithIcelandicCountryCode(phone as string)
       },
     }),
     buildDescriptionField({
@@ -162,7 +162,7 @@ export const childsOverview = buildMultiField({
           application.answers,
           'childsPersonalInfo.guardian2.phoneNumber',
         )
-        return formatPhoneNumber(phone as string)
+        return formatPhoneNumberWithIcelandicCountryCode(phone as string)
       },
     }),
     buildDescriptionField({

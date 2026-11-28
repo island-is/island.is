@@ -4,11 +4,11 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
+  buildPhoneField,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { removeCountryCode } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
@@ -61,23 +61,18 @@ export const personalInfo = buildMultiField({
           }
         )?.email ?? '',
     }),
-    buildTextField({
+    buildPhoneField({
       id: 'personalInfo.phoneNumber',
       title: m.phoneNumber,
       width: 'half',
-      variant: 'tel',
-      format: '###-####',
       required: true,
-      defaultValue: (application: Application) => {
-        const phone =
-          (
-            application.externalData.userProfile?.data as {
-              mobilePhoneNumber?: string
-            }
-          )?.mobilePhoneNumber ?? ''
-
-        return removeCountryCode(phone)
-      },
+      enableCountrySelector: true,
+      defaultValue: (application: Application) =>
+        (
+          application.externalData.userProfile?.data as {
+            mobilePhoneNumber?: string
+          }
+        )?.mobilePhoneNumber ?? '',
     }),
     buildDescriptionField({
       id: 'personalInfo.space',
