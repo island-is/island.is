@@ -37,6 +37,7 @@ import {
   PageTitle,
   RulingModifiedAlert,
   UserContext,
+  VerdictAppealConclusion,
   VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
@@ -301,6 +302,7 @@ export const Overview = () => {
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             )}
+          <VerdictAppealConclusion />
           {features.includes(Feature.INDICTMENT_APPEAL) && (
             <VerdictAppealFiles />
           )}

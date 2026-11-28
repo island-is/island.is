@@ -22,13 +22,14 @@ import {
   Asset,
   Family,
 } from '@island.is/form-system/ui'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   field: FormSystemField
   valueIndex?: number
+  groupNumber?: number
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -53,7 +54,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.FAMILY]: Family,
 } as const
 
-export const Field = ({ field, valueIndex = 0 }: Props) => {
+export const Field = ({ field, valueIndex = 0, groupNumber }: Props) => {
   const { dispatch, state } = useApplicationContext()
   const { control } = useFormContext()
 
@@ -84,6 +85,11 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
 
   return (
     <Box marginTop={4}>
+      {groupNumber !== undefined && (
+        <Box marginBottom={1}>
+          <Text variant="h4">{groupNumber}.</Text>
+        </Box>
+      )}
       <FieldInformation item={field} />
       {FieldComponent ? <FieldComponent {...fieldItems} /> : null}
     </Box>

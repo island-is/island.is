@@ -32,6 +32,7 @@ import {
   RulingModifiedAlert,
   SectionHeading,
   UserContext,
+  VerdictAppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
 import { isVerdictAppealPastReview } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import ReviewerVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/ReviewerVerdictTimelineCard'
@@ -283,6 +284,7 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            <VerdictAppealConclusion />
             <AllIndictmentCaseFiles />
             <Box component="section">
               <InputPenalties />

@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import {
   ApplicationState,
   FieldTypesEnum,
@@ -42,6 +43,17 @@ export const Summary = ({ state }: Props) => {
 
       for (const screen of section.screens ?? []) {
         if (!screen || screen.isHidden) continue
+        const multisetValueCount = screen.isMulti
+          ? Math.max(
+              1,
+              ...(screen.fields ?? [])
+                .filter(
+                  (field) =>
+                    field?.isPartOfMultiset !== false && !field?.isHidden,
+                )
+                .map((field) => field?.values?.length ?? 0),
+            )
+          : 1
 
         for (const field of screen.fields ?? []) {
           if (!field || field.isHidden) continue
@@ -51,9 +63,17 @@ export const Summary = ({ state }: Props) => {
           const valueCount =
             field.isPartOfMultiset === false
               ? 1
-              : Math.max(1, field.values?.length ?? 0)
+              : Math.max(multisetValueCount, field.values?.length ?? 0)
 
           for (let valueIndex = 0; valueIndex < valueCount; valueIndex++) {
+            if (
+              getHiddenMultisetFieldIds(
+                screen,
+                state.application.dependencies,
+                valueIndex,
+              ).has(field.id)
+            )
+              continue
             if (field.isRequired && hasError(field, valueIndex)) return true
           }
         }
@@ -61,7 +81,7 @@ export const Summary = ({ state }: Props) => {
     }
 
     return false
-  }, [state?.sections])
+  }, [state?.sections, state?.application.dependencies])
 
   useEffect(() => {
     // make state.isValid mean “no required missing”
@@ -109,37 +129,42 @@ export const Summary = ({ state }: Props) => {
             const visibleFields =
               screen?.fields?.filter(
                 (field): field is NonNullable<typeof field> =>
-                  field != null &&
-                  !field.isHidden &&
-                  field.fieldType !== FieldTypesEnum.MESSAGE,
+                  field != null && !field.isHidden,
               ) ?? []
+            const answerFields = visibleFields.filter(
+              (field) => field.fieldType !== FieldTypesEnum.MESSAGE,
+            )
 
             const firstMultisetFieldIndex = screen?.isMulti
-              ? visibleFields.findIndex(
+              ? answerFields.findIndex(
                   (field) => field.isPartOfMultiset !== false,
                 )
               : -1
             const leadingFields =
               firstMultisetFieldIndex === -1
-                ? visibleFields
-                : visibleFields.slice(0, firstMultisetFieldIndex)
+                ? answerFields
+                : answerFields.slice(0, firstMultisetFieldIndex)
             const multisetFields =
               firstMultisetFieldIndex === -1
                 ? []
-                : visibleFields.filter(
+                : answerFields.filter(
                     (field) => field.isPartOfMultiset !== false,
                   )
             const trailingFields =
               firstMultisetFieldIndex === -1
                 ? []
-                : visibleFields
+                : answerFields
                     .slice(firstMultisetFieldIndex)
                     .filter((field) => field.isPartOfMultiset === false)
 
-            const numberOfItems = Math.max(
-              1,
-              ...multisetFields.map((f) => f.values?.length ?? 0),
-            )
+            const numberOfItems = screen?.isMulti
+              ? Math.max(
+                  1,
+                  ...visibleFields
+                    .filter((field) => field.isPartOfMultiset !== false)
+                    .map((field) => field.values?.length ?? 0),
+                )
+              : 1
 
             return (
               <Box
@@ -218,7 +243,16 @@ export const Summary = ({ state }: Props) => {
                               )}
 
                               {multisetFields
-                                .filter((field) => field.values?.[itemIndex])
+                                .filter(
+                                  (field) =>
+                                    (field.values?.[itemIndex] ||
+                                      field.isRequired) &&
+                                    !getHiddenMultisetFieldIds(
+                                      screen ?? {},
+                                      state?.application.dependencies,
+                                      itemIndex,
+                                    ).has(field.id),
+                                )
                                 .map((field) => {
                                   const key = `${
                                     field.id ?? 'field'
@@ -235,13 +269,7 @@ export const Summary = ({ state }: Props) => {
                                     />
                                   )
 
-                                  return numberOfItems > 1 ? (
-                                    <Box marginLeft={2} key={key}>
-                                      {content}
-                                    </Box>
-                                  ) : (
-                                    <Box key={key}>{content}</Box>
-                                  )
+                                  return <Box key={key}>{content}</Box>
                                 })}
                             </Box>
                           ),

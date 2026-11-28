@@ -2,6 +2,7 @@ import {
   ApplicationEvents,
   ApplicationStatus,
   FieldTypesEnum,
+  getHiddenMultisetFieldIds,
   SectionTypes,
 } from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
@@ -199,7 +200,12 @@ export class ApplicationMapper {
   ): ApplicationJsonDto {
     const fields: ApplicationJsonFieldDto[] = (applicationDto.sections ?? [])
       .flatMap((section) => section.screens ?? [])
-      .flatMap((screen) => this.mapScreenToApplicationJsonFields(screen))
+      .flatMap((screen) =>
+        this.mapScreenToApplicationJsonFields(
+          screen,
+          applicationDto.dependencies,
+        ),
+      )
 
     const jsonDto = new ApplicationJsonDto()
     jsonDto.id = applicationDto.id ?? ''
@@ -216,10 +222,29 @@ export class ApplicationMapper {
 
   mapScreenToApplicationJsonFields(
     screen: ScreenDto,
+    dependencies?: Dependency[],
   ): ApplicationJsonFieldDto[] {
+    const hiddenFieldsByIndex = new Map<number, Set<string>>()
     return (screen.fields ?? [])
       .filter((field) => !field.isHidden)
       .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .map((field) => ({
+        ...field,
+        values: screen.isMulti
+          ? field.values?.filter((_, index) => {
+              let hiddenFields = hiddenFieldsByIndex.get(index)
+              if (!hiddenFields) {
+                hiddenFields = getHiddenMultisetFieldIds(
+                  screen,
+                  dependencies,
+                  index,
+                )
+                hiddenFieldsByIndex.set(index, hiddenFields)
+              }
+              return !hiddenFields.has(field.id)
+            })
+          : field.values,
+      }))
       .filter((field) => (field.values?.length ?? 0) > 0)
       .map((field) =>
         this.mapFieldToApplicationJsonField(

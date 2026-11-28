@@ -1,8 +1,10 @@
 import {
+  FormSystemDependency,
   FormSystemField,
   FormSystemForm,
   FormSystemSection,
 } from '@island.is/api/schema'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import {
   Action,
   ApplicantDisplay,
@@ -154,10 +156,12 @@ export const PreviewSummary = ({
   sections,
   onNavigate,
   hasValidationError,
+  dependencies,
 }: {
   sections: FormSystemSection[]
   onNavigate: (sectionId: string, screenId?: string) => void
   hasValidationError?: (field: FormSystemField, valueIndex: number) => boolean
+  dependencies?: FormSystemDependency[]
 }) => {
   const { lang, formatMessage } = useLocale()
   return (
@@ -237,17 +241,26 @@ export const PreviewSummary = ({
                                 {valueIndex + 1}.
                               </Text>
                             )}
-                            {repeating.map((field) => (
-                              <SummaryField
-                                key={field.id}
-                                field={field}
-                                valueIndex={valueIndex}
-                                requiredMissing={hasValidationError?.(
-                                  field,
-                                  valueIndex,
-                                )}
-                              />
-                            ))}
+                            {repeating
+                              .filter(
+                                (field) =>
+                                  !getHiddenMultisetFieldIds(
+                                    screen ?? {},
+                                    dependencies,
+                                    valueIndex,
+                                  ).has(field.id),
+                              )
+                              .map((field) => (
+                                <SummaryField
+                                  key={field.id}
+                                  field={field}
+                                  valueIndex={valueIndex}
+                                  requiredMissing={hasValidationError?.(
+                                    field,
+                                    valueIndex,
+                                  )}
+                                />
+                              ))}
                           </Box>
                         ),
                       )}

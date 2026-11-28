@@ -43,6 +43,7 @@ import {
   RulingModifiedAlert,
   serviceAnnouncementsStrings,
   UserContext,
+  VerdictAppealConclusion,
   VerdictAppealFiles,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -481,16 +482,7 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
-            {workingCase.verdictAppealCase?.appealState ===
-              AppealCaseState.COMPLETED &&
-              workingCase.verdictAppealCase.appealConclusion && (
-                <Conclusion
-                  title="Dómsorð Landsréttar"
-                  conclusionText={
-                    workingCase.verdictAppealCase.appealConclusion
-                  }
-                />
-              )}
+            <VerdictAppealConclusion />
             {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}

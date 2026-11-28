@@ -54,6 +54,27 @@ settings also clears any previously saved child multiset membership.
 These changes update both editor state and the saved field. The form-system
 data migration also clears existing child-family multiset membership.
 
+## Multiset dependencies
+
+Multiset group numbers appear directly above their fields, with normal field
+spacing before the number and no extra group indentation.
+Each number belongs to the first field visible in that row. When resuming an
+application, an incomplete section without a visible incomplete screen remains
+selected with no current screen.
+Summary rendering and required-field validation count visible repeated messages
+when determining multiset rows, matching the input screen. Messages themselves
+are not displayed as answers.
+
+Checkbox, radio-button, and dropdown fields can control dependencies while part
+of a multiset. Dependent fields in the same multiset follow the controlling
+value in their own row. Dependents outside that multiset are visible while any
+parent row selects their controlling value. Removing the last selected row
+updates those dependencies. Hidden row controls do not contribute selections or
+required-field errors. Live forms and previews with connections use these rules;
+unrestricted previews continue to show every field.
+Submitted JSON and PDFs omit values from hidden dependent rows while saved
+application values keep their original row indexes for reopening.
+
 ## Forms list
 
 The forms-list query requests only the ID, Icelandic name, slug, modification

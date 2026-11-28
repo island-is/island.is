@@ -113,6 +113,7 @@ export { default as AllIndictmentCaseFiles } from './AllIndictmentCaseFiles/AllI
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
+export { default as VerdictAppealConclusion } from './VerdictAppealConclusion/VerdictAppealConclusion'
 export { default as CaseResentExplanation } from './CaseResentExplanation/CaseResentExplanation'
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'

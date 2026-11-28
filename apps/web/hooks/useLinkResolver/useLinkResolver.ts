@@ -243,6 +243,10 @@ export const routesTemplate = {
     is: '/v/[slug]/[subSlug]/[childSlug]',
     en: '/en/p/[slug]/[subSlug]/[childSlug]',
   },
+  projectparentsubpagechildlistitem: {
+    is: '/v/[slug]/[subSlug]/[childSlug]/[listItemSlug]',
+    en: '/en/p/[slug]/[subSlug]/[childSlug]/[listItemSlug]',
+  },
   organizationsubpagelistitem: {
     is: '/s/[organization]/[slug]/[listItemSlug]',
     en: '/en/o/[organization]/[slug]/[listItemSlug]',

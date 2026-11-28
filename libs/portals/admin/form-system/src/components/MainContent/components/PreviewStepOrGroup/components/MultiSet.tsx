@@ -1,6 +1,11 @@
-import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemScreen,
+} from '@island.is/api/schema'
+import { getHiddenMultisetFieldIds } from '@island.is/form-system/shared'
 import { Action, ApplicationState, m } from '@island.is/form-system/ui'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, Fragment, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -10,9 +15,10 @@ interface Props {
   screen: FormSystemScreen
   dispatch?: Dispatch<Action>
   state?: Pick<ApplicationState, 'currentScreen'>
+  dependencies?: FormSystemDependency[]
 }
 
-export const MultiSet = ({ screen, dispatch, state }: Props) => {
+export const MultiSet = ({ screen, dispatch, state, dependencies }: Props) => {
   const { formatMessage } = useLocale()
   const { unregister } = useFormContext()
   const [numberOfItems, setNumberOfItems] = useState(() =>
@@ -50,39 +56,26 @@ export const MultiSet = ({ screen, dispatch, state }: Props) => {
       ? -1
       : firstMultisetFieldIndex + repeatedFields.length - 1
 
-  const renderPreviewField = (
-    field: FormSystemField,
-    fieldIndex: number,
-    itemIndex: number,
-  ) => {
-    const showRowGutter = field.isPartOfMultiset !== false && numberOfItems > 1
+  const renderPreviewField = (field: FormSystemField, itemIndex: number) => {
+    const hiddenFields = getHiddenMultisetFieldIds(
+      screen,
+      dependencies,
+      itemIndex,
+    )
+    if (hiddenFields.has(field.id)) return null
+    const showGroupNumber =
+      numberOfItems > 1 &&
+      field === repeatedFields.find((item) => !hiddenFields.has(item.id))
     return (
-      <Box
-        key={`${field.id}-${itemIndex}`}
-        display="flex"
-        alignItems="flexStart"
-      >
-        {showRowGutter && (
-          <Box
-            marginRight={2}
-            flexShrink={0}
-            marginTop={4}
-            style={{ width: '2ch' }}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            {fieldIndex === 0 && <Text variant="h4">{itemIndex + 1}.</Text>}
-          </Box>
-        )}
-        <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-          <Preview
-            data={field}
-            dispatch={dispatch}
-            state={state}
-            valueIndex={itemIndex}
-            screenOrSection
-          />
-        </Box>
+      <Box key={`${field.id}-${itemIndex}`}>
+        <Preview
+          data={field}
+          dispatch={dispatch}
+          state={state}
+          valueIndex={itemIndex}
+          groupNumber={showGroupNumber ? itemIndex + 1 : undefined}
+          screenOrSection
+        />
       </Box>
     )
   }
@@ -134,13 +127,13 @@ export const MultiSet = ({ screen, dispatch, state }: Props) => {
     <Box>
       {orderedFields.map((field, fieldIndex) => (
         <Fragment key={field.id}>
-          {renderPreviewField(field, repeatedFields.indexOf(field), 0)}
+          {renderPreviewField(field, 0)}
           {fieldIndex === lastMultisetFieldIndex && (
             <>
               {Array.from({ length: numberOfItems - 1 }).map((_, index) => (
                 <Box key={index + 1} marginBottom={3}>
-                  {repeatedFields.map((repeatedField, repeatedIndex) =>
-                    renderPreviewField(repeatedField, repeatedIndex, index + 1),
+                  {repeatedFields.map((repeatedField) =>
+                    renderPreviewField(repeatedField, index + 1),
                   )}
                 </Box>
               ))}

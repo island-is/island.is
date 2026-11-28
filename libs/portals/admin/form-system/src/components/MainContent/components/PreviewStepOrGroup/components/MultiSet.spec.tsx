@@ -1,7 +1,7 @@
 import { FormSystemScreen } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Preview } from '../../Preview/Preview'
@@ -32,13 +32,120 @@ jest.mock('@island.is/island-ui/core', () => ({
   ),
 }))
 
-jest.mock('../../Preview/Preview', () => ({
-  Preview: jest.fn(
-    ({ data, valueIndex = 0 }: ComponentProps<typeof Preview>) => (
-      <output data-testid={data.id} data-value-index={valueIndex} />
+jest.mock('../../Preview/Preview', () => {
+  const { useFormContext } =
+    jest.requireActual<typeof import('react-hook-form')>('react-hook-form')
+  return {
+    Preview: jest.fn(
+      ({
+        data,
+        valueIndex = 0,
+        groupNumber,
+      }: ComponentProps<typeof Preview>) => {
+        const { register } = useFormContext()
+        return (
+          <>
+            <output
+              data-testid={data.id}
+              data-value-index={valueIndex}
+              data-group-number={groupNumber}
+            />
+            {data.isRequired && (
+              <input
+                aria-label={`${data.id}:${valueIndex}`}
+                {...register(`${data.id}.${valueIndex}.text`, {
+                  required: true,
+                })}
+              />
+            )}
+          </>
+        )
+      },
     ),
-  ),
-}))
+  }
+})
+
+it.each([true, false])(
+  'applies matching-row dependencies only in restricted preview=%s',
+  async (restricted) => {
+    const previewScreen: FormSystemScreen = {
+      id: 'screen',
+      sectionId: 'section',
+      isMulti: true,
+      multiMax: 3,
+      fields: [
+        {
+          id: 'child',
+          screenId: 'screen',
+          name: { is: 'Child' },
+          isRequired: true,
+          isPartOfMultiset: true,
+        },
+        {
+          id: 'parent',
+          screenId: 'screen',
+          name: { is: 'Parent' },
+          isRequired: false,
+          fieldType: FieldTypesEnum.CHECKBOX,
+          isPartOfMultiset: true,
+          values: [
+            { json: { checkboxValue: false } },
+            { json: { checkboxValue: true } },
+          ],
+        },
+      ],
+    }
+    const validated = jest.fn()
+    const Form = () => {
+      const methods = useForm({ shouldUnregister: restricted })
+      return (
+        <FormProvider {...methods}>
+          <MultiSet
+            screen={previewScreen}
+            dependencies={
+              restricted
+                ? [
+                    {
+                      parentProp: 'parent',
+                      childProps: ['child'],
+                      isSelected: true,
+                    },
+                  ]
+                : undefined
+            }
+          />
+          <button onClick={async () => validated(await methods.trigger())}>
+            Validate
+          </button>
+        </FormProvider>
+      )
+    }
+    render(<Form />)
+    expect(
+      screen
+        .getAllByTestId('child')
+        .map((item) => item.getAttribute('data-value-index')),
+    ).toEqual(restricted ? ['1'] : ['0', '1'])
+    expect(
+      screen
+        .getAllByRole('status')
+        .filter((item) => item.hasAttribute('data-group-number'))
+        .map((item) => [
+          item.getAttribute('data-testid'),
+          item.getAttribute('data-value-index'),
+          item.getAttribute('data-group-number'),
+        ]),
+    ).toEqual([
+      [restricted ? 'parent' : 'child', '0', '1'],
+      ['child', '1', '2'],
+    ])
+    fireEvent.change(screen.getByRole('textbox', { name: 'child:1' }), {
+      target: { value: 'Visible answer' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Validate' }))
+    await waitFor(() => expect(validated).toHaveBeenCalledWith(restricted))
+  },
+)
 
 it('keeps multiset fields contiguous and moves interleaved standalone fields below the controls', () => {
   const previewScreen: FormSystemScreen = {

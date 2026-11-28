@@ -7,6 +7,7 @@ import { AppealStatementDeadline } from './models/appealStatementDeadline.model'
 import { AppealSummons } from './models/appealSummons.model'
 import { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
 import { AppealSummonsServiceRecipient } from './models/appealSummonsServiceRecipient.model'
+import { AppealVerdict } from './models/appealVerdict.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
@@ -54,6 +55,7 @@ export const repositoryModels = [
   AppealSummons,
   AppealSummonsDefendant,
   AppealSummonsServiceRecipient,
+  AppealVerdict,
   Case,
   CaseArchive,
   CaseDefendantPoliceCaseNumber,

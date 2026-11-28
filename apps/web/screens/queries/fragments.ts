@@ -305,6 +305,29 @@ export const slices = gql`
     teamMemberOrder
   }
 
+  fragment TeamMemberFields on TeamMember {
+    __typename
+    id
+    name
+    title
+    email
+    phone
+    tagGroups {
+      groupLabel
+      tagLabels
+    }
+    image {
+      ...ImageFields
+    }
+    imageOnSelect {
+      ...ImageFields
+    }
+    # Aliased since other slices in the Slice union have an "intro" field of type String
+    teamMemberIntro: intro {
+      ...HtmlFields
+    }
+  }
+
   fragment ContactUsFields on ContactUs {
     __typename
     id
@@ -1187,6 +1210,7 @@ export const slices = gql`
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
+    ...TeamMemberFields
     ...ContactUsFields
     ...TellUsAStoryFields
     ...ConnectedComponentFields
