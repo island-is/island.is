@@ -133,6 +133,12 @@ lists framework behaviour that a single template does not reveal.
 - **The form's Apollo client retries failed requests, mutations included,
   up to 4 times (5 attempts in total) with backoff.** Make external side
   effects idempotent where possible.
+- **The application controller audits application operations.** Templates
+  and template-api actions do not call `AuditService` or add `@Audit`.
+- **Log context comes from `withApplicationInfo()` in the application
+  controller,** which tags every log line in an action with `applicationId`,
+  `templateId` and the code owner. Do not add `applicationId` or the
+  template name to log messages or metadata by hand.
 
 ## Payment, lifecycle and my-pages
 

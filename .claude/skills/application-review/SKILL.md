@@ -153,7 +153,7 @@ Each prompt carries:
 > the change breaks. Drop anything `suppressions.md` covers. Cite source
 > code as evidence; a test or fixture shows what the test sets up, not how
 > production behaves. For each finding, return: `path:line`, check id,
-> what is wrong, a concrete failure scenario (input → wrong outcome), its
+> what is wrong (confirm each `path:line` against the file at the PR head, with `git show <ref>:<path>`, not against the diff offset), a concrete failure scenario (input → wrong outcome), its
 > preconditions and how often they hold ("every applicant", "on an FJS
 > 503", "two failures overlapping"), what the user or institution then
 > sees, read from the code that renders or receives it, severity, and a
@@ -203,27 +203,27 @@ empty, except the counts and clean checks.
 <PR only: draft or ready; ><n> files, +<added>/−<removed>; lenses: <list>
 
 ### Must fix (high)
-1. **<one-line headline in plain words>** (`<path:line>`[, `<path:line>`]; <check names>)
-   - **Problem:** <what the code does>.
-   - **Scenario:** <input or state> → <wrong outcome>.
-   - **Fix:** <one or two lines>.
-   - **Precedent:** #<PR>. [Add "unverified" or "framework-wide" notes here.]
+- **H<n>. <one-line headline in plain words>** (`<path:line>`[, `<path:line>`]; <check names>)
+  - **Problem:** <what the code does>.
+  - **Scenario:** <input or state> → <wrong outcome>.
+  - **Fix:** <one or two lines>.
+  - **Precedent:** #<PR>. [Add "unverified" or "framework-wide" notes here.]
 
 ### Should fix (medium)
 
 **<Area: The template (<name>)>**
-- `<path:line>` (**<check name>**): <what is wrong>.
+- **MT<n>** `<path:line>` (**<check name>**): <what is wrong>.
   - **Scenario:** <input → outcome>.
   - **Fix:** <one line>. [**Precedent:** #<PR>.]
 
 **The README**
-- <one bullet per G6 gap: the rule, where it is implemented, and what to add>
+- **MR<n>** <one bullet per G6 gap: the rule, where it is implemented, and what to add>
 
 **Shared code**
-- <same shape as the template area; name the other templates affected>
+- **MS<n>** <same shape as the template area; name the other templates affected>
 
 **<Other area, if any: clients, infra, portals>**
-- …
+- **MO<n>** …
 
 ### Scope ledger                           (when the scopes lens ran)
 - `<library>`: `<scope>` → `<client>`: <granted, already exchanged by `<library>` | seeded in `<file>` | seeded in this PR | not in repo, so confirm in IDS admin>
@@ -243,7 +243,7 @@ empty, except the counts and clean checks.
   stale comments. One bullet each.
 
 ### Nits (low)
-- `<path:line>`: <one line>. At most eight bullets.
+- **L<n>** `<path:line>`: <one line>. At most eight bullets.
 
 **<h> high · <m> medium · <l> low**
 
@@ -261,8 +261,13 @@ empty, except the counts and clean checks.
   checks by area, not by lens file: Data handling, Access and states, Template
   API, Shared UI, Scopes, Security, General. List checks that did not run
   under **Not run**, never under the clean ones.
-- Number the high findings. Give each one a plain-words headline, so a
-  reader can scan them before reading the detail.
+- Give every finding an id, so a reader can refer to it: `H1`, `H2` for
+  high, `M…` for medium, `L1`, `L2` for low. A medium finding carries the
+  letter of its area after the `M`: `MT` the template, `MR` the README,
+  `MS` shared code, `MO` anything else. Number from 1 within each id prefix
+  and use the ids when restating findings later.
+- Give each high finding a plain-words headline, so a reader can scan them
+  before reading the detail.
 - Group the medium findings by area, in this order: the template, the
   README, shared code, then anything else. Within an area, put the most
   consequential first.
