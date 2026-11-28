@@ -57,6 +57,7 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
       isVisible={isActive}
       className={styles.container}
       hideOnClickOutside={false}
+      hideOnEsc={false}
     >
       <Box
         position="relative"
